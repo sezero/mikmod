@@ -308,46 +308,208 @@ static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG ind
 }
 
 // Slowest part...
+
+#if defined HAVE_SSE2 || defined HAVE_ALTIVEC
+
+static __inline SWORD GetSample(const SWORD* const srce, SLONGLONG index)
+{
+	SLONGLONG i=index>>FRACBITS;
+	SLONGLONG f=index&FRACMASK;
+	return (SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+			         ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+}
+
+static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,ULONG todo)
+{	
+	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
+	SWORD s[8];
+	SWORD sample=0;	
+	SLONG remain = todo;
+
+	// Dest can be misaligned ...
+	while(!IS_ALIGNED_16(dest)) {
+		sample=srce[(index += increment) >> FRACBITS];
+		*dest++ += vol[0] * sample;
+		*dest++ += vol[1] * sample;
+		todo--;
+	}
+	
+	// Srce is always aligned ...
+
+#if defined HAVE_SSE2
+	remain = todo&3;	
+	{
+		__m128i v0 = _mm_set_epi16(0, vol[1], 
+								   0, vol[0], 
+								   0, vol[1], 
+								   0, vol[0]);
+		for(todo>>=2;todo; todo--)
+		{
+			SWORD s0 = GetSample(srce, index += increment);
+			SWORD s1 = GetSample(srce, index += increment);
+			SWORD s2 = GetSample(srce, index += increment);
+			SWORD s3 = GetSample(srce, index += increment);
+			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
+			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
+			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
+			__m128i v4 = _mm_load_si128((__m128i*)(dest+4));
+			_mm_store_si128((__m128i*)(dest+0), _mm_add_epi32(v3, _mm_madd_epi16(v0, v1)));
+			_mm_store_si128((__m128i*)(dest+4), _mm_add_epi32(v4, _mm_madd_epi16(v0, v2)));
+			dest+=8;				
+		}
+	}
+
+#elif defined HAVE_ALTIVEC
+	remain = todo&3;
+	{
+		vector signed short r0 = vec_ld(0, vol);
+		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
+																		 0, 1, // l
+																		 2, 3, // r
+																		 2, 1, // r
+																		 0, 1, // l
+																		 0, 1, // l
+																		 2, 3, // r 
+																		 2, 3 // r
+																		 ));
+		
+			
+		for(todo>>=2;todo; todo--)
+		{
+			// Load constants
+			s[0] = GetSample(srce, index += increment);
+			s[1] = GetSample(srce, index += increment);
+			s[2] = GetSample(srce, index += increment);
+			s[3] = GetSample(srce, index += increment);
+			s[4] = 0;
+	
+			vector short int r1 = vec_ld(0, s);
+			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
+																			 4*2, 4*2+1, // 0
+																			 0*2, 0*2+1, // s0
+																			 4*2, 4*2+1, // 0
+																			 1*2, 1*2+1, // s1
+																			 4*2, 4*2+1, // 0
+																			 1*2, 1*2+1, // s1
+																			 4*2, 4*2+1  // 0
+																			 ));
+																			 
+			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, // s2
+																			 4*2, 4*2+1, // 0
+																			 2*2, 2*2+1, // s2
+																			 4*2, 4*2+1, // 0
+																			 3*2, 3*2+1, // s3
+																			 4*2, 4*2+1, // 0
+																			 3*2, 3*2+1, // s3
+																			 4*2, 4*2+1  // 0
+																			 ));
+			vector signed int v3 = vec_ld(0, dest);
+			vector signed int v4 = vec_ld(0, dest + 4);
+			vector signed int v5 = vec_mule(v0, v1);
+			vector signed int v6 = vec_mule(v0, v2);
+
+			vec_st(vec_add(v3, v5), 0, dest);				
+			vec_st(vec_add(v4, v6), 0, dest + 4);
+
+			dest+=8;
+		}
+	}
+	#endif // HAVE_ALTIVEC
+
+	// Remaining bits ...
+	while(remain--) {
+		sample=GetSample(srce, index+= increment);
+
+		*dest++ += vol[0] * sample;
+		*dest++ += vol[1] * sample;
+	}
+
+
+	vnf->lastvalL=vnf->lvolsel*sample;
+	vnf->lastvalR=vnf->rvolsel*sample;
+	return index;
+}
+
+#endif
+
+
 static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	SLONGLONG i,f;
 
-	while(todo--) {
+	if (vnf->rampvol)	
+	while(todo) {
+		todo--;
+		i=index>>FRACBITS,f=index&FRACMASK;
+		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+		        ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+		index += increment;
+		
+		
+		*dest++ += (long)(
+			( ( ((SLONGLONG)vnf->oldlvol*vnf->rampvol) +
+			    (vnf->lvolsel*(CLICK_BUFFER-vnf->rampvol))
+			) * (SLONGLONG)sample ) >> CLICK_SHIFT );
+		*dest++ += (long)(
+			( ( ((SLONGLONG)vnf->oldrvol*vnf->rampvol) +
+			    (vnf->rvolsel*(CLICK_BUFFER-vnf->rampvol))
+			) * (SLONGLONG)sample ) >> CLICK_SHIFT );
+		vnf->rampvol--;
+		
+		if (!vnf->rampvol)
+			break;
+	}
+	
+	if (vnf->click)
+	while(todo) {
+		todo--;
 		i=index>>FRACBITS,f=index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
 		index += increment;
 
-		if(vnf->rampvol) {
-			*dest++ += (long)(
-			  ( ( ((SLONGLONG)vnf->oldlvol*vnf->rampvol) +
-			      (vnf->lvolsel*(CLICK_BUFFER-vnf->rampvol))
-			    ) * (SLONGLONG)sample ) >> CLICK_SHIFT );
-			*dest++ += (long)(
-			  ( ( ((SLONGLONG)vnf->oldrvol*vnf->rampvol) +
-			      (vnf->rvolsel*(CLICK_BUFFER-vnf->rampvol))
-			    ) * (SLONGLONG)sample ) >> CLICK_SHIFT );
-			vnf->rampvol--;
-		} else
-		  if(vnf->click) {
-			*dest++ += (long)(
+		*dest++ += (long)(
 			  ( ( (SLONGLONG)(vnf->lvolsel*(CLICK_BUFFER-vnf->click)) *
 			      (SLONGLONG)sample ) + (vnf->lastvalL * vnf->click) )
 			    >> CLICK_SHIFT );
-			*dest++ += (long)(
+		
+		*dest++ += (long)(
 			  ( ( ((SLONGLONG)vnf->rvolsel*(CLICK_BUFFER-vnf->click)) *
 			      (SLONGLONG)sample ) + (vnf->lastvalR * vnf->click) )
 			    >> CLICK_SHIFT );
 			vnf->click--;
-		} else {
-			*dest++ +=vnf->lvolsel*sample;
-			*dest++ +=vnf->rvolsel*sample;
-		}
+		 
+		if (!vnf->click)
+			break;
 	}
-	vnf->lastvalL=vnf->lvolsel*sample;
-	vnf->lastvalR=vnf->rvolsel*sample;
+	
+	
+	if (todo)
+	{
+#if defined HAVE_SSE2 || defined HAVE_ALTIVEC
+		if (md_mode & DMODE_SIMDMIXER)
+		{
+			index = MixSIMDStereoNormal(srce, dest, index, increment, todo);		
+		}
+		else
+#endif
+		{		
+			
+			while(todo) 
+			{		
+				i=index>>FRACBITS,
+				f=index&FRACMASK;
+				sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+								((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+				index += increment;
 
+				*dest++ +=vnf->lvolsel*sample;
+				*dest++ +=vnf->rvolsel*sample;		
+				todo--;		
+			}
+		}	
+	}
 	return index;
 }
 
@@ -1157,4 +1319,4 @@ BOOL VC2_SetNumVoices(void)
 	return 0;
 }
 
-/* ex:set ts=4: */
+/* ex:set ts=4:  */

@@ -245,10 +245,11 @@ MREADER *_mm_new_mem_reader(const void *buffer, int len)
 	return (MREADER*)reader;
 }
 
+
 static BOOL _mm_MemReader_Eof(MREADER* reader)
 {
 	if (!reader) { return 1; }
-	if ( ((MMEMREADER*)reader)->pos >= ((MMEMREADER*)reader)->len ) { 
+	if ( ((MMEMREADER*)reader)->pos > ((MMEMREADER*)reader)->len ) { 
 		return 1; 
 	}
 	return 0;
@@ -256,9 +257,8 @@ static BOOL _mm_MemReader_Eof(MREADER* reader)
 
 static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 {
-	unsigned char *d=ptr;
-	const unsigned char *s;
-	
+	unsigned char *d=ptr, *s;
+
 	if (!reader) { return 0; }
 
 	if (reader->Eof(reader)) { return 0; }
@@ -266,12 +266,13 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 	s = ((MMEMREADER*)reader)->buffer;
 	s += ((MMEMREADER*)reader)->pos;
 
-	if ( ((MMEMREADER*)reader)->pos + size >= ((MMEMREADER*)reader)->len - 1) 
+	if ( ((MMEMREADER*)reader)->pos + size > ((MMEMREADER*)reader)->len) 
 	{
+		((MMEMREADER*)reader)->pos = ((MMEMREADER*)reader)->len;
 		return 0; /* not enough remaining bytes */
 	}
 
-	((MMEMREADER*)reader)->pos += (long)size;
+	((MMEMREADER*)reader)->pos += size;
 
 	while (size--)
 	{
