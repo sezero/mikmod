@@ -1,5 +1,6 @@
 
 #include <ios>
+#include "unimod.h"
 #include "fileio.h"
 #include "types.h"
 #include "MODLoader.h"
@@ -10,6 +11,16 @@ using namespace MikMod;
 
 namespace
 {
+    u16 FineTune(int i)
+    {
+        static u16 finetune[16] =
+        {   8363,   8413,   8463,   8529,   8581,   8651,   8723,   8757,
+            7895,   7941,   7985,   8046,   8107,   8169,   8232,   8280
+        };
+
+        return finetune[i];
+    }
+
     // MOD specific headers and crap
 
     struct SampleInfo
@@ -24,18 +35,27 @@ namespace
         SampleInfo()
             : nLength(0),finetune(0),nVolume(0),nReppos(0),nReplen(0)
         {}
-
-        void Read(BinaryStream& stream)
-        {
-            stream.read(sName,22);
-            stream >>
-                nLength >>
-                finetune >>
-                nVolume >>
-                nReppos >>
-                nReplen;
-        }
     };
+
+    BinaryStream& operator >> (BinaryStream& stream,SampleInfo& samp)
+    {
+        stream.read(samp.sName,22);
+        //*
+            stream >>
+            samp.nLength >>
+            samp.finetune >>
+            samp.nVolume >>
+            samp.nReppos >>
+            samp.nReplen;
+        /*/
+        stream.read(&samp.nLength,2);
+        stream.read(&samp.finetune,1);
+        stream.read(&samp.nVolume,1);
+        stream.read(&samp.nReppos,2);
+        stream.read(&samp.nReplen,2);*/
+
+        return stream;
+    }
 
     struct Header
     {
@@ -46,23 +66,25 @@ namespace
         u8          nPosition[128];     // The order in which patterns should be played.
         string      sID;                // id string.  4 bytes long
         //u8          magic2[4];          // string "M.K.", "FLT4" or "FLT8"
-
-        void Read(BinaryStream& stream)
-        {
-            stream.read(sName,20);
-            for (int i=0; i<31; i++)
-                samples[i].Read(stream);//stream >> samples[i];
-
-            stream >> nLength;
-            stream >> magic1;               // eat up magic bytes
-            stream.read((char*)nPosition,128);
-
-            char sTemp[5];
-            sTemp[4]=0;
-            stream.read(sTemp,4);
-            sID=sTemp;
-        }
     };
+
+    BinaryStream& operator >> (BinaryStream& stream,Header& h)
+    {
+        stream.read(h.sName,20);
+        for (int i=0; i<31; i++)
+            stream >> h.samples[i];
+        
+        stream >> h.nLength;
+        stream >> h.magic1;               // eat up magic bytes
+        stream.read((char*)h.nPosition,128);
+        
+        char sTemp[5];
+        sTemp[4]=0;
+        stream.read(sTemp,4);
+        h.sID=sTemp;
+
+        return stream;
+    }
 
     const int nHeadersize=1084;
 
@@ -119,21 +141,6 @@ namespace
     };
 
     const int nModtypes=23;
-
-    // Stream overloads for gushy loading syntax
-    BinaryStream& operator >> (BinaryStream& src,SampleInfo& dest)
-    {
-        dest.Read(src);
-
-        return src;
-    }
-
-    BinaryStream& operator >> (BinaryStream& src,Header& dest)
-    {
-        dest.Read(src);
-
-        return src;
-    }
 
 };
 
@@ -215,13 +222,13 @@ void MODLoader::LoadSamples(BinaryStream& stream,Unimod* mod)
 
     for (int i=0; i<mod->numsamples; i++)
     {
-        UniSample& s=mod->samples[i];
+        Sample& s=mod->samples[i];
 
         delete[] s.pSampledata;         // paranoia.  This should always be null.
 
         s.pSampledata=new u16[s.length];
 
-        if (!s.format.at(UniSample::sf_16bit))
+        if (!s.format.at(Sample::sf_16bit))
         {
             // decode 8 bit crap into 16 bit!
             u8* pTemp=new u8[s.length];
@@ -244,8 +251,8 @@ Unimod* MODLoader::Load(std::istream& _stream)
     Unimod* mod=new Unimod;
 
     BinaryStream stream(_stream);
+    stream.SetBigEndian(true);
 
-    char sTemp[1024];   // temp C string buffer thing
     int i;              // omnipurpose loop iterator
 
     Header header;
@@ -292,29 +299,29 @@ Unimod* MODLoader::Load(std::istream& _stream)
 
     // sample info stuffs
     mod->numsamples=31;
-    mod->samples.resize(mod->numsamples);
+    mod->samples.resize(mod->numsamples+1);
 
     for (i=0; i<mod->numsamples; i++)
     {
-        UniSample& unismp=mod->samples[i];
+        Sample& unismp=mod->samples[i];
         SampleInfo& modsmp=header.samples[i];
 
-        stream.read(sTemp,22);      unismp.sName=sTemp;
+        unismp.sName=modsmp.sName;
         
-        unismp.speed     = MikMod::FineTune(modsmp.finetune);
+        unismp.speed     = FineTune(modsmp.finetune);
         unismp.volume    = modsmp.nVolume*2;
         unismp.loopstart = modsmp.nReppos*2;
         unismp.loopend   = unismp.loopstart + modsmp.nReplen*2;
         unismp.length    = modsmp.nLength*2;
-        unismp.format    = UniSample::sf_signed;
+        unismp.format    = Sample::sf_signed;
 
         if (modsmp.nReplen>1)
-            unismp.flags.set(UniSample::sl_loop);
+            unismp.loopflags.set(Sample::sl_loop);
 
         // Enable aggressive declicking for songs that do not loop and that
         // are long enough that they won't be adversely affected.
-        if (! (unismp.flags.at(UniSample::sl_loop) || unismp.flags.at(UniSample::sl_sustain_loop)) )
-            unismp.flags.set(UniSample::sl_declick);
+        if (! (unismp.loopflags.at(Sample::sl_loop) || unismp.loopflags.at(Sample::sl_sustain_loop)) )
+            unismp.loopflags.set(Sample::sl_declick);
 
         if (unismp.loopend>unismp.length)
             unismp.loopend=unismp.length;
