@@ -1,0 +1,84 @@
+# MikMod 3.0 Player - by Divine Entertainment
+# MIKMOD.EXE Makefile for WATCOM C/C++ compilers
+#
+
+
+####################
+### User Options ###
+####################
+
+# Use the C or C++ compiler
+Compiler                = wcc386
+#Compiler                = wpp386
+
+# Compiler Options!
+#
+#   /4r  Will align all code procedures and loops on 4 byte bound-
+#        dries (which increases execution speed on 486's only).
+#
+#   /6r  Will enable Pentium Pro instruction ordering, mainly providing
+#        a benefit to multi-processor systems (Watcom v11.0+ only). 
+#
+#   /zq  Enables the brief mode of the compiler.  To get code sizes
+#        remove this option.
+#
+#   /zpX Turns on 'X' byte structure alignment.  Each element of a
+#        structure will be aligned to an 'X' byte boundry.  Speeds up
+#        access of data on all processors, but increases memory use-
+#        age, and may cause other unseen problems (/zp1 is packed).
+#
+#
+#   Add l+ after the optimization switches (ie, /oineatxl+) to enable
+#   loop unrolling.  This results in a larger .EXE, and is most bene-
+#   ficial for 486 platforms.
+
+# compiler options for code that has to run from an interrupt:
+Compiler_Options1       = /bt=dos /zq /zp1 /oineatxl /5r /j /s
+
+# options for other code:
+Compiler_Options2       = /bt=dos /zq /zp1 /oinatxl /5r /j /s
+
+
+# Linker Options!
+#
+#   stack  Tells the linker how much stack space the program should
+#          allocate.  Larger values require more ram but can offer
+#          more stability.  Smaller values (2K to 4K) run the risk
+#          of stack overflows, especially if many arrays are defined
+#          within functions.  
+#
+
+Linker_options          = option stack=30000
+
+
+System                  = dos4g
+#System                  = pmodew
+
+
+Exe_file                = mikdos.exe
+
+
+Object_files            = mikmod.obj &
+                          message.obj &
+                          getopt.obj
+
+
+Lib_files               = dos\dos.lib &
+                          miklib.lib
+
+
+####################
+## Makefile rules ##
+####################
+
+project : $(Exe_file) $(Lib_files)
+
+$(Exe_file) : $(Object_files) $(Lib_files) .AUTODEPEND
+  *wlink system $(System) $(Linker_Options) NAME $(Exe_file) FILE {$(Object_files)} LIBRARY {$(Lib_files)}
+
+
+.c.obj:    .AUTODEPEND
+  *$(Compiler) $(Compiler_Options1) $<
+
+.asm.obj:  .AUTODEPEND
+  *wasm -3pr $<

@@ -1,0 +1,378 @@
+MikMod Bug Report 17.9.2001 (Jan Lönnberg)
+
+Version 2.2.x (current CVS tree)
+
+Fixed bugs:
+-----------
+
+Problem:	Arpeggio ignores first data nibble.
+Exhibited by:	Cybernd2.MOD
+Fix:		Replace arpeggio routine references
+		to shorts in control int with
+		references to bytes.
+Severity:	High
+
+Problem:	Mikplay crashes on module change when
+		declicker active.
+Fix:		Reset declicker on sample unload.
+Severity:	High
+
+Problem: 	IT: Appears to retrigger envelopes on portamento
+		even though Compatible Gxx is off.
+Exhibited by:	JAN109.IT, TEST23.IT
+Fix:		Retrigger envelopes on portamento only when
+		Compatible Gxx is on.
+Comment:	There was a comment in the code explaining
+		what was missing! Something you forgot to do?
+Severity:	Medium
+
+Problem:	Note delay greater than pattern speed causes
+		following rows to be ignored until next note
+		delay command!
+Exhibited by:	AQUA.S3M
+Comment:	The lead gets stuck on the same note in order 21
+		in Aquaphobia. Previously misdiagnosed as:
+		"S3M: G00 ignored - portamento doesn't seem to
+		have memory.".
+Fix:		Reset note delay on each row.
+Severity:	High
+
+Problem:	IT: Portamento doesn't trigger notes if no note
+		is playing.
+Exhibited by:	JAN109.IT
+Fix:		Retrigger notes on portamento if no note is
+		playing (IT only, but _all_ modes).
+Severity:	Medium
+
+Problem:	IT: Doesn't restart notes when an attempt to
+		play a note with carry is made and no note
+		is playing.
+Exhibited by:	TEST11.IT
+Fix:		Restart envelopes if no note is playing, and
+		actually play the note. Note that a note that
+		has been faded out to zero and can't fade back
+		in counts as no note playing in IT. The exact
+		rules in IT for when a channel is turned off
+		are arcane, and I'll discuss them only when
+		necessary.
+Severity:	Medium
+
+Problem:	IT: Magnitude/speed of vol. column portamento
+		too small.
+Exhibited by:	TEST3C.IT
+Fix:		Increase vol. col. porta speed x4.
+Comment:	Compare the relative pitch of the final two
+		notes; the difference is much larger in MikAmp
+		than in IT.
+Severity:	Medium
+
+Problem: 	Auto-vibrato in log pitch mode accesses
+		linear pitch slide table incorrectly.		
+Exhibited by:	TEST4.IT, TEST27.IT
+Fix:		Check pitch handling code?
+Comment:	Autovibrato seemed to be too strong.		
+		Misdiagnosed as a problem with pitch
+		envelopes resetting.
+		Serves you right for trying to be sneaky,
+		Jake.
+Severity:	Minimal
+
+Problem:	IT: Cxx break to row never takes BCD
+		parameter!
+Exhibited by:	OCEAN4.IT, OCEAN4T.IT
+Fix:		Always interpret Cxx parameter directly in
+		IT.
+Comment:	Cute. Cxx is _always_ hex in IT, not just
+		with old effects off. Another Lim-induced
+		compatibility problem.
+Severity:	Medium
+
+Problem:	IT: Ignores module stereo separation parameter.
+Exhibited by:	OCEAN4.IT, OCEAN4T.IT
+Fix:		Don't just ignore pan separation! Scale all
+		panning values by pan separation/128 before
+		feeding them to the mixer device.
+Comment:	I don't believe second-guessing the composer
+		is a good idea. Especially since it sounds
+		horrible in places. Of course, the current
+		behaviour could be an option, but I feel it
+		messes up more modules than it improves.
+Severity:	Low
+
+Problem:	IT: Ignores stereo/mono bit in module flags.
+Exhibited by:	WIZBALL2.IT
+Fix:		Bit 0 in the module flags. If this is off,
+		all channels should be centred at all times.
+		I suggest you implement this by setting
+		stereo separation to 0.
+Comment:	See previous bug.
+Severity:	Low
+
+Problem:	IT: Vol. column pitch slide completely wrong.
+Exhibited by:	TEST3D.IT
+Fix:		Corrected sign error in vol. col pitch slide
+		memory.
+Comment:	Compare the relative pitch of the final two
+		notes; the difference is much larger in MikAmp
+		than in IT.
+Severity:	Medium
+
+Problem:	IT: SA0 ignored.
+Exhibited by:	TEST12.IT
+Fix:		Slight modification to OFFSET_LEGACY data format.
+Severity:	Medium
+
+Problem:	IT: Portamento with sample change is wrong.
+Exhibited by:	TEST21.IT
+Fix:		A little logarithm madness.
+Severity:	Low
+
+Problem:	S3M stereo/mono switch not implemented.
+Severity:	Low
+
+Problem:	DirectSound output driver occasionally
+		scrambles output, especially with low latency.
+Fix:		Changed driver to avoid overwriting currently
+		playing data.
+Severity:	High
+
+Problem:	Reallocating sample table in virtch.c causes
+		channel VINFO structs to have invalid sample
+		pointers.
+Severity:	High
+Fix:		Changed getfreehandle to modify
+		vc->vinf[x].handle for all 0<x<vc->numchn to
+		point to the new VSAMPLE table.
+Comment:	Previously reported as: "Multiplay crashes
+		occasionally when loading files	when a file is
+		already playing, especially with large .IT files."
+		Does _not_ appear to be a multithreading problem;
+		even if the next Mikmod_Update doesn't run
+		until after the song has been Player_SongInit:ed,
+		(I added some mutexes temporarily just to make sure)
+		the whole things still crashes.
+		This showed up in the same situations on both
+		Multiplay and MikSDLPlay, so it had to be a
+		MikMod bug.
+
+Problem:	Effects delayed past the row change should not
+		be executed.
+Severity:	Low
+Comment:	If an effect is delayed to or starts at tick x
+		and x>=speed, the effect should be ignored, not
+		delayed until the last tick in the row. I
+		checked this using IT, ST3, FT2 and PT, using
+		several different effects.
+
+Problem:	Volume sliding (non-fine) on first tick:
+		IT: Slide on first tick only when slide speed is F.
+		S3M: Slide on first tick if slide speed is F or
+		fast volume slides are on (fast volume slides
+		implicit in version 3.00).
+Severity:	Medium
+Comment:	XM and PT: Never slide on first tick. This was
+		correctly handled already.
+		Apparently, this is a bug in the so-called
+		corrected volume slide in ST3.20, because:
+		- The ST3 docs don't mention the D0F/DF0
+		  weirdness, but ST3 does it anyway.
+		- IT always does it, "for S3M compatibility".
+
+Problem:	S3M files saved by IT need to use IT "buggy"
+		portamento, which retriggers notes.
+Severity:	Low
+Comment:	Impulse Tracker messes the portamento up even
+		when importing/exporting S3Ms, so we check
+		whether IT saved this one and screw it up just
+		like IT does.
+
+Problem:	IT: SAx commands should have no effect until
+		an Oxx command is executed.
+Severity:	Medium
+Comment:	This caused PANIC.S3M to sound horrible; it
+		sounds OK in IT despite its interpretation of
+		the SAx command.
+
+Problem:	IT, S3M: Oxx command should have memory.
+Severity:	Low
+Comment:	And SAx shouldn't affect Oxx's memory...
+
+Problem:	IT: With old effects off, illegal sample offset
+		commands should reset offset (high and low) to 0.
+Exhibited by:	TEST22.IT
+Severity:	Low
+
+Problem:	XM: Fixed loader bug that zapped panning
+		envelopes for no apparent reason.
+Fix:		Swapped the check and assignment so that the
+		variable that gets checked actually has a
+		meaningful value.
+Severity:	Medium
+Comment:	Slump code, Jake?
+
+Problem:	XM: Fixed loader bug that destroyed volume
+		envelope position change in Lxx effect.
+Severity:	Low
+Comment:	More slump code?
+
+Problem:	FT2 envelope position change (Lxx) effect should
+		not affect pan envelope.
+Severity:	Low
+Comment:	As far as I can tell. On the other hand, ModPlug
+		Tracker changes both volume and panning envelopes
+		when handling XMs. Sigh. Why can't people check
+		their code?
+
+Problem:	669: Too many errors to mention.
+Severity:	Medium
+Comment:	669 effects should now work properly, except for
+		the ridiculous extended 669 effect Hx, which
+		seems to retrigger the note six times, but with
+		a delay that can be set to be far smaller than
+		the time between ticks. Needless to say, this
+		makes it kind of hard to implement in MikMod.
+		Likewise, the UNIS669 super-fast tempo (F0) is
+		not implemented yet.
+
+Old bugs:
+---------
+
+Problem:	S3M: Impulse Tracker's extra effects.
+Exhibited by:	PANIC.S3M
+Comment:	IT adds several effects to S3M that aren't in
+		ST3. ModPlug Tracker also does this. Impulse
+		Tracker identifies its files clearly (tracker
+		version 0x3ijj, where i.jj is IT version), but
+		ModPlug Tracker uses tracker ID 0x1320 (ST3.20).
+
+		Anyway, we have three options:
+		a) Deactivate Lim's extensions when playing
+		   S3M:s not saved by Impulse Tracker. Problem:
+		   corrupts ModPlug Tracker S3Ms that use IT-
+		   style effects.
+		b) Ignore it. Who would want to use an effect that
+  		   doesn't do anything? Problem: corrupts ST3
+		   S3Ms that use undefined commands.
+		c) Deactivate Lim's extensions when playing S3Ms
+		   that have a version number less than 3.20.
+		   Problem: fixes only the oldest problem modules,
+		   may cause problems if ModPlug Tracker uses
+		   another identifier, lots of extra work.
+
+		Whatever we do, someone's going to complain it's
+		wrong. Maybe we should do it both ways and let
+		the user decide.
+Severity:	Low
+
+Problem:	IT: Turning on envelopes should not reset
+		envelope position.
+Exhibited by:	TEST7.IT
+Fix:		Need code to check whether this should be done.
+Severity:	Low
+
+Problem:	IT: Vibrato et.c. waveforms need checking.
+Exhibited by:	TEST13.IT
+Fix:		Careful testing to see what trackers use what
+		waveforms.
+Severity:	Low
+Comment:	IT may have serious problems with consistency
+		in tremolo. This makes checking tremolo waveforms
+		minimal priority.
+
+Problem:	IT: Tremolo seems to get reset on type change.
+Exhibited by:	TEST15.IT
+Fix:		Need code to check whether this should be done.
+Severity:	Minimal
+Comment:	Again, tremolo is quite uncommon, and if it's
+		as buggy as it seems...
+
+Problem:	S3M vol0 optimisation: if on, cut all (not just
+		looping as documented) notes that have been at
+		0 volume for three rows.
+Fix:		More code!
+Severity:	Low
+Comment:	The whole concept of vol0 optimisation is a
+		ghastly kludge. Any sane mixer should be able to
+		optimise mixing of zero volume channels by itself.
+
+Problem:	S3M, XM, IT: Volume setting on note delay processing
+		not delayed.
+Fix:		Lots of work...
+Severity:	Low
+Comment:	In IT note delay actually delays _everything_
+		on the row, including volume/panning changes
+		and volume column effects. In S3M, note delay
+		can't affect other effects (only one effect
+		at a time), but it does affect volume setting.
+		In FT2, note delay affects volume setting
+		(vol. col. 0 to 0x40), but not volume column
+		effects (!), and the note is always rekicked
+		even though no note or instrument is specified
+		(sample, envelopes, pitch setting, the works).
+		PT is simple enough to avoid this problem
+		entirely.
+
+Problem:	IT: Vol. col. effects not delayed by note delay.
+Fix:		Lots of work...
+Severity:	Low
+Comment:	Yes, note delay actually delays _everything_
+		on the row, including volume/panning changes
+		and volume column effects. But in FT2, only
+		the volume setting is delayed.
+
+New bugs:
+---------
+
+Problem:	XM: Pitch changes made by volume column vibrato
+		should not be reset until another operation
+		touches the pitch setting for this channel.
+Exhibited by:	TEST13D.XM
+Fix:		If we keep sending vibrato depth commands
+		(without the vibrato speed)
+		until we reach a pitch bend, porta, new note
+		or something, we should get the same result.
+		In other words, we need tons of weird special
+		logic. Not recommended.
+Severity:	Minimal
+Comment:	Wonderful. Looks like someone from Triton
+		forgot to reset the pitch after the volume
+		column vibrato ends. The effect column
+		vibrato works fine.
+
+		Of course, not a single XM-compatible tracker
+		(AFAIK) emulates this bug, so any ModPlug users
+		will be very surprised if we introduce this
+		feature.
+
+Problem:	XM: Set fine tune (E5x) should only affect
+		notes starting on the same row.
+Severity:	Minimal
+Comment:	This certainly qualifies as obscure.
+
+Problem:	UNIS669: Hx retrig effect not implemented.
+Severity:	Minimal
+Comment:	This effect seems to be able to retrigger more
+		often than once a tick.
+Fix:		Increase the tempo and decrease effect
+		intensities to compensate (UNIS669 may be
+		doing this itself).
+
+Problem:	UNIS669: F0 super fast tempo not implemented.
+Severity:	Minimal
+Comment:	Unsure how fast this tempo is.
+
+Bug severity criteria:
+----------------------
+
+Critical:	Causes most tunes to misplay badly.
+		MikAmp crashes on many tunes.
+High:		Causes most tunes to misplay somewhat or
+		many tunes to misplay badly. Sporadic crashes
+		in any major MikMod app caused by MikMod.
+Medium:		Causes many tunes or a few famous tunes
+		(especially anything by Purple Motion) to
+		play incorrectly.
+Low:		Minor glitches in a few tunes. Major
+		glitches, but only in test files.
+Minimal:	Only noticable in really twisted test files.
+

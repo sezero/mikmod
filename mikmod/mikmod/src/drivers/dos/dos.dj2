@@ -1,0 +1,37 @@
+# MikMod 3.01 Library Makefile for DJGPP (*NOT* Linux)
+
+
+####################
+### User Options ###
+####################
+
+# Use the C or C++ compiler
+CC                = gcc
+CFLAGS            = -O2 -I. -I.. # -g -Wall
+Librarian         = ar
+
+Lib_file          = libdos.a
+
+DriverObjs        =  mdma.o mirq.o gus.o gusdrv1.o pas16.o sb.o sb16.o sbpro.o sndscape.o
+
+
+####################
+## Makefile rules ##
+####################
+
+all: $(Lib_file)
+
+$(Lib_file): $(DriverObjs)
+	-rm -f $(Lib_file)
+	$(Librarian) rcs $(Lib_file) $^
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+# capital S is very important!!!
+%.o: %.S
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+clean:
+	-rm -f *.o dos_drv/*.o $(Lib_file)
+

@@ -1,0 +1,66 @@
+#
+# MikMod 3.x Library Makefile
+#
+
+
+####################
+### User Options ###
+####################
+
+# Use the C or C++ compiler
+Compiler           = wcc386
+#Compiler           = wpp386
+
+# Compiler Options!
+#
+#   /4r  Will align all code procedures and loops on 4 byte bound-
+#        dries (which increases execution speed on 486's only).
+#
+#   /6r  Will enable Pentium Pro instruction ordering, mainly providing
+#        a benefit to multi-processor systems (Watcom v11.0+ only). 
+#
+#   /zq  Enables the brief mode of the compiler.  To get code sizes
+#        remove this option.
+#
+#   /zpX Turns on 'X' byte structure alignment.  Each element of a
+#        structure will be aligned to an 'X' byte boundry.  Speeds up
+#        access of data on all processors, but increases memory use-
+#        age, and may cause other unseen problems (/zp1 is packed).
+#
+#
+#   Add l+ after the optimization switches (ie, /oineatxl+) to enable
+#   loop unrolling.  This results in a larger .EXE, and is most bene-
+#   ficial for 486 platforms.
+
+# options for code that has to run from an interrupt:
+Compiler_Options1  = /bt=dos /zq /zp1 /oneatx /j /s /zu /I..
+
+# Compile using dos4g or pmodew
+System             = dos4g
+#System             = pmodew
+
+
+Lib_file           = dos.lib
+
+DriverObjs         = mdma.obj &
+                     mirq.obj &
+                     gus.obj &
+                     gusdrv1.obj &
+                     sb.obj &
+                     sb16.obj &
+                     sbpro.obj &
+                     sndscape.obj &
+                     pas16.obj
+
+
+####################
+## Makefile rules ##
+####################
+
+$(Lib_file): $(LoaderObjs) $(DriverObjs) $(PlayerObjs) .AUTODEPEND
+   *wlib $(Lib_file) $< 
+
+
+.c.obj:    .AUTODEPEND
+  *$(Compiler) $(Compiler_Options1) $<
+

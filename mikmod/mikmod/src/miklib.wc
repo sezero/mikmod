@@ -1,0 +1,152 @@
+#
+# MikMod 3.x Library Makefile
+#
+
+
+####################
+### User Options ###
+####################
+
+# Use the C or C++ compiler
+Compiler           = wcc386
+#Compiler           = wpp386
+
+# Compiler Options!
+#
+#   /4r  Will align all code procedures and loops on 4 byte bound-
+#        dries (which increases execution speed on 486's only).
+#
+#   /6r  Will enable Pentium Pro instruction ordering, mainly providing
+#        a benefit to multi-processor systems (Watcom v11.0+ only). 
+#
+#   /zq  Enables the brief mode of the compiler.  To get code sizes
+#        remove this option.
+#
+#   /zpX Turns on 'X' byte structure alignment.  Each element of a
+#        structure will be aligned to an 'X' byte boundry.  Speeds up
+#        access of data on all processors, but increases memory use-
+#        age, and may cause other unseen problems (/zp1 is packed).
+#
+#
+#   Add l+ after the optimization switches (ie, /oineatxl+) to enable
+#   loop unrolling.  This results in a larger .EXE, and is most bene-
+#   ficial for 486 platforms.
+
+# options for code that has to run from an interrupt:
+Compiler_Options1  = /bt=dos /zq /zp1 /oneatx /j /s /zu
+
+# options for code optimized for size:
+Compiler_Options2  = /bt=dos /zq /zp1 /onasx /j /s
+
+
+# Compile using dos4g or pmodew
+System             = dos4g
+#System             = pmodew
+
+
+Lib_file           = miklib.lib
+
+LoaderObjs         = mloader.obj &
+                     mlreg.obj &
+                     npertab.obj &
+                     sloader.obj &
+                     load_mod.obj &
+                     load_m15.obj &
+                     load_mtm.obj &
+                     load_s3m.obj &
+                     load_stm.obj &
+                     load_669.obj &
+                     load_far.obj &
+                     load_dsm.obj &
+                     load_xm.obj &
+                     load_ult.obj &
+                     load_it.obj &
+                     s3m_it.obj &
+                     mmio.obj &
+                     mmalloc.obj &
+                     mmerror.obj
+
+DriverObjs         = mdriver.obj &
+                     mdreg.obj &
+                     drv_nos.obj &
+                     drv_raw.obj &
+                     drv_wav.obj &
+
+PlayerObjs         = mplayer.obj &
+                     munitrk.obj &
+                     virtch.obj &
+                     vc8norm.obj &
+                     vc8nc.obj &
+                     vc16norm.obj &
+                     vc16nc.obj &
+                     resample.obj
+
+
+
+####################
+## Makefile rules ##
+####################
+
+$(Lib_file): $(LoaderObjs) $(DriverObjs) $(PlayerObjs) .AUTODEPEND
+   *wlib $(Lib_file) $< 
+
+
+##########################
+### all loader modules ###
+##########################
+
+mloader.obj :   mloader.c  .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+sloader.obj :   sloader.c  .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_uni.obj :  load_uni.c  .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_it.obj :   load_it.c  .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_m15.obj :  load_m15.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_mod.obj :  load_mod.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_mtm.obj :  load_mtm.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_ult.obj :  load_ult.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_stm.obj :  load_stm.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_669.obj :  load_669.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_far.obj :  load_far.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_dsm.obj :  load_dsm.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_med.obj :  load_med.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_s3m.obj :  load_s3m.c .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+load_xm.obj :   load_xm.c  .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+s3m_it.obj :    s3m_it.c   .AUTODEPEND
+                $(Compiler) $(Compiler_Options2) $<
+
+
+.c.obj:    .AUTODEPEND
+  *$(Compiler) $(Compiler_Options1) $<
+
+.asm.obj:  .AUTODEPEND
+  *wasm -3pr $<
+

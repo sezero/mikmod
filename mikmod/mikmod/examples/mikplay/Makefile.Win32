@@ -1,0 +1,10 @@
+OBJS= message.o mikplay.o ../../../mmio/src/log.o
+
+%.o: %.c
+	gcc -g -I../../include -I../../../mmio/include -o $@ -c $<
+
+default: $(OBJS)
+	gcc -g -o mikplay.exe $(OBJS) ../../libmikmod.a 
+
+clean:
+	rm $(OBJS)

@@ -1,0 +1,178 @@
+Unimod 2000 Format Specifications
+Revision 1 - October 20th, 1999.
+----------------------------------
+By Jake Stine [Air] of Divine Entertainment
+
+
+INTRODUCTION
+
+ Mikmod uses an internal format for all modules, which I call Unimod.  Since
+ it must be able to encompass all effects supported by all trackers through
+ out history, Unimod has always been traditionally cluttered and unsuitable
+ for public use.  Enter Unimod 2000, rebuilt from the ground-up to be a clean,
+ flexable, and above all: an easy-to-use format.
+ 
+ Unimod 2000 has a couple of unique features which give it an unparalleled
+ power and speed over most other formats, at the cost of some size.  Since
+ most of this extra space is whitespace, it still zips well and hence is of
+ little consequence.  Also, the simplicity in implimentation also makes up
+ for any other shortcommings.
+ 
+ The most important 'new' feature of Unimod 2000 is the universal frame delay.
+ There is a frame delay value attached to every effect, giving the composer and
+ the program total control over when an effect is executed within the row it has
+ been specified on.  This feature allows the core player to consolodate several
+ otherwise separate effects into one simple block of code.  For example: volume
+ slides and fine volume slides.  A fine volume slide is simply a volume slide
+ which is run only once.  Also, some module formats start execution of many com-
+ mands on the second tick of a row, while others start the same command on the
+ first tick.  With my new method, the only difference is the framedelay and
+ there is no longer a need to code duplicate effects.
+
+
+------------------------------------------------------------------------------
+The UNITRK_EFFECT Structure:
+
+ typedef struct _UNITRK_EFFECT
+ {   INT_MOB  param;             // Parameter, union of unsigned and signed ints, words and bytes).
+     UBYTE    effect;            // Effect
+     UBYTE    framedly;          // framedelay for effect.  If UFD_RUNONCE is set,
+                                 // command is run once on the given tick.
+ } UNITRK_EFFECT;
+ 
+ Fairly self-explainitory, I think.
+ The framedly is a 7 bit value with the 8th bit a flag (UFD_RUNONCE).  If
+ that flag is set, then the bottom 7 bits indicates the tick that the command
+ should be run on.  If not, then the bottom 7 bits is the delay, in ticks, be-
+ fore execution of the command starts.
+ 
+------------------------------------------------------------------------------
+The UniTrack Stream
+
+ A single row can occupy up to 63 bytes (62 excluding the initial Row Length/
+ Flag byte).  This is enough space to store up to 7 FULL effects (and 12 or so
+ memory effects) per row per channel.
+
+ Row Length/Flag byte (1 byte):
+   Bottom six bytes indicate the byte length of this row (including this byte),
+   provided for speedier seeking through the row, and as a track termination
+   indicator.  If this byte is 0, then there is no data in this row, and the
+   track has ended.  Reading beyond a zero-value is bad.  Also, a value of 1
+   indicates an empty row, where the next byte will be the Length/Flag byte
+   for the NEXT row.
+
+ Effect Flag byte (1 byte):
+   A dedicated flag byte for each effect on the current row.  If the flag
+   byte is 0, then there is no effect, and the row has ended.  The proceeding
+   byte will be the Length/Flag byte for the NEXT row.
+
+ The unitrk row format, in pseudocode:
+
+  Row Length/Flag (1 byte)
+  if(rlflag == 0) End of Track!
+  if(rlflag > 1)
+  {   if (rlflag & 64)
+          UniNote (1 byte)
+          UniInstrument (1 byte)
+
+      if(rlflag & 128)
+      {   Effect Flag (1 byte)
+          While(eflag != 0)
+              if (eflag & 1)        // unieffect flag
+                  Effect Memory index (1 byte)
+
+              if (eflag & 2)        // effect memory read/write flag
+                  UNITRK_EFFECT Structure (6 bytes)
+              
+              if (eflag & 4)        // effect memory override
+                  // Only valid if bit 1 is also set
+                  Override Effect (1 byte)
+
+              Next Effect Flag.
+          Loop.
+      }
+  }
+  End Row.
+
+
+ --------------------------
+  The Global Effects Track
+ --------------------------
+ 
+ The global effects column differs from an effects column in that it has no
+ note/instrument data.  Instead that data has been removed and more room has
+ been allocated in the Length/flag byte to store the length.  With 7 bits for
+ the length, each row can hold up to 18 effects.
+ 
+ Row Length/Flag byte (1 byte):
+   Bottom eight bytes indicate the byte length of this row (including this byte),
+   provided for speedier seeking through the row, and as a track termination
+   indicator.  If this byte is 0, then there is no data in this row, and the
+   track has ended.  Reading beyond a zero-value is bad.  Also, a value of 1
+   indicates an empty row, where the next byte will be the Length/Flag byte
+   for the NEXT row.
+
+ Effect Flag byte (1 byte):
+   A dedicated flag byte for each effect on the current row.  If the flag
+   byte is 0, then there is no effect, and the row has ended.  The proceeding
+   byte will be the Length/Flag byte for the NEXT row.
+
+ The unitrk global effects format, in pseudocode:  
+
+  Row Length/Flag (1 byte)
+  if(rlflag == 0) End of Track!
+  if(rlflag > 1)
+  {   if(rlflag & 128)
+      {   Effect Flag (1 byte)
+          While(eflag != 0)
+              if (eflag & 1)        // unieffect flag
+              {   Effect Memory index (1 byte)
+                  Effect Memory channel (1 byte)
+              }
+              if (eflag & 2)        // effect memory read/write flag
+                  UNITRK_EFFECT Structure (6 bytes)
+              Next Effect Flag.
+          Loop.
+      }
+  }
+  End Row.
+
+
+
+==============================================================================
+ The OLD UNITRK format, which was great and all for a scripting language, but
+ left a few things to be desired in the way of certain specializations and
+ optimizations when it came to being used as a module track format.  Note
+ that I still use a nearly identical system (although I do not use a repeat
+ feature) for any scripting languages I end up using in games.
+
+
+    The UNITRK(tm) Format:
+    ======================
+
+    A UNITRK stream is an array of bytes representing a single track
+    of a pattern. It's made up of 'repeat/length' bytes, opcodes and
+    operands (sort of a assembly language):
+
+    rrrlllll
+    [REP/LEN][OPCODE][OPERAND][OPCODE][OPERAND] [REP/LEN][OPCODE][OPERAND]..
+    ^                                         ^ ^
+    |-------ROWS 0 - 0+REP of a track---------| |-------ROWS xx - xx+REP of a track...
+
+
+    The rep/len byte contains the number of bytes in the current row,
+    _including_ the length byte itself (So the LENGTH byte of row 0 in the
+    previous example would have a value of 5). This makes it easy to search
+    through a stream for a particular row. A track is concluded by a 0-value
+    length byte.
+
+    The upper 3 bits of the rep/len byte contain the number of times -1 this
+    row is repeated for this track. (so a value of 7 means this row is repeated
+    8 times)
+
+    Opcodes can range from 1 to 255 but currently only opcodes 1 to 70 (or so)
+    are being used. Each opcode can have a different number of operands. You
+    can find the number of operands to a particular opcode by using the opcode
+    as an index into the 'unioperands' table. 
+
+

@@ -1,0 +1,66 @@
+
+     Mikmod Voice Handling System
+---------------------------------------
+ By Jake Stine of Divine Entertainment
+
+
+Mikmod has a fairly complex voice handling system, which allows nearly complete
+duality between hardware and software voices.  Mikmod will use whichever are
+available for optimal performance everytime a new voice is activated.
+
+Mikmod's voice allocation system works hand-in-hand with its sample loader.
+Samples can only be mixed by the driver that has access to their data.  Mikmod
+supports two modes of loading samples:
+
+  a) static mode.  Samples are loaded into soundcard hardware wehn possible.
+     These samples are considered static because they cannot be modified with
+     out being completely reloaded into the soundcard.
+     
+  b) Dynamic mode.  Samples are loaded into system memory.  On most older sound
+     cards, this forces the use of the Mikmod software mixer.  However, on
+     Soundblaster Live cards and other like PCI soundcards which actually use
+     system memory for their wavetable memory banks, this method will use the
+     acceleration features of the card.
+     
+This means that initially, mikmod must determine if the sample in question has
+been loaded as static or dynamic.
+
+Secondly, there is the voiceset.  A voiceset can either be marked as a player
+of static or dynamic samples.
+
+
+Dynamic samples should only be played on dynamic
+voicesets!  If you attempt to play a sample loaded as dynamic on a static
+voiceset, the sample may not play (depending on the user's hardware).  However
+static samples can be played in either static or dynamic voicesets with no
+problem.
+
+
+For example, an application such as a module player will want to force all
+voicesets to static mode since such an application does not use any dynamic 
+samples.  In a more specific situation such as a small game, everything except
+a single voiceset may be marked static (that voiceset being for streaming
+audio, which requires dynamic samples).
+
+
+SampleAlloc
+-----------
+
+Allocates a memory for a sample.  This allocation is always dynamic, and is 
+used primarily for creating a buffer for streaming audio.  This allocation
+bypasses all of Mikmod's internal sample manager logic.  Additionally, you can
+use SampleGetPointer to get a faltmode pointer to the sample so you can do
+whatever damned thing you want to with it!
+
+
+SampleGetPtr
+------------
+returns a void pointer to the sample handle.  The pointer will be to either an
+8 bit or 16 bit sample.  If the 'flags' parameter is not NULL, then the driver
+will return the sample flags (to indicate the 
+
+
+SampleLoad
+----------
+This is the driver sample precaching procedure.  Generally, this function is
+only used by Mikmod's SLOADER layer (SL_Precache).

@@ -1,0 +1,31 @@
+# MikMod 3.0 Player Makefile for DJGPP
+
+
+####################
+### User Options ###
+####################
+
+# Use the C or C++ compiler
+CC                = gcc
+CFLAGS            = -O2 -I. -g
+
+Lib_files         = libmikm.a
+
+####################
+## Makefile rules ##
+####################
+
+all: mikwin.exe mikwav.exe
+
+mikwin.exe: mikmod.o message.o $(Lib_files)
+	gcc mikmod.o message.o $(Lib_files) -o mikwin.exe
+
+mikwav.exe: mikwav.o $(Lib_files)
+	gcc mikwav.o $(Lib_files) -o mikwav.exe
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $<
+
+clean:
+	-rm -f *.o *.exe
+

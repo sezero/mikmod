@@ -1,0 +1,23 @@
+OBJS=src/mdreg.o src/mdriver.o src/mdsfx.o src/mloader.o src/mlreg.o src/mplayer.o src/munitrk.o src/mwav.o \
+	src/npertab.o src/sloader.o src/snglen.o src/unimod.o src/voiceset.o \
+	src/loaders/S3m_it.o src/loaders/Load_xm.o src/loaders/Load_ult.o src/loaders/Load_stm.o \
+	src/loaders/Load_s3m.o src/loaders/Load_mtm.o src/loaders/Load_mod.o src/loaders/Load_m15.o \
+	src/loaders/Load_669.o \
+	src/loaders/Load_it.o src/virtch/nc16.o src/virtch/nc16ss.o src/virtch/nc8.o src/virtch/nc8ss.o \
+	src/virtch/placebo.o src/virtch/regmix_ss.o src/virtch/vc16.o src/virtch/vc16ss.o \
+	src/virtch/vc8.o src/virtch/vc8ss.o src/virtch/virtch.o src/virtch/wrap16.o src/virtch/wrap8.o \
+	src/virtch/resfilter/16.o src/virtch/resfilter/8.o src/drivers/drv_nos.o src/drivers/drv_raw.o \
+	src/drivers/drv_wav.o \
+	src/drivers/sdl/drv_sdl.o \
+	../mmio/src/log.o ../mmio/src/mmalloc.o \
+	../mmio/src/mmconfig.o ../mmio/src/mmcopy.o ../mmio/src/mmerror.o ../mmio/src/mmio.o \
+	../mmio/src/linux/mmforbid.o
+
+%.o: %.c
+	gcc -g `sdl-config --cflags` -DMIKMOD_SDL -DMM_DLL_EXPORT -Iinclude -I../mmio/include -o $@ -c $<
+
+default: $(OBJS)
+	gcc -shared -o libnewmikmod.so $(OBJS) `sdl-config --libs` -lm
+
+clean:
+	rm -f $(OBJS)

@@ -1,0 +1,53 @@
+==========
+(#1)
+some clicking, associated with Clicking proper, like the no-clicking system just isn't working.  Bug is reproduceable with the pianob.rar file obtainable from zeromus and the following mikmod_init():
+
+
+device = Mikmod_Init(44100, 60, NULL, MD_STEREO, CPU_AUTODETECT,
+                     DMODE_16BITS | DMODE_INTERP | DMODE_NOCLICK);
+
+reporter: zeromus
+status:
+update: fixed in some cases, include pianob.rar
+
+==========
+(#2)
+(possibly related to (#1))
+Mikplay crashes when initialized without DMODE_NOCLICK.  Is the declicking system under construction somehow?
+
+reporter: zeromus
+status:
+update: Well, I fixed a bug that crashed Mikplay and lots of other stuff when
+changing modules with the declicker active - the declicker was trying to declick
+using an unloaded sample. I kludged this by reseting the declicker on sample
+unload; now Mikplay works fine. I assume you meant that it crashed with the
+declicker on (the crash report appears to contradict itself on this point).
+[Jan L]
+
+==========
+(#3)
+When mikmod_init() is used with CPU_AUTODETECT things crash nasty-like.  Can be fixed by putting CPU_NONE.  
+Noticed commented autodetection code.  is this why?
+
+reporter: zeromus
+status: FIXED 8.15.00
+
+===========
+(#4)
+When these three lines are executed:
+
+Mikmod_RegisterDriver(drv_ds);
+device = Mikmod_Init(44100, 60, NULL, MD_STEREO, CPU_NONE ,DMODE_16BITS | DMODE_INTERP | DMODE_NOCLICK);
+vs = Voiceset_Create(device, NULL, 8, MDVS_DYNAMIC);
+
+And Mikmod_update() is called at any rate, after a random interval of time it will crash in VC_WriteSamples()
+
+The number of voices in the voiceset is irrelevant.  The driver used must be drv_ds to reproduce the bug.
+
+reporter: zeromus
+status: FIXED 8.26.00
+SUGGESTED BUGFIX:
+Make vc->SetMode() re-initialize vc by calling vc->Init()
+
+===========
+

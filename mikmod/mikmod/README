@@ -1,0 +1,276 @@
+-- Mikmod Sound System
+-- README - Quick Overview of portability and compilation.
+
+
+Compilation
+-----------
+
+Most importantly are Mikmod's dependancies.  Mikmod requires the 'mmio' lib-
+raries and header files in order to be compiled properly.  The mmio lib is
+relatively small and simple and is normally distributed with Mikmod.  If you
+do not have it, then get it from:
+
+http://www.divent.org/
+
+The source tree looks like this:
+
+src [Contains the 'main' or otherwse uncatagorizable mikmod code]
+ \
+  virtch  [software mixer code.  C and Assembly code]
+  loaders [All module loaders]
+  drivers [All non-OS specific drivers (disk writiers)]
+  \
+   dos    [MS-DOS Specific Drivers]
+   win32  [Windows waveout and directsound drivers]
+   linux  [Linux drivers, Alsa, OSS, whatever]
+   sdl    [SDL drivers for Windows, Mac, Linux, Unix, whatever]
+
+For now, the source is divided up for organizational purposes only, and when
+you create your makefile, you need only generate one .LIB file.  We will
+make considerations about dividing the source into seprate .LIB files at a 
+later date.  The modules to be compiled look like this:
+
+
+src
+  mdriver.c
+  mloader.c
+  mplayer.c
+  munitrk.c
+  npertab.c
+  sloader.c
+  unimod.c  - If I call it munimod.c, it will be the same length too.. hmm :)
+  
+loaders
+  load_mod.c
+  load_m15.c
+  load_xm.c
+  load_it.c
+  load_s3m.c
+  load_stm.c
+  s3m_it.c  
+    - unified pattern/effects conversion code because the three formats have
+      more in common than they do different.
+      
+  Note: All other loaders present in the loaders/ dir do NOT currently work.
+    I have not had an opportunity to convert them to the new unitrk stream
+    and test them, so don't try to use them!
+    
+drivers:
+  drv_wav.c
+  drv_raw.c
+  
+  Note: There are no native Linux drivers yet.  If you need to test, use
+    the SDL, wave-out or raw-out disk writers for now.  Once mikmod itself
+    works under linux, I can convert an older driver file to the new API in
+    a snap.
+    
+mmio
+  mmio.c
+  mmerror.c
+  mmalloc.c
+  
+virtch
+  virtch.c - Define __ASSEMBLY__ if you want to use the assembly mixers.
+  vc8norm.c
+  vc16norm.c
+  vc8nc.c  \  Clickless mixers.  These have no assembly counterparts since
+  vc16nc.c /  they are used so sparsely (they do micro-volume ramping).
+
+  resample.nasm 
+    - the non-working NASM version of the 8 bit mixers.  Feel free to scan
+      over this if you so wish.  If someone can make it work, well.. that
+      would be really nice :)
+
+For the current Mikmod compilation, there are NO compiler options required,
+UNLESS you are working on a big endian machine, in which case you must use
+"MM_BIG_ENDIAN" on all modules.  I have not tested mikmod for 100% big-
+endian compatability in a long time, and there could be some issues with it,
+particuarly in virtch.c, where I had to use some wacky 64 bit int pointer
+tricks to get the code as optimal as possible on 32-bit platforms.
+
+Structure Alignment/Packing:
+   Mikmod is most optimal when working with smaller structures, which means
+   8 byte structure alignment is a big no-no.  Four bytes is good, and ac-
+   tually, 2 bytes seems to be best.  Mikmod also currently relies on struct
+   elements being in the same order in memory as in code (for memcpy opt-
+   imizations).  Visual C, for one, does not gaurantee this in packed struct
+   mode, which leads to improper playback.  Just something to look out for.
+   
+
+Microsoft Visual C++ 6
+======================
+
+Due to verious 'difficulties' in supporting prior versions of Visual C, we
+have only included makefiles for Visual C 6.  This is probably a good thing
+anyway because VC5 is known to have several interface instabilities and bugs
+in code generation (bad!).  I realize some people are just stuck with VC5,
+but the bottom line is: you really should upgrade.
+
+Onto the useful information:  Mikmod includes a global workspace (which con-
+tains all examples and the mikmod and mmio libraries) along with individual
+projects for each example and for the library version of mikmod.  Using the
+workspace is good for inital 'compile tests,' however once you know that mik-
+mod is correctly installed you will want to make your own workspace and in-
+clude mikmod into that.
+
+Including Mikmod into Your Project:
+
+Generally, the *best* way to do this is to simply add the mikmod/src/mikmod.dsp
+project file to your workspace/project (via 'Add project to workspace).  Then
+you go to Project Dependencies and make sure mikmod is checked under your
+project.  Finally, you have to edit your project settings:
+
+C/C++ Tab -- Category 'Preprocessor' -- Add the following to your list of
+'additional iclude directories':
+
+        $(MIKMOD)\include,$(MMIO)\include
+
+Sidebar:
+========
+Notice the variables.  You must set these as system environment variables.
+There are two to worry about: MIKMOD and MMIO.  Simply set them to the path of
+the mikmod and mmio root folders, appropriately.  For example:
+
+MIKMOD=c:\sdk\mikmod\mikmod
+MMIO=c:\sdk\mikmod\mmio
+
+To do this in win9x, add them to your autoexec.bat as
+SET MIKMOD=c:\sdk\mikmod\mikmod
+and reboot.
+
+To do this winnt, add them to your system environment variable list and reboot.
+=========
+
+Assuming you have properly onfigured your system's environment variables as
+specified, this will work.  Or, alternatively, you can man ually substitute the
+actual location of the mikmod/mmio subdirectories in the place of the $(blah)
+thingies.  ie: c:\mikmod\include  ..  simple. :)
+
+Known problems:
+ - Compiling with packed structures seems causes mikmod to play some modules
+   incorrectly.  It has to do with an optimization in the player which 
+   copies structures.  You shouldn't be using packed structs anyway so this
+   shouldn't be a problem.  If it is, I can fix it for you.  Drop me a line
+   at air@divent.org.
+
+GCC
+===
+
+Mikmod is portable enough to compile under some versions of GCC. The
+limiting factor seems to be the lack of support for unnamed structs
+and unions in all but the newest versions of GCC. In other words,
+Mikmod will probably compile on the latest GCC, but anything older than
+2.95.2 is doomed to fail with missing struct and union members or the
+like. The following have been tested.
+
+	Compiler		OS	Functionality
+	-------------------------------------------------------------------
+	GCC 2.95.2 (Mingw32)	Win32	Works, but spouts lots of warnings.
+	GCC 2.96-RH (Red Hat)	Linux	Works, but spouts lots of warnings.
+	GCC 2.81		Solaris	No anon. struct/union support.	
+	GCC 2.95		Irix	No anon. struct/union support.
+
+Most of the warning messages seem to be caused by Jake's habit of
+declaring function pointers of one type (e.g. void *func(void *)) and
+initialising them with pointers to slightly different functions
+(e.g. void *func(char *)). These appear to be harmless, but may cause
+portability problems in theory.
+
+GCC also seems to complain a lot about the extensive bit-shifting in
+the fixed-point arithmetic (shift count too large for variable type
+et.c.). The code appears to be OK, so these messages can be ignored.
+
+In the future, steps may be taken to improve portability and get rid
+of mysterious warnings.
+
+To compile Mikmod under GCC, use one of the following makefiles with
+GNU Make:
+
+	OS	Driver		Makefile
+	----------------------------------------
+	Linux	SDL		Makefile
+	Win32	SDL		Makefile.Win32SDL
+	Win32	DirectX 6	Makefile.dx6
+
+Note that the Win32 makefiles are designed for Mingw32 with Cygwin;
+in other words, you should have a Unix-style compilation environment.
+The SDL home page at http://www.libsdl.org/ provides this in a
+convenient package.
+
+The Linux version should work under other Unix variants, but has not
+yet been successfully compiled on anything but Linux. The Linux makefile
+also currently assumes a little-endian architecture such as Intel x86.
+See the porting instructions for details on using Mikmod with big-endian
+systems.
+
+The GCC Makefiles are set up to produce a dynamically linked library
+(.so in Linux, .DLL in Windows (cdecl calling convention)). In both
+cases a corresponding import library (.a) is generated; link your code
+with this to use the DLL/so.
+
+The makefiles assume that the mikmod and mmio libraries are in the same
+directory, i.e.:
+
+lib
+  mikmod
+  mmio
+
+If you check out both libraries from CVS at the same time, this should
+happen anyway.
+
+Compiling the Example, mikplay.exe
+----------------------------------
+
+This one is quite simple.  In examples/mikplay/ you find the mikplay sources.
+Only two files are used in the example:
+
+  mikplay.c
+  message.c
+
+Currently, for your convienence, mikplay.exe defaults to the waveout driver.
+Change this to raw if you prefer.  So just compile those two files and link
+it with the mikmod.lib generated above and.. well.. hope for the best!
+
+
+Mikmod API
+----------
+
+If you are familiar with the old mikmod, then you will notice real quick that
+this one is very different under the hood.  I removed almost all global var-
+iables, except for those used static with a single module only.  I renamed
+a lot of stuff, and added some new features.
+
+Currently the only part of mikmod which is not multi-thread friendly is the
+driver itself, and likewise the driver (mdriver.c code, I mean) is still the
+portion I am least happy with.
+
+Suugestions and recommendations on the API are encouraged, especially for
+anything that is not linux or multithread friendly.
+
+Documentation
+-------------
+There is none.  Obviously.  We will work on that later, once the API is more
+complete.
+
+
+Conclusion
+----------
+
+I hope I didn't miss anything of particular importance.  If you have any
+questions (and remember, if you have problems, it is probably a good idea
+to ask me because I do know the source like the back of my hand - I dunno
+how many times people have spent hours, or days, working on something that 
+I fixed in minutes), then contact me via:
+
+e-mail:
+  air@divent.org
+
+icq:
+  2320014
+  
+irc:
+  irc.esper.net:5555
+  nick 'Air'
+  
+
+Good Luck!

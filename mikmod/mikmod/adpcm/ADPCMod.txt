@@ -1,0 +1,30 @@
+ADPCMod - Module ADPCM library
+Version 1.0 [06/03/2001] by RGR
+
+Decompresses ADPCM compressed samples (like the ones used by MODPlug Player).
+
+ADPCM
+-----
+This basic ADPCM algorithm uses a variable 16-byte prediction-error delta table to compress 8-bit mono samples, achieving a 2:1 compression ratio.
+
+MODULES
+-------
+ADPCM samples can be identified in MOD files by the "ADPCM" signature on the beginning each sample data block. The format is: "ADPCM"{16 byte table}{compressed data}.
+
+On XM files, ADPCM samples can be identified by the 0xAD byte just before the sample name, on the sample header. Normal samples have 0x00 instead. The sample's data block format is {16 byte table}{compressed data}.
+
+DECOMPRESSING
+-------------
+To decompress the sample, use the DeADPCM function using the {16 byte table} and the {compressed data} as arguments. DO NOT USE .MOD FILES "ADPCM" SIGNATURE IN ANY OF THE ARGUMENTS!
+
+KNOWN ISSUES
+------------
+Last byte of the decompressed sample is different from the decompression engine used by MODPlug. Have no idea why.
+
+HISTORY
+-------
+1.1    [21/04/2001] - Even samples decompress bug squashed. First good version.
+1.0    [06/03/2001] - First version ever. Decompresses ADPCM samples
+
+
+(C) 2001 by Ricardo Ramalho (Ricardo.G.Ramalho@rnl.ist.utl.pt)

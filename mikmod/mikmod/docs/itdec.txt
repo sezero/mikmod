@@ -1,0 +1,268 @@
+;Basic structure:
+;
+;Offset  Length                  Meaning
+;0       2 (word)                <Compressed byte count>
+;2       <Compressed byte count> Compressed sample data
+;
+;The size of the uncompressed data is 32kb or the remainder of the sample,
+;whichever is less.
+;
+;Code to decompress sample data:
+;
+;Each procedure is given DS:SI as the compressed buffer, ES:DI points to the
+;destination buffer for the sample. CX = <Decompressed byte count>
+;
+;These routines haven't been optimised at all - they are the ones that have
+;been used in IT itself, so they should be sufficiently fast.
+
+
+
+.386p
+.model flat
+.code
+
+NAME  decompress
+
+PUBLIC _D_Decompress16BitData
+PUBLIC _D_Decompress8BitData
+
+
+STUBSTART macro
+  push eax
+  push ebx
+  push ecx
+  push edx
+  push esi
+  push edi
+  push ebp
+  endm
+
+
+STUBEND macro
+  pop ebp
+  pop edi
+  pop esi
+  pop edx
+  pop ecx
+  pop ebx
+  pop eax
+  endm
+
+
+Proc            _D_Decompress16BitData
+
+        STUBSTART
+        mov    esi,[esp+32] ; get src
+        mov    edi,[esp+36] ; get dst
+        mov    ebp,[esp+40] ; get cbcount
+                
+        Mov     CX, 1100h
+        ShR     EBP, 1
+        Xor     EDX, EDX
+        Xor     EBX, EBX
+        xor     EAX, EAX
+
+D_Decompress16BitData1:
+
+        Push    ECX
+
+        Mov     EAX, [ESI]
+        Mov     CL, DL
+        ShR     EAX, CL
+
+        Add     DL, CH
+        Mov     ECX, EDX
+        ShR     ECX, 3
+        Add     ESI, ECX
+        And     DL, 7
+
+        Pop     ECX
+
+        Cmp     CH, 6
+        JA      D_Decompress16BitA
+
+        ShL     EAX, CL
+        Cmp     AX, 8000h
+        JE      D_Decompress16BitDepthChange1
+
+D_Decompress16BitD:
+        SAR     AX, CL
+
+D_Decompress16BitC:
+        Add     EBX, EAX
+        Mov     [EDI], BX
+        Add     DI, 2
+
+        Dec     BP
+        JNZ     D_Decompress16BitData1
+
+        STUBEND
+        Ret
+
+D_Decompress16BitDepthChange1:
+        ShR     EAX, 16
+        And     AL, 15
+
+        Inc     EAX
+
+        Add     DL, 4
+
+D_Decompress16BitDepthChange3:
+        Cmp     AL, CH
+        SBB     AL, 0FFh
+        Mov     CL, 16
+        Mov     CH, AL
+        Sub     CL, AL
+        AdC     CL, 0
+
+        Jmp     D_Decompress16BitData1
+
+D_Decompress16BitA:
+        Cmp     CH, 16
+        JA      D_Decompress16BitB
+
+        Push    EDX
+        Mov     EDX, 10000h
+        ShR     EDX, CL
+        Dec     EDX
+        And     EAX, EDX
+        ShR     EDX, 1
+        Add     EDX, 8
+        Cmp     AX, DX
+        JA      D_Decompress16BitE
+        Sub     EDX, 16
+        Cmp     AX, EDX
+        JBE     D_Decompress16BitE
+
+        Sub     EAX, EDX
+        Pop     EDX
+        Jmp     D_Decompress16BitDepthChange3
+
+D_Decompress16BitE:
+        Pop     EDX
+        ShL     EAX, CL
+        Jmp     D_Decompress16BitD
+
+D_Decompress16BitB:
+        Test    EAX, 10000h
+        JZ      D_Decompress16BitC
+
+        Mov     CL, 16
+        Inc     EAX
+
+        Sub     CL, AL
+        Mov     CH, AL
+
+        Jmp     D_Decompress16BitData1
+
+EndP            D_Decompress16BitData
+
+;컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
+
+Proc            D_Decompress8BitData
+
+        STUBSTART
+        mov     esi,[esp+32] ; get src
+        mov     edi,[esp+36] ; get dst
+        mov     ebp,[esp+40] ; get cbcount
+
+        Mov     BX, 900h
+        Xor     ECX, ECX
+        Xor     EDX, EDX
+        xor     EAX,EAX
+        
+
+D_Decompress8BitData1:
+        Push    ECX
+        Mov     EAX, [ESI]
+        Mov     CL, CH
+
+        ShR     EAX, CL
+        Pop     ECX
+
+        Add     CH, BH
+        Mov     DL, CH
+        And     CH, 7
+        ShR     DL, 3
+        Add     ESI, EDX
+
+        Cmp     BH, 6
+        JA      D_Decompress8BitA
+
+        ShL     EAX, CL
+
+        Cmp     AL, 80h
+        JE      D_Decompress8BitDepthChange1
+
+D_Decompress8BitWriteData2:
+        SAR     AL, CL
+
+D_Decompress8BitWriteData:
+        Add     BL, AL
+        Mov     [EI], BL
+
+        Inc     EDI
+        Dec     EBP
+
+        JNZ     D_Decompress8BitData1
+        STUBEND
+        Ret
+
+D_Decompress8BitDepthChange1:
+        Mov     AL, AH
+        Add     CH, 3
+
+        And     AL, 7
+        Mov     DL, CH
+
+        And     CH, 7
+        ShR     DL, 3
+
+        Add     ESI, EDX
+        Jmp     D_Decompress8BitD
+
+D_Decompress8BitA:
+        Cmp     BH, 8
+        JA      D_Decompress8BitC
+        JE      D_Decompress8BitB
+
+        ShL     AL, 1
+        Cmp     AL, 78h
+        JB      D_Decompress8BitWriteData2
+        Cmp     AL, 86h
+        JA      D_Decompress8BitWriteData2
+
+        ShR     AL, 1
+        Sub     AL, 3Ch
+        Jmp     D_Decompress8BitD
+
+D_Decompress8BitB:
+        Cmp     AL, 7Ch
+        JB      D_Decompress8BitWriteData
+        Cmp     AL, 83h
+        JA      D_Decompress8BitWriteData
+
+        Sub     AL, 7Ch
+
+D_Decompress8BitD:
+        Mov     CL, 8
+        Inc     EAX
+
+        Cmp     AL, BH
+        SBB     AL, 0FFh
+        Mov     BH, AL
+        Sub     CL, AL
+        AdC     CL, 0
+
+        Jmp     D_Decompress8BitData1
+
+D_Decompress8BitC:
+        And     EAX, 1FFh
+
+        Test    EAX, 100h
+        JZ      D_Decompress8BitWriteData
+
+        Jmp     D_Decompress8BitD
+
+EndP            D_Decompress8BitData
+

@@ -1,0 +1,15 @@
+OBJS=font.o gui.o miksdlplay.o
+MIKLIB=../../..
+
+%.o: %.c
+	gcc -g -Dvsnprintf=_vsnprintf -Dsnprintf=_snprintf \
+	`sdl-config --cflags` \
+	-I$(MIKLIB)/mikmod/include \
+	-I$(MIKLIB)/mmio/include -o $@ -c $<
+
+default: $(OBJS)
+	gcc -o miksdlplay $(OBJS) $(MIKLIB)/mikmod/libmikmod.a \
+	`sdl-config --libs`
+
+clean:
+	rm -f $(OBJS)

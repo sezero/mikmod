@@ -1,0 +1,53 @@
+    Sound Acceleration Ramblings
+-------------------------------------
+By Jake Stine of Divine Entertainment
+-------------------------------------
+
+This text file serves only one shallow purpose: to allow myself to collect my
+thoughts on the situation surrounding accelerated sound.
+
+Hardware vs Software
+
+As a general rule of thumb, we should make allowances to be able to take full
+advantage of hardware features whenever possible.  In mikmod this involves
+sample mixing alone (since mikmod currently has no 3D sound crap).  To mix
+samples via hardware, the samples in question must be located in the soundcard
+memory banks.
+
+Most older soundcards use their own on-board memory banks, which means the CPU
+does not have direct access to the contents of the samples.  Samples must be
+allocated and uploaded to using th soundcard API and this can be both slow
+and limit flexability.  In addition, sound memory is often severely limited
+(512k to 2 megs).  These types of soundcard setups are not suitable for lots
+of large samples or advanced forms of streaming audio (involving more than one
+stream).
+
+Secondly there is the new PCI soundcards like the SB Live, which use system 
+memory for all sample data.  This feature allows us to get a direct memory
+pointer to any sample and read or write to it as we like - which means the SB
+Live is suitable for streaming audio.  Memory on the SB Live is generally
+considerably more plentiful, with the smallest configurations being about
+4megs (default is 8 megs, and many people run 16 or 32 megs!).  Still, size
+may be a concern.
+
+sample downsizing
+-----------------
+ This is the most complex feature, because for it to work properly, the pre-
+ caching routines must have the complete information for every sample to be
+ loaded into the soundcard prior to anything actually being loaded!
+ 
+ 
+The dilemma in mikmod is determining when to load samples into memory or onto
+the soundcard, and in turn when to use hardware or software mixing.  My sit-
+uation would be simplified considerably if I didn't worry about the ability to
+downsize samples when loading or if I just decided to load all samples into
+both hardware and software buffers.  But my dedication to effificency will not
+permit me to allow either shortcut to be a viable soultion!
+
+so, I must allow for the following:
+
+ a) samples loadable into hardware/software (either or both)
+ 
+And not only that, but to do so in a way that allows the end user a simple API
+for deciding between them if they don't much care to worry with those types of
+advanced options.
