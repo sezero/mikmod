@@ -1,0 +1,36 @@
+#! /bin/sh
+#
+# $FreeBSD: CVSROOT/commitcheck,v 1.12 1999/09/19 13:11:03 peter Exp $
+# $Id$$
+
+#
+# BEWARE:  If you are "borrowing" this code for use on another cvs
+# repository, please make sure you change all references to '@FreeBSD.org'
+# in the log_accum script.  Otherwise your commit messages will be sent
+# to 'cvs-committers@freebsd.org' etc.  This could be highly embarresing. :-)
+#
+
+#
+# Does the access control list allow them commit access?
+#
+#if $CVSROOT/CVSROOT/cvs_acls.pl ${1+"$@"}
+#then
+#	:	# OK
+#else
+#	echo "Access control checks failed! (cvs_acls.pl)" 1>&2
+#	exit 1
+#fi
+
+#
+# Last minute checks and preperations for log_accum.pl later.  This
+# records the last directory in this commit so that log_accum knows when
+# to finish coalescing commit messages and mail it.
+#
+if $CVSROOT/CVSROOT/commit_prep.pl ${1+"$@"}
+then
+	:	# OK
+else
+	echo "commit_prep.pl failed!" 1>&2
+fi
+
+exit 0		# Lets do it!

@@ -11,3 +11,7 @@
 #	[<whitespace>]<filename><whitespace><error message><end-of-line>
 #
 # comment lines begin with '#'
+commit_prep.pl
+commitcheck
+log_accum.pl
+rcstemplate
