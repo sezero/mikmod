@@ -40,8 +40,7 @@ int main(int argc, char **argv)
 	MikMod_RegisterAllLoaders();
 
 	/* init the library */
-	//md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION | DMODE_HQMIXER | DMODE_SIMDMIXER; 
-	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION; 
+	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION | DMODE_HQMIXER | DMODE_SIMDMIXER; 
 	
 	if (MikMod_Init("")) {
 		fprintf(stderr, "Could not initialize sound, reason: %s\n",

@@ -1,4 +1,4 @@
-DESCRIPTION "libmikmod (win32) 3.2.2"
+DESCRIPTION "libmikmod (win32) 3.1.10"
 EXPORTS
 	MikMod_GetVersion                               @1
 
@@ -111,7 +111,7 @@ EXPORTS
 	load_uni                                        @125
 	load_xm                                         @126
 	load_gdm                                        @127
-	load_okt										@128
+	load_okt					@128
 
 	VC_Init                                         @141
 	VC_Exit                                         @142
@@ -136,8 +136,6 @@ EXPORTS
 	VC_VoiceGetFrequency                            @161
 	VC_VoiceGetPanning                              @162
 	VC_SetCallback									@163
-	
 	Player_GetRow									@164
-	Player_GetOrder                                 @165
-
+	Player_GetOrder									@165
 

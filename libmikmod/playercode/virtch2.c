@@ -361,6 +361,7 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 
 #elif defined HAVE_ALTIVEC
 	remain = todo&3;
+		remain = todo&3;
 	{
 		vector signed short r0 = vec_ld(0, vol);
 		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
@@ -1319,4 +1320,4 @@ BOOL VC2_SetNumVoices(void)
 	return 0;
 }
 
-/* ex:set ts=4:  */
+/* ex:set ts=4: */

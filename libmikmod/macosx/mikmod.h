@@ -605,7 +605,7 @@ MIKMODAPI extern int     Player_GetChannelVoice(UBYTE);
 MIKMODAPI extern UWORD   Player_GetChannelPeriod(UBYTE);
 MIKMODAPI extern int     Player_QueryVoices(UWORD numvoices, VOICEINFO *vinfo); 
 MIKMODAPI extern int     Player_GetRow(void);
-MIKMODAPI extern int     Player_GetOrder(void);
+MIKMODAPI extern int     Player_GetOrder(void); 
 
 typedef void (*MikMod_player_t)(void);
 typedef void (*MikMod_callback_t)(unsigned char *data, size_t len);

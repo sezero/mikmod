@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	MikMod_RegisterAllLoaders();
 
 	/* init the library */
-	md_mode |= DMODE_SOFT_MUSIC;
+	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION;
 	if (MikMod_Init("")) {
 		fprintf(stderr, "Could not initialize sound, reason: %s\n",
 				MikMod_strerror(MikMod_errno));
@@ -44,7 +44,8 @@ int main(int argc, char **argv)
 	module = Player_Load(argv[1], 64, 0);	
 	if (module) {
 		/* */
-		printf("Playing %s\n", module->songname);
+		printf("Playing %s (%d chn) - SIMD: %s\n", module->songname, module->numchn,
+			md_mode & DMODE_SIMDMIXER ? "yes" : "no");
 		/* start module */
 		Player_Start(module);
 

@@ -129,6 +129,129 @@ static	SLONG *RVbufR1=NULL,*RVbufR2=NULL,*RVbufR3=NULL,*RVbufR4=NULL,
 #else
 #define NATIVE SLONG
 #endif
+#if defined HAVE_SSE2 || defined HAVE_ALTIVEC
+
+static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size_t increment,size_t todo)
+{
+	// TODO:
+	SWORD sample;
+	SLONG lvolsel = vnf->lvolsel;
+
+	while(todo--) {
+		sample = srce[index >> FRACBITS];
+		index += increment;
+
+		*dest++ += lvolsel * sample;
+	}
+	return index;
+}
+
+static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, size_t increment,size_t todo)
+{	
+	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
+	SWORD sample;
+	SLONG remain = todo;
+
+	// Dest can be misaligned ...
+	while(!IS_ALIGNED_16(dest)) {
+		sample=srce[(index += increment) >> FRACBITS];
+		*dest++ += vol[0] * sample;
+		*dest++ += vol[1] * sample;
+		todo--;
+	}
+
+	// Srce is always aligned ...
+
+#if defined HAVE_SSE2
+	remain = todo&3;	
+	{
+		__m128i v0 = _mm_set_epi16(0, vol[1], 
+								   0, vol[0], 
+								   0, vol[1], 
+								   0, vol[0]);
+		for(todo>>=2;todo; todo--)
+		{
+			SWORD s0 = srce[(index += increment) >> FRACBITS];
+			SWORD s1 = srce[(index += increment) >> FRACBITS];
+			SWORD s2 = srce[(index += increment) >> FRACBITS];
+			SWORD s3 = srce[(index += increment) >> FRACBITS];
+			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
+			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
+			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
+			__m128i v4 = _mm_load_si128((__m128i*)(dest+4));
+			_mm_store_si128((__m128i*)(dest+0), _mm_add_epi32(v3, _mm_madd_epi16(v0, v1)));
+			_mm_store_si128((__m128i*)(dest+4), _mm_add_epi32(v4, _mm_madd_epi16(v0, v2)));
+			dest+=8;				
+		}
+	}
+
+#elif defined HAVE_ALTIVEC
+	remain = todo&3;
+	{
+		vector signed short r0 = vec_ld(0, vol);
+		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
+																		 0, 1, // l
+																		 2, 3, // r
+																		 2, 1, // r
+																		 0, 1, // l
+																		 0, 1, // l
+																		 2, 3, // r 
+																		 2, 3 // r
+																		 ));
+		SWORD s[8];
+			
+		for(todo>>=2;todo; todo--)
+		{
+			// Load constants
+			s[0] = srce[(index += increment) >> FRACBITS];
+			s[1] = srce[(index += increment) >> FRACBITS];
+			s[2] = srce[(index += increment) >> FRACBITS];
+			s[3] = srce[(index += increment) >> FRACBITS];
+			s[4] = 0;
+	
+			vector short int r1 = vec_ld(0, s);
+			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
+																			 4*2, 4*2+1, // 0
+																			 0*2, 0*2+1, // s0
+																			 4*2, 4*2+1, // 0
+																			 1*2, 1*2+1, // s1
+																			 4*2, 4*2+1, // 0
+																			 1*2, 1*2+1, // s1
+																			 4*2, 4*2+1  // 0
+																			 ));
+																			 
+			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, // s2
+																			 4*2, 4*2+1, // 0
+																			 2*2, 2*2+1, // s2
+																			 4*2, 4*2+1, // 0
+																			 3*2, 3*2+1, // s3
+																			 4*2, 4*2+1, // 0
+																			 3*2, 3*2+1, // s3
+																			 4*2, 4*2+1  // 0
+																			 ));
+			vector signed int v3 = vec_ld(0, dest);
+			vector signed int v4 = vec_ld(0, dest + 4);
+			vector signed int v5 = vec_mule(v0, v1);
+			vector signed int v6 = vec_mule(v0, v2);
+
+			vec_st(vec_add(v3, v5), 0, dest);				
+			vec_st(vec_add(v4, v6), 0, dest + 4);
+
+			dest+=8;
+		}
+	}
+#endif // HAVE_ALTIVEC
+
+	// Remaining bits ...
+	while(remain--) {
+		sample=srce[(index += increment) >> FRACBITS];
+
+		*dest++ += vol[0] * sample;
+		*dest++ += vol[1] * sample;
+	}
+	return index;
+}
+#endif
 
 /*========== 32 bit sample mixers - only for 32 bit platforms */
 #ifndef NATIVE_64BIT_INT
@@ -147,21 +270,31 @@ static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG inc
 	return index;
 }
 
+// FIXME: This mixer should works also on 64-bit platform
+// Hint : changes SLONG / SLONGLONG mess with size_t 
 static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
-	SWORD sample;
-	SLONG lvolsel = vnf->lvolsel;
-	SLONG rvolsel = vnf->rvolsel;
+#if defined HAVE_ALTIVEC || defined HAVE_SSE2
+    if (md_mode & DMODE_SIMDMIXER)
+    {
+		return MixSIMDStereoNormal(srce, dest, index, increment, todo);
+	}
+	else
+#endif
+	{
+		SWORD sample;
+		SLONG lvolsel = vnf->lvolsel;
+		SLONG rvolsel = vnf->rvolsel;
+		while(todo--) {
+			sample=srce[(index += increment) >> FRACBITS];
 
-	while(todo--) {
-		sample=srce[index >> FRACBITS];
-		index += increment;
-
-		*dest++ += lvolsel * sample;
-		*dest++ += rvolsel * sample;
+			*dest++ += lvolsel * sample;
+			*dest++ += rvolsel * sample;
+		}
 	}
 	return index;
 }
+
 
 static SLONG Mix32SurroundNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
@@ -700,7 +833,7 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 {
 	int	remain=count&3;	
 	
-	const float k = (1.0f / 32768.0f) / (float)(1 << (FP_SHIFT)); // Scale factor
+	const float k = (1.0f / (float)(1<<24));
 	simd_m128i x1;
 	simd_m128 x2 = LOAD_PS1_SIMD(&k); // Scale factor
 	remain = count&3;
@@ -717,14 +850,19 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 // PC: Ok, Mac Ok
 static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)
 {	
-	int	remain;
-	while(!IS_ALIGNED_16(dste))
+	int	remain = count;
+
+	while(!IS_ALIGNED_16(dste) || !IS_ALIGNED_16(srce))
 	{
 		SLONG x1;
 		EXTRACT_SAMPLE(x1,16);
 		CHECK_SAMPLE(x1,32768);
 		PUT_SAMPLE(x1);
 		count--;
+		if (!count)
+		{
+			return;
+		}
 	}
 
 	remain = count&7;
@@ -749,12 +887,17 @@ static void Mix32To8_SIMD(SBYTE* dste,SLONG* srce,NATIVE count)
 {	
 	int	remain=count;
 	
-	while(!IS_ALIGNED_16(dste))
+	while(!IS_ALIGNED_16(dste) || !IS_ALIGNED_16(srce))
 	{
 		SWORD x1;
 		EXTRACT_SAMPLE(x1,8);
 		CHECK_SAMPLE(x1,128);
 		PUT_SAMPLE(x1+128);
+		count--;
+		if (!count)
+		{
+			return;
+		}
 	}
 	
 	remain = count&15;
@@ -878,8 +1021,17 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 						vnf->current=Mix32SurroundNormal
 						               (s,ptr,vnf->current,vnf->increment,done);
 					else
+					{
+#if defined HAVE_ALTIVEC || defined HAVE_SSE2
+					if (md_mode & DMODE_SIMDMIXER)
+						vnf->current=MixSIMDStereoNormal
+						               (s,ptr,vnf->current,vnf->increment,done);
+    
+					else
+#endif
 						vnf->current=Mix32StereoNormal
 						               (s,ptr,vnf->current,vnf->increment,done);
+					}
 				} else
 					vnf->current=Mix32MonoNormal
 					                   (s,ptr,vnf->current,vnf->increment,done);
@@ -902,8 +1054,17 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 						vnf->current=MixSurroundNormal
 						               (s,ptr,vnf->current,vnf->increment,done);
 					else
+					{
+#if defined HAVE_ALTIVEC || defined HAVE_SSE2
+					if (md_mode & DMODE_SIMDMIXER)
+						vnf->current=MixSIMDStereoNormal
+						               (s,ptr,vnf->current,vnf->increment,done);
+    
+					else
+#endif
 						vnf->current=MixStereoNormal
 						               (s,ptr,vnf->current,vnf->increment,done);
+					}
 				} else
 					vnf->current=MixMonoNormal
 					                   (s,ptr,vnf->current,vnf->increment,done);
@@ -985,7 +1146,7 @@ void VC1_WriteSamples(SBYTE* buf,ULONG todo)
 			}
 
 			if (vc_callback) {
-				vc_callback(vc_tickbuf, portion);
+				vc_callback((unsigned char*)vc_tickbuf, portion);
 			}
 
 

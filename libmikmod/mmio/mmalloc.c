@@ -47,17 +47,31 @@ static void * align_pointer(char *ptr, size_t stride)
 	return fptr;
 }
 
+static void *get_pointer(void *data)
+{
+	unsigned char *_pptr = (unsigned char*)data - sizeof(void*);
+	size_t _ptr = *(size_t*)_pptr;
+	return (void*)_ptr;
+}
+
 
 void* MikMod_realloc(void *data, size_t size)
 {
 	if (data)
 	{
-		size_t stride = ALIGN_STRIDE;
-		unsigned char *_pptr = (unsigned char*)data - sizeof(void*);
-		size_t _ptr = *(size_t*)_pptr;
-
-		unsigned char *newPtr = (unsigned char *)realloc((void*)_ptr, size + stride + sizeof(void*));
-		return align_pointer(newPtr, stride);
+#if defined __MACH__
+		void *d = realloc(data, size);
+		if (d)
+		{
+			return d;
+		}
+		return 0;
+#elif defined _WIN32 || defined _WIN64
+		return _aligned_realloc(data, size, ALIGN_STRIDE);
+#else
+		unsigned char *newPtr = (unsigned char *)realloc(get_pointer(data), size + ALIGN_STRIDE + sizeof(void*));
+		return align_pointer(newPtr, ALIGN_STRIDE);
+#endif
 	}
 	return MikMod_malloc(size);
 }
@@ -66,6 +80,22 @@ void* MikMod_realloc(void *data, size_t size)
 /* Same as malloc, but sets error variable _mm_error when fails. Returns a 16-byte aligned pointer */
 void* MikMod_malloc(size_t size)
 {
+#if defined __MACH__
+	void *d = calloc(1, size);
+	if (d)
+	{
+		return d;
+	}
+	return 0;
+#elif defined _WIN32 || defined _WIN64
+	void * d = _aligned_malloc(size, ALIGN_STRIDE);
+	if (d)
+	{
+		ZeroMemory(d, size);
+		return d;
+	}
+	return 0;
+#else
 	void *d = calloc(1, size + ALIGN_STRIDE + sizeof(void*));
 
 	if(!d) {
@@ -73,11 +103,28 @@ void* MikMod_malloc(size_t size)
 		if(_mm_errorhandler) _mm_errorhandler();
 	}
 	return align_pointer(d, ALIGN_STRIDE);
+#endif
 }
 
 /* Same as calloc, but sets error variable _mm_error when fails */
 void* MikMod_calloc(size_t nitems,size_t size)
 {
+#if defined __MACH__
+	void *d = calloc(nitems, size);
+	if (d)
+	{
+		return d;
+	}
+	return 0;
+#elif defined _WIN32 || defined _WIN64
+	void * d = _aligned_malloc(size * nitems, ALIGN_STRIDE);
+	if (d)
+	{
+		ZeroMemory(d, size * nitems);
+		return d;
+	}
+	return 0;
+#else
 	void *d = calloc(nitems, size + ALIGN_STRIDE + sizeof(void*));
    
 	if(!d) {
@@ -85,15 +132,20 @@ void* MikMod_calloc(size_t nitems,size_t size)
 		if(_mm_errorhandler) _mm_errorhandler();
 	}
 	return align_pointer(d, ALIGN_STRIDE);
+#endif
 }
 
-void MikMod_free(void *ptr)
+void MikMod_free(void *data)
 {
-	if (ptr)
+	if (data)
 	{
-		unsigned char *_pptr = (unsigned char*)ptr - sizeof(void*);
-		size_t _ptr = *(size_t*)_pptr;
-		free((void*)_ptr);
+#if defined __MACH__
+		free(data);
+#elif defined _WIN32 || defined _WIN64
+		_aligned_free(data);
+#else
+		free(get_pointer(data));
+#endif
 	}
 }
 

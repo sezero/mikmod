@@ -3334,27 +3334,6 @@ MIKMODAPI BOOL Player_Paused(void)
 	return result;
 }
 
-
-// Get current module order
-MIKMODAPI int Player_GetOrder(void)
-{
-	int ret;
-	MUTEX_LOCK(vars);
-	ret = pf ? pf->positions[pf->sngpos ? pf->sngpos-1 : 0]: 0;
-	MUTEX_UNLOCK(vars);
-	return ret;
-}
-
-// Get current module row
-MIKMODAPI int Player_GetRow(void)
-{
-	int ret;
-	MUTEX_LOCK(vars);
-	ret = pf ? pf->patpos : 0;
-	MUTEX_UNLOCK(vars);
-	return ret;
-}
-
 MIKMODAPI void Player_TogglePause(void)
 {
 	MUTEX_LOCK(vars);
@@ -3405,6 +3384,26 @@ MIKMODAPI int Player_QueryVoices(UWORD numvoices, VOICEINFO *vinfo)
 	return numvoices;
 }
 
+
+// Get current module order
+MIKMODAPI int Player_GetOrder(void)
+{
+	int ret;
+	MUTEX_LOCK(vars);
+	ret = pf ? pf->positions[pf->sngpos ? pf->sngpos-1 : 0]: 0;
+	MUTEX_UNLOCK(vars);
+	return ret;
+}
+
+// Get current module row
+MIKMODAPI int Player_GetRow(void)
+{
+	int ret;
+	MUTEX_LOCK(vars);
+	ret = pf ? pf->patpos : 0;
+	MUTEX_UNLOCK(vars);
+	return ret;
+}
 
 
 /* ex:set ts=4: */
