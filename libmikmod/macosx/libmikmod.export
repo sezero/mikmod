@@ -95,6 +95,8 @@ _Player_ToggleMute
 _Player_GetChannelVoice
 _Player_GetChannelPeriod
 _Player_QueryVoices
+_Player_GetRow
+_Player_GetOrder
 _MikMod_RegisterPlayer
 _md_volume
 _md_musicvolume
