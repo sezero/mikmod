@@ -2,11 +2,11 @@
  
  Mikmod Portable System Management Facilities (the MMIO)
 
-  By Jake Stine of Divine Entertainment (1996-2000) and
+  By Jake Stine of Hour 13 Studios (1996-2002) and
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
+    air@hour13.com
 
  Distribution / Code rights:
   Use this source code in any fashion you see fit.  Giving me credit where
@@ -14,7 +14,7 @@
   honesty.
 
  ------------------------------------------------------
- module: log.c
+ log.c
  
  A generic set of logging functions included with the mikmod package for
  optional use.  These functions can either log messages to display or to a
@@ -63,7 +63,7 @@ static CHAR     *str;
 
     if((str = calloc(1024, sizeof(CHAR))) == NULL) return 1;
 
-    _mmlog_init(log_print, log_printv); // register the logging routines with mmerror
+    _mmlog_init(log_print, log_printv, log_printv); // register the logging routines with mmerror
 
     if(logfile && logfile[0])
     {   // - Check for the file and make a backup if it exists.
@@ -72,10 +72,10 @@ static CHAR     *str;
         if((backup = malloc(strlen(logfile)+5)) == NULL)
         {   log_file = NULL;  return 1;  }
 
-        strcpy(backup,logfile);  strcat(backup,".old");
-        strcpy(str,logfile);     strcat(str,".txt");
+        strcpy(backup, logfile);  strcat(backup, ".old");
+        strcpy(str, logfile);     strcat(str, ".txt");
         remove(backup);
-        rename(str,backup);
+        rename(str, backup);
         free(backup);
 
         if((log_file = _mm_fopen(str,"wb")) == NULL) return 1;
@@ -151,4 +151,5 @@ void log_silent(void)  {  verbose = 0;  }
         puts(str);
     }
 }
+
 

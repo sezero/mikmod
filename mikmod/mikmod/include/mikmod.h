@@ -1,20 +1,15 @@
 /*
 
- Mikmod Sound System
+ Mikmod Sound System -- The Legend Continues!
 
-  By Jake Stine of Divine Entertainment (1996-2000)
+  By Jake Stine of Hour 13 Studios (1996-2000)
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
-
- Distribution / Code rights:
-  Use this source code in any fashion you see fit.  Giving me credit where
-  credit is due is optional, depending on your own levels of integrity and
-  honesty.
+    air@hour13.com
 
  -----------------------------------------
- Header: mikmod.h
+ mikmod.h
 
   General stuffs needed to use or compile mikmod.  Of course.
   It is easier to list what things are NOT containted within this header
@@ -90,32 +85,64 @@ typedef struct MD_VOICESET MD_VOICESET;
 #define SF_START_BEGIN       -2
 #define SF_START_CURRENT     -1
 
-enum
-{   DECOMPRESS_IT214 = 1,
-    DECOMPRESS_MPEG3,
-    DECOMPRESS_ADPCM,
+enum SL_COMPRESS
+{   
+    SL_COMPRESS_RAW   = 0,
+    SL_COMPRESS_IT214 = 1,
+    SL_COMPRESS_IT215,
+    SL_COMPRESS_MPEG3,
+    SL_COMPRESS_ADPCM,
+    SL_COMPRESS_VORBIS,
+    SL_COMPRESS_COUNT,
 };
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
+    typedef struct SL_DECOMPRESS_API
+// -------------------------------------------------------------------------------------
+// decompress16/8    - returns the number of samples actually loaded.
+{
+    struct SL_DECOMPRESS_API     *next;
+
+    enum SL_COMPRESS  type;    // compression type!
+
+    void   *(*init)(MMSTREAM *mmfp);
+    void    (*cleanup)(void *handle);
+    int     (*decompress16)(void *handle, SWORD *dest, int cbcount1, MMSTREAM *mmfp);
+    int     (*decompress8)(void *handle, SWORD *dest, int cbcount1, MMSTREAM *mmfp);
+
+} SL_DECOMPRESS_API;
+
+
+// -------------------------------------------------------------------------------------
     typedef struct SAMPLOAD
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // This structure contains all pertinent information to loading and properly
 // converting a sample.
 {
-    uint      length;         // length of the sample to load
+    uint      length;           // length of the sample to load
 
-    uint      infmt,          // format of the sample on disk (never changes)
-              outfmt;         // format it will be in when loaded
-    UBYTE     decompress;     // decompression flags.
+    uint      infmt,            // format of the sample on disk (never changes)
+              outfmt;           // format it will be in when loaded
 
-    MMSTREAM  *mmfp;          // file and seekpos of module
-    long      seekpos;        // seek position within the file (-1 = current position)
-    int       *handle;        // place to write the handle to
-
+    MMSTREAM  *mmfp;            // file and seekpos of module
+    long      seekpos;          // seek position within the file (-1 = current position)
+    int       *handle;          // place to write the handle to
     int        scalefactor;
+
+    struct
+    {
+        enum SL_COMPRESS    type;  // compression type!
+        SL_DECOMPRESS_API  *api;   // decompression api!
+        void               *handle;
+    } decompress;
+
     struct SAMPLOAD *next;      // linked list hoopla.
+
 } SAMPLOAD;
+
+
+MMEXPORT void      SL_RegisterDecompressor(SL_DECOMPRESS_API *ldr);
 
 MMEXPORT void      SL_HalveSample(SAMPLOAD *s);
 MMEXPORT void      SL_Sample8to16(SAMPLOAD *s);
@@ -131,6 +158,11 @@ MMEXPORT void      SL_Exit(SAMPLOAD *s);
 MMEXPORT void      SL_Cleanup(void);
 
 MMEXPORT SAMPLOAD *SL_RegisterSample(struct MDRIVER *md, int *handle, uint infmt, uint length, int decompress, MMSTREAM *fp, long seekpos);
+
+extern SL_DECOMPRESS_API  dec_raw;
+extern SL_DECOMPRESS_API  dec_it214;
+extern SL_DECOMPRESS_API  dec_vorbis;
+extern SL_DECOMPRESS_API  dec_adpcm;
 
 
 /**************************************************************************
@@ -166,9 +198,9 @@ enum
 #define DMODE_RESONANCE      (1ul<<8)    // Enable support for resonance filters
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _MMVOLUME
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Used by mdriver to communicate quadsound volumes between itself and the drivers in a
 // fast, efficient, and clean manner.  You can use it too, if are elite and don't mind 
 // using structs for things.  Or you can just use 'flvol, frvol, rlvol, rrvol' for 
@@ -184,9 +216,9 @@ enum
 } MMVOLUME;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MD_DEVICE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // driver structure:
 // Each driver must have a structure of this type.
 {   
@@ -283,9 +315,9 @@ enum
 #define MDVD_PAUSED             (1ul<<1)      // voice is suspended (paused) rather than off.
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _VS_STREAM
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     void    (*callback)(struct MD_VOICESET *voiceset, uint voice, void *dest, uint len);
     void    *streaminfo;        // information set by and used by the streaming device.
@@ -297,9 +329,9 @@ enum
 } _VS_STREAM;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MD_VOICE_DESCRIPTOR
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     int         voice;             // reference/index to the 'real' voice
     int         volume;            // mdriver's pre-vs->volume modified volumes!
@@ -313,12 +345,13 @@ enum
     // SAMPLEs.
 
     _VS_STREAM *stream;
+
 } MD_VDESC;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     struct MD_VOICESET
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Uh Oh! I used my stupid-like object oriented coding approach for this structure... and
 // I'm just sure all your GCC/unix people are going to hate it. :)
 {
@@ -371,9 +404,9 @@ enum
 };
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     struct MDRIVER
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // The info in this structure, after it has been returned from Mikmod_Init, will be
 // properly updated whenever the status of the driver changes (for whatever reason
 // that may be).  Note that none of these should ever be changed manually.  Use
@@ -422,9 +455,9 @@ enum
 };
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MD_STREAM
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // This is a streaming audio template structure, which can be attached to any
 // SAMPLE struct to turn that struct into an automatic streaming audio sample.
 {
@@ -432,6 +465,7 @@ enum
     void    *streaminfo;        // information set by and used by the streaming device.
     uint    blocksize;          // buffer size... (in samples)
     uint    numblocks;          // number of blocks (> 1 means block mode!)
+
 } MD_STREAM;
 
 
@@ -455,6 +489,9 @@ MMEXPORT void     Mikmod_RegisterPlayer(MDRIVER *md, void (*plr)(void));
 MMEXPORT void     Mikmod_Update(MDRIVER *md);
 MMEXPORT int      Mikmod_GetActiveVoices(MDRIVER *md);
 MMEXPORT void     Mikmod_WipeBuffers(MDRIVER *md);
+
+MMEXPORT BOOL     Mikmod_SetMode(MDRIVER *md, uint mixspeed, uint mode, uint channels, uint cpumode);
+MMEXPORT void     Mikmod_GetMode(MDRIVER *md, uint *mixspeed, uint *mode, uint *channels, uint *cpumode);
 
 
 // Voiceset crapola -- from -- VOICESET.C --
@@ -562,15 +599,6 @@ MMEXPORT MD_DEVICE drv_sdl;	// Simple DirectMedia Layer output driver
 #ifdef __cplusplus
 }
 #endif
-
-/*
-// =====================================================================================
-    static void __inline Mikmod_SetPanSeparation(MDRIVER *md, uint pansep)
-// =====================================================================================
-{
-    md->pansep = pansep;
-}
-*/
 
 #include "virtch.h"    // needed because mdriver has a virtch handle now.
 

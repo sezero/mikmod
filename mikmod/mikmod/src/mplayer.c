@@ -2,11 +2,11 @@
 
  MikMod Sound System
 
-  By Jake Stine of Divine Entertainment (1996-2000)
+  By Jake Stine of Hour 13 Studios (1996-2000)
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
+    air@hour13.com
 
  Distribution / Code rights:
   Use this source code in any fashion you see fit.  Giving me credit where
@@ -1486,7 +1486,8 @@ static int ScalePan(int pan,int pansep)
     }
     
     if(++ps->state.vbtick >= (ps->state.sngspd + ps->state.framedly))
-    {   ps->state.patpos++;
+    {
+        ps->state.patpos++;
         ps->state.vbtick = ps->state.framedly = 0;
 
         // process pattern-delay.  ps->state.patdly2 is the counter and ps->state.patdly
@@ -1534,7 +1535,7 @@ static int ScalePan(int pan,int pansep)
 
             // reset a->row track stuff to new song position.
             pseek(ps);
-            _mmlogd1("\nSONG POSITION CHANGE: %d\n",ps->state.sngpos);
+            _mmlogd1("\nSONG POSITION CHANGE: %d\n", ps->state.sngpos);
         } else
             // no position jump, so go to the next row in the current pattern.
             if(!ps->state.patdly2) nextrow(ps);
@@ -1802,6 +1803,7 @@ static int ScalePan(int pan,int pansep)
         }
     }
 
+
     a = ps->state.control;
     if(pf->flags & UF_NNA)
     {   for(t=0; t<pf->numchn; t++, a++)
@@ -1890,6 +1892,7 @@ static int ScalePan(int pan,int pansep)
         }  // for loop
     }
 
+
     a = ps->state.control;
     for(t=0; t<pf->numchn; t++, a++)
     {   int newchn;
@@ -1947,26 +1950,32 @@ static int ScalePan(int pan,int pansep)
             continue;
         }
 
-        if(pf->flags & UF_LINEAR_FREQ) {
-	  if (aout->shared.period < 5)
-	    aout->shared.period=5;
-	} else {
-	  if(aout->shared.period < 2) {
-	    aout->shared.period = 2;
-	    _mmlogd("mplayer > Warning: Period clipped at 2");
-	  }
-	}
+        if(pf->flags & UF_LINEAR_FREQ)
+        {
+	        if (aout->shared.period < 5)
+	            aout->shared.period = 5;
+	    } else
+        {
+	        if(aout->shared.period < 2)
+            {
+	            aout->shared.period = 2;
+	            _mmlogd("mplayer > Warning: Period clipped at 2");
+            }
+        }
         
-	/* Clipping raw frequencies at 28 kHz will be disastrous. */
-        if(pf->flags & UF_LINEAR_FREQ) {
-	  if (aout->shared.period > 60906)
-	    aout->shared.period=60906;
-	} else {
-	  if (aout->shared.period > 28000) {
-	    aout->shared.period = 28000;
-	    _mmlogd("mplayer > Warning: Period clipped at 28000");
-	  }
-	}
+	    // Clipping raw frequencies at 28 kHz will be disastrous.
+        if(pf->flags & UF_LINEAR_FREQ)
+        {
+	        if (aout->shared.period > 60906)
+	            aout->shared.period = 60906;
+	    } else 
+        {
+	        if (aout->shared.period > 28000)
+            {
+	            aout->shared.period = 28000;
+	            _mmlogd("mplayer > Warning: Period clipped at 28000");
+	        }
+	    }
         
         if(aout->shared.kick & KICK_NOTE)
         {   uint   flags = s->flags;
@@ -2538,18 +2547,20 @@ static int ScalePan(int pan,int pansep)
     else
         start = Voiceset_GetVolume(ps->vs);
 
-    if(dest < start)
-        speed *= -1;
+    if(dest != start)
+    {
+        if(dest < start)  speed *= -1;
 
-    ps->fadedest    = (dest >= 0) ? dest : ps->vs->volume;
-    ps->fadespeed   = speed;
+        ps->fadedest    = (dest >= 0) ? dest : ps->vs->volume;
+        ps->fadespeed   = speed;
+    }
 
     ps_unforbid();
 }
 
 
 // =====================================================================================
-    void Player_QuickFadeEx(MPLAYER *ps, int start, int dest, int speed, void (*callback), void *handle)
+    void Player_QuickFadeEx(MPLAYER *ps, int start, int dest, int speed, void (*callback)(void *handle), void *handle)
 // =====================================================================================
 // This is a quick and dirty player fading feature, intended for use in video games.  
 // This fade is *not* suitable for module players since it does not have a wide range of
@@ -2571,14 +2582,19 @@ static int ScalePan(int pan,int pansep)
     else 
         start = Voiceset_GetVolume(ps->vs);
 
-    if(dest < start)
-        speed *= -1;
+    if(dest != start)
+    {
+        if(dest < start)  speed *= -1;
 
-    ps->fadedest        = (dest >= 0) ? dest : ps->vs->volume;
-    ps->fadespeed       = speed;
+        ps->fadedest        = (dest >= 0) ? dest : ps->vs->volume;
+        ps->fadespeed       = speed;
 
-    ps->fadepostfunc    = callback;
-    ps->fadepostvoid    = handle;
+        ps->fadepostfunc    = callback;
+        ps->fadepostvoid    = handle;
+    } else
+    {
+        if(callback) callback(handle);
+    }
 
     ps_unforbid();
 }

@@ -76,6 +76,7 @@ typedef struct _MTM_HANDLE
     UBYTE     **globtrack;
     int         numtrk;
     MM_ALLOC   *allochandle;
+
 } MTM_HANDLE;
 
 
@@ -100,6 +101,8 @@ typedef struct _MTM_HANDLE
     allochandle = _mmalloc_create("Load_MTM", NULL);
     retval = (MTM_HANDLE *)_mm_calloc(allochandle, 1,sizeof(MTM_HANDLE));
     retval->allochandle = allochandle;
+
+    SL_RegisterDecompressor(&dec_raw);
 
     return retval;
 }

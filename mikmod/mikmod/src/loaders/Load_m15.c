@@ -70,6 +70,7 @@ typedef struct _H_M15
     void *M15_Init(void)
 // =====================================================================================
 {
+    SL_RegisterDecompressor(&dec_raw);
     return _mm_calloc(NULL, 1,sizeof(MODULEHEADER));
 }
 

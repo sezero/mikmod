@@ -2,12 +2,11 @@
 #ifndef _MDSFX_H_
 #define _MDSFX_H_
 
-//#define SFXF_CRITICAL       (1<<0)          // criticals aren't interrupted by new sfx.
-//#define SFXF_DUPCHECK       (1<<1)          // looks for duplicates first, and doesn't play sample if it's already playing
+#include "mikmod.h"
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MD_SAMPLE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {
 //    MD_STREAM *stream;       // streaming information
     struct MDRIVER *md;

@@ -19,11 +19,23 @@
 #define MMCONF_CASE_INSENSITIVE    1
 #define MMCONF_AUTOFIX             2
 
+typedef struct MMCONF_SUBSEC_OPT
+{
+    uint        tabpos;         // tab position (uing the conf->tabsize var) [default 4]
+    BOOL        indentvars;     // indent the variables of this subsection? [default = false]
+    CHAR       *comment;        // An optional comment.
+
+} MMCONF_SUBSEC_OPT;
+
+
 typedef struct MMCFG_SUBSEC
-{   const CHAR  *name;         // name
-    uint         line;         // line (of the tag itself)
-    uint         insertpos;    // insert position (makes sure things get inserted in order
-                               // and not in reverse-order).
+{
+    CHAR        *name;          // name
+    uint         line;          // line (of the tag itself)
+    uint         insertpos;     // insert position (makes sure things get inserted in order
+                                // and not in reverse-order).
+    MMCONF_SUBSEC_OPT opt;      // subsection option extensions
+
 } MMCFG_SUBSEC;
 
 
@@ -31,29 +43,30 @@ typedef struct MMCFG_SUBSEC
     typedef struct MM_CONFIG
 // =====================================================================================
 {
-    uint      flags;
-    CHAR     *fname;           // filename to save to (load from)
-    CHAR    **line,            // storage for each line of the configuration file
-             *work,            // general workspace for variable checks, etc.
-            **work2;           // workspace used by array-readers.
+    uint       flags;
+    CHAR      *fname;           // filename to save to (load from)
+    CHAR     **line,            // storage for each line of the configuration file
+              *work,            // general workspace for variable checks, etc.
+             **work2;           // workspace used by array-readers.
 
-    CHAR     *lineflg;         // line flags -- block commented or not?
+    CHAR      *lineflg;         // line flags -- block commented or not?
 
-    uint      length;          // length of the config file, in lines
-    int       cursubsec;       // current working subsection
+    uint       length;          // length of the config file, in lines
+    int        cursubsec;       // current working subsection (-1 for unset)
 
-    uint      buflen;          // insertion buffer length between var and '='
-    BOOL      changed;         // changed-flag (indicates whether or not we save on exit)
+    uint       buflen;          // insertion buffer length between var and '='
+    uint       tabsize;         // tab size, for indentations [default = 4]
+    BOOL       changed;         // changed-flag (indicates whether or not we save on exit)
 
-    uint      numsubsec;
-    MMCFG_SUBSEC *subsec;      // list of all subsections (name and line)
+    uint       numsubsec;
+    MMCFG_SUBSEC *subsec;       // list of all subsections (name and line)
 
     //MMSTREAM *fp;
 
-    uint      subsec_alloc;
-    uint      length_alloc;
+    uint       subsec_alloc;    // allocsize of the subsec array
+    uint       length_alloc;    // allocsize of the line array
 
-    MM_ALLOC *allochandle;
+    MM_ALLOC  *allochandle;
 
 } MM_CONFIG;
 
@@ -61,12 +74,14 @@ typedef struct MMCFG_SUBSEC
 
 // Shit used to read existing configuration file entries!
 
-extern MM_CONFIG *_mmcfg_initfn(CHAR *fname);
+extern MM_CONFIG *_mmcfg_initfn_ex(const CHAR *fname, const uint flags);
+extern MM_CONFIG *_mmcfg_initfn(const CHAR *fname);
 extern void      _mmcfg_exit(MM_CONFIG *conf);
 extern void      _mmcfg_enable_autofix(MM_CONFIG *conf, uint buflen);
+extern void      _mmcfg_disable_autofix(MM_CONFIG *conf);
 
 extern BOOL      _mmcfg_set_subsection(MM_CONFIG *conf, const CHAR *var);
-extern BOOL      _mmcfg_set_subsection_int(MM_CONFIG *conf, uint var, CHAR name[MMCONF_MAXNAMELEN]);
+extern BOOL      _mmcfg_set_subsection_int(MM_CONFIG *conf, uint var, CHAR *name);
 extern int       _mmcfg_findvar(MM_CONFIG *conf, const CHAR *var);
 
 extern BOOL      _mmcfg_request_string(MM_CONFIG *conf, const CHAR *var, CHAR *val);
@@ -90,9 +105,10 @@ extern void      _mmcfg_reassign_boolean(MM_CONFIG *conf, const CHAR *var, BOOL 
 extern void      _mmcfg_reassign_enum(MM_CONFIG *conf, const CHAR *var, const CHAR **enu, int val);
 
 extern void      _mmcfg_resarray_string(MM_CONFIG *conf, const CHAR *var, uint nent, CHAR *val[]);
-extern void      _mmcfg_resarray_enum(MM_CONFIG *conf, const CHAR *var, const CHAR **enu, uint nent, int val[]);
+extern void      _mmcfg_resarray_integer(MM_CONFIG *conf, const CHAR *var, uint nent, const int *val);
+extern void      _mmcfg_resarray_enum(MM_CONFIG *conf, const CHAR *var, const CHAR **enu, uint nent, const int *val);
 
-extern void      _mmcfg_insert_subsection(MM_CONFIG *conf, const CHAR *var);
+extern void      _mmcfg_insert_subsection(MM_CONFIG *conf, const CHAR *var, const MMCONF_SUBSEC_OPT *options);
 extern void      _mmcfg_insert(MM_CONFIG *conf, int line, const CHAR *var, const CHAR *val);
 extern void      _mmcfg_reconstruct(MM_CONFIG *conf, int line, const CHAR *var, const CHAR *val);
 extern BOOL      _mmcfg_save(MM_CONFIG *conf);

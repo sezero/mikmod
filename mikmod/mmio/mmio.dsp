@@ -42,12 +42,13 @@ RSC=rc.exe
 # PROP Target_Dir ""
 MTL=midl.exe
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /G6 /Gr /Zp4 /MT /W3 /GX /O2 /Ob2 /I "include" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "WIN32" /D "MIKMOD_STATIC" /D "ANIM_NO_TRACKING" /YX /FD /c
+# ADD CPP /nologo /G6 /Gr /Zp4 /MT /W3 /GX /O2 /Ob2 /I "include" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "MM_LO_VERBOSE" /D "NDEBUG" /D "WIN32" /D "MIKMOD_STATIC" /YX /FD /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../temp/mmio.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -66,12 +67,12 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 MTL=midl.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /G6 /Zp4 /MTd /W3 /Gm /GX /ZI /Od /I "include" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "_DEBUG" /D "MM_LOG_VERBOSE" /D "WIN32" /D "MIKMOD_STATIC" /D "ANIM_NO_TRACKING" /Fr /YX /FD /GZ /c
+# ADD CPP /nologo /G6 /Zp8 /MTd /W3 /Gm /GX /Zi /Od /I "include" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "_DEBUG" /D "MM_LOG_VERBOSE" /D "WIN32" /D "MIKMOD_STATIC" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../temp/mmio.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo /out:"..\mmiod.lib"
@@ -126,17 +127,41 @@ SOURCE=.\src\mmio.c
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=.\src\node.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\random.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\wildcard.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\include\assfile.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\include\log.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\include\mmalloc.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\include\mmconfig.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\mmerror.h
 # End Source File
 # Begin Source File
 
@@ -153,6 +178,10 @@ SOURCE=.\include\mmio.h
 # Begin Source File
 
 SOURCE=.\include\mmtypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\random.h
 # End Source File
 # Begin Source File
 

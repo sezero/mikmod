@@ -93,16 +93,16 @@ static CHAR  STM_Version[] = "Screamtracker 2";
     BOOL STM_Test(MMSTREAM *mmfile)
 // =====================================================================================
 {
-   CHAR  str[9];
-   UBYTE filetype;
+    CHAR  str[9];
+    UBYTE filetype;
 
-   _mm_fseek(mmfile,21,SEEK_SET);
-   _mm_read_UBYTES(str,9,mmfile);
-   str[8]=0; strlwr(str);
-   filetype = _mm_read_UBYTE(mmfile);
-   if(!memcmp(str,"!scream!",8) || (filetype!=2)) // STM Module = filetype 2
-      return 0;
-   return 1;
+    _mm_fseek(mmfile,21,SEEK_SET);
+    _mm_read_UBYTES(str, 9, mmfile);
+    str[8]=0; strlwr(str);
+    filetype = _mm_read_UBYTE(mmfile);
+    if(!memcmp(str,"!scream!",8) || (filetype!=2)) // STM Module = filetype 2
+        return 0;
+    return 1;
 }
 
 
@@ -110,6 +110,7 @@ static CHAR  STM_Version[] = "Screamtracker 2";
     void *STM_Init(void)
 // =====================================================================================
 {
+    SL_RegisterDecompressor(&dec_raw);
     return _mm_calloc(NULL, 1,sizeof(STMHEADER));
 }
 

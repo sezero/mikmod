@@ -128,6 +128,7 @@ MODTYPE modtypes[22] =
     void *MOD_Init(void)
 // =====================================================================================
 {
+    SL_RegisterDecompressor(&dec_raw);
     return _mm_calloc(NULL, 1,sizeof(MODULEHEADER));
 }
 
@@ -355,7 +356,7 @@ ple number.                  ple number.
             if(!memcmp(adpcm, "ADPCM", 5))
             {   q->seekpos += 5;
                 seekpos    += ((q->length+1)/2)+16 + 5;
-                q->compress = DECOMPRESS_ADPCM;
+                q->compress = SL_COMPRESS_ADPCM;
             } else
                 seekpos    += q->length;
 

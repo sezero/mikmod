@@ -2,19 +2,15 @@
 
  MikMod Sound System
 
-  By Jake Stine of Divine Entertainment (1996-2000)
+  By Jake Stine of Hour 13 Studios (1996-2002)
+  Original code & concepts by Jean-Paul Mikkers (1993-1996)
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
-
- Distribution / Code rights:
-  Use this source code in any fashion you see fit.  Giving me credit where
-  credit is due is optional, depending on your own levels of integrity and
-  honesty.
+    air@hour13.com
 
  -----------------------------------------
- Module: unimod.c
+ unimod.c
  
   Structure handling and manipulation.  Includes loading, freeing, and track
   manipulation functions for the UNIMOD format.
@@ -120,7 +116,9 @@ extern MLOADER *firstloader;
     }
 
     if(l==NULL)
-    {   _mmerr_set(MMERR_UNSUPPORTED_FILE, "Unknown module format or corrupted file.");
+    {   CHAR  stmp[_MAX_PATH + 64];
+        sprintf(stmp,"Module file: %s\nThis is an unknown module format or corrupted a file.", filename);
+        _mmerr_set(MMERR_UNSUPPORTED_FILE, "Failure loading module music", stmp);
         return NULL;
     }
 
@@ -164,7 +162,7 @@ extern MLOADER *firstloader;
     }
 
     if(l==NULL)
-    {   _mmerr_set(MMERR_UNSUPPORTED_FILE, "Unknown module format or corrupted file.");
+    {   //_mmerr_set(MMERR_UNSUPPORTED_FILE, "Failure loading module music", "Unknown module format or corrupted file.");
         return NULL;
     }
 
@@ -181,7 +179,7 @@ extern MLOADER *firstloader;
     mf->pansep=128; /* Full stereo pan. */
 
     // all channels are unmuted.
-    memset(mf->muted,0,sizeof(BOOL) * 64);
+    memset(mf->muted, 0, sizeof(BOOL) * 64);
 
     // init module loader and load the header / patterns
     if(lh = l->Init())
@@ -233,7 +231,7 @@ extern MLOADER *firstloader;
         // -------------------------
         // Oh what wonderous crap I put in place for the sake of easier debugging!
 
-        sprintf(mf->allochandle->name, "UNIMOD-%.48s",mf->songname);
+        sprintf(mf->allochandle->name, "UNIMOD-%.16s",mf->songname);
     }
 
     return mf;
@@ -329,8 +327,10 @@ extern MLOADER *firstloader;
 
     _mm_fclose(fp);
     if(!mf)
-    {   _mmlog("Unimod > Module load failed : %s",filename);
-        _mmerr_set(MMERR_UNSUPPORTED_FILE, "Corrupt file or unsupported module type.");
+    {   CHAR  stmp[_MAX_PATH + 64];
+        _mmlog("Unimod > Module load failed : %s", filename);
+        sprintf(stmp,"Module file: %s\nThis is an unknown module format or corrupted a file.", filename);
+        _mmerr_set(MMERR_UNSUPPORTED_FILE, "Failure loading module music", stmp);
     }
     return mf;
 }
@@ -417,3 +417,4 @@ extern MLOADER *firstloader;
         mf->strip_threshold = threshold;
     }
 }
+

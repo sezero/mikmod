@@ -1,16 +1,15 @@
 -- Mikmod Sound System
 -- README - Quick Overview of portability and compilation.
 
+By Jake Stine of Hour 13 Studios
+[Warning : This file is potentially very out-of-date!]
 
 Compilation
------------
+===========
 
-Most importantly are Mikmod's dependancies.  Mikmod requires the 'mmio' lib-
+Most importantly are Mikmod's dependencies.  Mikmod requires the 'mmio' lib-
 raries and header files in order to be compiled properly.  The mmio lib is
-relatively small and simple and is normally distributed with Mikmod.  If you
-do not have it, then get it from:
-
-http://www.divent.org/
+relatively small and simple and is normally distributed with Mikmod.
 
 The source tree looks like this:
 
@@ -95,7 +94,7 @@ Structure Alignment/Packing:
    elements being in the same order in memory as in code (for memcpy opt-
    imizations).  Visual C, for one, does not gaurantee this in packed struct
    mode, which leads to improper playback.  Just something to look out for.
-   
+
 
 Microsoft Visual C++ 6
 ======================
@@ -120,38 +119,24 @@ project file to your workspace/project (via 'Add project to workspace).  Then
 you go to Project Dependencies and make sure mikmod is checked under your
 project.  Finally, you have to edit your project settings:
 
-C/C++ Tab -- Category 'Preprocessor' -- Add the following to your list of
-'additional iclude directories':
+- add mikmod\include and mmio\include to your Active Project's include paths,
+  under C/C++ options (Preprocessor option under the combo box).
 
-        $(MIKMOD)\include,$(MMIO)\include
+- Add dxguid.lib and winmm.lib to your active project!
+  [Under Project Options, Link tab]
 
-Sidebar:
-========
-Notice the variables.  You must set these as system environment variables.
-There are two to worry about: MIKMOD and MMIO.  Simply set them to the path of
-the mikmod and mmio root folders, appropriately.  For example:
+- Ensure that you are using Multithreaded and Debug Multithreaded CRT libraries,
+  configured under Code Generation.
 
-MIKMOD=c:\sdk\mikmod\mikmod
-MMIO=c:\sdk\mikmod\mmio
-
-To do this in win9x, add them to your autoexec.bat as
-SET MIKMOD=c:\sdk\mikmod\mikmod
-and reboot.
-
-To do this winnt, add them to your system environment variable list and reboot.
-=========
-
-Assuming you have properly onfigured your system's environment variables as
-specified, this will work.  Or, alternatively, you can man ually substitute the
-actual location of the mikmod/mmio subdirectories in the place of the $(blah)
-thingies.  ie: c:\mikmod\include  ..  simple. :)
+- Use _cdecl calling convention for debug, and _fastcall calling convention for
+  Release, also under Code Generation.
 
 Known problems:
  - Compiling with packed structures seems causes mikmod to play some modules
    incorrectly.  It has to do with an optimization in the player which 
    copies structures.  You shouldn't be using packed structs anyway so this
    shouldn't be a problem.  If it is, I can fix it for you.  Drop me a line
-   at air@divent.org.
+   at air@hour13.com.
 
 GCC
 ===
@@ -249,6 +234,7 @@ anything that is not linux or multithread friendly.
 
 Documentation
 -------------
+
 There is none.  Obviously.  We will work on that later, once the API is more
 complete.
 
@@ -263,14 +249,10 @@ how many times people have spent hours, or days, working on something that
 I fixed in minutes), then contact me via:
 
 e-mail:
-  air@divent.org
+  air@hour13.com
 
 icq:
   2320014
-  
-irc:
-  irc.esper.net:5555
-  nick 'Air'
   
 
 Good Luck!

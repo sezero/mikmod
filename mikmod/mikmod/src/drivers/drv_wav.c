@@ -121,7 +121,7 @@
 
     VC_SetMode(md->device.vc, hwdata->mixspeed, hwdata->mode, channels, cpumode);
 
-    _mm_write_string("RIFF    WAVEfmt ",hwdata->wavout);
+    _mm_write_stringz("RIFF    WAVEfmt ", hwdata->wavout);
     _mm_write_I_ULONG(18,hwdata->wavout);     // length of this RIFF block crap
 
     _mm_write_I_UWORD(1, hwdata->wavout);     // microsoft format type
@@ -135,7 +135,7 @@
     _mm_write_I_UWORD((hwdata->mode & DMODE_16BITS) ? 16 : 8, hwdata->wavout);
     _mm_write_I_UWORD(0,hwdata->wavout);      // No extra data here.
 
-    _mm_write_string("data    ",hwdata->wavout);
+    _mm_write_stringz("data    " ,hwdata->wavout);
 
     hwdata->dumpsize = 0;
 

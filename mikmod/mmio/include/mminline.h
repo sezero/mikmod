@@ -4,6 +4,19 @@
 #include "mmio.h"
 #include <string.h>
 
+static long __inline _mm_timeoverflow(ulong newtime, ulong oldtime)
+{
+    if(newtime < oldtime) return (0xfffffffful - oldtime) + newtime;
+    return newtime - oldtime;       // return timediff, with overflow checks!
+}
+
+// =====================================================================================
+//                               Inline Memcpy Functions
+// =====================================================================================
+// These are mostly obsolete since the discovery that Visual Studio's memcpy is one heck
+// of a fast mother.  I leave them here, however, and still continue to use them, in
+// the event that I ever happen to implement some sort of MMX or FPU-accelerated memcpy.
+
 static void __inline _mminline_memcpy_long(void *dst, const void *src, int count)
 {
     // ** note to self : compiler memcpy is faster than mine!

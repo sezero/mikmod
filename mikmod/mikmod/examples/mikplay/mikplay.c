@@ -262,20 +262,14 @@ void mikcommand(int index, P_VALUE *unival)
 
 
 // =====================================================================================
-    void errorhandler(int errnum, const CHAR *errmess)
+    void errorhandler(const MM_ERRINFO *errinfo)
 // =====================================================================================
-// When called, the following global variables will have been set:
-//  _mm_errno     - INTEGER; the error that occured [listed in mmio.h]
-//  _mm_critical  - BOOLEAN; set to TRUE if an error occurs within
-//                  MikMod_Init() or when trying to start playing of a
-//                  module - in which case MikMod automatically shuts
-//                  down and impliments the NoSound driver.
 {
-    printf("ERROR!\n");
-    printf("MikMod Error: %s\n\n",errmess);
+    printf("MikMod Error: %s\n\n", errinfo->heading);
+    printf(errinfo->desc);
 
-    exit(errnum);     // Mod player not much use without sound, so
-                         // just exit the program.
+    exit(errinfo->num);     // Mod player not much use without sound, so
+                            // just exit the program.
 }
 
 
@@ -297,12 +291,7 @@ void mikcommand(int index, P_VALUE *unival)
    BOOL  next;         // set true when time to play next song (space pressed)
 #endif
 
-	int a;
-
-   //int   nfiles, i;
-
-
-   log_init("mikplay",LOG_VERBOSE);
+   log_init("mikplay", LOG_VERBOSE);
 
    // Register the MikMod error handler.  If any errors occur within the
    // MikMod libraries (including the ngetopt and all _mm_ functions),
@@ -464,7 +453,7 @@ void mikcommand(int index, P_VALUE *unival)
                             {   // note volume scale ...
                                 //   md->volume = (percentage * 128) / 100
 
-                                int t = (c == F1) ? 13 : (((c%10)*1280) / 100) + 26;
+                                //int t = (c == F1) ? 13 : (((c%10)*1280) / 100) + 26;
                                 //if(t > 128)
                                 //   md->volume = 128;
                                 //else

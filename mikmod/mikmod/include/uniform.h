@@ -229,9 +229,9 @@ enum
 #define PSF_OWNPAN          (1ul<<16)
 #define PSF_UST_LOOP        (1ul<<17)
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct UNISAMPLE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Mikmod's custom module player sample structure, used in the place of the MD_SAMPLE,
 // which I normally use in applications for sound effects.  Reason: this has a lot of
 // extra little tidbits which would be otherwise worthless in a sound effects situaiton.
@@ -312,14 +312,15 @@ typedef struct _UNITRK_NOTE
 // by trackers and info viewers.
 
 typedef struct _UNITRK_EFFECT
-{   INT_MOB  param;             // Parameter
+{
+    INT_MOB  param;             // Parameter
     UBYTE    effect;            // Effect 
     UBYTE    framedly;          // framedelay for effect.  If UFD_RUNONCE is set,
                                 // command is run once on the given tick.
 } UNITRK_EFFECT;
 
 
-//--------------
+// -------------------------
 // UE_EFFECT - Unitrk Extended Effect Structure.
 //  This structure contains the memory information in addition to the
 //  standard effect information.
@@ -333,7 +334,8 @@ typedef struct _UNITRK_EFFECT
 #define UEF_MEMORY  2
 
 typedef struct _UE_EFFECT
-{   int           flags;
+{
+    int           flags;
     UNITRK_EFFECT effect;
     int           memslot,      // Memory slot effect uses.
                   memchan;      // Only valid if UEF_GLOBAL flag is set.
@@ -349,9 +351,9 @@ typedef struct _UNITRK_ROW
 #pragma pack (pop)
 #endif
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _UNI_EFFTRK
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // inuse member:
 // The inuse is used to determine if a track is blank or not.  utrk_dup has no easy way
 // to tell if the track has meaningful content or is simply filled with a series of 0's.
@@ -372,12 +374,13 @@ typedef struct _UNITRK_ROW
 
     BOOL     inuse;            // indicates if track is in use or just blank
     int      reallen;          // the length of the 'used' stream (minus trailing empty rows)
+
 } UNI_EFFTRK;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _UNI_GLOBTRK
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {
     UBYTE    *buffer;          // unitrk buffer allocation!
     int      writepos;         // current writepos in the buffer (and length!)
@@ -391,9 +394,9 @@ typedef struct _UNITRK_ROW
 } UNI_GLOBTRK;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _UTRK_WRITER
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {
     UNI_EFFTRK   *curtrk, *unitrk;
     UNI_GLOBTRK   globtrk;
@@ -418,9 +421,9 @@ typedef struct ENVPT
 } ENVPT;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct EXTSAMPLE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Each extanded sample info block extends the information for each corresponding core
 // SAMPLE structure in the samples[] array in the UNIMOD struct (ie same index for ext-
 // samples and samples arrays - info for same sample).  
@@ -465,12 +468,13 @@ typedef struct ENVPT
     UBYTE  vibrate;
 
     UWORD  avibpos;          // autovibrato pos [internal use only]
+
 } EXTSAMPLE;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct INSTRUMENT
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     UBYTE  flags;
 
@@ -529,21 +533,22 @@ typedef struct ENVPT
     UBYTE  vibdepth;
     UBYTE  vibrate;
 
+    UWORD  avibpos;          // autovibrato pos [internal use only]
+
     int    cutoff,           // the cutoff frequency (range 0 to 16384)
            resonance;        // the resonance factor (range -128 to 128)
 
     CHAR   *insname;
 
-    UWORD  avibpos;          // autovibrato pos [internal use only]
 } INSTRUMENT;
 
 #ifndef __GNUC__
 #pragma pack (pop)
 #endif
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct UNIMOD
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {
     // This section of elements are all file-storage related.
     // all of this information can be found in the UNIMOD disk format.
@@ -604,6 +609,7 @@ typedef struct ENVPT
     long         strip_threshold;  // time, in milliseconds, before shortening song.
     int          sngpos_silence;   // number of positions in this song
     int          patpos_silence;   // number of patterns in this song
+
 } UNIMOD;
 
 
@@ -667,9 +673,9 @@ typedef void ML_HANDLE;
 
 // loader structure:
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MLOADER
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     CHAR    *Type;
     CHAR    *Version;
@@ -714,9 +720,7 @@ MMEXPORT void     Unimod_Free(UNIMOD *mf);
 MMEXPORT void     Unimod_SetDefaultPan(int defpan);
 MMEXPORT BOOL     Unimod_LoadSamples(UNIMOD *mf, MDRIVER *md, MMSTREAM *smpfp);
 MMEXPORT void     Unimod_UnloadSamples(UNIMOD *mf);
-
 MMEXPORT void     Unimod_StripSilence(UNIMOD *mf, long threshold);
-
 MMEXPORT void     ML_RegisterLoader(MLOADER *ldr);  // use the macro MikMod_RegisterLoader instead
 
 
@@ -733,6 +737,10 @@ extern CHAR    *DupStr(MM_ALLOC *allochandle, CHAR *s, UWORD len);
 
 
 // Declare external loaders:
+// -------------------------
+// Various module loaders that come pre-packaged with mikmod and/or have
+// separate distributions that I'm aware of (although by now they are woefully
+// out of date and have no chance of even compiling).
 
 MMEXPORT MLOADER  load_uni;        // Internal UniMod Loader (Current version of UniMod only)
 MMEXPORT MLOADER  load_mod;        // Standard 31-instrument Module loader (Protracker, StarTracker, FastTracker, etc)
@@ -753,4 +761,5 @@ MMEXPORT MLOADER  load_far;        // Farandole Composer Module
 #endif
 
 #endif
+
 

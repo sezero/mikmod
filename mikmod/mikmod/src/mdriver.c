@@ -2,11 +2,11 @@
 
  MikMod Sound System
 
-  By Jake Stine of Divine Entertainment (1996-2000)
+  By Jake Stine of Hour 13 Studios (1996-2000)
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
+    air@hour13.com
 
  Distribution / Code rights:
   Use this source code in any fashion you see fit.  Giving me credit where
@@ -236,13 +236,12 @@ static MD_DEVICE *firstdriver = NULL;
 
 {
     UWORD t;
-//    uint  dummy;
     
     MD_DEVICE *device  = NULL, *cruise;  // always autodetect.. for now!
     MDRIVER   *md;
 
     // Clear the error handler.
-    _mmerr_set(MMERR_NONE, NULL);
+    _mmerr_set(MMERR_NONE, NULL, NULL);
 
     {
         MM_ALLOC *allochandle = _mmalloc_create("MDRIVER", NULL);
@@ -262,7 +261,7 @@ static MD_DEVICE *firstdriver = NULL;
         }
 
         if(!cruise)
-        {   _mmerr_setsub(MMERR_DETECTING_DEVICE, "Mikmod: Driver autodetect failed.");
+        {   _mmerr_setsub(MMERR_DETECTING_DEVICE, "Audio driver autodetect failed.", "The Mikmod Sound System failed to find a suitable or supported audio device.  The application will proceed normally without sound.");
             cruise = &drv_nos;
         }
     } else
@@ -270,7 +269,7 @@ static MD_DEVICE *firstdriver = NULL;
         cruise = device;
         if(!cruise->IsPresent())
         {   // The user has forced this driver, so we generate a critical error upon failure.
-            _mmerr_setsub(MMERR_DETECTING_DEVICE, "Mikmod: Selected driver failed detection.");
+            _mmerr_setsub(MMERR_DETECTING_DEVICE, "Audio driver failure.", "A specific audio driver was selected, but no compatable hardware was found.");
             cruise = &drv_nos;
         }
     }
@@ -279,12 +278,11 @@ static MD_DEVICE *firstdriver = NULL;
     memcpy(&md->device, cruise, sizeof(md->device));
 
     if(md->device.Init(md, latency, optstr))
-    {   md->device.Exit(md);
-        //_mmerr_setsub(MMERR_INITIALIZING_DEVICE, "Mikmod: Audio Failure");
-
+    {
         // switch to the nosound driver so that the program can continue to run
         // without sound, if the user so desires...
 
+        md->device.Exit(md);
         memcpy(&md->device, &drv_nos, sizeof(md->device));
         md->device.Init(md, latency, optstr);
     }
@@ -330,7 +328,8 @@ static MD_DEVICE *firstdriver = NULL;
     BOOL ok = FALSE;
     
     if(md)
-    {   ok = md->device.SetMode(md, mixspeed, mode, channels, cpumode);
+    {
+        ok = md->device.SetMode(md, mixspeed, mode, channels, cpumode);
         md->isplaying = 0;
     }
 

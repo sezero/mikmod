@@ -35,7 +35,8 @@ static void WriteChanVolSlide(UTRK_WRITER *ut, int hi, int lo);
 // IT / S3M Extended SS effects:
 
 enum
-{   SS_GLISSANDO = 1,
+{
+    SS_GLISSANDO = 1,
     SS_FINETUNE,
     SS_VIBWAVE,
     SS_TREMWAVE,

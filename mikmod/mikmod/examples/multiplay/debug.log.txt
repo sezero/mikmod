@@ -3,19 +3,3 @@ Mikmod > virtch > Initialization successful!
 Mikmod > Initialized DirectSound driver.
        > 44100khz, Stereo
 Virtch > Reallocating voices.  Old = 0, New = 2
-Mikmod > unimod_load > Loading Module : D:\new14\Previewz.it
-_mmalloc_close > Unloading lotsa memory : 'UTRK_WRITER'
-_mmalloc_close > Unloading lotsa memory : 'Load_IT'
-Virtch > Reallocating voices.  Old = 2, New = 66
-
-SONG POSITION CHANGE: 0
-
-
-SONG POSITION CHANGE: 1
-
-Voiceset > Deinitializing...
-_mmalloc_close > Unloading lotsa memory : 'MPLAYER'
-Unimod > Unloading module 'Lost in Verge'
-_mmalloc_close > Unloading lotsa memory : 'UNIMOD-Lost in Verge'
-_mmalloc_close > Unloading lotsa memory : 'VIRTCH'
-_mmalloc_close > Unloading lotsa memory : 'MDRIVER'

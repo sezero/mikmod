@@ -112,7 +112,7 @@ int        rvolsel, lvolsel;
         cruise = cruise->next;
     }
 
-    //woops, we can't mix this sample.
+    // woops, we can't mix this sample.
 
     _mmlog("Mikmod > virtch > Attempted to configure sample, but no suitable mixer was available!");
     vc->sample[handle].mixer = &VC_MIXER_PLACEBO;
@@ -136,7 +136,7 @@ int        rvolsel, lvolsel;
     {   // Allocate More sample handles
         t = vc->samplehandles;
         vc->samplehandles += 32;
-        if((vc->sample = (VSAMPLE *)_mm_realloc(vc->allochandle, vc->sample, sizeof(VSAMPLE) * vc->samplehandles)) == NULL) return -1;
+        if((vc->sample = (VSAMPLE *)_mm_realloc(&vc->allochandle, vc->sample, sizeof(VSAMPLE) * vc->samplehandles)) == NULL) return -1;
 	
         memset(&vc->sample[t], 0, sizeof(VSAMPLE) * 32);
     }
@@ -971,25 +971,21 @@ static void volcalc_Quad(VINFO *vnf)
     VIRTCH *VC_Init(void)
 // =====================================================================================
 {
-    MM_ALLOC  *allochandle;
     VIRTCH    *vc;
 
     _mmlog("Mikmod > virtch > Entering Initialization Sequence.");
     
-    allochandle = _mmalloc_create("VIRTCH", NULL);
-
-    vc = (VIRTCH *)_mm_calloc(allochandle, 1, sizeof(VIRTCH));
-    vc->allochandle = allochandle;
+    vc  = (VIRTCH *)_mmalloc_create_ex("VIRTCH", NULL, sizeof(VIRTCH));
 
     vc->volume.front.left  = 
     vc->volume.front.right = 
     vc->volume.rear.left   = 
     vc->volume.rear.right  = 128;
     
-    if((vc->sample = (VSAMPLE *)_mm_calloc(vc->allochandle, vc->samplehandles=64, sizeof(VSAMPLE))) == NULL) return 0;
+    if((vc->sample = _mmobj_array(vc, vc->samplehandles=64, VSAMPLE)) == NULL) return 0;
 
     if(!vc->TICKBUF)
-        if((vc->TICKBUF=(SLONG *)_mm_malloc(vc->allochandle, (TICKLSIZE+32) * sizeof(SLONG))) == NULL) return 0;
+        if((vc->TICKBUF = _mmobj_array(vc, (TICKLSIZE+32), SLONG)) == NULL) return 0;
 
     vc->TICKLEFT = vc->TICKREMAIN = 0;
     vc->numchn = 0;
@@ -1026,7 +1022,7 @@ static void volcalc_Quad(VINFO *vnf)
 // =====================================================================================
 {
     if(!vc) return;
-    _mmalloc_close(vc->allochandle);
+    _mmalloc_close(&vc->allochandle);
 }
 
 
@@ -1043,8 +1039,8 @@ static void volcalc_Quad(VINFO *vnf)
     if(!voices)
     {   vc->numchn = 0;
         _mmlogd("Virtch > Deallocating all voices.");
-        _mm_free(vc->allochandle, vc->vinf);
-        _mm_free(vc->allochandle, vc->vold);
+        _mmobj_free(vc, vc->vinf);
+        _mmobj_free(vc, vc->vold);
         return 0;
     }
 
@@ -1052,9 +1048,9 @@ static void volcalc_Quad(VINFO *vnf)
     
     _mmlogd2("Virtch > Reallocating voices.  Old = %d, New = %d", vc->numchn, voices);
 
-    if((vc->vinf = (VINFO *)_mm_realloc(vc->allochandle, vc->vinf, sizeof(VINFO) * (voices+1))) == NULL) return 1;
+    if((vc->vinf = (VINFO *)_mm_realloc(&vc->allochandle, vc->vinf, sizeof(VINFO) * (voices+1))) == NULL) return 1;
     if(vc->mode & DMODE_NOCLICK)
-        if((vc->vold = (VINFO *)_mm_realloc(vc->allochandle, vc->vold, sizeof(VINFO) * (voices+1))) == NULL) return 1;
+        if((vc->vold = (VINFO *)_mm_realloc(&vc->allochandle, vc->vold, sizeof(VINFO) * (voices+1))) == NULL) return 1;
     
     for(t=vc->numchn; t<voices+1; t++)
     {   vc->vinf[t].frq          = 10000;
@@ -1310,18 +1306,20 @@ static void volcalc_Quad(VINFO *vnf)
     if(*flags & SF_STEREO) length *= 2;
 
     if(!(vc->mode & DMODE_SAMPLE_8BIT) && (*flags & SF_16BITS))
-    {   SWORD  *samp16;
+    {
+        SWORD  *samp16;
 
         *flags |= SF_16BITS;
 
-        if((vc->sample[handle].data = _mm_malloc(vc->allochandle, (length+12)<<1))==NULL) return -1;
+        if((vc->sample[handle].data = _mm_malloc(&vc->allochandle, (length+12)<<1))==NULL) return -1;
 
         samp16 = (SWORD *)vc->sample[handle].data;
         for(t=0; t<8; t++) samp16[t+length] = 0;
     } else
-    {   SBYTE  *samp8;
+    {
+        SBYTE  *samp8;
         *flags &= ~SF_16BITS;
-        if((vc->sample[handle].data = _mm_malloc(vc->allochandle, length+12))==NULL) return -1;
+        if((vc->sample[handle].data = _mm_malloc(&vc->allochandle, length+12))==NULL) return -1;
 
         samp8 = vc->sample[handle].data;
         for(t=0; t<8; t++) samp8[t+length] = 0;
@@ -1357,7 +1355,7 @@ vc->clickcnt = 0; /* Prevent declicker from trying to access unloaded samples
 		         We really ought to check whether a sample is in use
 	 		 before unloading it. */
 
-        _mm_free(vc->allochandle, vc->sample[handle].data);
+        _mmobj_free(vc, vc->sample[handle].data);
 
         if(vc->sample[handle].mixer)
         {   if(vc->sample[handle].mixer->Exit) vc->sample[handle].mixer->Exit(vc->sample[handle].mixer);
@@ -1395,14 +1393,14 @@ vc->clickcnt = 0; /* Prevent declicker from trying to access unloaded samples
         {   SWORD  *samp16;
 
             SL_Sample8to16(sload);
-            if((vc->sample[handle].data = _mm_malloc(vc->allochandle, (length+16)<<1))==NULL) return -1;
+            if((vc->sample[handle].data = _mm_malloc(&vc->allochandle, (length+16)<<1))==NULL) return -1;
             SL_Load(samp16 = (SWORD *)vc->sample[handle].data,sload,sload->length);
 
             for(t=0; t<8; t++) samp16[t+length] = 0;
         } else
         {   SBYTE  *samp8;
             SL_Sample16to8(sload);
-            if((vc->sample[handle].data = _mm_malloc(vc->allochandle, length+16))==NULL) return -1;
+            if((vc->sample[handle].data = _mm_malloc(&vc->allochandle, length+16))==NULL) return -1;
             SL_Load(samp8 = vc->sample[handle].data,sload,sload->length);
 
             for(t=0; t<8; t++) samp8[t+length] = 0;

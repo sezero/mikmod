@@ -34,9 +34,9 @@
 **************************************************************************/
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct ITHEADER
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Raw IT header struct:
 {   
     CHAR      songname[26];
@@ -61,13 +61,13 @@
  
     UBYTE     pantable[64];
     UBYTE     voltable[64];
+
 } ITHEADER;
 
 
-
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct ITSAMPLE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Raw IT sampleinfo struct:
 {   
     CHAR  filename[12];
@@ -89,12 +89,13 @@
     UBYTE vibdepth;
     UBYTE vibrate;
     UBYTE vibwave;    // 0 = sine; 1 = rampdown; 2 = square; 3 = random (speed ignored)
+
 } ITSAMPLE;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct ITINSTHEADER
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     ULONG size;             // (dword) Instrument size
     CHAR  filename[12];     // (char) Instrument filename
@@ -145,6 +146,7 @@
     UWORD pantick[25];      // tick value of panning nodes
     SBYTE pitnode[25];      // pitchenv - node points
     UWORD pittick[25];      // tick value of pitch nodes
+
 } ITINSTHEADER;                       
 
 
@@ -159,9 +161,9 @@ static int       old_effect;      // if set, use S3M old-effects stuffs
    
 static CHAR IT_Version[] = "ImpulseTracker x.xx";
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _IT_HANDLE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     MM_ALLOC    *allochandle;
     UTRK_WRITER *ut;
@@ -199,6 +201,9 @@ static CHAR IT_Version[] = "ImpulseTracker x.xx";
     allochandle = _mmalloc_create("Load_IT", NULL);
     handle = (IT_HANDLE *)_mm_calloc(allochandle, 1, sizeof(IT_HANDLE));
     handle->allochandle = allochandle;
+
+    SL_RegisterDecompressor(&dec_it214);        // make sure IT decompressor is registered!
+    SL_RegisterDecompressor(&dec_raw);
 
     return handle;
 }
@@ -615,7 +620,7 @@ static UBYTE   portatable[] = { 0, 1, 4, 8, 16, 32, 64, 96, 128, 255 };
         if(s.flag & 128) q->flags |= SL_SUSTAIN_BIDI;
 
         // set disk format
-        if(s.flag & 8)  q->compress = DECOMPRESS_IT214;
+        if(s.flag & 8)  q->compress = SL_COMPRESS_IT214;
         if(s.flag & 2)  q->format  |= SF_16BITS;
         if(h->mh.cwt >= 0x200)
         {   if(s.convert & 1) q->format |= SF_SIGNED;

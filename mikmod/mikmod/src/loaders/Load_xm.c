@@ -34,7 +34,8 @@
 **************************************************************************/
 
 enum
-{   FT2MEM_VOLSLIDEUP = PTMEM_LAST,
+{
+    FT2MEM_VOLSLIDEUP = PTMEM_LAST,
     FT2MEM_VOLSLIDEDN,          // Fine Volume slide (PT Exx effect w/ memory)
     FT2MEM_PITCHSLIDEUP,        // Fine pitch slide (PT Exx effect w/ memory)
     FT2MEM_PITCHSLIDEDN,
@@ -48,7 +49,8 @@ enum
 };
 
 typedef struct XMHEADER
-{   CHAR  id[17];                   // ID text: 'Extended module: '
+{
+    CHAR  id[17];                   // ID text: 'Extended module: '
     CHAR  songname[21];             // Module name, padded with zeroes and 0x1a at the end
     CHAR  trackername[20];          // Tracker name
     UWORD version;                  // (word) Version number, hi-byte major and low-byte minor
@@ -66,16 +68,19 @@ typedef struct XMHEADER
 
 
 typedef struct XMINSTHEADER
-{   ULONG size;                     // (dword) Instrument size
+{
+    ULONG size;                     // (dword) Instrument size
     CHAR  name[22];                 // (char) Instrument name
     UBYTE type;                     // (byte) Instrument type (always 0)
     UWORD numsmp;                   // (word) Number of samples in instrument
     ULONG ssize;                    //
+
 } XMINSTHEADER;
 
 
 typedef struct XMPATCHHEADER
-{   UBYTE what[96];         // (byte) Sample number for all notes
+{
+    UBYTE what[96];         // (byte) Sample number for all notes
     ENVPT volenv[24];       // (byte) Points for volume envelope
     ENVPT panenv[24];       // (byte) Points for panning envelope
     UBYTE volpts;           // (byte) Number of volume points
@@ -94,11 +99,13 @@ typedef struct XMPATCHHEADER
     UBYTE vibrate;          // (byte) Vibrato rate
     UWORD volfade;          // (word) Volume fadeout
     UWORD reserved[11];     // (word) Reserved
+
 } XMPATCHHEADER;
 
 
 typedef struct XMWAVHEADER
-{   ULONG length;           // (dword) Sample length
+{
+    ULONG length;           // (dword) Sample length
     ULONG loopstart;        // (dword) Sample loop start
     ULONG looplength;       // (dword) Sample loop length
     UBYTE volume;           // (byte) Volume 
@@ -115,14 +122,17 @@ typedef struct XMWAVHEADER
     UBYTE vibsweep;         // (byte) Vibrato sweep
     UBYTE vibdepth;         // (byte) Vibrato depth
     UBYTE vibrate;          // (byte) Vibrato rate
+
 } XMWAVHEADER;
 
 
 typedef struct XMPATHEADE
-{   ULONG size;                     // (dword) Pattern header length 
+{
+    ULONG size;                     // (dword) Pattern header length 
     UBYTE packing;                  // (byte) Packing type (always 0)
     UWORD numrows;                  // (word) Number of rows in pattern (1..256)
     UWORD packsize;                 // (word) Packed patterndata size
+
 } XMPATHEADER;
 
 typedef struct XMNOTE
@@ -149,6 +159,7 @@ typedef struct XMNOTE
     void *XM_Init(void)
 // =====================================================================================
 {
+    SL_RegisterDecompressor(&dec_raw);
     return _mm_calloc(NULL, 1,sizeof(XMHEADER));
 }
 
@@ -821,7 +832,7 @@ typedef struct XMNOTE
         if(s->type & 0x2) q->flags |= SL_BIDI;
 
         q->format |= SF_DELTA | SF_SIGNED; 
-        if(s->reserved == 0xad) q->compress = DECOMPRESS_ADPCM;
+        if(s->reserved == 0xad) q->compress = SL_COMPRESS_ADPCM;
     }
 
     d = of->instruments;

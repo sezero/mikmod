@@ -1,4 +1,7 @@
 /*
+this documentation is all out of date as of 9/4/02
+*/
+/*
 
 Name:
 DRV_dx6.C
@@ -67,6 +70,11 @@ Notes about Directsound:
 #include <dsound.h>
 #include <stdio.h>
 
+#define MINIMUM_LATENCY     (60)        // was 10
+#define BUFFER_SIZE         (2000)
+#define LAG_INCREMENT       (64)        // was 16
+#define ERROR_TOLERANCE     (2500)
+
 static void DS_WipeBuffers(MDRIVER *md);
 
 // =====================================================================================
@@ -86,13 +94,18 @@ static void DS_WipeBuffers(MDRIVER *md);
     uint   mixspeed;
     uint   channels;
     int    dorefresh;
-    DWORD  poppos;
-    DWORD  bufsize;
-    int    tolerance;
+	uint	bufsize;
+	uint	latency;
+	int		currpos;
+	char *nullbuf;
+	int lag;
+	int lastwrite;
+	int lastwritecursor;
+	int samplesize;
+	int lasterror;
 
-    uint   dx6_latency;
+	int filterwindow[7];
 
-    DWORD  CurrBufPlayPos, CurrBufWritePos;
 
 } DS_LOCALINFO;
 
@@ -112,7 +125,7 @@ static void DS_WipeBuffers(MDRIVER *md);
 			// This one gets a special action since the user may want to be
             // informed that their sound is tied up.
             error = "Audio device in use.";
-            _mmerr_set(MMERR_INITIALIZING_DEVICE, "Audio device is already in use.");
+            _mmerr_set(MMERR_INITIALIZING_DEVICE, "DirectSound Initialization Failure", "The audio device is already in use and I'm not allowed to use it.  Woops!");
 		break;
 
         case DSERR_BADFORMAT:
@@ -203,12 +216,9 @@ static void DS_WipeBuffers(MDRIVER *md);
     HRESULT       (WINAPI *DSoundCreate)(LPGUID, LPDIRECTSOUND *, LPUNKNOWN);
     HRESULT       hres;
     DS_LOCALINFO *hwdata;
+	//int i;
     
     hwdata = (DS_LOCALINFO *)_mm_calloc(md->allochandle, 1,sizeof(DS_LOCALINFO));
-
-    hwdata->mode     = DMODE_16BITS | DMODE_INTERP | DMODE_NOCLICK;
-    hwdata->mixspeed = 44100;
-    hwdata->channels = 2;
 
 	// Load the dsound DLL
     
@@ -222,27 +232,29 @@ static void DS_WipeBuffers(MDRIVER *md);
     // we safely assume that the user detected the dsound first.
     DSoundCreate = (void *)GetProcAddress(hwdata->dll, "DirectSoundCreate");
 
+#ifdef _DEBUG
+	AllocConsole();
+#endif
+
     //SetPriorityClass(GetCurrentProcess(),HIGH_PRIORITY_CLASS); //HIGH_PRIORITY_CLASS);
     //SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
-    
+	
     hres = DSoundCreate(NULL,&hwdata->ds,NULL);
     if(hres != DS_OK)
     {   logerror("DSoundCreate",hres);
         return 1;
     }
 
-    hwdata->dx6_latency = latency;
+	hwdata->latency=latency;
 
     if(!md->device.vc)
     {   md->device.vc = VC_Init();
         if(!md->device.vc) return 1;
     }
 
-    hwdata->mode     = DMODE_16BITS | DMODE_INTERP | DMODE_NOCLICK;
-    hwdata->mixspeed = 44100;
-    hwdata->channels = 2;
-
     md->device.local = hwdata;
+
+	hwdata->nullbuf = 0;
 
     return 0;
 }
@@ -252,10 +264,13 @@ static void DS_WipeBuffers(MDRIVER *md);
     static void DS_Exit(MDRIVER *md)
 // =====================================================================================
 {
+	//int i;
     DS_LOCALINFO  *hwdata = md->device.local;
+	
 
     if(hwdata)
-    {   if(hwdata->dll)
+    {   
+		if(hwdata->dll)
         {   if(hwdata->bb) IDirectSoundBuffer_Stop(hwdata->bb);
     
             VC_Exit(md->device.vc);
@@ -266,51 +281,97 @@ static void DS_WipeBuffers(MDRIVER *md);
 
             FreeLibrary(hwdata->dll);
         }
+
+		if(hwdata->nullbuf)
+			free(hwdata->nullbuf);
+
         _mm_free(md->allochandle, hwdata);
     }
 }
 
+static DWORD last;
 
 // =====================================================================================
     static void DS_Update(MDRIVER *md)
 // =====================================================================================
 {
-    int            last;
     DS_LOCALINFO  *hwdata = md->device.local;
+    HRESULT        h;
+    DWORD          play, write;
+    DWORD          ptr1len, ptr2len;
+    void          *ptr1, *ptr2;
+    int            diff, errordiff, thistime;
 
     if(hwdata->dorefresh)
-    {   int      diff;
-        DWORD    ptr1len, ptr2len;
-        void    *ptr1, *ptr2;
-        HRESULT  h;
+    {
+	    IDirectSoundBuffer_GetCurrentPosition(hwdata->bb, &play, &write);
 
-        IDirectSoundBuffer_GetCurrentPosition(hwdata->bb,&hwdata->CurrBufPlayPos,&hwdata->CurrBufWritePos);
-	    diff = hwdata->CurrBufPlayPos - hwdata->poppos;
+	    diff = (int)write-hwdata->lastwritecursor;
+	    if(diff < 0) diff += (int)hwdata->bufsize;
 
-	    if(diff < 0) diff += hwdata->bufsize;
+	    hwdata->lastwritecursor = (int)write;
 
-        if(diff)
-        {   last = hwdata->CurrBufWritePos;
+	    if(diff > hwdata->lag)
+	    {
+		    thistime = (int)timeGetTime();
+		    errordiff = thistime - hwdata->lasterror;
 
-            h = IDirectSoundBuffer_Lock(hwdata->bb,hwdata->poppos,diff,&ptr1,&ptr1len,&ptr2,&ptr2len,0);
-            if(h==DSERR_BUFFERLOST)
-            {   IDirectSoundBuffer_Restore(hwdata->bb);
-                h=IDirectSoundBuffer_Lock(hwdata->bb,hwdata->poppos,diff,&ptr1,&ptr1len,&ptr2,&ptr2len,0);
+            #ifdef _DEBUG
+            {
+            char xx[100];
+	        DWORD crap;
+            sprintf(xx,"%d>%d\n", diff, hwdata->lag);
+            WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), xx, strlen(xx), &crap, 0);
             }
+            #endif
+
+		    if(errordiff < ERROR_TOLERANCE)
+		    {
+			    hwdata->lag += hwdata->samplesize * (LAG_INCREMENT);
+			    if(hwdata->lag > (int)hwdata->bufsize)
+			    {
+                    // we needed more samples worth of lag than BUFFER_SIZE
+                    // things are never going to work without a larger buffer
+                    hwdata->lag = hwdata->bufsize;
+			    }
+
+		    }
+
+		    hwdata->lasterror = thistime;
+
+		    diff = (int)write-hwdata->lastwrite;
+		    if(diff < 0)
+			    diff += (int)hwdata->bufsize;
+
+		    VC_WriteBytes(md,hwdata->nullbuf,diff);
+
+		    diff = hwdata->lag;
+		    hwdata->lastwrite = write;
+
+	    }
+
+	    if(diff>0)
+	    {
+		    h = IDirectSoundBuffer_Lock(hwdata->bb,hwdata->lastwrite, diff, &ptr1, &ptr1len, &ptr2, &ptr2len, 0);
+            if(h==DSERR_BUFFERLOST)
+            {
+			    IDirectSoundBuffer_Restore(hwdata->bb);
+			    h = IDirectSoundBuffer_Lock(hwdata->bb, hwdata->lastwrite, diff, &ptr1, &ptr1len, &ptr2, &ptr2len, 0);
+		    }
 
             if(h==DS_OK)
-            {   //if player is paused?
-                //VC_SilenceBytes(ptr1,ptr1len);
-                //if(ptr2) VC_SilenceBytes(ptr2,ptr2len);
-
+            {   
+			    
                 VC_WriteBytes(md, ptr1,ptr1len);
                 if(ptr2) VC_WriteBytes(md, ptr2,ptr2len);
 
                 IDirectSoundBuffer_Unlock(hwdata->bb,ptr1,ptr1len,ptr2,ptr2len);
-                hwdata->poppos += diff;
-                if(hwdata->poppos >= hwdata->bufsize) hwdata->poppos -= hwdata->bufsize;
             }
-        }
+
+		    hwdata->lastwrite += diff;
+		    if(hwdata->lastwrite >= (int)hwdata->bufsize)
+			    hwdata->lastwrite -= (int)hwdata->bufsize;
+	    }
     }
 }
 
@@ -320,7 +381,7 @@ static void DS_WipeBuffers(MDRIVER *md);
 // =====================================================================================
 {
     DS_LOCALINFO  *hwdata = md->device.local;
-    
+
     if(hwdata->dorefresh)
     {   DWORD    ptr1len;
         void    *ptr1;
@@ -329,7 +390,7 @@ static void DS_WipeBuffers(MDRIVER *md);
         h = IDirectSoundBuffer_Lock(hwdata->bb,0,0,&ptr1,&ptr1len, NULL, NULL, DSBLOCK_ENTIREBUFFER);
         if(h==DSERR_BUFFERLOST)
         {   IDirectSoundBuffer_Restore(hwdata->bb);
-            h=IDirectSoundBuffer_Lock(hwdata->bb,0,0,&ptr1,&ptr1len, NULL, NULL, DSBLOCK_ENTIREBUFFER);
+            h = IDirectSoundBuffer_Lock(hwdata->bb,0,0,&ptr1,&ptr1len, NULL, NULL, DSBLOCK_ENTIREBUFFER);
         }
 
         if(h==DS_OK)
@@ -349,9 +410,10 @@ static void DS_WipeBuffers(MDRIVER *md);
     WAVEFORMATEX   pcmwf;
     HRESULT        hres;
     uint           outrate;
+	//HANDLE  thread;
+	//int i;
 
     DS_LOCALINFO  *hwdata = md->device.local;
-    int          latency = hwdata->dx6_latency;
 
     if(!hwdata->ds) return 0;
 
@@ -361,7 +423,8 @@ static void DS_WipeBuffers(MDRIVER *md);
     if(!(mode & DMODE_DEFAULT)) hwdata->mode = mode;
 
     switch(channels)
-    {   case MD_MONO:
+    {
+        case MD_MONO:
             hwdata->channels = 1;
         break;
 
@@ -374,7 +437,7 @@ static void DS_WipeBuffers(MDRIVER *md);
     hres = hwdata->ds->lpVtbl->SetCooperativeLevel(hwdata->ds,GetForegroundWindow(),DSSCL_PRIORITY | ((hwdata->mode & DMODE_EXCLUSIVE) ? DSSCL_EXCLUSIVE : 0));
 
     if(hres != DS_OK)
-    {   logerror("SetCooperativeLevel",hres);
+    {   logerror("SetCooperativeLevel", hres);
         return 1;
     }
 
@@ -385,7 +448,7 @@ static void DS_WipeBuffers(MDRIVER *md);
     else if(hwdata->mixspeed <= 22050) outrate = 22050;
     else if(hwdata->mixspeed <= 44100) outrate = 44100;
 
-    memset(&pcmwf,0,sizeof(PCMWAVEFORMAT));
+    memset(&pcmwf, 0, sizeof(PCMWAVEFORMAT));
     pcmwf.wFormatTag      = WAVE_FORMAT_PCM;
     pcmwf.nChannels       = hwdata->channels;
     pcmwf.nSamplesPerSec  = outrate;
@@ -393,42 +456,32 @@ static void DS_WipeBuffers(MDRIVER *md);
     pcmwf.nBlockAlign     = (pcmwf.wBitsPerSample*pcmwf.nChannels)/8;
     pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec*pcmwf.nBlockAlign;
 
-    hwdata->tolerance     = (pcmwf.nAvgBytesPerSec*(latency/2)) / 1000;
-    hwdata->tolerance    &= ~3;
-    hwdata->bufsize       = hwdata->tolerance*2;
-    hwdata->poppos        = hwdata->tolerance;
-       
-    memset(&bf,0,sizeof(DSBUFFERDESC));
-    bf.lpwfxFormat   = NULL; 
-    bf.dwSize        = sizeof(DSBUFFERDESC);
-    bf.dwFlags       = DSBCAPS_PRIMARYBUFFER;
-    bf.dwBufferBytes = 0;
 
-    hres = hwdata->ds->lpVtbl->CreateSoundBuffer(hwdata->ds,&bf,&hwdata->pb,NULL);
-    if(hres != DS_OK)
-    {   logerror("CreateSoundBuffer (Primary)",hres);
-        return 1;
-    }
+	hwdata->samplesize = pcmwf.nBlockAlign;
 
-    hres = hwdata->pb->lpVtbl->SetFormat(hwdata->pb,&pcmwf);
-    if(hres != DS_OK)
-    {   logerror("Primary_SetFormat",hres);
-        return 1;
-    }
+	// set bufsize and round to nearest samplesize
+	hwdata->bufsize  = ((BUFFER_SIZE) * hwdata->mixspeed * hwdata->samplesize) / 1000;
+	hwdata->bufsize += (hwdata->samplesize - (hwdata->bufsize % hwdata->samplesize)) % hwdata->samplesize;
 
-    hwdata->pb->lpVtbl->Play(hwdata->pb,0,0,DSBPLAY_LOOPING);
-    
-    memset(&pcmwf,0,sizeof(PCMWAVEFORMAT));
-    pcmwf.wFormatTag      = WAVE_FORMAT_PCM;
-    pcmwf.nChannels       = hwdata->channels;
-    pcmwf.wBitsPerSample  = (hwdata->mode&DMODE_16BITS) ? 16 : 8;
-    pcmwf.nSamplesPerSec  = hwdata->mixspeed;
-    pcmwf.nBlockAlign     = (pcmwf.wBitsPerSample*pcmwf.nChannels)/8;
-    pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec*pcmwf.nBlockAlign;
-    
-    memset(&bf,0,sizeof(DSBUFFERDESC));
+	// allocate scratch buffer for dumping lost samples
+	if(hwdata->nullbuf) free(hwdata->nullbuf);
+	hwdata->nullbuf = (UBYTE *)malloc(hwdata->bufsize * sizeof(UBYTE));
+
+	// set write cursor lag and round to nearest samplesize
+	hwdata->lag  = (MINIMUM_LATENCY * hwdata->mixspeed*hwdata->samplesize)/1000;
+	hwdata->lag += (hwdata->samplesize-(hwdata->samplesize-hwdata->lag%hwdata->samplesize)) % hwdata->samplesize;
+
+	//initial write cursors
+	hwdata->currpos = hwdata->lag;
+	hwdata->lastwrite = 0;
+	hwdata->lastwritecursor = 0;
+
+	//error tolerance timer
+	hwdata->lasterror = 0;
+	
+        memset(&bf,0,sizeof(DSBUFFERDESC));
     bf.dwSize          = sizeof(DSBUFFERDESC);
-    bf.dwFlags         = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_STATIC | ((hwdata->mode & DMODE_EXCLUSIVE) ? 0 : DSBCAPS_GLOBALFOCUS);
+    bf.dwFlags         = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_LOCSOFTWARE | ((hwdata->mode & DMODE_EXCLUSIVE) ? 0 : DSBCAPS_GLOBALFOCUS);
     bf.dwBufferBytes   = hwdata->bufsize;
     bf.lpwfxFormat     = &pcmwf;
     
@@ -438,17 +491,17 @@ static void DS_WipeBuffers(MDRIVER *md);
         return 1;
     }
 
-    hwdata->CurrBufPlayPos = hwdata->CurrBufWritePos = 0;
-
     VC_SetMode(md->device.vc, hwdata->mixspeed, hwdata->mode, channels, cpumode);
-    
+   
     // Finally, start playing the buffer (and wipe it first)
+
+	IDirectSoundBuffer_Play(hwdata->bb,0,0,DSBPLAY_LOOPING);
     hwdata->dorefresh = 1;
-    DS_WipeBuffers(md);
-    IDirectSoundBuffer_Play(hwdata->bb,0,0,DSBPLAY_LOOPING);
+	DS_WipeBuffers(md);
 
     return 0;
 }
+
 
 
 // =====================================================================================
@@ -520,3 +573,5 @@ MD_DEVICE drv_ds =
 
     DS_WipeBuffers
 };
+
+

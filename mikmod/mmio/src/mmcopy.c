@@ -1,7 +1,7 @@
 /*
  Mikmod Portable Memory Allocation
 
- By Jake Stine of Divine Entertainment (1996-2000) and
+ By Jake Stine of Hour 13 Studios (1996-2002) and
     Jean-Paul Mikkers (1993-1996).
 
  File: mmcopy.c
@@ -13,18 +13,18 @@
 #include "mmio.h"
 #include <string.h>
 
-void _mm_memcpy_long(void *dst, const void *src, int count)
+void _mm_memcpy_long(void *dst, const void *src, const int count)
 {
     register ULONG *dest = (ULONG *)dst, *srce = (ULONG *)src, i;
     for(i=count; i; i--, dest++, srce++) *dest = *srce;
 }
 
-void _mm_memcpy_word(void *dst, const void *src, int count)
+void _mm_memcpy_word(void *dst, const void *src, const int count)
 {
     memcpy(dst, src, count*2);
 }
 
-void _mm_memcpy_quad(void *dst, const void *src, int count)
+void _mm_memcpy_quad(void *dst, const void *src, const int count)
 {
     register ULONG *dest = (ULONG *)dst, *srce = (ULONG *)src, i;
     for(i=count*2; i; i--, dest++, srce++) *dest = *srce;
@@ -40,7 +40,7 @@ void _mm_memcpy_quad(void *dst, const void *src, int count)
     CHAR *buf;
 
     if(!src) return NULL;
-    if((buf = (CHAR *)_mm_malloc(allochandle, strlen(src)+1)) == NULL) return NULL;
+    if((buf = (CHAR *)_mm_malloc(allochandle, (strlen(src)+1) * sizeof(CHAR))) == NULL) return NULL;
 
     strcpy(buf,src);
     return buf;
@@ -48,7 +48,24 @@ void _mm_memcpy_quad(void *dst, const void *src, int count)
 
 
 // =====================================================================================
-    CHAR *_mm_strcat(CHAR *dest, const CHAR *src, uint maxlen)
+    CHAR *_mm_strcpy(CHAR *dest, const CHAR *src, const uint maxlen)
+// =====================================================================================
+// copies the source string onto the dest, ensuring the dest never goes above maxlen
+// characters!  This is effectively a more useful version of strncpy.  Use it to
+// prevent buffer overflows and such.
+{
+    if(dest && src)
+    {
+        strncpy(dest, src, maxlen-1);
+        dest[maxlen-1] = 0;                   // strncpy not garunteed to do this
+    }
+
+    return dest;
+}
+
+
+// =====================================================================================
+    CHAR *_mm_strcat(CHAR *dest, const CHAR *src, const uint maxlen)
 // =====================================================================================
 // concatenates the source string onto the dest, ensuring the dest never goes above
 // maxlen characters!  This is effectively a more useful version of strncat.  USe it to
@@ -90,13 +107,13 @@ void _mm_memcpy_quad(void *dst, const void *src, int count)
 
 
 // ======================================================================================
-    void *_mm_structdup(MM_ALLOC *allochandle, const void *src, size_t size)
+    void *_mm_structdup(MM_ALLOC *allochandle, const void *src, const size_t size)
 // ======================================================================================
 {
     void *tribaldance;
     
     if(!src) return NULL;
-    
+
     tribaldance = _mm_malloc(allochandle, size);
     if(tribaldance) memcpy(tribaldance, src, size);
 
@@ -105,7 +122,23 @@ void _mm_memcpy_quad(void *dst, const void *src, int count)
 
 
 // =====================================================================================
-    void _mm_insertchr(CHAR *dest, CHAR src, uint pos)
+    void *_mm_objdup(MM_ALLOC *parent, const void *src, const uint blksize)
+// =====================================================================================
+{
+    void  *dest = _mmalloc_create_ex("Sumkinda Duplicate", parent, blksize);
+   
+    {
+        UBYTE        *stupid = (UBYTE *)dest;
+        const UBYTE  *does   = (UBYTE *)src;
+
+        memcpy(&stupid[sizeof(MM_ALLOC)], &does[sizeof(MM_ALLOC)], blksize - sizeof(MM_ALLOC));
+    }
+    return dest;
+}
+
+
+// =====================================================================================
+    void _mm_insertchr(CHAR *dest, const CHAR src, const uint pos)
 // =====================================================================================
 // inserts the specified source character into the destination string at position.  It
 // is the responsibility of the caller to ensure the string has enough room to contain
@@ -151,7 +184,7 @@ void _mm_memcpy_quad(void *dst, const void *src, int count)
 
 
 // =====================================================================================
-    void _mm_insertstr(CHAR *dest, const CHAR *src, uint pos)
+    void _mm_insertstr(CHAR *dest, const CHAR *src, const uint pos)
 // =====================================================================================
 // inserts the specified source string into the destination string at position.  It
 // is the responsibility of the caller to ensure the string has enough room to contain
@@ -181,3 +214,136 @@ void _mm_memcpy_quad(void *dst, const void *src, int count)
         }
     }
 }
+
+
+// =====================================================================================
+    void _mm_splitpath(const CHAR *fullpath, CHAR *path, CHAR *fname)
+// =====================================================================================
+{
+    if(fullpath)
+    {
+        int    i;
+        const   flen = strlen(fullpath);
+
+        if(path) strcpy(path, fullpath);
+
+        for(i=flen-1; i>=0; i--)
+            if(fullpath[i] == '\\') break;
+
+        if(fname) strcpy(fname, &fullpath[i+1]);
+        if(path) path[i+1] = 0;
+    }
+}
+
+const static CHAR  invalidchars[] = "'|()*%?/\\\"";
+
+// =====================================================================================
+    CHAR *_mmstr_filename(CHAR *src)
+// =====================================================================================
+// Takes the given string and converts it into a valid filename by stripping out any and
+// all invalid characters and replacing them with underscores.
+{
+    if(src)
+    {
+        uint    idx = 0;
+        while(src[idx])
+        {
+            const CHAR  *ic  = invalidchars;
+            while(*ic)
+            {   if(src[idx] == *ic)
+                {   src[idx] = '_';
+                    break;
+                }
+            }
+            idx++;
+        }
+    }
+    return src;
+}
+
+
+// =====================================================================================
+    CHAR *_mmstr_pathcat(CHAR *dest, const CHAR *src)
+// =====================================================================================
+// Concatenates the source path onto the dest, ensuring the dest never goes above
+// _MAX_PATH!  If the source path has root characters, then it overwrites the dest
+// (proper root behavior)
+{
+    if(!dest) return NULL;
+    if(!src)  return dest;
+
+    // Check for Colon / Backslash
+    // ---------------------------
+    // A colon, in DOS terms, designates a drive specification, which means we should
+    // ignore the root path.  Same goes for a backslash as the first character in the
+    // path!
+
+    if((strcspn(src, ":") < strlen(src)) || (src[0] == '\\'))
+        strcpy(dest, src);
+    else
+    {
+        if(dest[0])
+        {
+            // Remove Trailing Backslashes on dest
+            // -----------------------------------
+            // We'll add our own in later and they mess up some of the logic.
+
+            uint    t   = 0;
+            uint    len = strlen(dest);
+            len--;
+            while(len && (dest[len] == '\\')) len--;
+
+            dest[len+1] = 0;
+
+            // Check for Periods in src
+            // ------------------------
+            // Periods encapsulated by '\' represent folder nesting: '.' is current (ignored),
+            // '..' is previous, etc.
+
+            while(src[t] && (src[t] == '.')) t++;
+            if((src[t] == '\\') || (src[t] == 0))
+                src  += t;
+            else
+                t     = 0;
+
+            if(t)
+            {
+                t--;
+                while(t && len)
+                {
+                    if(dest[len] == '\\') t--;
+                    len--;
+                }
+                dest[len+1] = 0;
+            }
+        }
+
+        if(dest[0] != 0)
+            _mm_strcat(dest, "\\", _MAX_PATH);
+        _mm_strcat(dest, src, _MAX_PATH);
+    }
+    return dest;
+}
+
+
+// =====================================================================================
+    CHAR *_mmstr_newext(CHAR *path, const CHAR *ext)
+// =====================================================================================
+// Attaches a new extension to the specified string, removing the old one if it existed.
+{
+    uint    i;
+    uint    slen = strlen(path);
+
+    if(!path) return NULL;
+
+    for(i=slen-1; i; i--)
+        if(path[i] == '.') break;
+
+    i++;
+    path[i] = 0;
+    if(ext)
+        strcpy(&path[i], ext);
+    return path;
+}
+
+

@@ -9,8 +9,8 @@
 
 CHAR banner[]=
 "\n"
-"MikMod v3.20 - A Divine Entertainment Production\n"
-"               Public Release - May 20th, 1999\n"
+"MikMod v3.20 - An Hour 13 Studios Production\n"
+"               Public Release - April 9th, 2003\n"
 "컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴\n"
 "Coded by Jake Stine [Air Richter] and Jean-Paul Mikkers [MikMak]\n"
 "컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴";

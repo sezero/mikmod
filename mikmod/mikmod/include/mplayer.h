@@ -36,14 +36,15 @@ enum
 #pragma pack (push,1)
 #endif
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MP_EFFMEM
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Effect memory structure.  Flag indicates whether this is a global or local effect. 
 // Sloppy, but works.
 {   
     UBYTE          flag;
     UNITRK_EFFECT  effect;
+
 } MP_EFFMEM;
 
 #ifndef __GNUC__
@@ -51,9 +52,9 @@ enum
 #pragma pack (push,4)
 #endif
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _ENVPR
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     UBYTE pts;          // number of envelope points
     UBYTE susbeg;       // envelope sustain index begin
@@ -67,45 +68,47 @@ enum
     UWORD p;            // current envelope counter
     int   a;            // envelope index a
     int   b;            // envelope index b
+
 } ENVPR;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _MP_SIZEOF
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {
     INSTRUMENT  *i;
     UNISAMPLE   *s;
     EXTSAMPLE   *es;
 
-    uint   sample;       // which instrument number
-    int    volume;       // output volume (vol + sampcol + instvol)
-    int    panning;      // panning position
-    int    chanvol;      // channel's "global" volume
-    uint   fadevol;      // fading volume rate
-    uint   period;       // period to play the sample at
+    uint    sample;       // which instrument number
+    int     volume;       // output volume (vol + sampcol + instvol)
+    int     panning;      // panning position
+    int     chanvol;      // channel's "global" volume
+    uint    fadevol;      // fading volume rate
+    uint    period;       // period to play the sample at
 
-    SWORD  handle;       // which sample-handle
-    long   start;        // The start byte index in the sample
-    long   setpos;       // new setposition index for the sample.
+    SWORD   handle;       // which sample-handle
+    long    start;        // The start byte index in the sample
+    long    setpos;       // new setposition index for the sample.
 
-    UBYTE  volflg;       // volume envelope settings
-    UBYTE  panflg;       // panning envelope settings
-    UBYTE  pitflg;       // pitch envelope settings
-    UBYTE  resflg;       // resonance filter envelope settings
+    UBYTE   volflg;       // volume envelope settings
+    UBYTE   panflg;       // panning envelope settings
+    UBYTE   pitflg;       // pitch envelope settings
+    UBYTE   resflg;       // resonance filter envelope settings
 
-    UBYTE  note;         // the audible note (as heard, direct rep of period)
-    UBYTE  nna;          // New note action type + master/slave flags
-    UBYTE  kick;         // if true = sample has to be restarted
+    UBYTE   note;         // the audible note (as heard, direct rep of period)
+    UBYTE   nna;          // New note action type + master/slave flags
+    UBYTE   kick;         // if true = sample has to be restarted
 
-    int    cutoff;       // Resonance filter cutoff (harmonic scale)
-    uint   resonance;    // Resonance filter resonance.
+    int     cutoff;       // Resonance filter cutoff (harmonic scale)
+    uint    resonance;    // Resonance filter resonance.
+
 } MP_SIZEOF;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _MP_VOICE
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {   
     MP_SIZEOF  shared;
 
@@ -124,12 +127,13 @@ enum
     BOOL   mflag;
     SWORD  masterchn;
     struct _MP_CONTROL *master;// index of "master" effects channel
+
 } MP_VOICE;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct _MP_CONTROL
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 {
     MP_SIZEOF  shared;
 
@@ -185,9 +189,9 @@ enum
 } MP_CONTROL;
 
 
-// ============================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MP_STATE
-// ============================================================================
+// -------------------------------------------------------------------------------------
 {
     // All following variables can be modified at any time.
 
@@ -235,12 +239,13 @@ enum
     UBYTE      *globtrk_row;    // global track!
 
     long        strip_timeout;  // for stripping out the end of songs.
+
 } MP_STATE;
 
 
-// =====================================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MP_VOLFADER
-// =====================================================================================
+// -------------------------------------------------------------------------------------
 // Block of information set by Player_VolumeFade and Player_VolumeFadeEx, and used by the
 // player updater to fade the song appropriately!
 {
@@ -254,9 +259,9 @@ enum
 } MP_VOLFADER;
 
 
-// ============================================================================
+// -------------------------------------------------------------------------------------
     typedef struct MPLAYER
-// ============================================================================
+// -------------------------------------------------------------------------------------
 {
     BOOL          ended;         // set to 1 when the song ends naturally.
     MP_STATE      state;         // current state information

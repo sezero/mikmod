@@ -37,32 +37,24 @@
 // Disable the pointless warning: "(big val) converted to (small val). Possible loss of data"
 // Move the semi-useful warning "(small value) assigned to (big val), Conversion Supplied"
 //   (useful because that conversion is kinda slow on Pentiums, usually requiring a movsx)
+// Move more useful warning "local variable initialized but not referenced" to Level 3.
 
 #pragma warning( disable : 4244 )       // (big val) converted to (small val). Possible loss of data
 #pragma warning( disable : 4305 )       // truncation from 'const double ' to 'float '
+#pragma warning( disable : 4514 )       // Unreferenced inline function has been removed (yeah, we know)
 #pragma warning( 4 : 4761 )             // (small value) assigned to (big val), Conversion Supplied
+#pragma warning( 4 : 4142 )             // benign redefinition of type (ex: unsigned char to char)
+
+// Release Optimizations / Options
+// -------------------------------
+// /Og (global optimizations), /Os (favor small code), /Oy (no frame pointers)
+// set the 512-byte alignment .. cuts back on whitespace in output files (EXE/DLL/LIB)
 
 #ifndef _DEBUG
-// release optimizations
-// /Og (global optimizations), /Os (favor small code), /Oy (no frame pointers)
+#pragma warning( 3 : 4189 )             // local variable initialized but not referenced (moved from lvl 4)
 #pragma optimize("gy",on)
 #pragma comment(linker,"/RELEASE")
-// set the 512-byte alignment .. cuts back on whitespace in output files (EXE/DLL/LIB)
 #pragma comment(linker,"/opt:nowin98")
-
-/*
-#define _mm_initdebugmem()
-
-#else
-
-#include <crtdbg.h>
-
-#define _mm_initdebugmem() \
-{   uint tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG); \
-    tmpDbgFlag |= _CRTDBG_CHECK_ALWAYS_DF; \
-    _CrtSetDbgFlag(tmpDbgFlag); \
-}
-*/
 #endif
 #endif
 
@@ -70,8 +62,8 @@
 // mikmod that is an actual character string uses this type.  Things that
 // want to be bytes use the std c 'char' type.
 
-#ifndef CHAR
-typedef char            CHAR;
+#ifndef VOID
+typedef unsigned char   CHAR;
 #endif
 
 // finally got tired of typing in 'unsigned' all the time!
@@ -228,5 +220,14 @@ typedef unsigned __int64 INT64U;
 #define _mmchr_whitespace(x)    ( (x) && ((x <= 32) || (x == 255)) )
 #define _mmchr_notwhitespace(x) ( (x > 32) && (x != 255) )
 
+#define _mm_exchange(x, y, type)  \
+{ \
+    type  __tmp = x; \
+    x = y; \
+    y = __tmp; \
+} \
+
+
 #endif
+
 

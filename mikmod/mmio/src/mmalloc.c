@@ -59,17 +59,24 @@
 
 #endif
 
-static CHAR *msg_fail = "%s > Failure allocating block of size: %d";
-static CHAR *msg_set  = "Out of memory!  Please check the logfile for more information.";
+#ifdef MM_NO_NAMES
+static const CHAR *msg_fail = "%s > Failure allocating block of size: %d";
+#else
+static const CHAR *msg_fail = "%s > In allochandle '%s' > Failure allocating block of size: %d";
+#endif
+static const CHAR *msg_set  = "General memory allocation failure.  Close some other applications, increase swapfile size, or buy some more ram... and then try again.";
+static const CHAR *msg_head = "Out of memory!";
 
 
 // Add the buffer threshold value and the size of the 'pointer storage space'
 // onto the buffer size. Then, align the buffer size to the set alignment.
+//
+// TODO  : Make this code more thread-safe.. ?
 
 #define BLOCKHEAP_THRESHOLD     3072
 
 static MM_ALLOC      *globalalloc = NULL;
-static MM_BLOCKINFO  *blockheap = NULL; 
+static MM_BLOCKINFO  *blockheap   = NULL; 
 static uint           heapsize;               // number of blocks in the heap
 static uint           lastblock;              // last block free'd (or first free block)
 
@@ -188,9 +195,6 @@ static uint           lastblock;              // last block free'd (or first fre
 {
     int cruise = type->blocklist;
 
-    if(!strcmp(type->name, "RIPINF"))
-        _mmlog("woombey");
-
     if(type->children)
     {   MM_ALLOC *child = type->children;
         while(child)
@@ -221,9 +225,6 @@ static uint           lastblock;              // last block free'd (or first fre
 
     for(i=0; i<tabsize; i++) tab[i] = 32;
     tab[i] = 0;
-
-    if(!strcmp(type->name, "RIPINF"))
-        _mmlog("woombey");
 
     if(type)
     {   int  cruise = type->blocklist;
@@ -426,7 +427,11 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
-    static MM_BLOCKINFO *addblock(MM_ALLOC *type, ULONG *ptr, uint size, void (*deallocate)(void *block))
+#ifndef MM_NO_NAMES
+    static MM_BLOCKINFO *addblock(const CHAR *name, MM_ALLOC *type, ULONG *ptr, uint size, void (*deallocate)(void *block, uint count))
+#else
+    static MM_BLOCKINFO *addblock(MM_ALLOC *type, ULONG *ptr, uint size, void (*deallocate)(void *block, uint count))
+#endif
 // =====================================================================================
 {
     MM_BLOCKINFO *block;
@@ -461,7 +466,11 @@ static uint           lastblock;              // last block free'd (or first fre
 
     }
 
+#ifndef MM_NO_NAMES
+    _mm_strcpy(block->name, name, MM_NAME_LENGTH);
+#endif
     block->size       = size;
+    block->nitems      = 0;
     block->deallocate = deallocate;
     block->block      = ptr;
     block->next       = type->blocklist;
@@ -493,7 +502,7 @@ static uint           lastblock;              // last block free'd (or first fre
 #endif
 
     block = &blockheap[blkidx];
-    if(block->deallocate) block->deallocate(myblockval(block));
+    if(block->deallocate) block->deallocate(myblockval(block), block->nitems);
 
     // NOTE: Re-fetch block pointer incase realloc dicked with it!
 
@@ -551,17 +560,23 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
+#ifndef MM_NO_NAMES
     MMEXPORT MM_ALLOC *_mmalloc_create(const CHAR *name, MM_ALLOC *parent)
+#else
+    MMEXPORT MM_ALLOC *mmalloc_create(MM_ALLOC *parent)
+#endif
 // =====================================================================================
 // Create an mmio allocation handle for allocating memory in groups/pages.
+// TODO : Add overwrite checking for these blocks
 {
     MM_ALLOC   *type;
 
-    type = (MM_ALLOC *)calloc(1, sizeof(MM_ALLOC));
-    strcpy(type->name, name);
+    type        = (MM_ALLOC *)calloc(1, sizeof(MM_ALLOC));
+    type->size  = (sizeof(MM_ALLOC) / 4) + 1;
 
-    type->size        = (sizeof(MM_ALLOC) / 4) + 1;
-
+#ifndef MM_NO_NAMES
+    _mm_strcpy(type->name, name, MM_NAME_LENGTH);
+#endif
 #ifdef _DEBUG
     type->checkplease = TRUE;
 #endif
@@ -573,21 +588,26 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
+#ifndef MM_NO_NAMES
     MMEXPORT MM_ALLOC *_mmalloc_create_ex(const CHAR *name, MM_ALLOC *parent, uint size)
+#else
+    MMEXPORT MM_ALLOC *mmalloc_create_ex(MM_ALLOC *parent, uint size)
+#endif
 // =====================================================================================
 // Create an mmio allocation handle for allocating memory in groups/pages.
+// TODO : Add overwrite checking for these blocks
 {
     MM_ALLOC   *type;
 
     assert(size >= sizeof(MM_ALLOC));            // this can't be good!
     if(!size) size = sizeof(MM_ALLOC);
 
-    type = (MM_ALLOC *)calloc(1, size);
-    strcpy(type->name, name);
+    type        = (MM_ALLOC *)calloc(1, size);
+    type->size  = (size / 4) + 1;
 
-    // TODO : Add overwrite checking for these blocks
-
-    type->size        = (size / 4) + 1;
+#ifndef MM_NO_NAMES
+    _mm_strcpy(type->name, name, MM_NAME_LENGTH);
+#endif
 
 #ifdef _DEBUG
     type->checkplease = TRUE;
@@ -669,7 +689,7 @@ static uint           lastblock;              // last block free'd (or first fre
         }
 #endif
         if(block->deallocate)
-            block->deallocate(myblockval(block));
+            block->deallocate(myblockval(block), block->nitems);
 
         // NOTE: Re-get block address, incase deallocate changed it.
         block = &blockheap[cruise];
@@ -763,7 +783,11 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
-    MMEXPORT void *_mm_mallocx(MM_ALLOC *type, size_t size, void (*deinitialize)(void *block))
+#ifndef MM_NO_NAMES
+    MMEXPORT void *_mm_mallocx(const CHAR *name, MM_ALLOC *type, size_t size, void (*deinitialize)(void *block, uint nitems))
+#else
+    MMEXPORT void *mm_mallocx(MM_ALLOC *type, size_t size, void (*deinitialize)(void *block, uint nitems))
+#endif
 // =====================================================================================
 {
     ULONG   *d;
@@ -782,10 +806,20 @@ static uint           lastblock;              // last block free'd (or first fre
         d = mymalloc(type, size);
 
         if(!d)
-        {   _mmlog(msg_fail, "_mm_malloc", size);
-            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_set);
+        {   
+            #ifdef MM_NO_NAMES
+                _mmlog(msg_fail, "_mm_malloc", size);
+            #else
+                _mmlog(msg_fail, "_mm_malloc", type->name, size);
+            #endif
+            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_head, msg_set);
         } else
-        {   MM_BLOCKINFO *block = addblock(type, d, size, deinitialize);
+        {
+        #ifndef MM_NO_NAMES
+            MM_BLOCKINFO *block = addblock(name, type, d, size, deinitialize);
+        #else
+            MM_BLOCKINFO *block = addblock(type, d, size, deinitialize);
+        #endif
             fillblock(block, FALSE);
             myretval(block);
         }
@@ -890,7 +924,11 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
-    MMEXPORT void *_mm_callocx(MM_ALLOC *type, size_t nitems, size_t size, void (*deallocate)(void *block))
+#ifndef MM_NO_NAMES
+    MMEXPORT void *_mm_callocx(const CHAR *name, MM_ALLOC *type, size_t nitems, size_t size, void (*deallocate)(void *block, uint count))
+#else
+    MMEXPORT void *mm_callocx(MM_ALLOC *type, size_t nitems, size_t size, void (*deallocate)(void *block, uint count))
+#endif
 // =====================================================================================
 {
     ULONG *d;
@@ -913,12 +951,23 @@ static uint           lastblock;              // last block free'd (or first fre
 
         d = mymalloc(type,size);
         if(d)
-        {   MM_BLOCKINFO *block = addblock(type, d, size, deallocate);
+        {
+        #ifndef MM_NO_NAMES
+            MM_BLOCKINFO *block = addblock(name, type, d, size, deallocate);
+        #else
+            MM_BLOCKINFO *block = addblock(type, d, size, deallocate);
+        #endif
+            block->nitems      = nitems;
             fillblock(block, TRUE);
             myretval(block);
         } else
-        {   _mmlog(msg_fail, "_mm_calloc", size);
-            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_set);
+        {
+            #ifdef MM_NO_NAMES
+                _mmlog(msg_fail, "_mm_calloc", size);
+            #else
+                _mmlog(msg_fail, "_mm_calloc", type->name, size);
+            #endif
+            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_head, msg_set);
         }
     }
 
@@ -927,10 +976,14 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
-    MMEXPORT void *_mm_reallocx(MM_ALLOC *type, void *old_blk, size_t size, void (*deallocate)(void *block))
+#ifndef MM_NO_NAMES
+    MMEXPORT void *_mm_reallocx(const CHAR *name, MM_ALLOC *type, void *old_blk, size_t size, void (*deallocate)(void *block, uint nitems))
+#else
+    MMEXPORT void *mm_reallocx(MM_ALLOC *type, void *old_blk, size_t size, void (*deallocate)(void *block, uint nitems))
+#endif
 // =====================================================================================
 {
-    ULONG *d;    
+    ULONG *d = NULL;    
 
     if(!type)
     {   if(!globalalloc) globalalloc = createglobal();
@@ -972,15 +1025,24 @@ static uint           lastblock;              // last block free'd (or first fre
             }
         } else
         {   d = mymalloc(type,size);
+        #ifndef MM_NO_NAMES
+            block = addblock(name, type, d, size, deallocate);
+        #else
             block = addblock(type, d, size, deallocate);
+        #endif
         }
 
         if(d)
         {   fillblock(block, FALSE);
             myretval(block);
         } else
-        {   _mmlog(msg_fail, "_mm_realloc", size);
-            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_set);
+        {
+            #ifdef MM_NO_NAMES
+                _mmlog(msg_fail, "_mm_realloc", size);
+            #else
+                _mmlog(msg_fail, "_mm_realloc", type->name, size);
+            #endif
+            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_head, msg_set);
         }
     }
 
@@ -989,12 +1051,16 @@ static uint           lastblock;              // last block free'd (or first fre
 
 
 // =====================================================================================
-    MMEXPORT void *_mm_recallocx(MM_ALLOC *type, void *old_blk, size_t nitems, size_t size, void (*deallocate)(void *block))
+#ifndef MM_NO_NAMES
+    MMEXPORT void *_mm_recallocx(const CHAR *name, MM_ALLOC *type, void *old_blk, size_t nitems, size_t size, void (*deallocate)(void *block, uint count))
+#else
+    MMEXPORT void *mm_recallocx(MM_ALLOC *type, void *old_blk, size_t nitems, size_t size, void (*deallocate)(void *block, uint count))
+#endif
 // =====================================================================================
 // My own special reallocator, which works like calloc by allocating memory by both block-
 // size and numitems.
 {
-    ULONG   *d;
+    ULONG   *d = NULL;
 
     if(!type)
     {   if(!globalalloc) globalalloc = createglobal();
@@ -1043,19 +1109,113 @@ static uint           lastblock;              // last block free'd (or first fre
             }
         } else
         {   d = mymalloc(type,size);
+        #ifndef MM_NO_NAMES
+            block = addblock(name, type, d, size, deallocate);
+        #else
             block = addblock(type, d, size, deallocate);
+        #endif
             memset(myblockval(block), 0, size*4);
         }
 
         if(d)
-        {   fillblock(block, FALSE);
+        {   block->nitems  = nitems;
+            fillblock(block, FALSE);
             myretval(block);
         } else
-        {   _mmlog(msg_fail, "_mm_recalloc", size);
-            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_set);
+        {
+            #ifdef MM_NO_NAMES
+                _mmlog(msg_fail, "_mm_recalloc", size);
+            #else
+                _mmlog(msg_fail, "_mm_recalloc", type->name, size);
+            #endif
+            _mmerr_set(MMERR_OUT_OF_MEMORY, msg_head, msg_set);
         }
     }
 
     return d;
 }
 
+
+// =====================================================================================
+    MM_VECTOR *_mm_vector_create(MM_ALLOC *allochandle, uint strucsize, uint increment)
+// =====================================================================================
+// Creates a vector thingie (like the C STL thingie, only not stupid or something).
+// If you want a custom threshold value, set it manually after this call.  Simple enough.
+// Use _mm_vector_free to feee the vector handle and memory allocated to it.
+{
+    MM_VECTOR    *array;
+    if(!strucsize) return NULL;
+
+    array               = _mmobj_allocblock(allochandle, MM_VECTOR);
+    if(!array) return NULL;
+
+    array->allochandle  = allochandle;
+    array->strucsize    = strucsize;
+    array->increment    = increment ? increment : 256;
+    array->threshold    = 8;
+
+    return array;
+}
+
+
+// =====================================================================================
+    void _mm_vector_init(MM_VECTOR *array, MM_ALLOC *allochandle, uint strucsize, uint increment)
+// =====================================================================================
+// initializes a static vector thingie (like the C STL thingie, only not stupid or
+// something). If you want a custom threshold value, set it manually after this call.
+// Simple enough.
+// Use _mm_vector_close to free the memory allocated to the vector.
+{
+    if(!array || !strucsize) return;
+    array->allochandle  = allochandle;
+    array->strucsize    = strucsize;
+    array->increment    = increment ? increment : 256;
+    array->threshold    = 8;
+}
+
+
+// =====================================================================================
+    void _mm_vector_alloc(MM_VECTOR *array, void **ptr)
+// =====================================================================================
+// Reallocates an array as needed, as according to the specified array descriptor.
+{
+    if(array && (array->alloc <= (array->count + array->threshold)))
+    {
+        #ifdef _DEBUG
+        if(array->ptr)
+        {   assert(array->ptr == *ptr);   }
+        #endif
+
+        array->alloc = array->count + array->increment + array->threshold;
+        *ptr         = _mm_recalloc(array->allochandle, *ptr, array->alloc, array->strucsize);
+        #ifdef _DEBUG
+        if(!array->ptr)
+            array->ptr = *ptr;
+        #endif
+    }
+}
+
+
+// =====================================================================================
+    void _mm_vector_close(MM_VECTOR *array, void **ptr)
+// =====================================================================================
+// Wipes the contents of the specified array and unloads allocated memory.
+// If used on a dynamically-allocated vector handle, the handle remains intact.
+{
+    array->count        = 0;
+    array->alloc        = 0;
+    _mm_a_free(array->allochandle, ptr);
+}
+
+
+// =====================================================================================
+    void _mm_vector_free(MM_VECTOR **array, void **ptr)
+// =====================================================================================
+// Frees a dynamically-allocated mm_vector!
+{
+    if(array)
+    {
+        _mm_a_free((*array)->allochandle, ptr);
+        _mm_a_free((*array)->allochandle, array);
+    }
+}

@@ -2,22 +2,17 @@
 
  MikMod Sound System
 
-  By Jake Stine of Divine Entertainment (1996-2000)
+  By Jake Stine of Hour 13 Studios (1996-2000)
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
-
- Distribution / Code rights:
-  Use this source code in any fashion you see fit.  Giving me credit where
-  credit is due is optional, depending on your own levels of integrity and
-  honesty.
+    air@hour13.com
 
  -----------------------------------------
- Module: sloader.c
+ sloader.c
 
   Routines for loading samples.  The sample loader utilizes the routines
-  provided by the "registered" sample loader.  See SAMPLELOADER in
+  provided by the "registered" sample loader.  See SAMPLELOAD in
   MIKMOD.H for the sample loader structure.
 
  Portability:
@@ -28,280 +23,74 @@
 #include "mikmod.h"
 #include "mmforbid.h"
 
+#include "mminline.h"
+
 #include <string.h>
+#include <assert.h>
 
 static int        sl_rlength;
 static int        sl_old, sl_new, sl_ditherval;
 static SWORD     *sl_buffer      = NULL;
-static UBYTE     *sl_compress    = NULL;
-static MM_ALLOC  *sl_allochandle = NULL;
 
+static MM_ALLOC  *sl_allochandle = NULL;
 static SAMPLOAD  *staticlist     = NULL;
+static SL_DECOMPRESS_API   *sl_loadlist = NULL;
+
 
 // Our sample loader critical section!
-
 static MM_FORBID *mmcs           = NULL;
 
-
-// Courtesy of Justin Frankel!
-//
-// ImpulseTracker 8 and 16 bit compressed sample loaders.
-// 100% tested and proven!
-// These routines recieve src and dest buffers, the dest which must be no more
-// and no less than 64K in size (that means equal folks).  The cbcount is the
-// number of bytes to be read (never > than 32k).
-
-// =====================================================================================
-    void Decompress8Bit(const UBYTE *src, SWORD *dest, int cbcount1)
-// =====================================================================================
-{
-    uint ebx = 0x00000900;
-    uint ecx = 0;
-    uint edx = 0;
-    uint eax = 0;
-
-D_Decompress8BitData1:
-    eax   = *(int *)src;   //(eax&~0xffff) | (*((short *)src));
-    
-    {   UBYTE   ch = (ecx>>8) & 0xff;
-
-        eax >>= ch;
-
-        ch  += (ebx>>8) & 0xff;
-        edx  = (edx&~0xff) | (ch>>3);
-        ch  &= 7;
-        ecx  = (ecx&~0xff00) | (ch<<8);
-        src += edx;
-    }
-    if (((ebx>>8) &0xff) > 0x06) goto D_Decompress8BitA;
-    eax <<= ecx&0xff;
-    if ((eax&0xff) == 0x80) goto D_Decompress8BitDepthChange1;
-
-D_Decompress8BitWriteData2:
-    {   SBYTE  c = (eax & 0xff);
-
-        c >>= (ecx&0xff);
-        eax = (eax&~0xff) | c;
-    }
-D_Decompress8BitWriteData:
-    {   UBYTE  c = (ebx & 0xff);
-
-        c  += (eax&0xff);
-        ebx = (ebx&~0xff) | c;
-    }
-    *dest++ = ((ebx<<8) & 0xffff);
-        
-    if (--cbcount1) goto D_Decompress8BitData1;
-    return;
-
-D_Decompress8BitDepthChange1:
-    eax=(eax&~0xff)|((eax>>8)&0x7);
-    {   UBYTE  ch=(ecx&0xff00)>>8;
-        ch  += 3;
-        edx  = (edx&~0xff)|(ch>>3);
-        ch  &= 7;
-        ecx  = (ecx&~0xff00)|(ch<<8);
-    }
-    src += edx;
-    goto D_Decompress8BitD;
-
-D_Decompress8BitA:
-    if (((ebx&0xFF00)>>8) >  0x8) goto D_Decompress8BitC;
-    if (((ebx&0xFF00)>>8) == 0x8) goto D_Decompress8BitB;
-
-    {
-        UBYTE  al=(eax&0xff);
-        al <<= 1;
-        eax  = (eax&~0xff) | al;
-        if (al < 0x78) goto D_Decompress8BitWriteData2;
-        if (al > 0x86) goto D_Decompress8BitWriteData2;
-        al >>= 1;
-        al  -= 0x3c;
-        eax  = (eax&~0xff)|al;
-    }
-    goto D_Decompress8BitD;
-
-D_Decompress8BitB:
-    if ((eax & 0xff)  < 0x7C) goto D_Decompress8BitWriteData;
-    if ((eax & 0xff)  > 0x83) goto D_Decompress8BitWriteData;
-
-    {   UBYTE  al = (eax&0xff);
-        al -= 0x7c;
-        eax=(eax&~0xff) | al;
-    }
-
-D_Decompress8BitD:
-        ecx = (ecx&~0xff)|0x8;
-        {   unsigned short int ax=eax&0xffff;
-            ax++;
-            eax = (eax&~0xffff) | ax;
-        }
-
-        if (((ebx&0xff00)>>8) <= (eax&0xff))
-        {   unsigned char al=(eax&0xff);
-            al -= 0xff;
-            eax = (eax&~0xff)|al;
-        }
-
-        ebx = (ebx&~0xff00) | ((eax&0xff)<<8);
-
-        {   unsigned char cl = (ecx&0xff);
-            unsigned char al = (eax&0xff);
-            cl -= al;
-            if ((eax&0xff) > (ecx&0xff)) cl++;
-            ecx = (ecx&~0xff) | cl;             
-        }
-        goto D_Decompress8BitData1;
-D_Decompress8BitC:
-        eax &= 0x1ff;
-        if (!(eax&0x100)) goto D_Decompress8BitWriteData;
-
-    goto D_Decompress8BitD;
-}
-
-// =====================================================================================
-    void Decompress16Bit(const UBYTE *src, SWORD *dest, int cbcount1)
-// =====================================================================================
-{
-        uint ecx,edx,ebx,eax;
-        uint ecx_save,edx_save;
-        // esi=src,edi=dest, ebp=cbcount1
-        ecx = 0x1100;
-        edx = ebx = eax = 0;
-
-D_Decompress16BitData1:
-//        _mmlog("> StartThingie : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-
-        ecx_save = ecx;
-        eax      = *((ULONG *)src);
-        eax    >>= (UBYTE)(edx & 0xff);
-
-        {   
-            // get the sum of the low-byte of edx and the high byte of ecx.
-            // Then assign it to the low-byte of edx.
-
-            unsigned char c = edx&0xff;
-            c   += (ecx&0xff00)>>8;
-            edx &= ~0xff;
-            edx |= c;
-        }
-
-        ecx  = edx>>3;
-        src += ecx;
-        edx &= 0xffffff07;
-        ecx  = ecx_save;
-        if ((ecx & 0xff00) > 0x0600) goto D_Decompress16BitA;
-        eax <<= ecx&0xff;
-        if ((eax & 0xffff) == 0x8000) goto D_Decompress16BitDepthChange1;
-
-D_Decompress16BitD:
-        //_mmlog("> DecompressD  : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-        {   short d = eax&0xffff;
-            d >>= (ecx & 0xff);
-            eax=(eax&~0xffff) | d;
-        }
-
-D_Decompress16BitC:
-        ebx += eax;
-        //_mmlog("> DecompressC  : %8x %8x %8x %8x", eax, ebx, ecx, edx);
-        *dest = ebx;
-        dest++;
-        if (--cbcount1) goto D_Decompress16BitData1;
-        return;
-
-D_Decompress16BitDepthChange1:
-        //_mmlog("> DepthChange1 : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-        eax >>= 16;
-        eax  &= 0xffffff0f;
-        eax++;
-        {   unsigned char d = edx&0xff;
-            d  += 4;
-            edx = (edx&~0xff) | d;
-        }
-
-D_Decompress16BitDepthChange3:
-        //_mmlog("> DepthChange3 : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-
-        {   unsigned char a = eax&0xff;
-            if (a >= ((ecx>>8)&0xff)) a -= 255;
-            eax = (eax&~0xff) | a;
-        }
-
-        {   unsigned char c;
-            c   = 0x10;
-            c  -= eax&0xff;
-            if ((eax&0xff) > 0x10) c++;
-            ecx = ((eax&0xff)<<8) | c;
-        }
-    goto D_Decompress16BitData1;
-
-D_Decompress16BitA:
-
-        //_mmlog("> DecompressA  : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-
-        if ((ecx&0xff00)>0x1000) goto D_Decompress16BitB;
-        edx_save = edx;
-        edx      = 0x10000;
-        edx    >>= (ecx&0xff);
-        edx--;
-        eax     &= edx;
-        edx    >>= 1;
-        edx     += 8;
-        if (eax > edx) goto D_Decompress16BitE;
-        edx     -= 16;
-        if (eax <= edx) goto D_Decompress16BitE;
-        eax     -= edx;
-        edx      = edx_save;
-    goto D_Decompress16BitDepthChange3;
-
-D_Decompress16BitE:
-        //_mmlog("> DecompressE  : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-        edx      = edx_save;
-        eax    <<= (ecx&0xff);
-        goto D_Decompress16BitD;
-
-D_Decompress16BitB:
-        //_mmlog("> DecompressB  : %8x %8x %8x %8x",eax, ebx, ecx, edx);
-        if (!(eax&0x10000)) goto D_Decompress16BitC;
-
-        ecx = (ecx&~0xff)|0x10;
-        eax++;
-        {   unsigned char c = (ecx&0xff);
-            c  -= (eax&0xff);
-            ecx = c | ((eax&0xff)<<8);
-        }
-    goto D_Decompress16BitData1;
-}
 
 // ===================================================================
 //  Sample Loader API class structure.
 //  To make it sound all OO fancy-like!  Woo, because it matters!  yes!
 //  Rememeber: Terminology does not make good code.  I do!
 
-static void slfree01(void *block) { sl_buffer    = NULL; }
-static void slfree02(void *block) { sl_compress  = NULL; }
+static void slfree01(void *block, uint nitems) { sl_buffer    = NULL; }
+//static void slfree02(void *block, uint nitems) { sl_compress  = NULL; }
 
 // =====================================================================================
     BOOL SL_Init(SAMPLOAD *s, MM_ALLOC *allochandle)        // returns 0 on error!
 // =====================================================================================
+// Preps the SAMPLOAD struct for loading and allocates needed buffers.
 {    
     if(!mmcs) mmcs = _mmforbid_init();
 
     _mmforbid_enter(mmcs);
 
-    // A 32k buffer is necessary for decompressing the 32k frames of ImpulseTracker 
-    // compressed samples.
-
     if(!sl_buffer)
-         if((sl_buffer=(SWORD *)_mm_mallocx(sl_allochandle = allochandle, 262144, slfree01)) == NULL) return 0;
+         if((sl_buffer=(SWORD *)_mm_mallocx("sl_buffer", sl_allochandle = allochandle, 131072, slfree01)) == NULL) return 0;
 
-    // Get the actual byte length of the sample buffer.
-    sl_rlength = (s->infmt & SF_16BITS) ? (s->length*2) : s->length;
+    // Put length of sample into sl_rlength
+    // ------------------------------------
+
+    sl_rlength = s->length;
     if(s->infmt & SF_STEREO) sl_rlength *= 2;
 
     sl_old = sl_new = 0;
-    sl_ditherval = 32;
+    sl_ditherval    = 32;
 
+    // Assign Decompression API
+    // ------------------------
+
+    {
+        SL_DECOMPRESS_API   *cruise = sl_loadlist;
+
+        while(cruise)
+        {
+            if(cruise->type == s->decompress.type)
+            {   s->decompress.api       = cruise;
+                s->decompress.handle    = cruise->init(s->mmfp);
+                break;
+            }
+            cruise = cruise->next;
+        }
+
+        if(!cruise)
+        {   _mmlog("Mikmod > SLoader > Failed to find suitable sample decompression API!");
+            assert(FALSE);
+        }
+    }
     return 1;
 }
 
@@ -316,6 +105,7 @@ static void slfree02(void *block) { sl_compress  = NULL; }
 
     //if(sl_rlength > 0) _mm_fseek(s->mmfp,sl_rlength,SEEK_CUR);
 
+    s->decompress.api->cleanup(s->decompress.handle);
     _mmforbid_exit(mmcs);
 }
 
@@ -328,8 +118,6 @@ static void slfree02(void *block) { sl_compress  = NULL; }
 // allocation.
 {
     _mm_free(sl_allochandle, sl_buffer);
-    _mm_free(sl_allochandle, sl_compress);
-
     _mmforbid_deinit(mmcs);
     mmcs = NULL;
 }
@@ -342,8 +130,29 @@ static void slfree02(void *block) { sl_compress  = NULL; }
     sl_old = 0;
 }
 
-#include "mminline.h"
-//#include "adpcmod.h"
+
+// =====================================================================================
+    void SL_RegisterDecompressor(SL_DECOMPRESS_API *ldr)
+// =====================================================================================
+// Checks if the requested decompressor is already regitsered, and quits if so!
+{
+    SL_DECOMPRESS_API   *cruise = sl_loadlist;
+
+    while(cruise)
+    {
+        if(cruise == ldr) return;
+        cruise = cruise->next;
+    }
+
+    if(sl_loadlist == NULL)
+    {   sl_loadlist  = ldr;
+        ldr->next    = NULL;
+    } else
+    {   ldr->next    = sl_loadlist;
+        sl_loadlist  = ldr;
+    }
+}
+
 
 // =====================================================================================
     void SL_Load(void *buffer, SAMPLOAD *smp, int length)
@@ -354,13 +163,11 @@ static void slfree02(void *block) { sl_compress  = NULL; }
 {
     UWORD      infmt = smp->infmt, outfmt = smp->outfmt;
     int        t, u;
-    MMSTREAM  *mmfp = smp->mmfp;
 
     SWORD     *wptr = (SWORD *)buffer;
     SBYTE     *bptr = (SBYTE *)buffer;
             
-    int        inlen, outlen;        // length of the input and output (in samples)
-    int        todo;
+    int        inlen;        // length of the input and output (in samples)
 
     if(outfmt & SF_STEREO) 
         length *= 2;
@@ -369,74 +176,22 @@ static void slfree02(void *block) { sl_compress  = NULL; }
 
     while(length)
     {
-        // Get the # of samples to process.
-        todo  = (sl_rlength < 32768) ? sl_rlength : 32768;
+        // Get the # of samples to process
+        // -------------------------------
+        // Must be less than the following: sl_rlength, 32768, and length!
 
-        inlen = outlen = todo;
+        inlen  = MIN(sl_rlength, 32768);
+        if(inlen > length) inlen  = length;
 
-        if(outfmt & SF_16BITS) outlen >>= 1;
-        if(outlen > length)    outlen   = length;
+        // ---------------------------------------------
+        // Load and decompress sample data
 
-        if(infmt & SF_16BITS)  inlen  >>= 1;
-        //if(infmt & SF_STEREO)  inlen  >>= 1;
-
-        if(smp->decompress == DECOMPRESS_IT214)
-        {   UWORD tlen;
-
-            // create a 32k loading buffer for reading in the compressed frames of ImpulseTracker
-            // samples. Air notes: I had to change this to 36000 bytes to make room for very
-            // rare samples which are about 32k in length and don't compress - IT tries to com-
-            // press them anyway and makes the compressed block > 32k (and larger than the 
-            // original sample!).  Woops!
-
-            if(!sl_compress) sl_compress = (UBYTE *)_mm_mallocx(sl_allochandle, 36000, slfree02);
-
-            // load the compressed data into a buffer.  Has to be done
-            // because we can't effectively stream this compression algorithm
-
-            tlen = _mm_read_I_UWORD(mmfp);
-            _mm_read_UBYTES(sl_compress,tlen,mmfp);
-
-            if(infmt & SF_16BITS)
-                Decompress16Bit(sl_compress,sl_buffer, inlen);
-            else
-                Decompress8Bit(sl_compress,sl_buffer, inlen);
-
-        #ifdef MM_SUPPORT_ADPCM
-        } else if(smp->decompress == DECOMPRESS_ADPCM)
+        if(smp->decompress.api)
         {
-            UBYTE  table[16], *input;
-
-            input = _mm_malloc(sl_allochandle, (length+1)/2);
-            _mm_read_UBYTES(table,16,mmfp);
-            _mm_read_UBYTES(input,(length+1)/2,mmfp);
-
-            DeADPCM(table, input, (length+1)/2, (UBYTE *)sl_buffer);
-            _mm_free(sl_allochandle, input);
-
-            todo   = length;
-            inlen  = outlen = length;
-        #endif
-        } else if(infmt & SF_16BITS)
-        {   _mm_read_I_SWORDS(sl_buffer,inlen,mmfp);
-        } else
-        {   SBYTE  *s;
-            SWORD  *d;
-
-            _mm_read_SBYTES((SBYTE *)sl_buffer,inlen,mmfp);
-
-            // convert 8 bit data to 16 bit for conversions!
-            
-            s  = (SBYTE *)sl_buffer;
-            d  = sl_buffer;
-            s += inlen;
-            d += inlen;
-
-            for(t=0; t<inlen; t++)
-            {   s--;
-                d--;
-                *d = (*s) << 8;
-            }
+            if(infmt & SF_16BITS)
+                inlen = smp->decompress.api->decompress16(smp->decompress.handle, sl_buffer, inlen, smp->mmfp);
+            else
+                inlen = smp->decompress.api->decompress8(smp->decompress.handle, sl_buffer, inlen, smp->mmfp);
         }
 
         // ---------------------------------------------
@@ -464,7 +219,7 @@ static void slfree02(void *block) { sl_compress  = NULL; }
                 SWORD  *s, *d;
                 s = d = sl_buffer;
 
-                for(t=0; t<outlen; t++, s++, d+=2)
+                for(t=0; t<inlen; t++, s++, d+=2)
                     *s = (*d + *(d+1)) / 2;
             }
         } else
@@ -473,7 +228,7 @@ static void slfree02(void *block) { sl_compress  = NULL; }
                 // it someday - convert a mono sample to stereo!
                 SWORD  *s, *d;
                 s = d = sl_buffer;
-                s += outlen;
+                s += inlen;
                 d += inlen;
 
                 for(t=0; t<inlen; t++)
@@ -490,7 +245,7 @@ static void slfree02(void *block) { sl_compress  = NULL; }
 
             // Sample Scaling... average values for better results.
             t = 0;
-            while((t < outlen) && length)
+            while((t < inlen) && length)
             {   scaleval = 0;
                 for(u=smp->scalefactor; u && (t < inlen); u--, t++)
                     scaleval += sl_buffer[t];
@@ -499,14 +254,14 @@ static void slfree02(void *block) { sl_compress  = NULL; }
             }
         }
         
-        length     -= outlen;
-        sl_rlength -= todo;
+        length     -= inlen;
+        sl_rlength -= inlen;
 
         // ---------------------------------------------
         // Normal-to-Delta sample conversion
 
         if(outfmt & SF_DELTA)
-        {   for(t=0; t<outlen; t++)
+        {   for(t=0; t<inlen; t++)
             {   int   ewoo   = sl_new;
                 sl_new       = sl_buffer[t];
                 sl_buffer[t] = sl_buffer[t] - ewoo;
@@ -514,17 +269,17 @@ static void slfree02(void *block) { sl_compress  = NULL; }
         }
 
         if(outfmt & SF_16BITS)
-        {   _mminline_memcpy_word(wptr, sl_buffer, outlen);
-            wptr += outlen;
+        {   _mminline_memcpy_word(wptr, sl_buffer, inlen);
+            wptr += inlen;
         } else
         {   if(outfmt & SF_SIGNED)
-            {   for(t=0; t<outlen; t++, bptr++)
+            {   for(t=0; t<inlen; t++, bptr++)
                 {   int  eep     = (sl_buffer[t]+sl_ditherval);
                     *bptr        =  _mm_boundscheck(eep,-32768l, 32767l) >> 8;
                     sl_ditherval = sl_buffer[t] - (eep & ~255l);
                 }
             } else            
-            {   for(t=0; t<outlen; t++, bptr++)
+            {   for(t=0; t<inlen; t++, bptr++)
                 {   int  eep     = (sl_buffer[t]+sl_ditherval);
                     *bptr        =  _mm_boundscheck(eep, 0, 65535l) >> 8;
                     sl_ditherval = sl_buffer[t] - (eep & ~255l);
@@ -555,13 +310,12 @@ static void slfree02(void *block) { sl_compress  = NULL; }
     } else
         staticlist = news;
 
-    news->infmt         = news->outfmt = infmt;
-    news->decompress    = decompress;
-    news->seekpos       = seekpos;
-    //memcpy(&news->mmfp,fp, sizeof(MMSTREAM));
-    news->mmfp          = fp;
-    news->handle        = handle;
-    news->length        = length;
+    news->infmt           = news->outfmt = infmt;
+    news->decompress.type = decompress;
+    news->seekpos         = seekpos;
+    news->mmfp            = fp;
+    news->handle          = handle;
+    news->length          = length;
 
     return news;
 }

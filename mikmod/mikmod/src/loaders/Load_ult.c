@@ -92,6 +92,7 @@ typedef struct ULT_HANDLE
     uint        numtrk;
     UBYTE     **globtrack;
     MM_ALLOC   *allochandle;
+
 } ULT_HANDLE;
 
 
@@ -106,6 +107,7 @@ typedef struct ULT_HANDLE
     retval = (ULT_HANDLE *)_mm_calloc(allochandle, 1,sizeof(ULT_HANDLE));
     retval->allochandle = allochandle;
 
+    SL_RegisterDecompressor(&dec_raw);
     return retval;
 }
 

@@ -53,7 +53,7 @@
 
 
 #define MMCONF_ARRAY_DELIMITOR  ','
-#define MMCONF_REQARRAY_MAX      8
+#define MMCONF_REQARRAY_MAX      12
 
 enum
 {
@@ -82,7 +82,7 @@ enum
             i++; cpos = 0;
             while((line[i] != ']') && line[i]) i++;
             if(!line[i])
-            {   _mmlog("mmconfig > Line %d: Missing closing bracket",conf->length);
+            {   _mmlog("mmconfig > %s > Line %d: Missing closing bracket", conf->fname, conf->length);
                 return SUBPARSE_INVALID;
             }
         break;
@@ -100,12 +100,12 @@ enum
         default:
             while((line[i] != '=') && line[i]) i++;
             if(!line[i])
-            {   _mmlog("mmconfig > Line %d: Meaningless use of an expression", conf->length);
+            {   _mmlog("mmconfig > %s > Line %d: Meaningless use of an expression", conf->fname, conf->length);
                 return SUBPARSE_WARNING;
             }
             while(_mmchr_whitespace(line[i])) i++;
             if(!line[i])
-            {   _mmlog("mmconfig > Line %d: Missing value to right of variable", conf->length);
+            {   _mmlog("mmconfig > %s > Line %d: Missing value to right of variable", conf->fname, conf->length);
                 return SUBPARSE_WARNING;
             }
         break;
@@ -142,18 +142,26 @@ enum
 // =====================================================================================
     static BOOL AllocSubsection(MM_CONFIG *conf, const CHAR *str, uint line)
 // =====================================================================================
-// Add a subsection to the subsection list.  Note that this does not alter the
-// configuration file in any way.  This function should only be called if the
-// subsection already exists in the configuration file.
+// Add a subsection to the subsection list.  Note that this does not alter the configur-
+// ation file in any way.  This function should only be called if the subsection already
+// exists in the configuration file.
 {
     if(conf->numsubsec >= conf->subsec_alloc)
     {   conf->subsec = (MMCFG_SUBSEC *)_mm_realloc(conf->allochandle, conf->subsec, (conf->subsec_alloc + SUBSEC_THRESHOLD) * sizeof(MMCFG_SUBSEC));
         conf->subsec_alloc += SUBSEC_THRESHOLD;
     }
 
-    conf->subsec[conf->numsubsec].name      = _mm_strdup(conf->allochandle, str);
-    conf->subsec[conf->numsubsec].line      = line;
-    conf->subsec[conf->numsubsec].insertpos = 1;
+    conf->subsec[conf->numsubsec].name            = _mm_strdup(conf->allochandle, str);
+    conf->subsec[conf->numsubsec].line            = line;
+    conf->subsec[conf->numsubsec].insertpos       = 1;
+
+    conf->subsec[conf->numsubsec].opt.tabpos      = 0;
+    conf->subsec[conf->numsubsec].opt.indentvars  = FALSE;
+    conf->subsec[conf->numsubsec].opt.comment     = NULL;
+
+    if(conf->flags & MMCONF_CASE_INSENSITIVE)
+        strlwr(conf->subsec[conf->numsubsec].name);
+
     conf->numsubsec++;
 
     return -1;
@@ -193,10 +201,11 @@ enum
 
 
 // =====================================================================================
-    static MM_CONFIG *_mmcfg_initfp(MMSTREAM *fp)
+    static MM_CONFIG *_mmcfg_initfp(MMSTREAM *fp, const uint flags)
 // =====================================================================================
-// loads in the entire configuration file and processes it for optimized
-// indexing of the sub-section indexes.  Not to be called by the user!
+// loads in the entire configuration file and processes it for optimized indexing of the
+// sub-section indexes.  Not to be called by the user!
+// if fp is NULL
 {
     int         cpos;                  // character position on line
     MM_CONFIG  *conf;
@@ -204,9 +213,11 @@ enum
 
     MM_ALLOC   *allochandle = _mmalloc_create("mmconfig", NULL);
 
-    conf              = (MM_CONFIG *)_mm_calloc(allochandle, 1,sizeof(MM_CONFIG));
+    conf              = (MM_CONFIG *)_mm_calloc(allochandle, 1, sizeof(MM_CONFIG));
     conf->allochandle = allochandle;
+    conf->flags       = flags;
     conf->work        = (CHAR *)_mm_malloc(conf->allochandle, 512);
+    conf->tabsize     = 4;
 
     // read in all lines of the configuration file and mark each of the
     // bracketed sub-headers for future search referencing. ALSO: Check
@@ -288,18 +299,37 @@ enum
 
 
 // =====================================================================================
-    MM_CONFIG *_mmcfg_initfn(CHAR *fname)
+    MM_CONFIG *_mmcfg_initfn(const CHAR *fname)
 // =====================================================================================
-// opens the specified filename for reading / writing and then calls the
-// main intialization procedure [detailed below].
-
+// opens the specified filename for reading and then calls the main intialization
+// procedure [detailed below].  If the file does not exist, the configuration is still
+// initialized (but will be empty).  
 {
     MMSTREAM  *fp;
     MM_CONFIG  *conf;
 
-    fp = _mm_fopen(fname,"rb");
+    fp   = _mm_fopen(fname,"rb");
+    conf = _mmcfg_initfp(fp, 0);
+    _mm_fclose(fp);
 
-    conf = _mmcfg_initfp(fp);
+    if(!conf) return NULL;
+
+    //conf->fp    = _mm_fopen(fname, "wb");
+    conf->fname = _mm_strdup(conf->allochandle, fname);
+
+    return conf;
+}
+
+
+// =====================================================================================
+    MM_CONFIG *_mmcfg_initfn_ex(const CHAR *fname, const uint flags)
+// =====================================================================================
+{
+    MMSTREAM  *fp;
+    MM_CONFIG  *conf;
+
+    fp   = _mm_fopen(fname,"rb");
+    conf = _mmcfg_initfp(fp, flags);
     _mm_fclose(fp);
 
     if(!conf) return NULL;
@@ -327,13 +357,23 @@ enum
 // =====================================================================================
     void _mmcfg_enable_autofix(MM_CONFIG *conf, uint buflen)
 // =====================================================================================
-// Enables configuration autofix, and sets the default buffer elngth to the given value.
+// Enables configuration autofix, and sets the default buffer length to the given value.
 {
     if(conf)
     {   conf->flags |= MMCONF_AUTOFIX;
         conf->buflen = (buflen > 64) ? 64 : buflen;
     }
 }
+
+
+// =====================================================================================
+    void _mmcfg_disable_autofix(MM_CONFIG *conf)
+// =====================================================================================
+{
+    if(conf)
+        conf->flags &= ~MMCONF_AUTOFIX;
+}
+
 
 #define ValidCharacter(val)  ((val != '=') && (val != '[') && (val != ']') && (val != ',') && (val != ';'))
 
@@ -371,7 +411,7 @@ enum
                     dest[valid++] = var[i];
             }
         } else
-        {   for(i=0, valid=0; i<len && valid<48; i++)
+        {   for(i=0, valid=0; (i<len) && (valid<48); i++)
             {   switch(var[i])
                 {
                     case '=':
@@ -415,22 +455,23 @@ enum
 
 
 // =====================================================================================
-    BOOL _mmcfg_set_subsection_int(MM_CONFIG *conf, uint var, CHAR name[MMCONF_MAXNAMELEN])
+    BOOL _mmcfg_set_subsection_int(MM_CONFIG *conf, uint var, CHAR *name)
 // =====================================================================================
 // set the active sub-section based on a simple integer index.  All requests for variable
-// information will take place under this sub-section only.
+// information will take place under this sub-section only.  The variable 'name' will
+// be filled with the name of the subsection (if NULL, then that action is skipped)
 {
     if(!conf) return FALSE;
     
     if(var < conf->numsubsec)
         conf->cursubsec = var;
     else
-    {   _mmlogd1("Config > Invalid subsection range specified: %d",var);
+    {   _mmlogd2("Config > %s > Invalid subsection range specified: %d", conf->fname, var);
         name[0] = 0;
         return FALSE;
     }
 
-    strcpy(name, conf->subsec[var].name);
+    if(name) strcpy(name, conf->subsec[var].name);
 
     return TRUE;
 }
@@ -460,7 +501,7 @@ enum
         }
     }
 
-    _mmlogd1("mmconfig > Requested subsection '%s' was not found.", var);
+    _mmlogd2("mmconfig > %s > Requested subsection '%s' was not found.", conf->fname, var);
 
     if(conf->flags & MMCONF_AUTOFIX)
     {
@@ -468,7 +509,7 @@ enum
         // current subsection accordingly and add a new one:
 
         conf->cursubsec = conf->numsubsec;
-        _mmcfg_insert_subsection(conf, var);
+        _mmcfg_insert_subsection(conf, var, NULL);
     }
 
     return FALSE;
@@ -498,6 +539,7 @@ enum
     uint   lpos,cpos,vpos;
     CHAR  *line;
 
+    if(conf->cursubsec == -1) return -1;
     for(lpos=conf->subsec[conf->cursubsec].line+1; lpos<conf->length; lpos++)
     {
         if(!conf->lineflg[lpos] && (line = conf->line[lpos]))
@@ -547,6 +589,8 @@ enum
     uint    lpos,cpos,vpos;
     CHAR   *line;
    
+    if((!conf->numsubsec) || (conf->cursubsec == -1)) return FALSE;
+
     for(lpos=conf->subsec[conf->cursubsec].line+1; lpos<conf->length; lpos++)
     {
         if(!conf->lineflg[lpos] && (line = conf->line[lpos]))
@@ -564,7 +608,7 @@ enum
 
                 default:
                     vpos = 0;
-                    while((line[cpos] != '=') && line[cpos])
+                    while(line[cpos] && (line[cpos] != '='))
                     {   conf->work[vpos] = line[cpos];
                         cpos++; vpos++;
                     }
@@ -572,12 +616,22 @@ enum
                     conf->work[vpos] = 0;
                     _mmconf_rtrim(conf->work);          // strip the right-side whitespace
 
-                    if(!strcmp(conf->work,var))
-                    {   
-                        uint  cnt=0;
+                    if(!strcmp(conf->work, var))
+                    {
+                        uint  cnt = 0;
 
-                        while(line[cpos] && (line[cpos] != '=')) cpos++;
-                        cpos++;                                     // skip the equals
+                        if(!line[cpos])
+                        {
+                            // Broken Configuration File
+                            // -------------------------
+                            // Missing r-value on variable definition
+
+                            _mmlog("mmconfig > %s > Line %d: Missing r-value aftver variable'%s'", conf->fname, lpos);
+                            return 0;
+                        }
+
+                        //while(line[cpos] && (line[cpos] != '=')) cpos++;
+                        cpos++;                                            // skip the equals
                         while(_mmchr_whitespace(line[cpos])) cpos++;       // and skip the whitespace
 
                         // Special Logic Addition: Lets handle '#' comments that are on the
@@ -591,10 +645,9 @@ enum
                             {   conf->work[vpos] = line[cpos];
                                 cpos++; vpos++;
                             }
-                            
+
                             conf->work[vpos] = 0;
                             _mmconf_rtrim(conf->work);          // strip the right-side whitespace
-                            //reqline = lpos;
                             strcpy(val, conf->work);
 
                             cnt++;
@@ -620,11 +673,13 @@ enum
     uint    lpos,cpos,vpos;
     CHAR   *line;
    
+    if(conf->cursubsec == -1) return FALSE;
+
     for(lpos=conf->subsec[conf->cursubsec].line+1; lpos<conf->length; lpos++)
     {   if(!conf->lineflg[lpos] && (line = conf->line[lpos]))
         {   cpos=0; while(_mmchr_whitespace(line[cpos])) cpos++;
             switch(line[cpos])
-            {   case  '[':  return 0;  // end of subsection
+            {   case  '[':  return FALSE;  // end of subsection
                 case NULL:
                 case  '#':  break;
 
@@ -798,14 +853,41 @@ static CHAR *val_enabled  = "enabled",
     {   uint   t;
 
         for(t=0; t<cnt; t++)
-        {   int   i=0;
-
+        {
             if(conf->flags & MMCONF_CASE_INSENSITIVE) strlwr(conf->work2[t]);
 
             if(strcmp(conf->work2[t],val_enabled)==0 || strcmp(conf->work2[t],val_true)==0 || strcmp(conf->work2[t],val_yes)==0 || strcmp(conf->work2[t],val_on)==0)
                 val[t] = 1;
             else if(strcmp(conf->work2[t],val_disabled)==0 || strcmp(conf->work2[t],val_false)==0 || strcmp(conf->work2[t],val_off)==0 || strcmp(conf->work2[t],val_no)==0)
                 val[t] = 0;
+        }
+    }
+    return cnt;
+}
+
+
+// =====================================================================================
+    int _mmcfg_reqarray_integer(MM_CONFIG *conf, const CHAR *var, uint nent, int *val)
+// =====================================================================================
+// Returns the number of values actually found and loaded (never greater than 'nent')
+{
+    uint    cnt;
+
+    if(!conf || !var || !conf->subsec) return 0;
+    if(nent > MMCONF_REQARRAY_MAX) nent = MMCONF_REQARRAY_MAX;
+
+    AllocWork2(conf, nent);
+
+    for(cnt=0; cnt<nent; cnt++)
+        sprintf(conf->work2[cnt],"%d",val[cnt]);
+
+    if(cnt = _mmcfg_reqarray_string(conf, var, nent, conf->work2))
+    {
+        uint   t;
+        for(t=0; t<cnt; t++)
+        {
+            if(conf->flags & MMCONF_CASE_INSENSITIVE) strlwr(conf->work2[t]);
+            val[t] = atol(conf->work2[t]);
         }
     }
     return cnt;
@@ -850,43 +932,47 @@ static CHAR *val_enabled  = "enabled",
 
 
 // =====================================================================================
-    static void makesubname(CHAR *work, const CHAR *var)
+    static void makesubname(MM_CONFIG *conf, CHAR *work, uint subidx)
 // =====================================================================================
 {
-    uint   llen;
-    strncpy(&work[1], var, MMCONF_MAXNAMELEN);
-    llen = strlen(var);
-    if(llen > MMCONF_MAXNAMELEN) llen = MMCONF_MAXNAMELEN;
-    work[0]      = '[';
-    work[llen+1] = ']';
-    work[llen+2] = 0;
+    uint   llen, i;
+
+    for(i=0; i<(conf->subsec[subidx].opt.tabpos*conf->tabsize); i++)
+        work[i] = 32;
+
+    strcpy(&work[i+1], conf->subsec[subidx].name);
+    llen = strlen(conf->subsec[subidx].name);
+    work[i]        = '[';
+    work[llen+i+1] = ']';
+    work[llen+i+2] = 0;
 }
 
 
 // =====================================================================================
-    void _mmcfg_insert_subsection(MM_CONFIG *conf, const CHAR *var)
+    void _mmcfg_insert_subsection(MM_CONFIG *conf, const CHAR *var, const MMCONF_SUBSEC_OPT *options)
 // =====================================================================================
-// Inserts a new subsection into the configruation file.
-// Insertion occurs either at the specified line, or if -1 is given, at the end of the
-// file.
+// Inserts a new subsection into the configruation file. It can have certain attributes
+// bound to it through the use of the extended options parameter.
+// if 'options' is NULL, the defaults are assumed.
 {
-    CHAR    work[MMCONF_MAXNAMELEN+4];
+    CHAR    work[384];
+
+    if(!conf) return;
 
     _mmcfg_madechange(conf);
-
     AllocLine(conf, 3);
 
-    //conf->line[line] = strdup("# The following subsection was inserted during game initialization");
-    //sprintf(work,"[%s]",var);
-
-    makesubname(work, var);
-
-    conf->line[conf->length]   = NULL;
-    conf->line[conf->length+1] = _mm_strdup(conf->allochandle, work);
-
-    // Add our subsection to the subsection list!
+    // Add Subsection to the List
+    // --------------------------
 
     AllocSubsection(conf, var, conf->length+1);
+    if(options)
+        conf->subsec[conf->numsubsec-1].opt = *options;
+    makesubname(conf, work, conf->numsubsec-1);
+
+
+    conf->line[conf->length]     = NULL;
+    conf->line[conf->length+1]   = _mm_strdup(conf->allochandle, work);
 
     conf->length += 2;
 }
@@ -899,6 +985,8 @@ static CHAR *val_enabled  = "enabled",
 // Insertion occurs either at the specified line, or if -1 is given, at the top of the
 // subsection.
 {
+    if(!conf || (conf->cursubsec == -1)) return;
+
     if(line == -1)
         line = conf->subsec[conf->cursubsec].line + conf->subsec[conf->cursubsec].insertpos++;
 
@@ -923,21 +1011,18 @@ static CHAR *val_enabled  = "enabled",
 // subsection. Insertion occurs either at the specified line, or if -1 is given, at the
 // top of the subsection.
 {
+    if(!conf || (conf->cursubsec == -1)) return;
+
     if(line == -1)
         line = conf->subsec[conf->cursubsec].line + conf->subsec[conf->cursubsec].insertpos++;
 
     AllocLine(conf, 2);
     if(line < (int)conf->length)
     {
-        //memcpy(&conf->line[line+1], &conf->line[line], (conf->length - line) * sizeof(UBYTE *));
         int  stu;
-
-        for(stu=conf->length; stu>line; stu--)
+        for(stu=conf->length; stu>=line; stu--)
             conf->line[stu+1] = conf->line[stu];
     }
-
-    //sprintf(conf->work, "%45s %s", 
-    //conf->line[line] = strdup("# The following variable was inserted during game initialization");
 
     conf->line[line] = NULL;
     _mmcfg_reconstruct_array(conf, line, var, cnt, val);
@@ -958,7 +1043,9 @@ static CHAR *val_enabled  = "enabled",
 //   val   -  value to assign to variable
 {
     CHAR   erg[384];
-    
+
+    if(!conf) return;
+
     _mmcfg_madechange(conf);
 
     // If line is -1, then look for existence of the variable.
@@ -978,12 +1065,22 @@ static CHAR *val_enabled  = "enabled",
 
     if(conf->buflen > 48) conf->buflen = 48;
     
-    sprintf(erg, " -%ds = %s", conf->buflen, val);
+    {
+    uint       i;
+    uint       tablen = (conf->subsec[conf->cursubsec].opt.tabpos*conf->tabsize);
+
+    if(conf->subsec[conf->cursubsec].opt.indentvars)
+        tablen += conf->tabsize;
+
+    for(i=0; i<tablen; i++)
+        conf->work[i] = 32;
+
+    sprintf(erg, " -%ds = ", conf->buflen - tablen);
     erg[0] = '%';
-    sprintf(conf->work, erg, var);
+    sprintf(&conf->work[i], erg, var);
+    }
+    strcat(conf->work, val);
     conf->line[line] = _mm_strdup(conf->allochandle, conf->work);
-    _mmlog("** Thinking > ");
-    _mmlog(conf->work);
 }
 
 
@@ -1000,7 +1097,6 @@ static CHAR *val_enabled  = "enabled",
 //   val   -  value to assign to variable
 {
     CHAR   erg[384];
-    uint   i;
     
     _mmcfg_madechange(conf);
     if(line == -1)
@@ -1016,20 +1112,30 @@ static CHAR *val_enabled  = "enabled",
     // do this in order to get it set properly without sprintf thinking I was
     // trying to do something else.. :)
 
+    {
+    uint       i;
+    uint       tablen = (conf->subsec[conf->cursubsec].opt.tabpos*conf->tabsize);
+
+    if(conf->subsec[conf->cursubsec].opt.indentvars)
+        tablen += conf->tabsize;
+
+    for(i=0; i<tablen; i++)
+        conf->work[i] = 32;
+
     if(conf->buflen > 48) conf->buflen = 48;
 
-    sprintf(erg, " -%ds = ", conf->buflen);
+    sprintf(erg, " -%ds = ", conf->buflen - tablen);
     erg[0] = '%';
+    sprintf(&conf->work[i], erg, var);
     for(i=0; i<cnt; i++)
-    {   strcat(erg,val[i]);
+    {   strcat(conf->work, val[i]);
         if(i<cnt-1)
-        {   uint  t  = strlen(erg);
-            erg[t]   = MMCONF_ARRAY_DELIMITOR;
-            erg[t+1] = 0;
+        {   uint  t  = strlen(conf->work);
+            conf->work[t]   = MMCONF_ARRAY_DELIMITOR;
+            conf->work[t+1] = 0;
         }
     }
-
-    sprintf(conf->work, erg, var);
+    }
     conf->line[line] = _mm_strdup(conf->allochandle, conf->work);
 }
 
@@ -1039,25 +1145,29 @@ static CHAR *val_enabled  = "enabled",
 // =====================================================================================
 // Reassigns a value to an already existing variable.  Maintains the user's formatting.
 {
-    int    lpos,cpos;
-    CHAR  *line;
+    if(conf && var && conf->subsec)
+    {
+        int    lpos,cpos;
+        CHAR  *line;
 
-    _mmcfg_madechange(conf);
-    if((lpos = _mmcfg_findvar(conf, var)) == -1)
-    {   _mmcfg_insert(conf, -1,var,val);
-        return;
+        _mmcfg_madechange(conf);
+        if((lpos = _mmcfg_findvar(conf, var)) == -1)
+        {   _mmcfg_insert(conf, -1,var,val);
+            return;
+        }
+        line = conf->line[lpos];  cpos = 0;
+        while((line[cpos] != '=') && (line[cpos])) cpos++;
+        cpos++;   // skip the equals
+        while(_mmchr_whitespace(line[cpos])) cpos++;
+        line[cpos] = 0;
+
+        // TODO: Logic to maintain user's end-of-line commenting!
+        // [...]
+
+        strcpy(conf->work,line); strcat(conf->work,val);
+        _mm_free(conf->allochandle, line);
+        conf->line[lpos] = _mm_strdup(conf->allochandle, conf->work);
     }
-    line = conf->line[lpos];  cpos = 0;
-    while((line[cpos] != '=') && (line[cpos])) cpos++;
-    cpos++;   // skip the equals
-    while(_mmchr_whitespace(line[cpos])) cpos++;
-    line[cpos] = 0;
-
-    // TODO: Logic to maintain user's end-of-line commenting!
-    // [...]
-
-    strcpy(conf->work,line); strcat(conf->work,val);
-    _mm_free(conf->allochandle, line);  conf->line[lpos] = _mm_strdup(conf->allochandle, conf->work);
 }
 
 
@@ -1111,9 +1221,10 @@ static CHAR *val_enabled  = "enabled",
 
     _mmcfg_madechange(conf);
     if((lpos = _mmcfg_findvar(conf, var)) == -1)
-    {   _mmcfg_insert_array(conf, -1,var,nent,val);
+    {   _mmcfg_insert_array(conf, -1, var, nent, val);
         return;
     }
+
     line = conf->line[lpos];  cpos = 0;
     while((line[cpos] != '=') && (line[cpos])) cpos++;
     cpos++;   // skip the equals
@@ -1140,7 +1251,27 @@ static CHAR *val_enabled  = "enabled",
 
 
 // =====================================================================================
-    void _mmcfg_resarray_enum(MM_CONFIG *conf, const CHAR *var, const CHAR **enu, uint nent, int val[])
+    void _mmcfg_resarray_integer(MM_CONFIG *conf, const CHAR *var, uint nent, const int *val)
+// =====================================================================================
+{
+    uint   cnt;
+
+    if(!conf || !var || !conf->subsec) return;
+    if(nent > MMCONF_REQARRAY_MAX) nent = MMCONF_REQARRAY_MAX;
+
+    AllocWork2(conf, nent);
+
+    for(cnt=0; cnt<nent; cnt++)
+        sprintf(conf->work2[cnt], "%d", val[cnt]);
+
+    _mmcfg_resarray_string(conf, var, nent, conf->work2);
+
+    return;
+}
+
+
+// =====================================================================================
+    void _mmcfg_resarray_enum(MM_CONFIG *conf, const CHAR *var, const CHAR **enu, uint nent, const int *val)
 // =====================================================================================
 {
     uint   cnt;
@@ -1192,19 +1323,20 @@ static CHAR *val_enabled  = "enabled",
     BOOL _mmcfg_save(MM_CONFIG *conf)
 // =====================================================================================
 // saves the configuration file (stored in conf->line) to the specified file.
+// Returns fALSE on failure : Could not open file or disk full or something.
 {
     uint      i;
     MMSTREAM *fp;
 
-    fp = _mm_fopen(conf->fname,"wb");
+    fp = _mm_fopen(conf->fname, "wb");
 
     for(i=0; i<conf->length; i++)
         _mm_fputs(fp, conf->line[i]);
 
     _mm_fclose(fp);
+    conf->changed = FALSE;
 
-    return 1;
+    return TRUE;
 }
-
 
 

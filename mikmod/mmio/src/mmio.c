@@ -2,12 +2,12 @@
  
  Mikmod Portable System Management Facilities (the MMIO)
 
-  By Jake Stine of Divine Entertainment (1996-2000) and
-     Jean-Paul Mikkers (1993-1996).
+  By Jake Stine of Hour 13 Studios (1996-2002) and
+     Jean-Paul Mikkers (1993-1996)
 
  Support:
   If you find problems with this code, send mail to:
-    air@divent.org
+    air@hour13.com
 
  Distribution / Code rights:
   Use this source code in any fashion you see fit.  Giving me credit where
@@ -15,7 +15,7 @@
   honesty.
 
  --------------------------------------------------
- module: mmio.c
+ mmio.c
 
  Miscellaneous portable I/O routines.. used to solve some portability
  issues (like big/little endian machines and word alignment in structures).
@@ -30,7 +30,6 @@
 
  -----------------------------------
  The way this module works - By Jake Stine [Air Richter]
-
 
  - _mm_read_I_UWORD and _mm_read_M_UWORD have distinct differences:
    the first is for reading data written by a little endian (intel) machine,
@@ -163,7 +162,7 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
     CHAR *StringRead(MMSTREAM *fp)
 // =====================================================================================
 // Reads strings written out by StringWrite above:  a UWORD length followed by length 
-//characters.  A NULL is added to the string after loading.
+// characters.  A NULL is added to the string after loading.
 {
     CHAR  *s;
     UWORD len;
@@ -187,7 +186,7 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
 {
     MMSTREAM *mfp;
 
-    mfp           = _mm_calloc(NULL, 1,sizeof(MMSTREAM));
+    mfp           = _mmobj_allocblock(NULL, MMSTREAM);
     mfp->fp       = tmpfile();
     mfp->iobase   = 0;
     mfp->dp       = NULL;
@@ -202,25 +201,30 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
     MMSTREAM *_mm_fopen(const CHAR *fname, const CHAR *attrib)
 // =====================================================================================
 {
-    FILE     *fp;
-    MMSTREAM *mfp;
+    MMSTREAM *mfp = NULL;
 
-    if((fp=fopen(fname,attrib)) == NULL)
-    {   //CHAR   sbuf[256];
-        // this should check attributes and build a more appropriate error!
+    if(fname && attrib)
+    {
+        FILE     *fp;
+        if((fp=fopen(fname, attrib)) == NULL)
+        {
+            CHAR   sbuf[_MAX_PATH*2];
+            sprintf(sbuf, "Failed opening file: %s\nSystem message: %s\n"
+                          "(Please ensure the file exists and that you have read/write permissions and access to the file, and then try again)",
+                          fname, _sys_errlist[errno]);
         
-        //sprintf(sbuf,"Error opening file: %s",fname);
-        //_mmerr_set(MMERR_OPENING_FILE, sbuf);
-        _mmlogd2("Error opening file: %s > %s",fname, _sys_errlist[errno]);
-        return NULL;
+            _mmerr_set(MMERR_OPENING_FILE, "Error opening file!", sbuf);
+            _mmlogd2("Error opening file: %s > %s",fname, _sys_errlist[errno]);
+            return NULL;
+        }
+
+        mfp           = _mmobj_allocblock(NULL, MMSTREAM);
+        mfp->fp       = fp;
+        mfp->iobase   = 0;
+        mfp->dp       = NULL;
+
+        mfp_init(mfp);
     }
-
-    mfp           = _mm_calloc(NULL, 1,sizeof(MMSTREAM));
-    mfp->fp       = fp;
-    mfp->iobase   = 0;
-    mfp->dp       = NULL;
-
-    mfp_init(mfp);
 
     return mfp;
 }
@@ -259,7 +263,7 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
         
         return _my_fseek(stream->fp,(whence==SEEK_SET) ? offset+stream->iobase : offset, whence);
     } else
-    {   long   tpos;
+    {   long   tpos = -1;
         switch(whence)
         {   case SEEK_SET: tpos = offset;                   break;
             case SEEK_CUR: tpos = stream->seekpos + offset; break;
@@ -283,7 +287,7 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
 
 
 // =====================================================================================
-    BOOL _mm_feof(MMSTREAM *stream)
+    BOOL __inline _mm_feof(MMSTREAM *stream)
 // =====================================================================================
 {
     if(!stream) return 1;
@@ -307,7 +311,24 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
 
 
 // =====================================================================================
-    long _mm_flength(FILE *stream)
+    long _mm_flength(MMSTREAM *stream)
+// =====================================================================================
+{
+   long   tmp, tmp2;
+
+   tmp = _mm_ftell(stream);
+
+   _mm_fseek(stream,0,SEEK_END);
+   tmp2 = _mm_ftell(stream);
+
+   _mm_fseek(stream,tmp,SEEK_SET);
+
+   return tmp2;
+}
+
+
+// =====================================================================================
+    long _flength(FILE *stream)
 // =====================================================================================
 {
    long tmp,tmp2;
@@ -321,7 +342,7 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
 
 
 // =====================================================================================
-    BOOL _mm_copyfile(FILE *fpi, FILE *fpo, uint len)
+    BOOL _copyfile(FILE *fpi, FILE *fpo, uint len)
 // =====================================================================================
 // Copies a given number of bytes from the source file to the destination file.  Copy 
 // begins whereever the current read pointers are for the given files.  Returns 0 on error.
@@ -331,11 +352,11 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
     while(len)
     {   todo = (len > COPY_BUFSIZE) ? COPY_BUFSIZE : len;
         if(!fread(_mm_cpybuf, todo, 1, fpi))
-        {   _mmerr_set(MMERR_END_OF_FILE, "Unexpected End of File");
+        {   _mmerr_set(MMERR_END_OF_FILE, "Unexpected End of File", "An unexpected end of file error occured while copying a file.");
             return 0;
         }
         if(!fwrite(_mm_cpybuf, todo, 1, fpo))
-        {   _mmerr_set(MMERR_DISK_FULL, "Disk Full Error. Ouch.");
+        {   _mmerr_set(MMERR_DISK_FULL, "Disk Full Error. Ouch.", "Your disk got full while making a copy of a file.");
             return 0;
         }
         len -= todo;
@@ -346,10 +367,52 @@ static UBYTE  _mm_cpybuf[COPY_BUFSIZE];
 
 
 // =====================================================================================
-    void _mm_write_string(const CHAR *data, MMSTREAM *fp)
+    void _mm_write_stringz(const CHAR *data, MMSTREAM *fp)
 // =====================================================================================
+// Write an ASCIIZ-terminated string.  Only the number of bytes needed to represent the
+// string are written to disk.
 {
     if(data) _mm_write_UBYTES((UBYTE *)data, strlen(data), fp);
+}
+
+
+// =====================================================================================
+    void _mm_write_string(const CHAR *data, const uint count, MMSTREAM *fp)
+// =====================================================================================
+// Writes a fixed number of bytes out of an array.  This function is essentially like
+// _mm_write_I_UBYTES except behaves properly for UNICODE strings and the like if the
+// compiled code happens to be in unicode mode.
+// count   - size of the string buffer.  String buffers must be at least this long,
+//           although the string itself can be shorter.
+{
+    if(data) _mm_write_UBYTES((UBYTE *)data, count, fp);
+}
+
+
+// =====================================================================================
+    void _mm_fgets(MMSTREAM *fp, CHAR *buffer, uint buflen)
+// =====================================================================================
+// A non-sucky verison of fgets!  Keeps reading until the end-of-file or newline is
+// encountered, regardless of if the buffer is filled or not before hand.  Also, any
+// actual newline characters are ignored!
+{
+    if(buffer && (buflen > 1))
+    {
+        CHAR c    = _mm_read_UBYTE(fp);
+        uint clen = 0;
+
+        while(!_mm_feof(fp) && (c != 13) && (c != 10))
+        {
+            if(clen < buflen-1)
+            {   buffer[clen] = c;
+                clen++;
+            }
+
+            c  = _mm_read_UBYTE(fp);
+        }
+
+        buffer[clen] = 0;
+    }
 }
 
 
@@ -560,10 +623,10 @@ SLONG _mm_read_I_SLONG(MMSTREAM *fp)
 #endif
 
 
-int _mm_read_string(CHAR *buffer, int number, MMSTREAM *fp)
+int _mm_read_string(CHAR *buffer, const uint number, MMSTREAM *fp)
 {
     if(fp->fp)
-    {   _my_fread(buffer,sizeof(CHAR),number,fp->fp);
+    {   _my_fread(buffer, sizeof(CHAR), number, fp->fp);
         return !_mm_feof(fp);
     } else
     {   memcpy(buffer,&fp->dp[fp->seekpos], sizeof(CHAR) * number);
@@ -575,7 +638,7 @@ int _mm_read_string(CHAR *buffer, int number, MMSTREAM *fp)
 
 #define DEFINE_MULTIPLE_READ_FUNCTION_ENDIAN(type_name, type)    \
 int                                                              \
-_mm_read_##type_name##S (type *buffer, int number, MMSTREAM *fp) \
+_mm_read_##type_name##S (type *buffer, uint number, MMSTREAM *fp) \
 {                                                                \
     if(fp->fp)                                                   \
     {   while(number>0)                                          \
@@ -594,7 +657,7 @@ _mm_read_##type_name##S (type *buffer, int number, MMSTREAM *fp) \
 
 #define DEFINE_MULTIPLE_READ_FUNCTION_NORM(type_name, type)      \
 int                                                              \
-_mm_read_##type_name##S (type *buffer, int number, MMSTREAM *fp) \
+_mm_read_##type_name##S (type *buffer, uint number, MMSTREAM *fp) \
 {                                                                \
     if(fp->fp)                                                   \
     {   fileread_##type_name##S(buffer,number,fp);               \
@@ -631,3 +694,4 @@ DEFINE_MULTIPLE_READ_FUNCTION_NORM   (I_UWORD, UWORD)
 DEFINE_MULTIPLE_READ_FUNCTION_NORM   (I_SLONG, SLONG)
 DEFINE_MULTIPLE_READ_FUNCTION_NORM   (I_ULONG, ULONG)
 #endif
+

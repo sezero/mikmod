@@ -498,3 +498,4 @@ extern UNITRK_EFFECT *global_geteffect(MPLAYER *ps, UNITRK_EFFECT *effdat, MP_CO
         ps->ended = 1;
     }
 }
+

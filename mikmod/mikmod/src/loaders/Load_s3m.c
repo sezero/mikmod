@@ -116,6 +116,8 @@ static CHAR  S3M_Version_IT[] = "ScreamTracker 3.20 (IT x.xx)";
     retval = (ST3HANDLE *)_mm_calloc(allochandle, 1,sizeof(ST3HANDLE));
     retval->allochandle = allochandle;
 
+    SL_RegisterDecompressor(&dec_raw);
+
     return retval;
 }
 

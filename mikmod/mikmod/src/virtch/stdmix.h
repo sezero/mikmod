@@ -7,8 +7,6 @@
     for(; todo; todo--)
     {   SCAST  sample;
 
-        uint  argh = himacro(index);
-
         sample = srce[himacro(index)];
         index += increment;
 
@@ -87,5 +85,6 @@
         index  += increment;
     }
 }
+
 
 

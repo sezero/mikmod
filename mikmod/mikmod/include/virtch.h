@@ -137,6 +137,7 @@ typedef struct VINFO VINFO;
 /*    typedef */struct VIRTCH
 // =====================================================================================
 {
+    MM_ALLOC   allochandle;
     BOOL       initialized;
 
     uint       mode;
@@ -160,7 +161,6 @@ typedef struct VINFO VINFO;
     volatile BOOL preemption;         // see explaination of preemption in the mikmod docs.
 
     VMIXER    *mixerlist;
-    MM_ALLOC  *allochandle;
 } /*VIRTCH*/;
 
 #ifndef __GNUC__
@@ -275,3 +275,4 @@ extern VMIXER ASM_M16_MONO_INTERP, ASM_M16_STEREO_INTERP,
 #endif
 
 #endif
+

@@ -42,12 +42,13 @@ RSC=rc.exe
 # PROP Target_Dir ""
 MTL=midl.exe
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /G6 /Gr /Zp4 /MT /W3 /GX /O2 /Ob2 /I "..\mmio\include" /I "adpcm" /I "include" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "WIN32" /D "MIKMOD_STATIC" /D "ANIM_NO_TRACKING" /YX /FD /c
+# ADD CPP /nologo /G6 /Gr /Zp4 /MT /W3 /GX /Ox /Ot /Oa /Ow /Og /Oi /Op /Ob2 /I "..\include" /I "include" /I "..\mmio\include" /I "adpcm" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "MM_LO_VERBOSE" /D "NDEBUG" /D "WIN32" /D "MIKMOD_STATIC" /D "ANIM_NO_TRACKING" /YX /FD /c
+# SUBTRACT CPP /Os /Fr
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../temp/mikmod.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 src/virtch/i386/res16.obj src/virtch/i386/res16ss.obj src/virtch/i386/res8ss.obj src/virtch/i386/resample.obj /nologo
@@ -66,12 +67,12 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 MTL=midl.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /Zp4 /MTd /W3 /Gm /GX /ZI /Od /I "include" /I "..\mmio\include" /I "adpcm" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "MM_LOG_VERBOSE" /D "_DEBUG" /D "WIN32" /D "MIKMOD_STATIC" /D "ANIM_NO_TRACKING" /Fr /YX /FD /GZ /c
+# ADD CPP /nologo /G6 /Zp4 /MTd /W3 /Gm /GX /Zi /Od /I "..\include" /I "include" /I "..\mmio\include" /I "adpcm" /D "_MBCS" /D "_LIB" /D "CPU_INTEL" /D "MM_LOG_VERBOSE" /D "_DEBUG" /D "WIN32" /D "MIKMOD_STATIC" /D "ANIM_NO_TRACKING" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../temp/mikmod.bsc"
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 src/virtch/i386/res16.obj src/virtch/i386/res16ss.obj src/virtch/i386/res8ss.obj src/virtch/i386/resample.obj /nologo /out:"..\mikmodd.lib"
@@ -97,7 +98,7 @@ SOURCE=.\src\virtch\asmapi\asmapi.h
 
 !IF  "$(CFG)" == "mikmod - Win32 Release"
 
-# PROP Intermediate_Dir "../temp/release/mikmod/virtch/asmapi"
+# PROP Intermediate_Dir "../../temp/release/mikmod/virtch/asmapi"
 
 !ELSEIF  "$(CFG)" == "mikmod - Win32 Debug"
 
@@ -776,6 +777,30 @@ SOURCE=.\src\drivers\drv_wav.c
 # End Group
 # Begin Source File
 
+SOURCE=.\src\dec_adpcm.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\dec_it214.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\dec_raw.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\dec_vorbis.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\load_ogg.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\load_wav.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\mdreg.c
 # End Source File
 # Begin Source File
@@ -808,11 +833,11 @@ SOURCE=.\src\munitrk.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\mwav.c
+SOURCE=.\src\npertab.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\npertab.c
+SOURCE=.\src\sample.c
 # End Source File
 # Begin Source File
 
@@ -852,7 +877,7 @@ SOURCE=.\include\mplayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\mwav.h
+SOURCE=.\include\sample.h
 # End Source File
 # Begin Source File
 
