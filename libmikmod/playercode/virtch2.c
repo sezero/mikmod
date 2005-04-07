@@ -405,12 +405,12 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 																			 4*2, 4*2+1  // 0
 																			 ));
 			vector signed int v3 = vec_ld(0, dest);
-			vector signed int v4 = vec_ld(0, dest + 4);
+			vector signed int v4 = vec_ld(0x10, dest);
 			vector signed int v5 = vec_mule(v0, v1);
 			vector signed int v6 = vec_mule(v0, v2);
 
 			vec_st(vec_add(v3, v5), 0, dest);				
-			vec_st(vec_add(v4, v6), 0, dest + 4);
+			vec_st(vec_add(v4, v6), 0x10, dest);
 
 			dest+=8;
 		}
@@ -912,16 +912,16 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
 		{
 			// Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r)
 			vector signed int v0 = vec_add(
-				vec_sra(vec_ld(0, srce+0), SHIFT_MIX_TO_16),  //128bit = 2 stereo samples
- 				vec_sra(vec_ld(0, srce+4), SHIFT_MIX_TO_16)
+				vec_sra(vec_ld(0, srce), SHIFT_MIX_TO_16),  //128bit = 2 stereo samples
+ 				vec_sra(vec_ld(0x10, srce), SHIFT_MIX_TO_16)
 			);  //128bit = 2 stereo samples
 
 			// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
 			vector signed int v1 = vec_sra(vec_add(v0, vec_hiqq(v0)), vec_splat_u32(2));
 
 			vector signed int v2 = vec_add(
-				vec_sra(vec_ld(0, srce+8), SHIFT_MIX_TO_16),
-  				vec_sra(vec_ld(0, srce+12), SHIFT_MIX_TO_16)
+				vec_sra(vec_ld(0x20, srce), SHIFT_MIX_TO_16),
+  				vec_sra(vec_ld(0x30, srce), SHIFT_MIX_TO_16)
 			);
 
 			vector signed int v3 = vec_sra(vec_add(v2, vec_hiqq(v2)), vec_splat_u32(2));  //Upper 64bit is unused
@@ -931,16 +931,16 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
 
 			// Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r)
 			v0 = vec_add(
-				vec_sra(vec_ld(0, srce+16), SHIFT_MIX_TO_16),	//128bit = 2 stereo samples
-				vec_sra(vec_ld(0, srce+20), SHIFT_MIX_TO_16)
+				vec_sra(vec_ld(0x40, srce), SHIFT_MIX_TO_16),	//128bit = 2 stereo samples
+				vec_sra(vec_ld(0x50, srce), SHIFT_MIX_TO_16)
 			);  //128bit = 2 stereo samples
 
 			// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
 			v1 = vec_sra(vec_add(v0, vec_hiqq(v0)), vec_splat_u32(2));
 
 			v2 = vec_add(
-				vec_sra(vec_ld(0, srce+24), SHIFT_MIX_TO_16),
-				vec_sra(vec_ld(0, srce+28), SHIFT_MIX_TO_16))
+				vec_sra(vec_ld(0x60, srce), SHIFT_MIX_TO_16),
+				vec_sra(vec_ld(0x70, srce), SHIFT_MIX_TO_16))
 			;
 
 			v3 = vec_sra(vec_add(v2, vec_hiqq(v2)), vec_splat_u32(2));  //Upper 64bit is unused

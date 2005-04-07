@@ -575,6 +575,7 @@ extern BOOL   AllocTracks(void);
 extern BOOL   AllocInstruments(void);
 extern BOOL   AllocSamples(void);
 extern CHAR*  DupStr(CHAR*,UWORD,BOOL);
+extern CHAR*  StrDup(CHAR *s);
 
 /* loader utility functions */
 extern int*   AllocLinear(void);

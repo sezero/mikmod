@@ -235,7 +235,7 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 			vector signed int v6 = vec_mule(v0, v2);
 
 			vec_st(vec_add(v3, v5), 0, dest);				
-			vec_st(vec_add(v4, v6), 0, dest + 4);
+			vec_st(vec_add(v4, v6), 0x10, dest);
 
 			dest+=8;
 		}

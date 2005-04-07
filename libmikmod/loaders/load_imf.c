@@ -409,7 +409,7 @@ BOOL IMF_Load(BOOL curious)
 
 	/* set module variables */
 	of.songname=DupStr(mh->songname,31,1);
-	of.modtype=strdup(IMF_Version);
+	of.modtype=StrDup(IMF_Version);
 	of.numpat=mh->patnum;
 	of.numins=mh->insnum;
 	of.reppos=0;

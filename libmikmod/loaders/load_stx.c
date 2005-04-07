@@ -323,10 +323,10 @@ static BOOL STX_Load(BOOL curious)
 	version=_mm_read_I_UWORD(modreader);
 	if(version==mh->patsize) {
 		version    = 0x10;
-		of.modtype = strdup("STMIK 0.2 (STM2STX 1.0)");
+		of.modtype = StrDup("STMIK 0.2 (STM2STX 1.0)");
 	} else {
 		version    = 0x11;
-		of.modtype = strdup("STMIK 0.2 (STM2STX 1.1)");
+		of.modtype = StrDup("STMIK 0.2 (STM2STX 1.1)");
 	}
 
 	/* read the order data */

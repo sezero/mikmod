@@ -284,6 +284,14 @@ CHAR *DupStr(CHAR* s,UWORD len,BOOL strict)
 	return d;
 }
 
+CHAR *StrDup(CHAR *s)
+{
+	size_t l = strlen(s) + 1;
+	CHAR *d = MikMod_malloc(l);
+	strcpy(d, s);
+	return d;
+}
+
 static void ML_XFreeSample(SAMPLE *s)
 {
 	if(s->handle>=0)

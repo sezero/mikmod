@@ -591,7 +591,7 @@ BOOL UNI_Load(BOOL curious)
 		sprintf(modtype,"%s",(universion>=0x100)?"APlayer":"MikCvt3");
 #endif
 	}
-	of.modtype=strdup(modtype);
+	of.modtype=StrDup(modtype);
 	MikMod_free(modtype);MikMod_free(oldtype);
 	of.comment=readstring();
 
