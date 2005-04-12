@@ -1,5 +1,5 @@
 /*	MikMod sound library
-	(c) 1998-2001 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998-2005 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
@@ -45,6 +45,11 @@
 
 #define INITGUID
 #include <dsound.h>
+
+/* Not in compilers <= MSVC 6 */
+#ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
+#define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
+#endif
 
 /* DSBCAPS_CTRLALL is not defined anymore with DirectX 7. Of course DirectSound
    is a coherent, backwards compatible API... */
