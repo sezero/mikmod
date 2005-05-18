@@ -107,11 +107,12 @@
 				EXPORTED_SYMBOLS_FILE = libmikmod.export;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
+				GCC_VERSION = 3.1;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /Library/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H -ffast-math -faltivec";
 				OTHER_LDFLAGS = "-seg1addr 0xD0000000";
 				PRODUCT_NAME = mikmod;
 				SECTORDER_FLAGS = "";
@@ -164,6 +165,7 @@
 				F5F5DE7F017CB4020103A810,
 				F5F5DE81017CB4370103A810,
 				F5F5DEF5017D4B6E0103A810,
+				A4523BC508362E5B0012E4AE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,6 +224,7 @@
 				A415A72F05DA14F200C7F93E,
 				A415A73305DA151800C7F93E,
 				A473AC2705EB81D1005AB935,
+				A4523BC308361F910012E4AE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,6 +300,43 @@
 			settings = {
 			};
 		};
+		A4523BC008361F730012E4AE = {
+			fileEncoding = 12;
+			isa = PBXFileReference;
+			name = load_gt2.c;
+			path = ../loaders/load_gt2.c;
+			refType = 4;
+		};
+		A4523BC208361F730012E4AE = {
+			fileRef = A4523BC008361F730012E4AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		A4523BC308361F910012E4AE = {
+			fileRef = A4523BC008361F730012E4AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		A4523BC408362E5B0012E4AE = {
+			fileEncoding = 12;
+			isa = PBXFileReference;
+			path = ppc_intrinsics.h;
+			refType = 4;
+		};
+		A4523BC508362E5B0012E4AE = {
+			fileRef = A4523BC408362E5B0012E4AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		A4523BC608362E5B0012E4AE = {
+			fileRef = A4523BC408362E5B0012E4AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		A473AC2405EB817F005AB935 = {
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -362,6 +402,7 @@
 				F5F5DE24017CB2BC0103A810,
 				F5F5DE25017CB2BC0103A810,
 				F5F5DE26017CB2BC0103A810,
+				A4523BC408362E5B0012E4AE,
 			);
 			isa = PBXGroup;
 			name = Library;
@@ -401,6 +442,7 @@
 				F5F5DE34017CB3950103A810,
 				F5F5DE35017CB3950103A810,
 				F5F5DE36017CB3950103A810,
+				A4523BC008361F730012E4AE,
 				F5F5DE37017CB3950103A810,
 				F5F5DE38017CB3950103A810,
 				F5F5DE39017CB3950103A810,
@@ -1051,15 +1093,18 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = libmikmod.export;
+				GCC_VERSION = 3.1;
+				HEADER_SEARCH_PATHS = "";
 				LIBRARY_STYLE = STATIC;
 				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_CFLAGS = "-DHAVE_CONFIG_H -DDRV_OSX -ffast-math -fpeephole";
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H -ffast-math -faltivec";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = libmikmod.a;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USE_GCC3_PFE_SUPPORT = NO;
 				WARNING_CFLAGS = "-Wall";
 			};
 			dependencies = (
@@ -1077,6 +1122,7 @@
 				F5F5DE91017CB6120103A810,
 				F5F5DE92017CB6120103A810,
 				F5F5DE93017CB6120103A810,
+				A4523BC608362E5B0012E4AE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1127,6 +1173,7 @@
 				F5F5DEB9017CB6120103A810,
 				F5F5DEBA017CB6120103A810,
 				F5F5DEBB017CB6120103A810,
+				A4523BC208361F730012E4AE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

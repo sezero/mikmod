@@ -52,6 +52,7 @@ libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
 libmikmod_debug=no
 libmikmod_threads=yes
+libmikmod_altivec=yes
 
 DLOBJS=""
 
@@ -169,6 +170,15 @@ then
 	libmikmod_threads=yes
 else
 	libmikmod_threads=no
+fi])
+
+AC_ARG_ENABLE(altivec,
+[  --enable-altivec        PowerPC only: include AltiVec optimizations [default=yes]],
+[if test "$enableval" = "yes"
+then
+  libmikmod_altivec=yes
+else
+  libmikmod_altivec=no
 fi])
 
 # ===================
@@ -781,7 +791,27 @@ then
 		fi
 	fi
 fi
-		
+
+case `arch` in
+ppc|ppc64|powerpc|powerpc64)
+	AC_MSG_CHECKING(whether to use altivec)
+	if test x$libmikmod_altivec != xno
+	then
+		case `uname` in
+		Darwin)
+			dnl compile all Altivec functions, check at run-time
+			CFLAGS="$CFLAGS -faltivec -force_cpusubtype_ALL"
+			;;
+		Linux)
+			dnl force_cpusubtype_ALL not allowed for Linux as
+			CFLAGS="$CFLAGS -faltivec"
+			;;
+		esac
+	fi
+	AC_MSG_RESULT($libmikmod_altivec)
+	;;
+esac
+	
 # =================
 # Create Makefiles.
 # =================

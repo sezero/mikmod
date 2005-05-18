@@ -258,14 +258,23 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 
 static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
-	SWORD sample;
-	SLONG lvolsel = vnf->lvolsel;
-
-	while(todo--) {
-		sample = srce[index >> FRACBITS];
-		index += increment;
-
-		*dest++ += lvolsel * sample;
+#if defined HAVE_ALTIVEC || defined HAVE_SSE2
+    if (md_mode & DMODE_SIMDMIXER)
+    {
+		return MixSIMDMonoNormal(srce, dest, index, increment, todo);
+	}
+	else
+#endif
+	{
+		SWORD sample;
+		SLONG lvolsel = vnf->lvolsel;
+	
+		while(todo--) {
+			sample = srce[index >> FRACBITS];
+			index += increment;
+	
+			*dest++ += lvolsel * sample;
+		}
 	}
 	return index;
 }
@@ -285,6 +294,7 @@ static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG i
 		SWORD sample;
 		SLONG lvolsel = vnf->lvolsel;
 		SLONG rvolsel = vnf->rvolsel;
+
 		while(todo--) {
 			sample=srce[(index += increment) >> FRACBITS];
 
@@ -744,6 +754,9 @@ static void MixLowPass_Normal(SLONG* srce,NATIVE count)
 	nLeftNR = n1;
 }
 
+/* shifting fudge factor for FP scaling, should be 0 < FP_SHIFT < BITSHIFT */
+#define FP_SHIFT 4
+
 /* Mixing macros */
 #define EXTRACT_SAMPLE_FP(var,size) var=(*srce++>>(BITSHIFT-size)) * ((1.0f / 32768.0f) / (1 << size))
 #define CHECK_SAMPLE_FP(var,bound) var=(var>bound)?bound:(var<-bound)?-bound:var
@@ -754,8 +767,6 @@ static void Mix32ToFP(float* dste,const SLONG *srce,NATIVE count)
 	float x1,x2,x3,x4;
 	int	remain;
 
-	#define FP_SHIFT	4
-	
 	remain=count&3;
 	for(count>>=2;count;count--) {
 		EXTRACT_SAMPLE_FP(x1,FP_SHIFT); EXTRACT_SAMPLE_FP(x2,FP_SHIFT);
@@ -828,24 +839,53 @@ static void Mix32To8(SBYTE* dste,const SLONG *srce,NATIVE count)
 #if defined HAVE_ALTIVEC || defined HAVE_SSE2
 
 // Mix 32bit input to floating point. 32 samples per iteration
-// PC: ?
+// PC: ?, Mac OK
 static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 {
-	int	remain=count&3;	
+	int	remain=count;	
+
+	while(!IS_ALIGNED_16(dste) || !IS_ALIGNED_16(srce))
+	{
+		float x1;
+		EXTRACT_SAMPLE_FP(x1,FP_SHIFT);
+		CHECK_SAMPLE_FP(x1,1.0f);
+		PUT_SAMPLE_FP(x1);
+		count--;
+		if (!count)
+		{
+			return;
+		}
+	}
+
+	remain = count&7;	
 	
-	const float k = (1.0f / (float)(1<<24));
-	simd_m128i x1;
-	simd_m128 x2 = LOAD_PS1_SIMD(&k); // Scale factor
-	remain = count&3;
-	for(count>>=2;count;count--) {
-	   EXTRACT_SAMPLE_SIMD_0(srce, x1);  // Load 32 samples
-	PUT_SAMPLE_SIMD_F(dste, x1, x2); // Store 32 samples
-	srce+=4;
-	dste+=4;
+	const float k = ((1.0f / 32768.0f) / (1 << FP_SHIFT));
+	simd_m128 x1, x2;
+	simd_m128 xk = LOAD_PS1_SIMD(&k); // Scale factor
+
+	for(count>>=3;count;count--) {
+	   EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
+	   EXTRACT_SAMPLE_SIMD_F(srce+4, x2, FP_SHIFT, xk);  // Load 4 samples
+	PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
+	PUT_SAMPLE_SIMD_F(dste+4, x2); // Store 4 samples
+	srce+=8;
+	dste+=8;
 	}	
 
-	if (remain)
-	   Mix32ToFP(dste, srce, remain);
+	if (remain&4) {
+	   EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
+	PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
+	srce+=4;
+	dste+=4;
+	remain &= 3;	
+	}	
+
+	while(remain--) {
+		float x1;
+		EXTRACT_SAMPLE_FP(x1,FP_SHIFT);
+		CHECK_SAMPLE_FP(x1,1.0f);
+		PUT_SAMPLE_FP(x1);
+	}
 }
 // PC: Ok, Mac Ok
 static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)

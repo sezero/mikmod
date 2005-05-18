@@ -332,45 +332,18 @@ static OSStatus OSX_AudioIOProc8Bit (AudioDeviceID 		inDevice,
 
 //_________________________________________________________________________________OSX_AudioIOProc16Bit()
 
-static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID 		inDevice,
-                                      const AudioTimeStamp 	*inNow,
-                                      const AudioBufferList 	*inInputData,
-                                      const AudioTimeStamp 	*inInputTime,
-                                      AudioBufferList		*outOutputData, 
-                                      const AudioTimeStamp	*inOutputTime,
-                                      void 			*inClientData)
+
+#ifdef HAVE_ALTIVEC
+// note: AltiVec code needs to be in a function of it's own,
+//       since the compiler will generate vrsave instructions
+
+#ifdef __GNUC__
+__attribute__ ((noinline))
+#endif
+static void OSX_AudioIOProc16Bit_Altivec(SInt16	*myInBuffer, float *myOutBuffer)
 {
-    register float	*myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
-    register SInt16	*myInBuffer;
-    register UInt32	i;
+		register UInt32	i;
 
-#if USE_FILL_THREAD
-
-	pthread_mutex_lock (&gBufferMutex);
- 	
-  #if DEBUG_TRACE_THREADS
- 	fprintf(stderr,"playing buffer #%d\n", gCurrentPlayBuffer);
-  #endif
-                                      
- 	myInBuffer = (SInt16 *) gSoundBackBuffer[gCurrentPlayBuffer];
- 	if (++gCurrentPlayBuffer >= NUMBER_BACK_BUFFERS)
-    	gCurrentPlayBuffer = 0;	
-
-	// ... and check the oil too
-    pthread_cond_signal (&gBufferCondition);
-
-	pthread_mutex_unlock (&gBufferMutex);
-
-#else
-
-	myInBuffer = (SInt16 *) gSoundBuffer;
-
-	FILL_BUFFER(gSoundBuffer, gInBufferSize);
-
-#endif /* USE_FILL_THREAD */
-
-    if (md_mode & DMODE_SIMDMIXER)
-	{
 		float f = SOUND_BUFFER_SCALE_16BIT;
    		const vector float gain = vec_load_ps1(&f); // multiplier
 		const vector float mix = vec_setzero();
@@ -412,8 +385,59 @@ static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID 		inDevice,
 				vec_st(v4, 0, myOutBuffer + 4 + i); // Store 4 floats
 			}
 		}
+}
+#endif // HAVE_ALTIVEC
+
+static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID 		inDevice,
+                                      const AudioTimeStamp 	*inNow,
+                                      const AudioBufferList 	*inInputData,
+                                      const AudioTimeStamp 	*inInputTime,
+                                      AudioBufferList		*outOutputData, 
+                                      const AudioTimeStamp	*inOutputTime,
+                                      void 			*inClientData)
+{
+    register float	*myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
+    register SInt16	*myInBuffer;
+    register UInt32	i;
+
+#if USE_FILL_THREAD
+
+	pthread_mutex_lock (&gBufferMutex);
+ 	
+  #if DEBUG_TRACE_THREADS
+ 	fprintf(stderr,"playing buffer #%d\n", gCurrentPlayBuffer);
+  #endif
+                                      
+ 	myInBuffer = (SInt16 *) gSoundBackBuffer[gCurrentPlayBuffer];
+ 	if (++gCurrentPlayBuffer >= NUMBER_BACK_BUFFERS)
+    	gCurrentPlayBuffer = 0;	
+
+	// ... and check the oil too
+    pthread_cond_signal (&gBufferCondition);
+
+	pthread_mutex_unlock (&gBufferMutex);
+
+#else
+
+	myInBuffer = (SInt16 *) gSoundBuffer;
+
+	FILL_BUFFER(gSoundBuffer, gInBufferSize);
+
+#endif /* USE_FILL_THREAD */
+
+#ifdef HAVE_ALTIVEC
+    if (md_mode & DMODE_SIMDMIXER)
+	{
+	#if __MWERKS__
+		#pragma dont_inline on
+	#endif
+		OSX_AudioIOProc16Bit_Altivec(myInBuffer,myOutBuffer);
+	#if __MWERKS__
+		#pragma dont_inline reset
+	#endif
 	}
 	else
+#endif
 	{
 		if (gBufferMono2Stereo)
 		{
@@ -549,11 +573,13 @@ static BOOL OSX_Init (void)
     // set up basic md_mode, just to be secure...
     md_mode |= DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
 
+#ifdef HAVE_ALTIVEC
 	// check for Altivec support
 	if (OSX_HasAltivec())
 	{
 	    md_mode |= DMODE_SIMDMIXER;
 	}
+#endif
 
     // try the selected mix frequency, if failure, fall back to native frequency...
     if (mySoundBasicDescription.mSampleRate != md_mixfreq)
