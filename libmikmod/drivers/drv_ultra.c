@@ -297,7 +297,7 @@ static BOOL Ultra_IsThere(void)
 }
 
 /* Load a new sample directly into GUS DRAM and return a handle */
-static SWORD Ultra_SampleLoad(struct SAMPLOAD *sload)
+static SWORD Ultra_SampleLoad(struct SAMPLOAD *sload, int type)
 {
 	int handle;
 	SAMPLE *s = sload->sample;
@@ -397,14 +397,14 @@ static void Ultra_SampleUnload(SWORD handle)
 }
 
 /* Reports available sample space */
-static ULONG Ultra_SampleSpace(void)
+static ULONG Ultra_SampleSpace(int type)
 {
 	libgus_memory_pack();
 	return (libgus_memory_free_size());
 }
 
 /* Reports the size of a sample */
-static ULONG Ultra_SampleLength(SAMPLE *s)
+static ULONG Ultra_SampleLength(int type, SAMPLE *s)
 {
 	if (!s)
 		return 0;
