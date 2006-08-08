@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 {
 	MODULE *module;
 	unsigned char *file_data;
-	long file_length;
+	long sysFileGetLength;
 	FILE *fptr;
 	MREADER *mem_reader;
 
@@ -58,18 +58,18 @@ int main(int argc, char **argv)
 
 	/* calculate the file size */
 	fseek(fptr, 0, SEEK_END);
-	file_length = ftell(fptr);
+	sysFileGetLength = ftell(fptr);
 	fseek(fptr, 0, SEEK_SET);
 
 	/* allocate a buffer and load the file into it */
-	file_data = MikMod_malloc(file_length);
+	file_data = MikMod_malloc(sysFileGetLength);
 	if (file_data == NULL) {
 		perror("MikMod_malloc");
 		fclose(fptr);
 		MikMod_Exit();
 		return 1;
 	}
-	if (fread(file_data, file_length, 1, fptr) != 1)
+	if (fread(file_data, sysFileGetLength, 1, fptr) != 1)
 	{
 		perror("fread");
 		fclose(fptr);
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	fclose(fptr);
 
 	/* Create the memory reader */
-	mem_reader = _mm_new_mem_reader(file_data, file_length);
+	mem_reader = _mm_new_mem_reader(file_data, sysFileGetLength);
 	if (mem_reader == NULL) {
 		fprintf(stderr, "failed to create mem reader\n");
 		MikMod_free(file_data);

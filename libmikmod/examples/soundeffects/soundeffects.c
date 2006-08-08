@@ -21,7 +21,7 @@
 SAMPLE *Load(char *fn)
 {	
 	char *file_data;
-	long file_length;
+	long sysFileGetLength;
 	FILE *fptr;
 
 	// return Sample_Load(fn);
@@ -35,17 +35,17 @@ SAMPLE *Load(char *fn)
 
 	/* calculate the file size */
 	fseek(fptr, 0, SEEK_END);
-	file_length = ftell(fptr);
+	sysFileGetLength = ftell(fptr);
 	fseek(fptr, 0, SEEK_SET);
 
 	/* allocate a buffer and load the file into it */
-	file_data = MikMod_malloc(file_length);
+	file_data = MikMod_malloc(sysFileGetLength);
 	if (file_data == NULL) {
 		perror("MikMod_malloc");
 		fclose(fptr);
 		return 0;
 	}
-	if (fread(file_data, file_length, 1, fptr) != 1)
+	if (fread(file_data, sysFileGetLength, 1, fptr) != 1)
 	{
 		perror("fread");
 		fclose(fptr);
@@ -54,7 +54,7 @@ SAMPLE *Load(char *fn)
 	}
 	fclose(fptr);
 
-	return Sample_LoadMem(file_data, file_length);
+	return Sample_LoadMem(file_data, sysFileGetLength);
 }
 
 main()

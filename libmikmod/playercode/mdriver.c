@@ -72,7 +72,7 @@ MIKMODAPI	UBYTE md_sndfxvolume    = 128;	/* volume of sound effects */
 			UBYTE md_hardchn=0,md_softchn=0;
 
 			void (*md_player)(void) = Player_HandleTick;
-static		BOOL  isplaying=0, initialized = 0;
+static volatile	BOOL  isplaying=0, initialized = 0;
 static		UBYTE *sfxinfo;
 static		int sfxpool;
 

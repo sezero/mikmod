@@ -3390,7 +3390,7 @@ MIKMODAPI int Player_GetOrder(void)
 {
 	int ret;
 	MUTEX_LOCK(vars);
-	ret = pf ? pf->positions[pf->sngpos ? pf->sngpos-1 : 0]: 0;
+	ret = pf ? pf->sngpos :0; // pf->positions[pf->sngpos ? pf->sngpos-1 : 0]: 0;
 	MUTEX_UNLOCK(vars);
 	return ret;
 }

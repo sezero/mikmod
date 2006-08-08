@@ -675,26 +675,26 @@ extern BOOL Voice_Stopped_internal(SBYTE);
 #endif
 
 /*========== SIMD mixing routines */
+#undef HAVE_ALTIVEC
+#undef HAVE_SSE2
 
-#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__APPLE__) && !defined (__i386__)
 
-#ifdef __VEC__
+#if defined __VEC__ && !(defined(__GNUC__) && (__GNUC__ < 3))
 #define HAVE_ALTIVEC
 #endif // __VEC__
 
-#if defined(__GNUC__) && (__GNUC__ < 3)
-#undef HAVE_ALTIVEC
-#endif
-
-#elif defined WIN32 || defined __WIN64
+#elif defined WIN32 || defined __WIN64 || (defined __APPLE__ && defined (__i386__) && defined __VEC__)
 
 // FIXME: emmintrin.h requires VC6 processor pack or VC2003+
 #define HAVE_SSE2
 
 /* Fixes couples warnings */
+#ifdef _MSC_VER
 #pragma warning(disable:4761)
 #pragma warning(disable:4391)
 #pragma warning(disable:4244)
+#endif
 #endif
 // TODO: Test for GCC Linux
 
