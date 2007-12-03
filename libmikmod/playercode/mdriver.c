@@ -203,7 +203,13 @@ void _mm_registerdriver(struct MDRIVER* drv)
 	/* don't register a MISSING() driver */
 	if ((drv->Name) && (drv->Version)) {
 		if (cruise) {
-			while (cruise->next) cruise = cruise->next;
+			if ( cruise == drv )
+				return;
+			while(cruise->next) {
+				cruise = cruise->next;
+				if ( cruise == drv )
+					return;
+			}
 			cruise->next = drv;
 		} else
 			firstdriver = drv; 
