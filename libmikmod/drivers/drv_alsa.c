@@ -47,7 +47,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys/asoundlib.h>
+#include <alsa/asoundlib.h>
 #if defined(SND_LIB_VERSION) && (SND_LIB_VERSION >= 0x500)
 #undef DRV_ALSA
 #endif

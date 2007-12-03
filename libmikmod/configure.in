@@ -317,10 +317,10 @@ fi
 if test "`uname`" = "Linux" && test $libmikmod_driver_alsa = yes
 then
 	libmikmod_driver_alsa=no
-	AC_CHECK_HEADERS(sys/asoundlib.h)
-	if test $ac_cv_header_sys_asoundlib_h = yes
+	AC_CHECK_HEADERS(alsa/asoundlib.h)
+	if test $ac_cv_header_alsa_asoundlib_h = yes
 	then
-		AC_CHECK_LIB(asound,snd_cards,libmikmod_driver_alsa=yes)
+		AC_CHECK_LIB(asound,snd_pcm_open,libmikmod_driver_alsa=yes)
 	fi
 else
 	libmikmod_driver_alsa=no
