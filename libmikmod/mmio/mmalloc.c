@@ -66,7 +66,7 @@ void* MikMod_realloc(void *data, size_t size)
 			return d;
 		}
 		return 0;
-#elif defined _WIN32 || defined _WIN64
+#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
 		return _aligned_realloc(data, size, ALIGN_STRIDE);
 #else
 		unsigned char *newPtr = (unsigned char *)realloc(get_pointer(data), size + ALIGN_STRIDE + sizeof(void*));
@@ -87,7 +87,7 @@ void* MikMod_malloc(size_t size)
 		return d;
 	}
 	return 0;
-#elif defined _WIN32 || defined _WIN64
+#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
 	void * d = _aligned_malloc(size, ALIGN_STRIDE);
 	if (d)
 	{
@@ -116,7 +116,7 @@ void* MikMod_calloc(size_t nitems,size_t size)
 		return d;
 	}
 	return 0;
-#elif defined _WIN32 || defined _WIN64
+#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
 	void * d = _aligned_malloc(size * nitems, ALIGN_STRIDE);
 	if (d)
 	{
@@ -141,7 +141,7 @@ void MikMod_free(void *data)
 	{
 #if defined __MACH__
 		free(data);
-#elif defined _WIN32 || defined _WIN64
+#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
 		_aligned_free(data);
 #else
 		free(get_pointer(data));
