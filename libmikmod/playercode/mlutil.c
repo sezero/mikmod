@@ -60,7 +60,7 @@ CHAR *STM_Version[STM_NTRACKERS] = {
 SBYTE  remap[UF_MAXCHAN];   /* for removing empty channels */
 UBYTE* poslookup=NULL;      /* lookup table for pattern jumps after blank
                                pattern removal */
-UBYTE  poslookupcnt;
+UWORD  poslookupcnt;
 UWORD* origpositions=NULL;
 
 BOOL   filters;             /* resonant filters in use */

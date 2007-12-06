@@ -555,7 +555,7 @@ extern UWORD   npertab[7*OCTAVE];   /* used by the original MOD loaders */
 extern SBYTE   remap[UF_MAXCHAN];   /* for removing empty channels */
 extern UBYTE*  poslookup;           /* lookup table for pattern jumps after
                                       blank pattern removal */
-extern UBYTE   poslookupcnt;
+extern UWORD   poslookupcnt;
 extern UWORD*  origpositions;
 
 extern BOOL    filters;             /* resonant filters in use */
