@@ -145,7 +145,7 @@ static BOOL read_itcompr8(ITPACK* status,MREADER *reader,SWORD *sl_buffer,UWORD 
 	status->bufbits = bufbits;
 	status->last = last;
 	status->buf = buf;
-	return !!(dest-sl_buffer);
+	return (dest-sl_buffer);
 }
 
 /* unpack a 16bit IT packed sample */
@@ -219,7 +219,7 @@ static BOOL read_itcompr16(ITPACK *status,MREADER *reader,SWORD *sl_buffer,UWORD
 	status->bufbits = bufbits;
 	status->last = last;
 	status->buf = buf;
-	return !!(dest-sl_buffer);
+	return (dest-sl_buffer);
 }
 
 static BOOL SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor,ULONG length,MREADER* reader,BOOL dither)
