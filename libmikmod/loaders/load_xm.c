@@ -687,7 +687,7 @@ BOOL XM_Load(BOOL curious)
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
 	}
-	_mm_read_UBYTES(mh->orders,256,modreader);
+	_mm_read_UBYTES(mh->orders,mh->headersize-20,modreader);
 
 	if(_mm_eof(modreader)) {
 		_mm_errno = MMERR_LOADING_HEADER;
