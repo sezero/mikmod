@@ -862,6 +862,11 @@ BOOL IT_Load(BOOL curious)
 #endif
 
 				IT_ProcessEnvelope(vol);
+			
+				// Secunia SA37775
+				if (ih.volpts>= ENVPOINTS)
+					ih.volpts = ENVPOINTS-1;
+				
 				for(u=0;u<ih.volpts;u++)
 					d->volenv[u].val=(ih.volnode[u]<<2);
 
