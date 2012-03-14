@@ -743,6 +743,8 @@ BOOL IT_Load(BOOL curious)
 #define IT_LoadEnvelope(name,type) 										\
 				ih. name##flg   =_mm_read_UBYTE(modreader);				\
 				ih. name##pts   =_mm_read_UBYTE(modreader);				\
+				if (ih. name##pts > ITENVCNT)							\
+					ih. name##pts = ITENVCNT;							\
 				ih. name##beg   =_mm_read_UBYTE(modreader);				\
 				ih. name##end   =_mm_read_UBYTE(modreader);				\
 				ih. name##susbeg=_mm_read_UBYTE(modreader);				\
@@ -756,6 +758,8 @@ BOOL IT_Load(BOOL curious)
 #define IT_LoadEnvelope(name,type) 										\
 				ih. name/**/flg   =_mm_read_UBYTE(modreader);			\
 				ih. name/**/pts   =_mm_read_UBYTE(modreader);			\
+				if (ih. name/**/pts > ITENVCNT)							\
+					ih. name/**/pts = ITENVCNT;							\
 				ih. name/**/beg   =_mm_read_UBYTE(modreader);			\
 				ih. name/**/end   =_mm_read_UBYTE(modreader);			\
 				ih. name/**/susbeg=_mm_read_UBYTE(modreader);			\
@@ -863,10 +867,6 @@ BOOL IT_Load(BOOL curious)
 
 				IT_ProcessEnvelope(vol);
 			
-				// Secunia SA37775
-				if (ih.volpts>= ENVPOINTS)
-					ih.volpts = ENVPOINTS-1;
-				
 				for(u=0;u<ih.volpts;u++)
 					d->volenv[u].val=(ih.volnode[u]<<2);
 
