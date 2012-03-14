@@ -2316,7 +2316,7 @@ void pt_UpdateVoices(MODULE *mod, int max_volume)
 	SAMPLE *s;
 
 	mod->totalchn=mod->realchn=0;
-	for (channel=0;channel<md_sngchn;channel++) {
+	for (channel=0;channel<pf->numchn;channel++) {
 		aout=&mod->voice[channel];
 		i=aout->main.i;
 		s=aout->main.s;
@@ -3087,7 +3087,7 @@ MIKMODAPI void Player_NextPosition(void)
 		pf->patbrk=0;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<md_sngchn;t++) {
+		for (t=0;t<pf->numchn;t++) {
 			Voice_Stop_internal(t);
 			pf->voice[t].main.i=NULL;
 			pf->voice[t].main.s=NULL;
@@ -3112,7 +3112,7 @@ MIKMODAPI void Player_PrevPosition(void)
 		pf->patbrk=0;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<md_sngchn;t++) {
+		for (t=0;t<pf->numchn;t++) {
 			Voice_Stop_internal(t);
 			pf->voice[t].main.i=NULL;
 			pf->voice[t].main.s=NULL;
@@ -3139,7 +3139,7 @@ MIKMODAPI void Player_SetPosition(UWORD pos)
 		pf->sngpos=pos;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<md_sngchn;t++) {
+		for (t=0;t<pf->numchn;t++) {
 			Voice_Stop_internal(t);
 			pf->voice[t].main.i=NULL;
 			pf->voice[t].main.s=NULL;
