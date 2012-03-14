@@ -160,7 +160,7 @@ static BOOL OSS_IsThere(void)
 	   in the kernel or sound hardware                                      */
 	int fd;
 
-	if((fd=open(OSS_GetDeviceName(),O_WRONLY))>=0) {
+	if((fd=open(OSS_GetDeviceName(),O_WRONLY|O_NONBLOCK))>=0) {
 		close(fd);
 		return 1;
 	}
