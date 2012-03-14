@@ -186,11 +186,16 @@ MIKMODAPI CHAR* MikMod_InfoDriver(void)
 
 	if(len)
 		if((list=MikMod_malloc(len*sizeof(CHAR)))) {
+			CHAR * list_end = list;
 			list[0]=0;
 			/* list all registered device drivers : */
 			for(t=1,l=firstdriver;l;l=l->next,t++)
-				sprintf(list,(l->next)?"%s%2d %s\n":"%s%2d %s",
-				    list,t,l->Version);
+			{
+				list_end += sprintf(list_end,
+					"%2d %s%s",
+					t,l->Version, ((l->next)?"\n":"")
+				);
+			}
 		}
 	MUTEX_UNLOCK(lists);
 	return list;

@@ -67,10 +67,15 @@ MIKMODAPI CHAR* MikMod_InfoLoader(void)
 
 	if(len)
 		if((list=MikMod_malloc(len*sizeof(CHAR)))) {
+			CHAR * list_end = list;
 			list[0]=0;
 			/* list all registered module loders */
 			for(l=firstloader;l;l=l->next)
-				sprintf(list,(l->next)?"%s%s\n":"%s%s",list,l->version);
+			{
+				list_end += sprintf(list_end,
+					"%s%s",l->version, ((l->next) ? "\n" : "")
+				);
+			}
 		}
 	MUTEX_UNLOCK(lists);
 	return list;
