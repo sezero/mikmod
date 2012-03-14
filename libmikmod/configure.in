@@ -471,6 +471,7 @@ AC_REPLACE_FUNCS(strcasecmp strdup strstr)
 # Change extension, as we use libtool
 LIBOBJS="`echo $LIBOBJS|sed -e 's/\.o/\.lo/g'`"
 
+AC_CHECK_LIB([m],[floor],LIBRARY_LIB="-lm $LIBRARY_LIB")
 AC_HEADER_EGREP(srandom,math.h,AC_DEFINE(SRANDOM_IN_MATH_H))
 
 # ================
