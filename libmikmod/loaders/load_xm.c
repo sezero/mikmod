@@ -636,7 +636,8 @@ static BOOL LoadInstruments(void)
 				_mm_fseek(modreader,ck,SEEK_SET);
 				for(u=headend-_mm_ftell(modreader);u;u--) _mm_read_UBYTE(modreader);
 
-				if(_mm_eof(modreader)) {
+				/* last instrument is at the end of file in version 0x0104 */
+				if(_mm_eof(modreader) && (mh->version<0x0104 || t<of.numins-1)) {
 					MikMod_free(nextwav);MikMod_free(wh);
 					nextwav=NULL;wh=NULL;
 					_mm_errno = MMERR_LOADING_SAMPLEINFO;
