@@ -31,3 +31,16 @@
 ^libmikmod/macintosh/_libmikmodversion\.r$
 ^libmikmod/macintosh/mikmod\.h$
 ^libmikmod/stamp-h$
+^mikmod/src/Makefile$
+^mikmod/src/mikmod$
+^mikmod/src/stamp-h1$
+^mikmod/win32/Makefile$
+^mikmod/os2/Makefile$
+^mikmod/Makefile$
+^mikmod/dos/Makefile$
+^mikmod/src/\.deps
+^mikmod/config\.h$
+^mikmod/config\.log$
+^mikmod/config\.status$
+^mikmod/mik\.val$
+^mikmod/stamp-h1$
