@@ -1,0 +1,125 @@
+  Hello folks !
+
+
+This is MikMod, version 3.2.2-beta0, a module player for DOS.
+DOS support is new in this version, your comments and critics are welcome.
+
+
+
+>> BETA WARNING
+---------------
+
+This is a *beta* version of MikMod. Although it should work fine on
+almost all systems, there are likely a few last-minute errors or typos
+in the source, and some parts have not received enough hours of testing yet.
+
+Also, please note that all features planned for the final 3.2.2 release are not
+available yet, and the documentation has not been updated yet.
+
+If I've not scared you, then you can proceed and enjoy fewer bugs than in the
+previous version, as well as nice eye-candies (-;
+
+
+>> BUILDING MIKMOD
+------------------
+
+- If you're not building libmikmod for DOS, then you're lost in the sources.
+  Go up one directory, and read the main README file.
+  
+This port has been designed to work only with DJGPP compiler. However, it
+should not be too complex to make it compile with any other compiler. If you
+manage to make libmikmod compile and work with another compiler, we'd like to
+hear from you. You'll likely have to write an appropiate makefile, or build
+things manually ...
+
+You should have pre-built libmikmod.a either in %DJGPP%/lib or in $(MIKMOD)
+(see Makefile) directory. Refer to the libmikmod source package for
+instructions on how to build libmikmod under DOS.
+  
+If you have all proper tools installed, just type
+  
+      make -fMakefile.dj
+	  
+You should end up with a MIKMOD.EXE binary in the current directory.
+
+
+>> USING MIKMOD
+---------------
+
+Run MikMod with the ``--help'' parameter to get the available options.
+Program documentation is available as an Unix man page (..\src\mikmod.1) which
+you can read if you've got a port of the 'man' tool.
+
+Also, after you've run MikMod for the first time, you might want to
+customize your mikmod.cfg file, either from the configuration panel or by
+editing the file yourself, so you won't need to supply the same options to
+MikMod all the time. This file will be created in the directory pointed to by
+the HOME environment variable. If you don't have the HOME environment variable,
+the file will be created in C:\, which is probably not what you want and should
+encourage you to have the HOME environment variable set.
+
+Once you're in the player, if you haven't choosed terse mode (a la
+MikMod 2), pressing the H key will give you an help screen with the list
+of the keys you can use. I hope it's understandable.
+
+
+>> THANKS
+---------
+
+We would like to thank everyone who contributed to libmikmod. Their names
+are in the AUTHORS file for the significative contributions, but some other
+names can be found in the NEWS file. Thanks a lot ! Keeping MikMod alive
+wouldn't be much fun without you.
+
+
+>> LICENSE
+----------
+
+The MikMod module player is covered by the GNU General Public License as
+published by the Free Software Fundation (you'll find it in the file COPYING) ;
+either version 2 of the licence, or (at your option) any later version.
+
+
+>> CONTACT AND DOWNLOAD INFO
+----------------------------
+
+* email:
+  Please send all your MikMod related e-mail to the maintainer, Miodrag Vallat,
+  at:
+  miodrag@mikmod.darkorb.net
+
+  Things related to the DOS port should also be forwarded to the DOS
+  ``portmaster'', Andrew Zabolotny, at:
+  bit@eltech.ru
+
+  There's a mailing list for discussing the development of MikMod (new
+  features, bugs, ideas...). Look for more information on the web site.
+
+* web:
+  MikMod and libmikmod home page is located at:
+    http://mikmod.darkorb.net
+  The European mirror is at:
+    http://www.multimania.com/miodrag/mikmod
+
+* ftp:
+  Latest releases of libmikmod can be found:
+  - on the official ftp site
+    ftp://mikmod.darkorb.net
+  - on metalab (formerly known as sunsite) and its mirrors
+    ftp://metalab.unc.edu/pub/Linux/apps/sound/libs for libmikmod, and
+    ftp://metalab.unc.edu/pub/Linux/apps/sound/players for MikMod
+  - on hobbes, in source and OS/2 binary forms
+    ftp://hobbes.nmsu.edu/pub/os2/mmedia
+
+
+>> LAST NOTES
+-------------
+
+We hope you'll enjoy using this version of MikMod as well as we enjoyed
+debugging and improving it.
+
+-- Miodrag ("Miod") Vallat, 10/19/1999
+   miodrag@mikmod.darkorb.net
+   
+   Andrew Zabolotny
+   bit@eltech.ru

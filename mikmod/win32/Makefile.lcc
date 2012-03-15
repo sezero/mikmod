@@ -1,0 +1,99 @@
+# Makefile for MikMod for the lcc-win32 compiler system
+#
+
+CC=lcc.exe
+LINKER=lcclnk.exe
+
+CFLAGS=-O -g4 -A -ansic -DHAVE_CONFIG_H -DWIN32 -DLCC
+COMPILE=$(CC) -errout=err.out $(CFLAGS) -I. -Fo$@ ..\src\$*.c
+
+LIBS= mikmod.lib dsound.lib winmm.lib
+
+OBJS= display.o marchive.o mconfedit.o mconfig.o mdialog.o \
+	mfnmatch.o mgetopt.o mgetopt1.o mikmod.o mlist.o \
+	mlistedit.o mmenu.o mplayer.o mutilities.o mwidget.o \
+	mwindow.o rcfile.o
+
+all: mikmod.exe
+
+clean:
+	FOR %F IN ( err.out mikmod.exe *.o ) DO IF EXIST %F erase %F
+
+mikmod.exe: $(OBJS)
+	$(LINKER) -subsystem console -o mikmod.exe $(OBJS) $(LIBS)
+
+display.o: ..\src\display.c ..\src\player.h ..\src\mconfig.h ..\src\rcfile.h \
+	..\src\mlist.h ..\src\mutilities.h ..\src\mwindow.h ..\src\mconfedit.h \
+	..\src\mmenu.h ..\src\keys.h ..\src\mplayer.h ..\src\mlistedit.h
+	$(COMPILE)
+
+marchive.o: ..\src\marchive.c ..\src\mfnmatch.h ..\src\mlist.h \
+	..\src\marchive.h ..\src\mconfig.h ..\src\rcfile.h \
+	..\src\mutilities.h ..\src\display.h
+	$(COMPILE)
+
+mconfedit.o: ..\src\mconfedit.c ..\src\rcfile.h ..\src\mconfig.h \
+	..\src\mconfedit.h ..\src\mmenu.h ..\src\mwindow.h ..\src\mlist.h \
+	..\src\mdialog.h ..\src\mwidget.h ..\src\mutilities.h
+	$(COMPILE)
+
+mconfig.o: ..\src\mconfig.c ..\src\player.h ..\src\rcfile.h ..\src\mwindow.h \
+	..\src\mlist.h ..\src\mutilities.h
+	$(COMPILE)
+
+mdialog.o: ..\src\mdialog.c ..\src\mwidget.h ..\src\mwindow.h ..\src\mconfig.h \
+	..\src\rcfile.h ..\src\mdialog.h ..\src\display.h ..\src\mutilities.h
+	$(COMPILE)
+
+mfnmatch.o: ..\src\mfnmatch.c ..\src\mfnmatch.h
+	$(COMPILE)
+
+mgetopt.o: ..\src\mgetopt.c ..\src\mgetopt.h
+	$(COMPILE)
+
+mgetopt1.o: ..\src\mgetopt1.c ..\src\mgetopt.h
+	$(COMPILE)
+
+mikmod.o: ..\src\mikmod.c ..\src\mgetopt.h ..\src\player.h ..\src\mutilities.h \
+	..\src\display.h ..\src\rcfile.h ..\src\mconfig.h ..\src\mlist.h \
+	..\src\mlistedit.h ..\src\mmenu.h ..\src\mwindow.h ..\src\marchive.h \
+	..\src\mdialog.h ..\src\mwidget.h ..\src\mplayer.h ..\src\keys.h
+	$(COMPILE)
+
+mlist.o: ..\src\mlist.c ..\src\mfnmatch.h ..\src\mlist.h ..\src\marchive.h \
+	..\src\mutilities.h
+	$(COMPILE)
+
+mlistedit.o: ..\src\mlistedit.c ..\src\mlistedit.h ..\src\mmenu.h \
+	..\src\mwindow.h ..\src\mconfig.h ..\src\rcfile.h ..\src\mlist.h \
+	..\src\player.h ..\src\mdialog.h ..\src\mwidget.h ..\src\rcfile.h \
+	..\src\mconfedit.h ..\src\marchive.h ..\src\mwidget.h ..\src\keys.h \
+	..\src\display.h ..\src\mutilities.h
+	$(COMPILE)
+
+mmenu.o: ..\src\mmenu.c ..\src\display.h ..\src\mmenu.h ..\src\mwindow.h \
+	..\src\mconfig.h ..\src\rcfile.h ..\src\mdialog.h ..\src\mwidget.h \
+	..\src\keys.h ..\src\mutilities.h
+	$(COMPILE)
+
+mplayer.o: ..\src\mplayer.c ..\src\mplayer.h ..\src\mthreads.h ..\src\mconfig.h \
+	..\src\rcfile.h ..\src\mutilities.h
+	$(COMPILE)
+
+mutilities.o: ..\src\mutilities.c ..\src\player.h ..\src\mlist.h \
+	..\src\marchive.h ..\src\mutilities.h
+	$(COMPILE)
+
+mwidget.o: ..\src\mwidget.c ..\src\display.h ..\src\player.h ..\src\mwindow.h \
+	..\src\mconfig.h ..\src\rcfile.h ..\src\mwidget.h ..\src\keys.h \
+	..\src\mutilities.h
+	$(COMPILE)
+
+mwindow.o: ..\src\mwindow.c ..\src\display.h ..\src\player.h ..\src\mwindow.h \
+	..\src\mconfig.h ..\src\rcfile.h ..\src\mutilities.h ..\src\keys.h \
+	..\src\mthreads.h
+	$(COMPILE)
+
+rcfile.o: ..\src\rcfile.c ..\src\rcfile.h ..\src\mutilities.h
+	$(COMPILE)
+

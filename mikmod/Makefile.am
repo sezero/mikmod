@@ -1,0 +1,7 @@
+AUTOMAKE_OPTIONS = foreign
+SUBDIRS = src dos os2 win32
+
+pkgdata_DATA = mikmodrc
+
+EXTRA_DIST = mikmod-3.2.2.lsm \
+             convert_playlist mikmod.cfg $(pkgdata_DATA)

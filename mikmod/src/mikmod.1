@@ -1,0 +1,424 @@
+.TH MIKMOD 1 "Version 3.2.2-beta1, 29th January 2004"
+
+
+.SH NAME 
+mikmod - play soundtracker etc. modules on a Unix machine.
+
+
+.SH SYNOPSIS
+.B mikmod [\fB-options\fR]... [\fBmodule\fR|\fBplaylist\fR]...
+
+
+.SH DESCRIPTION
+
+
+\fIMikMod\fR is a \fIvery\fR portable module player based on libmikmod, written
+originally by Jean-Paul Mikkers (MikMak). It will play the IT, XM, MOD, MTM,
+S3M, STM, ULT, FAR, MED, DSM, AMF, IMF and 669 module formats. It works under
+AIX, FreeBSD, HP-UX, IRIX, Linux, NetBSD, OpenBSD, OSF/1, SunOS, Solaris,
+OS/2, DOS, and Windows. It is controllable via an easy-to-use curses
+interface and will extract and play modules from a variety of
+different archive formats.
+
+
+.SH OPTIONS
+
+
+Options can be given in any order, and are case-sensitive. For the options
+which have both a short and a long form, the long form can be prefixed by one
+or two dashes. Note that the settings in your $HOME/.mikmodrc will override the
+defaults shown in this man page.
+
+
+.SH OUTPUT OPTIONS
+
+
+.IP "\fB-d \fIn\fR"
+.IP "\fB--driver \fIn\fR"
+Use the specified device driver for output, 0 is autodetect. The default is 0. 
+If your installed libmikmod engine is recent enough (>=3.1.7), you can also
+specify the driver with an alias, as well as driver options separated by
+commas. The list and driver aliases and recognized options can be found in
+libmikmod's documentation.
+.IP "\fB-o[utput] \fI8m\fR|\fI8s\fR|\fI16m\fR|\fI16s\fR"
+Output settings, 8 or 16 bit in stereo or mono. The default is "16s".
+.IP "\fB-f \fIfreq\fR"
+.IP "\fB--frequency \fIfreq\fR"
+Set mixing frequency in hertz. The default is 44100.
+.IP "\fB-i\fR"
+.IP "\fB--interpolate\fR"
+Use interpolated mixing. This will generally improve audio quality, at the
+expense of a bit more CPU usage. Note that this option alters the behaviour of
+software drivers only ; hardware drivers are not affected (default).
+.IP "\fB--nointerpolate\fR"
+Do not use interpolated mixing.
+.IP "\fB-hq\fR"
+.IP "\fB--hqmixer\fR"
+Use high quality software mixer. This improves audio quality, but requires a lot
+more CPU power. Note that this option alters the behaviour of software drivers
+only ; hardware drivers are not affected.
+.IP "\fB--nohqmixer"
+Do not use high quality software mixer (default).
+.IP "\fB-s\fR"
+.IP "\fB--surround\fR"
+Use surround mixing.
+.IP "\fB--nosurround\fR"
+Do not use surround mixing (default).
+.IP "\fB-r \fIn\fR"
+.IP "\fB--reverb \fIn\fR"
+Sets reverb amount from 0 (no reverb) to 15 (max reverb). The default is 0 (no
+reverb).
+
+
+.SH PLAYBACK OPTIONS
+
+
+.IP "\fB-v \fIvolume\fR"
+.IP "\fB--volume \fIvolume\fR"
+Set volume from 0% (silence) to 100%. The default is 100%.
+.IP "\fB-F\fR"
+.IP "\fB--fadeout\fR"
+Fade out the volume during the last pattern of each module.
+.IP "\fB--nofadeout\fR"
+Do not fade out the volume during the last pattern of each module (default).
+.IP "\fB-l\fR"
+.IP "\fB--loops\fR"
+Enable in-module backwards loops.
+.IP "\fB--noloops\fR"
+Disable in-module backwards loops (default).
+.IP "\fB-a\fR"
+.IP "\fB--panning\fR"
+Process panning effects (default). This should be disabled (using --nopanning)
+for very old demo modules which use the panning effects for synchronization
+purposes.
+.IP "\fB--nopanning\fR"
+Do not process panning effects.
+.IP "\fB-x\fR"
+.IP "\fB--protracker\fR"
+Enable protracker extended speed effect (default). This should be disabled
+(using --noprotracker) for very old demo modules which use the extended speed
+effect for synchronization purposes.
+.IP "\fB--noprotracker\fR"
+Disable protracker extended speed effect.
+
+
+.SH LOADING OPTIONS
+
+
+.IP "\fB-y \fIdir\fR"
+.IP "\fB--directory \fIdir\fR"
+Scan directory recursively for modules.
+.IP "\fB-c\fR"
+.IP "\fB--curious\fR"
+Look for hidden patterns in module. Most modules don't have hidden patterns,
+but you can find "bonus" patterns (or just silence) in some modules.
+.IP "\fB--nocurious\fR"
+Do not look for hidden patterns in module (default).
+.IP "\fB-p \fIn\fR"
+.IP "\fB--playmode \fIn\fR"
+Playlist mode. The allowed values here are 1, to loop the current
+module; 2, to play the whole playlist repeatedly; 4, to shuffle the
+list before playing, and 8, to play the whole list randomly. The
+default is 2.
+.IP "\fB-t\fR"
+.IP "\fB--tolerant\fR"
+Don't halt MikMod if a module cannot be read or is an unknown format (default).
+.IP "\fB--notolerant\fR"
+Halt MikMod if a module cannot be read or is an unknown format.
+
+
+.SH SCHEDULING OPTIONS
+
+
+The following options need root privileges (or a setuid root binary), and
+don't work under all systems.
+.IP "\fB-s\fR"
+.IP "\fB--renice\fR"
+Renice to -20 if possible to gain more CPU priority. This option is only
+available under FreeBSD, Linux, NetBSD, OpenBSD and OS/2.
+.IP "\fB--norenice\fR"
+Do not renice to -20 (default).
+.IP "\fB-S\fR"
+.IP "\fB--realtime\fR"
+Reschedule mikmod to gain real-time priority (and thus more CPU time).
+\fBDANGEROUS! USE WITH CAUTION!\fR This option is only available under FreeBSD,
+Linux and OS/2.
+.IP "\fB--norealtime\fR"
+Do not reschedule MikMod to gain real-time priority (default).
+
+
+.SH DISPLAY OPTIONS
+
+
+.IP "\fB-q\fR"
+.IP "\fB--quiet\fR"
+Quiet mode. Disables interactive commands and displays only errors.
+
+
+.SH INFORMATION OPTIONS
+
+
+.IP "\fB-n\fR"
+.IP "\fB--information\fR"
+Display the list of the known drivers and module loaders.
+.IP "\fB-N \fIn\fR"
+.IP "\fB--drvinfo \fIn\fR"
+Display information about a specific driver.
+.IP "\fB-V\fR"
+.IP "\fB--version\fR"
+Display MikMod version.
+.IP "\fB-h\fR"
+.IP "\fB--help\fR"
+Display a summary of the options.
+
+
+.SH CONFIGURATION OPTION
+
+
+.IP "\fB--norc\fR"
+Do not parse the $HOME/.mikmodrc configuration file. This file contains your
+default settings, so that you don't have to specify them each time you run
+MikMod. The file is read when you run MikMod and updated on exit. Using this
+option prevents MikMod from accessing this file.
+
+
+.SH RUNTIME COMMANDS
+
+
+At play time, the following keystrokes offer control over MikMod:
+.IP "\fBH\fR, \fBfunction key F1\fR"
+Display help panel.
+.IP "\fBS\fR, \fBfunction key F2\fR"
+Display samples panel.
+.IP "\fBI\fR, \fBfunction key F3\fR"
+Display instruments panel (if present in the module).
+.IP "\fBM\fR, \fBfunction key F4\fR"
+Display song message panel (if present in the module).
+.IP "\fBL\fR, \fBfunction key F5\fR"
+Display the playlist panel.
+.IP "\fBC\fR, \fBfunction key F6\fR"
+Display the configuration panel.
+.IP "\fBV\fR, \fBfunction key F7\fR"
+Display the volume panel.
+.IP "\fBdigits\fR"
+Set volume from 10% (digit 1) to 100% (digit 0).
+.IP "\fB<\fR"
+Decrease volume.
+.IP "\fB>\fR"
+Increase volume.
+.IP "\fB-\fR, \fBLeft\fR"
+Restart current pattern / skip to previous pattern.
+.IP "\fB+\fR, \fBRight\fR"
+Skip to next pattern in current module.
+.IP "\fBUp\fR, \fBDown\fR"
+Scroll panel.
+.IP "\fBPgUp\fR, \fBPgDown\fR"
+Scroll panel (faster).
+.IP "\fBHome\fR"
+Go on top of the panel.
+.IP "\fBEnd\fR"
+Go to the end of the panel.
+.IP "\fB(\fR"
+Decrease speed variable (module plays faster).
+.IP "\fB)\fR"
+Increase speed variable (module plays slower).
+.IP "\fB{\fR"
+Decrease tempo variable (module plays slower).
+.IP "\fB}\fR"
+Increase tempo variable (module plays faster).
+.IP "\fB:\fR or \fB;\fR"
+Toggle interpolation mixing.
+.IP "\fBU\fR"
+Toggle surround mixing.
+.IP "\fBQ\fR"
+Exit MikMod.
+.IP "\fBP\fR"
+Switch to previous module in playlist.
+.IP "\fBN\fR"
+Switch to next module in playlist.
+.IP "\fBR\fR"
+Restart current module.
+.IP "\fBF\fR"
+Toggle fake/real volume bars in volume panel.
+.IP "\fBspace\fR"
+Toggle pause.
+.IP "\fBControl-L\fR"
+Refresh the screen.
+
+
+.SH MENU BASICS
+
+
+Some functions of MikMod are available through menus, in the playlist and
+configuration panels.
+
+You can select commands in the menus either by moving the selection with the
+arrow keys and pressing enter, or entering the highlighted letter corresponding
+ot the command you want to select.
+
+Menu entries ending with a \fB>\fR character open a submenu, whereas entries
+ending in \fB...\fR open a dialog box. You can dismiss a submenu either by
+choosing a command in this menu, or using the left arrow key to go back, or
+switching panels.
+
+In dialog boxes, you can move the focus from the input line to the \fBOk\fR and
+\fBCancel\fR buttons either with the "tab" key, or the up and down arrow keys.
+
+Also, if the statusbar is active (which is the default behaviour), it will
+contain a short help text describing the menu option currently highlighted.
+
+
+.SH PLAYLIST MENU
+
+
+When the playlist panel is displayed, pressing the \fIreturn\fR key will popup
+a menu. The menu commands are:
+
+.IP "\fBPlay\fR"
+Continue list playback from the currently highlighted module.
+.IP "\fBRemove\fR"
+Remove module from the playlist.
+.IP "\fBDelete...\fR"
+Remove module from the playlist, and delete module file on disk, or whole
+archive if the module is stored in an archive file. This function asks you to
+confirm your choice.
+.IP "\fBFile >\fR"
+This entry opens a submenu with four commands, "\fBLoad\fR", "\fBInsert\fR",
+"\fBSave\fR" and "\fBSave as\fR". The \fBLoad\fR and \fBInsert\fR commands ask
+you for a filename, and replace the playlist with it (load) or merge it with
+the playlist (insert). No wildcards are allowed. The \fBSave\fR and
+\fBSave as\fR commands save the current playlist in a file, by default
+``playlist.mpl'', in the current directory. Note that playlist filenames should
+end in \fB.mpl\fR, or they won't be recognized immediately as a playlist by MikMod.
+.IP "\fBShuffle\fR"
+Randomize the playlist.
+.IP "\fBSort >\fR"
+This entry opens a submenu with sort commands. You can select a normal or
+\fBreverse\fR order, and then sort the playlist with one of the four criteria:
+\fBby name\fR, \fBby extension\fR, \fBby path\fR or \fBby time\fR. 
+.IP "\fBBack\fR"
+Discards the menu.
+
+
+.SH CONFIGURATION PANEL
+
+
+The configuration panel lets you customize your MikMod settings, and save them.
+You can also try some particular settings without losing your previous
+configuration.
+
+.IP "\fBOutput options\fR"
+This section lets you choose various vital playback settings, such as the output
+driver, the stereo/mono and 16/8 bit output settings, the playback frequency,
+and the software mixer settings.
+.IP "\fBPlayback options\fR"
+This section lets you choose various module playback settings, such as the
+output volume, the processing of panning effects and bacwards loops, etc.
+.IP "\fBOther options\fR"
+This section lets you choose the remaining settings, such as the playlist mode,
+and various program settings.
+
+.IP "\fBUse config\fR"
+This command activates the current configuration settings, but does not save
+them.
+.IP "\fBSave config\fR"
+This command saves and activates the current configuration settings.
+.IP "\fBRevert config\fR"
+This command reverts to the on-disk configuration file settings.
+
+
+.SH MODULE FORMATS
+
+
+MikMod will currently play the following common and not so common formats:
+.IP "\fB669\fR"
+Composer 669 and Extended 669 modules.
+.IP "\fBAMF\fR"
+DSMI internal module format (Advanced Module Format, converted with M2AMF).
+.IP "\fBAMF\fR"
+ASYLUM Music format (From crusader games)
+.IP "\fBDSM\fR"
+DSIK's internal module format.
+.IP "\fBFAR\fR"
+Farandole composer modules.
+.IP "\fBGDM\fR"
+General Digital Munsic internal module format (converted with 2GDM).
+.IP "\fBIMF\fR"
+Imago Orpheus modules.
+.IP "\fBIT\fR"
+Impulse Tracker modules.
+.IP "\fBMED\fR"
+Amiga MED modules, but synthsounds are not supported.
+.IP "\fBMOD\fR"
+Protracker, Startracker, Fasttracker, Oktalyzer, and Taketracker modules.
+.IP "\fBMTM\fR"
+Multitracker module editor modules.
+.IP "\fBS3M\fR"
+Screamtracker version 3 modules.
+.IP "\fBSTM\fR"
+Screamtracker version 2 modules.
+.IP "\fBSTX\fR"
+STMIK converted modules.
+.IP "\fBULT\fR"
+Ultratracker modules.
+.IP "\fBUNI\fR, \fBAPUN\fR"
+Old MikMod (UNI) and APlayer (APUN) internal module format.
+.IP "\fBXM\fR"
+Fasttracker 2 modules.
+
+
+.SH ARCHIVE FORMATS
+
+
+MikMod should recognize and extract the following common archive formats.
+However, to use each of these you will need to find the appropriate
+program(s) for MikMod to use to extract them. These are commonly available
+and you will most likely find them with this distribution of MikMod. 
+Other archive formats can be configured by editing the configuration
+file (see \fBFILES\fR below).
+
+.IP "\fBzip\fR"
+Info-zip or PkZip archives, commonly used on DOS/Windows platforms.
+.IP "\fBlha\fR, \fBlzh\fR"
+Lharc archives, commonly used on the Amiga.
+.IP "\fBzoo\fR"
+Zoo archives, quite rare those days...
+.IP "\fBrar\fR"
+Rar archives.
+.IP "\fBgz\fR"
+Gzip compressed files.
+.IP "\fBbz2\fR"
+Bzip2 compressed files.
+.IP "\fBtar\fR, \fBtar.gz\fR and \fBtar.bz2\fR"
+Tar archives, even compressed with gzip or bzip2.
+
+
+.SH FILES
+
+
+.IP "$HOME/.mikmodrc (or mikmod.cfg under OS/2 / Windows)"
+User configuration settings.
+.IP "$HOME/.mikmod_playlist (mikmodpl.cfg/mikmod_playlist.mpl under OS/2 / Windows)"
+The default playlist, loaded if no other files are specified on the
+command line.
+.IP playlist.mpl
+Default playlist filename.
+
+
+.SH AUTHORS
+
+
+\fIMikMod\fP is the result of the work of many people, including:
+Jean-Paul Mikkers, Jake Stine, Miodrag Vallat, Frank Loemker, Andrew Zabolotny,
+Raphael Assenat, Steve McIntyre, Peter Amstutz, "MenTaLguY", Dimitri Boldyrev, 
+Shlomi Fish, Stefan Tibus, Tinic Urou.
+A full list of people having worked on libmikmod and MikMod is displayed when
+MikMod starts.
+
+
+.SH LOCATING NEWER VERSIONS...
+
+The official MikMod and libmikmod home page is located on
+  http://mikmod.raphnet.net
+
+

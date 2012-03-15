@@ -1,0 +1,187 @@
+  Hello folks !
+
+
+This is MikMod, version 3.2.2-beta1, a module player for Unix.
+As usual with each new version, there's a lot of bugfixes and improvements.
+Check out the file 'NEWS' for more information.
+
+
+>> BETA WARNING
+---------------
+
+This is a *beta* version of MikMod. Although it should work fine on
+almost all systems, there are likely a few last-minute errors or typos
+in the source, and some parts have not received enough hours of testing yet.
+
+Also, please note that all features planned for the final 3.2.2 release are not
+available yet, and the documentation has not been updated yet.
+
+If I've not scared you, then you can proceed and enjoy fewer bugs than in the
+previous version, as well as nice eye-candies (-;
+
+
+>> BUILDING MIKMOD
+------------------
+
+This MikMod version can build with any libmikmod version starting from 3.1.5,
+but building with 3.2.x is recommanded, since all the features and
+configuration functions are not available for older versions.
+
+- If you're building MikMod under DOS, please refer to the 'README' file
+  located in the 'dos' subdirectory.
+
+- If you're building MikMod under OS/2, please refer to the 'README' file
+  located in the 'os2' subdirectory.
+
+- If you want to build MikMod under Windows, please refer to the 'README' file
+  located in the 'win32' subdirectory.
+
+The first thing you need is to get and compile the libmikmod sound library,
+which is not bundled with MikMod anymore !
+If you don't know where to get libmikmod, look at the "contact and download
+info" section later in this document.
+
+So you're on a good old Unix workstation, aren't you ?
+
+You'll need an ANSI C compiler to build MikMod.
+
+To prevent clobbering the sources, I recommend building MikMod in an
+alternate directory, for example 'build':
+
+  mkdir build
+  cd build
+
+In this directory, run MikMod's configure script:
+
+  ../configure
+
+The configure script will attempt to guess correct values for various
+system-dependent variables used during the build process, and will
+create appropriate Makefiles for proper compilation. 
+
+If you're not familiar with configure scripts and their standard
+options, you can find more general information about them in the file
+INSTALL.
+
+After you've successfully run configure, simply run
+
+  make
+
+to get all things build. Then, run
+
+  make install
+
+to have the player installed. Depending on where you choose to install it
+(using the --prefix= option to configure), you may need root privileges for
+this operation.
+
+
+>> USING MIKMOD
+---------------
+
+Run MikMod with the ``--help'' parameter to get the available options, or
+display its man page (if you did "make install") with
+
+  man mikmod
+
+Also, after you've run MikMod for the first time, you might want to
+customize your $HOME/.mikmodrc, either from the configuration panel or by
+editing the file, so you won't need to supply the same options to MikMod all
+the time.
+
+Once you're in the player, if you haven't choosed terse mode (a la
+MikMod 2), pressing the H key will give you an help screen with the list
+of the keys you can use. I hope it's understandable.
+
+If you're playing MikMod in quiet mode (with the -q/-quiet switch), you can
+tell MikMod to jump to the next/previous song by sending the MikMod process
+SIGUSR1 or SIGUSR2 respectivly. In other words, let's say you're doing
+something like this:
+
+$ mikmod myalltimefavmods.mpl -quiet &
+[1] 7531
+
+You've told MikMod to read the songs out of the playlist myalltimefavmods,
+to not spit out any output (-quiet), and to run in the background.
+Your shell will give you the process ID, in this case it's 7531.  You
+can also find this out from "ps", "top", or a number of process
+management utilities.  Now, let's say a song you don't like as much comes
+on, or for some reason one seems to be looping forever, you can do
+this...
+
+$ kill -s SIGUSR1 7531
+
+or
+
+$ kill -USR1 %1
+
+(if your shell supports the %n process notation)
+and MikMod will start playing the next file in the list.
+If you want the previous file, just use SIGUSR2 in place of SIGUSR1.
+This feature also works when MikMod is in interactive mode (with the
+curses interface), but is less useful then, since you have full player
+control...
+
+If you used the playlist features of the previous MikMod versions, your
+old playlist won't work anymore since the playlist format has changed.
+Now the playlist files must have an .mpl extension. To convert your old
+playlists into the new format, use the
+'convert_playlist' awk script:
+
+  ./convert_playlist < my_old_playlist > my_new_playlist.mpl
+
+
+>> Y2K COMPLIANCE
+-----------------
+
+MikMod does not deal with dates. So, as long as the few libc functions used
+by the program are Y2K-compliant, MikMod is Y2K-compliant.
+However, the archive handler invokes archiver programs to display the contents
+of the archive files ; if these external programs are not Y2K compliant when
+displaying archive contents, MikMod may not work as expected when dealing with
+archives.
+
+
+>> THANKS
+---------
+
+I would like to thank everyone who contributed to libmikmod. Their names
+are in the AUTHORS file for the significative contributions, but some other
+names can be found in the NEWS file. Thanks a lot ! Keeping MikMod alive
+wouldn't be much fun without you.
+
+
+>> LICENSE
+----------
+
+The MikMod module player is covered by the GNU General Public License as
+published by the Free Software Fundation (you'll find it in the file COPYING) ;
+either version 2 of the licence, or (at your option) any later version.
+
+
+>> CONTACT AND DOWNLOAD INFO
+----------------------------
+
+* email:
+  Please send all your MikMod related e-mail to me, at:
+  miodrag@mikmod.darkorb.net
+
+  There's a mailing list for discussing the development of MikMod (new
+  features, bugs, ideas...). Look for more information on the web site.
+
+* web:
+  MikMod and libmikmod home page is located at:
+    http://mikmod.raphnet.net
+
+
+>> LAST NOTES
+-------------
+
+I hope you'll enjoy using this version of MikMod as well as I enjoyed
+debugging and improving it.
+
+-- Miodrag ("Miod") Vallat, 10/19/1999
+   miodrag@mikmod.darkorb.net
+
+   Raphael Assenat, 28/01/2004
+   raph@raphnet.net

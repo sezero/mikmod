@@ -1,0 +1,380 @@
+ummary of changes between MikMod 3.1.6 and MikMod 3.2.2 (Vitray):
+==================================================================
+
+MikMod 3.2.2 will be released on ??/??/2004
+beta1: Mon Feb 2, 2004
+beta0: never officially released
+
+THANKS
+
+- The winner of the ``it's rainy day, so I'll rewrite MikMod'' contest this
+  time is Andrew Zabolotny. The colored MikMod looks great ! Thanks a lot !
+
+- To Frank Loemker, who has done many changes since the last release in 1999, 
+  has improved the widget system a lot, added a file selector, theme support, 
+  improved the configuration routines, recursive directory scanning, made 
+  the player and library run in a separate thread, added win32 support 
+  (with lcc), fixed problems with DJGPP, and fixed a lot of small bugs.
+  (please note that some of theses changes may have been done by 
+  Andrew Zabolotny. Frank Loemker sent me a big patch so I cannot know for
+  sure who did whay).
+
+
+NEW FEATURES
+
+- On terminals that support it, colors. There is a built-in theme editor
+  in the configuration panel. Themes are loaded and saved from the
+  config file. Set the environment variable TERM to mono to 
+  disable this under OS/2 and DOS.
+
+- Mikmod will now display it's version and the song name or filename
+  currently being played in the terminal title bar. On unix, there is
+  support for xterm compatible title setting (rxvt, Eterm, aixterm, 
+  dtterm...), and a few others (iris-ansi, hpterm). It is also supported
+  under win32.
+
+- If using libmikmod 3.2, sample and instrument panels are dynamic, displaying
+  which samples/instruments are currently played, and a volume panel displays
+  volume bars and instruments/samples numbers.
+
+- A file selector for the load/insert/save operations:
+  - Marks files which are in the actual playlist.
+  - Includes the possibility to add/remove any number of entries to/from
+    the playlist.
+  - Directories can be changed with cursor keys and with an input line.
+  - Editable hotlist allows quick switching to preferred directories.
+  - Recursive directory scanning if "Add" or "Toggle" is used if a
+    directory is selected.
+	
+- Recursive directory scanning at startup with the option 
+    "-y, -di[rectory] dir  Scan directory recursively for modules".
+
+- Threaded player (that is an own thread for MikMod_Update()),
+  is switched off at compile time if the system supports no threads
+  and at run tmie if libmikmod does not support threads.
+
+- Better archive support
+  - Support for archivers which need short file names
+  - The definition of archivers is loaded from the config file.
+  - Many other improvements.
+
+- Of course, many bug fixes and clean ups.
+
+PLATFORM SPECIFIC
+
+- DOS is a supported platform again.
+- Can be compiled on WIN32 with lcc
+- Fixes for DJGPP
+
+Summary of changes between MikMod 3.1.5 and MikMod 3.1.6 (Riom):
+================================================================
+
+MikMod 3.1.6 was released on 07/05/1999.
+
+
+THANKS
+
+- As usual, Frank Loemker contributed lots of stuff to the player. Thanks
+  for your work.
+
+
+BUGFIXES
+
+- MikMod segfaulted when run as root (there was a public patch to 3.1.5 for
+  this).
+
+- The mono/stereo setting in the -output option was ignored.
+
+- The frequency range was restricted to 8kHz-44.1kHz without reason.
+
+- Loading playlist not located in the current directory should work now.
+
+
+NEW FEATURES
+
+- Interface is even more featured:
+  * On-screen configuration panel.
+  * Playlist sorting, loading files or playlists from the player.
+
+- Added a restart module (R key) feature.
+
+
+REMOVED FEATURES
+
+- Support for the ARJ archiver has been dropped, as unarj needed an 'extra
+  to stdout' extra feature, and the URL of the patch gave me an error 404
+  recently... Besides, ARJ isn't widely used in the Unix world (perhaps because
+  we don't like plagiarism...)
+
+
+PLATFORM SPECIFIC
+
+- Fixed a compilation problem on HP-UX systems lacking ncurses (HP-UX curses
+  doesn't define KEY_END).
+
+
+
+Summary of changes between MikMod 3.1.2 and MikMod 3.1.5 (Pradelles):
+=====================================================================
+
+MikMod 3.1.5 was released on 03/01/1999.
+
+Starting from this version, the engine (libmikmod) and the module player
+(MikMod) are made separate, to make the life easier for people who use
+libmikmod and don't need the player.
+
+
+THANKS
+
+- The player was nearly completely rewritten by Frank Loemker. Nice job !
+
+BUGFIXES
+
+- If the player is interrupted while loading a compressed file, a temporary
+  file was not removed.
+
+- Dealing with archives containing a lot of files hanged the player at start
+  (under Unix only).
+
+- When playing from a playlist, the last file of the playlist was played twice.
+
+
+NEW FEATURES
+
+- Player now displays which information panels are available, and should
+  look better with less than 80 character wide terminals.
+
+- Bzip2 compressed modules, as well as tar and compressed tar archives, are
+  recognized.
+
+- MikMod now stores your default settings in $HOME/.mikmodrc, so you don't
+  have to specify a butch of options each time you invoke MikMod.
+
+
+Summary of changes between MikMod 3.1.1 and MikMod 3.1.2 (Monistrol):
+=====================================================================
+
+MikMod 3.1.2 was released on 12/07/1998.
+
+
+THANKS
+
+- For this version, the special thanks distinction is awarded to Michal Svec,
+  Thomas Sailer and Winfried Scheibe. You guys rule !
+  And as usual, thanks to all the people who submitted bug reports and helped
+  me to get rid of'em.
+
+
+BUG FIXES
+
+- Due to an inverted test, the DSM loader rejected every valid DSM module.
+- Surround panning was misunderstood by the DSM loader.
+- FAR modules with more than 64 notes per pattern were incorrectly rejected.
+- report whether an IT module was compressed or not wasn't accurate.
+- STM identification test was broken and didn't reject some incorrect
+  modules.
+- A few glitches in the pattern break and pattern jump effect have been
+  fixed (thanks to Firelight for his "Backwards" module which showed the
+  problem !)
+- The OSS driver had a serious memory allocation bug which could cause
+  systematic coredumps, depending on your hardware and your environment
+  variable settings.
+- Archive support didn't work correctly with some versions of lharc (1.01,
+  1.14c+) and unzip (5.40+), hopefully they should work now.
+
+
+NEW FEATURES
+
+- Support for rar archives has been added. The player looks for 'unrar' to
+  display and extract the archives ; don't forget to put a symbolic link if
+  you only have rar.
+
+
+PLATFORM SPECIFIC
+
+- The Sun audio driver didn't work correctly at 44100 Hz 16 bit stereo under
+  Solaris, due to an incorrect default buffer size.
+- The generated Makefiles for Watcom C++ under OS/2 were incorrect.
+- When compiling with emx under OS/2, the optimization level was set too high
+  and caused incorrect playback for some modules.
+
+
+MISC
+
+- I've found more DSM information to throw in the documentation.
+
+
+Summary of changes between MikMod 3.1 and MikMod 3.1.1 (Landos):
+================================================================
+
+MikMod 3.1.1 was released on 12/02/1998.
+
+This version contains only bugfixes and was released shortly after 3.1 because
+of a really annoying bug in the error messages.
+
+
+THANKS
+
+- Special thanks to Scott Miller for his help in tracking a nasty bug.
+  And as usual, thanks to all the people who submitted bug reports and helped
+  me to get rid of'em.
+
+
+BUG FIXES
+
+- Due to a missing coma, most error message texts didn't correspond to what
+  was really happening.
+- MikMod 3.1 was too strict regarding the S3M speed effect and did not
+  allow >32 speeds.
+- The 15 instrument MOD loader has been made more robust by recognizing and
+  some non module filetypes which could be misunderstood as valid modules and
+  caused coredumps.
+- IT effects S5x (set panbrello waveform), S7x (instrument/NNA commands) and
+  SAx (set sample offset high part) were not processed correctly.
+- Modules written by Impulse Tracker 2.14p3 in the uncompressed Impulse 2
+  format could be rejected (detection routine had to be modified to cope with
+  an IT2.14p3 save bug...)
+
+
+PLATFORM SPECIFIC
+
+- A bug in the configure script prevented MikMod from compiling correctly under
+  IRIX, AIX and perhaps some other Unices.
+- Another bug in the configure script caused the detection of esd_close() in
+  libesd to always return true.
+- The README.OS2 file was missing in 3.1
+
+
+Summary of changes between MikMod 3.0.4 and MikMod 3.1 (Davayat):
+=================================================================
+
+MikMod 3.1 was released on 11/30/1998.
+
+
+THANKS
+
+- Many thanks to Bjornar Henden, Steve Martin, "MenTaLguY", Sebastiaan Megens
+  and Thomas Neumann for their precise bug reports and bug fixes.
+  Also thanks to all the people who submitted bug reports and helped me to
+  make MikMod better.
+  Thanks, guys !
+
+
+BUG FIXES
+
+- Panning overflows which resulted in extra noises of high volume )-: are
+  now fixed.
+- Surround mixer fixed.
+- 669 pitch slides are rendered correctly now (used logarithmic periods before).
+- FAR modules now play at correct speed, and more effects implemented.
+- IT pitch envelope now works correctly.
+- IT effect G (porta to note) misbehaviour when changing instrument on the same
+  row, or after a note cut, fixed.
+- IT volume column effect G was misunderstood (G0 was treated as G1, G1 as G2
+  etc).
+- Lots of bug fixes in MED loader. Should now play modules at correct speed, but
+  still not perfect.
+- Some notes were not played in MODs.
+- Some effect fixes in ULT loader.
+- The S3M volume slides were not rendered correctly.
+- XM modules with more than 256 samples caused systematic coredumps when trying
+  to load them.
+- XM effect G (set global volume) was misinterpreted, resulting in halved
+  volumes during playback.
+
+
+NEW FEATURES
+
+- MikMod now plays DMP's AMF files.
+- A "curious" option has been added to look for extra patterns in MODs, S3Ms and
+  ITs (useful for some Skaven's modules).
+- MikMod now uses autoconf for building, and you can build a shared MikMod
+  library.
+- Programmer's documentation in texinfo format, suitable for online browsing
+  (with GNU info) as well as printing. API function names made more consistant
+  and more thematic.
+
+
+PLATFORM SPECIFIC
+
+- New driver for the Advanced Linux Sound Architecture (ALSA).
+- The EsounD driver has been improved and will attempt daemon reconnection on
+  a regular time basis, should the esd been killed.
+- The SGI driver caused coredumps on some machines ; hopefully this is now
+  fixed.
+- integrated OS/2 support, with a new DART driver for use under Warp 4 and CPU
+  snagger feature.
+
+
+MISC
+
+- I was asked to put a copyright notice in MikMod. Although I don't like that,
+  it seems that there has to be one to be sure the GPL and LGPL apply correctly.
+  I really hate copyrighting free software I haven't entirely written...
+- I've also shaved my beard the day before this release. Nice to see there was
+  still skin under the thick beard (-:
+
+
+Summary of changes between MikMod 3.0.3 and MikMod 3.0.4 (Combronde):
+=====================================================================
+
+MikMod 3.0.4 was released on 09/21/1998.
+
+
+BUG FIXES
+
+- FAR, STM and ULT loader are fixed and work (at least for me...)
+- Imbricated loops won't block the player.
+- Updated all the old drivers to work with MikMod 3 interface.
+- Nosound driver now works.
+- 669 modules are now played at correct speed.
+- MED loader pattern size bug fixed.
+- MOD sample offsets (in file) computation fixed.
+- S3M with more than 16 channels (i.e not created with Scream Tracker) caused
+  previous version to coredump, but worked in 2.*
+- End of song marker is now recognized in S3M and IT when it appears inside
+  the pattern list.
+- It was possible to register the same loader or driver twice and this made
+  the library hang.
+- Speed and Tempo can't escape their bounds (1-31 for speed, 32-255 for tempo)
+  now.
+- Delay note effect did not work correctly in previous version, but did in 2.*
+- All divide by zero conditions are prevented.
+- Archive code forgot to erase its temporary file (and had too short buffers).
+- More accurate error messages in player.
+
+
+NEW FEATURES
+
+- Compressed IT samples are now supported.
+- If you use ncurses >= 4.0, MikMod is resize-aware and will continue to
+  display correctly in an xterm.
+- New driver for the Enlightened sound daemon
+    (http://www.tux.org/~ricdude/EsounD.html)
+- New "volume fadeout" option.
+- New "don't loop" option.
+- Help screen in the curses player.
+- Module time is displayed in the player.
+- MikMod 2 banners are back.
+- Randomized playlist can now be walked through correctly.
+
+
+REMOVED FEATURES
+
+- The Unimod format is not supported anymore (nobody used it, right ?). The
+  MikCvt utility has been withdrawn, too. Both will be put back on request
+  if someone really need them. Just ask !
+
+
+PLATFORM SPECIFIC
+
+- OpenBSD support, although in mono 8bit 8000 Hz only, but that's a start.
+- Merged NetBSD and FreeBSD specific patches from their "ports collection".
+- Player works with old AIX curses, as well as with old HP-UX curses.
+
+
+MISC
+
+- Rewritten building mechanism. It's not yet Autoconf, but it's coming...
+- License terms are clear : LGPL for the library, GPL for the player.
+

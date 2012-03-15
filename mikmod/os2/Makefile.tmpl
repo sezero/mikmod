@@ -1,0 +1,71 @@
+# Makefile for use under OS/2
+
+CC=@CC@
+CFLAGS=@CFLAGS@
+LDFLAGS=@LDFLAGS@
+COMPILE=$(CC) $(CFLAGS)
+
+# Watcom specific : change this to match your compiler installation or setup
+# environment variables
+LIBPATH=%TOOLKIT%\LIB;%WATCOM%\LIB386;%WATCOM%\LIB386\OS2
+
+.SUFFIXES:
+.SUFFIXES: .o .c
+
+AOUT=mikmod
+OBJ = display.o marchive.o mconfedit.o mconfig.o mdialog.o mikmod.o mlist.o \
+      mmenu.o mutilities.o mwidget.o mwindow.o
+LINKOBJ=display.o,marchive.o,mconfedit.o,mconfig.o,mdialog.o,mikmod.o,mlist.o,mmenu.o,mutilities.o,mwidget.o,mwindow.o
+EXTRA_OBJ=@EXTRA_OBJ@
+LINKEXTRA_OBJ=mgetopt.o,mgetopt1.o,mfnmatch.o
+
+all:		$(AOUT)
+
+clean: FORCE
+	FOR %F IN ( $(AOUT).exe $(AOUT) $(OBJ) $(EXTRA_OBJ) ) DO IF EXIST %F ERASE %F
+
+distclean:	clean
+	ERASE Makefile
+
+$(AOUT):	$(OBJ) $(EXTRA_OBJ)
+	@LINK@
+
+display.o:	../src/display.c ../src/display.h ../src/player.h \
+			../src/mutilities.h ../src/mwindow.h ../src/mmenu.h \
+			../src/mdialog.h ../src/mconfedit.h \
+			../os2/os2video.inc
+	$(COMPILE) @ORULE@ ../src/display.c
+marchive.o:	../src/marchive.c ../src/player.h ../src/mutilities.h
+	$(COMPILE) @ORULE@ ../src/marchive.c
+mconfedit.o:	../src/mconfedit.c ../src/player.h ../src/mmenu.h \
+			../src/mconfedit.h
+	$(COMPILE) @ORULE@ ../src/mconfedit.c
+mconfig.o:	../src/mconfig.c ../src/player.h ../src/mutilities.h
+	$(COMPILE) @ORULE@ ../src/mconfig.c
+mdialog.o:	../src/mdialog.c ../src/mdialog.h ../src/mwidget.h
+	$(COMPILE) @ORULE@ ../src/mdialog.c
+mikmod.o:	../src/mikmod.c ../src/player.h ../src/mdialog.h ../src/mwindow.h
+	$(COMPILE) @ORULE@ ../src/mikmod.c
+mlist.o:	../src/mlist.c ../src/player.h ../src/mutilities.h
+	$(COMPILE) @ORULE@ ../src/mlist.c
+mmenu.o:	../src/mmenu.c ../src/display.h ../src/player.h ../src/mwindow.h \
+			../src/mmenu.h ../src/mdialog.h
+	$(COMPILE) @ORULE@ ../src/mmenu.c
+mutilities.o:	../src/mutilities.c ../src/player.h ../src/mutilities.h
+	$(COMPILE) @ORULE@ ../src/mutilities.c
+mwidget.o:	../src/mwidget.c ../src/display.h ../src/player.h \
+			../src/mwidget.h ../src/mwindow.h 
+	$(COMPILE) @ORULE@ ../src/mwidget.c
+mwindow.o:	../src/mwindow.c ../src/display.h ../src/player.h ../src/mwindow.h
+	$(COMPILE) @ORULE@ ../src/mwindow.c
+
+mgetopt.o:	../src/mgetopt.c ../src/mgetopt.h
+	$(COMPILE) @ORULE@ ../src/mgetopt.c
+mgetopt1.o:	../src/mgetopt1.c ../src/mgetopt.h
+	$(COMPILE) @ORULE@ ../src/mgetopt1.c
+mfnmatch.o:	../src/mfnmatch.c ../src/mfnmatch.h
+	$(COMPILE) @ORULE@ ../src/mfnmatch.c
+musleep.o:	../src/musleep.c
+	$(COMPILE) @ORULE@ ../src/musleep.c
+
+FORCE:

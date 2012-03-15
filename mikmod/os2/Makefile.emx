@@ -1,0 +1,79 @@
+#------------------------------------------------------------------------------#
+# Makefile for building MikMod player under GCC/EMX
+#
+# This is a Makefile designed explicitly for GNU Make.
+#
+# Targets:
+# - all (default): build mikmod.exe
+# - depend: Rebuild dependencies (at the end of this file)
+#   You should have makedep from Crystal Space project installed
+# - clean: Clean up all generated files
+#------------------------------------------------------------------------------#
+
+# Use CMD.EXE for launching commands
+SHELL=$(COMSPEC)
+
+# Set to 1 for debug build
+DEBUG = 0
+
+# The tools
+CC = gcc -c
+CFLAGS = -Zmt -DHAVE_CONFIG_H $(INCLUDE)
+INCLUDE = -I. -I../src
+LD = gcc
+LDFLAGS = -lmikmod
+
+ifeq ($(DEBUG),1)
+CFLAGS += -g -Wall
+LDFLAGS += -g
+else
+CFLAGS += -s -O3 -Wall -fomit-frame-pointer -ffast-math
+LDFLAGS += -s -Zmt -Zcrtdll
+endif
+
+# Output directory
+OUT = out
+
+SRC = $(filter-out %mfnmatch.c %musleep.c,$(wildcard ../src/*.c))
+OBJ = $(addprefix $(OUT)/,$(notdir $(SRC:.c=.o)))
+
+# Build rules
+$(OUT)/%.o: ../src/%.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+all: $(OUT) mikmod.exe
+
+depend:
+	makedep -r -p $$(OUT)/ -DHAVE_CONFIG_H -D__EMX__ $(INCLUDE) $(SRC)
+
+clean:
+	rm -rf $(OUT) mikmod.exe
+
+$(OUT):
+	mkdir $@
+
+mikmod.exe: $(OBJ)
+	$(LD) -o $@ $^ $(LDFLAGS)
+
+# DO NOT DELETE this line - makedep uses it as a separator line
+
+$(OUT)/display.o: config.h ../src/display.h ../src/player.h \
+  ../src/mutilities.h ../src/mwindow.h ../src/mmenu.h ../src/mdialog.h \
+  ../src/mconfedit.h
+$(OUT)/mgetopt.o: ../src/mgetopt.h
+$(OUT)/mgetopt1.o: ../src/mgetopt.h
+$(OUT)/marchive.o: config.h ../src/player.h ../src/mutilities.h
+$(OUT)/mconfedit.o: config.h ../src/player.h ../src/mconfedit.h \
+  ../src/mmenu.h ../src/mwindow.h
+$(OUT)/mconfig.o: config.h ../src/player.h ../src/mutilities.h
+$(OUT)/mdialog.o: config.h ../src/mwidget.h ../src/mwindow.h ../src/mdialog.h
+$(OUT)/mikmod.o: config.h ../src/mgetopt.h ../src/player.h ../src/mwindow.h \
+  ../src/mdialog.h
+$(OUT)/mlist.o: config.h ../src/player.h ../src/mutilities.h
+$(OUT)/mmenu.o: config.h ../src/display.h ../src/player.h ../src/mmenu.h \
+  ../src/mwindow.h ../src/mdialog.h
+$(OUT)/mutilities.o: config.h ../src/player.h ../src/mutilities.h
+$(OUT)/mwidget.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
+  ../src/mwidget.h
+$(OUT)/mwindow.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
+  os2video.inc
