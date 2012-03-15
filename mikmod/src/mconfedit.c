@@ -292,7 +292,7 @@ static void get_drivers(MENTRY *entry)
 			start = pos;
 		}
 	}
-	free(driver);
+	MikMod_free(driver);
 }
 
 /* extract drivers options for the option menu */
