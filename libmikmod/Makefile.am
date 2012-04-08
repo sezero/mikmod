@@ -9,3 +9,5 @@ EXTRA_DIST = libmikmod-config.in libmikmod.m4 \
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
+
+ACLOCAL_AMFLAGS = -I m4
