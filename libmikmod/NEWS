@@ -11,6 +11,8 @@ THANKS
 - Anders F Björklund <afb@algonet.se>, for updates, fixes and tests on
   Mac Platforms and rpm support.
 - Ivan Shmakov, for the NAS audio driver.
+- Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora, 
+Debian, etc.)
 
 NEW FEATURES
 
@@ -45,6 +47,17 @@ BUGFIXES
 - A warning reported by Stéphane LOEUILLET in libmikmod.m4 with autoconf 1.8 was fixed.
 - The 'card' argument, supported by the OSS driver was not documented via
   the MDRIVER->CmdLineHelp string.
+- libmikmod-3.1.11-CVE-2010-2546,2971.diff (from Mandriva/Mageia).
+- libmikmod-3.1.11-CVE-2009-3995,3996.diff (from Mandriva/Mageia).
+- Now checking for linking against -lm (from Mandriva/Mageia).
+- Modified patch of libmikmod-CVE-2009-0179.patch (from Mandriva/Mageia).
+- Apply the libmikmod-CVE-2007-6720.patch (from Mandriva/Mageia).
+- Implement a fix for sprintf-of-list
+    - sprintf(list, "%sSOMETHING", list) does not work as expected and
+    suffers from the 
+    http://en.wikipedia.org/wiki/Schlemiel_the_Painter%27s_algorithm
+    syndrome.
+- Apply a patch for non-blocking opening of the OSS driver. (from Mandriva/Mageia).
 
 Summary of changes between libmikmod 3.1.10 and libmikmod 3.1.11 (Thiers):
 ==========================================================================

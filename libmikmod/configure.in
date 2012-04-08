@@ -9,11 +9,11 @@ LIBMIKMOD_MINOR_VERSION=2
 LIBMIKMOD_MICRO_VERSION=0
 
 # bn where n is the beta
-BETA=b2
+BETA=b3
 # used for #if in header files
 IS_BETA=1
 # used when a numeric beta number is required.
-BETA_RELEASE=2  # beta 1
+BETA_RELEASE=3  # beta 3
 
 LIBMIKMOD_VERSION=$LIBMIKMOD_MAJOR_VERSION.$LIBMIKMOD_MINOR_VERSION.$LIBMIKMOD_MICRO_VERSION$BETA
 
