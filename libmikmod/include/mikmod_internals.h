@@ -667,6 +667,7 @@ extern void Voice_SetVolume_internal(SBYTE,UWORD);
 extern void Voice_Stop_internal(SBYTE);
 extern BOOL Voice_Stopped_internal(SBYTE);
 
+extern MikMod_callback_t vc_callback;
 #ifdef __cplusplus
 }
 #endif

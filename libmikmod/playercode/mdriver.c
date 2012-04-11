@@ -499,7 +499,7 @@ MIKMODAPI ULONG Voice_RealVolume(SBYTE voice)
 	return result;
 }
 
-extern MikMod_callback_t vc_callback;
+MikMod_callback_t vc_callback;
 
 MIKMODAPI void VC_SetCallback(MikMod_callback_t callback)
 {
