@@ -13,6 +13,7 @@ THANKS
 - Ivan Shmakov, for the NAS audio driver.
 - Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora, 
 Debian, etc.)
+- P. Martin - the macports maintainer for some patches.
 
 NEW FEATURES
 
@@ -58,6 +59,10 @@ BUGFIXES
     http://en.wikipedia.org/wiki/Schlemiel_the_Painter%27s_algorithm
     syndrome.
 - Apply a patch for non-blocking opening of the OSS driver. (from Mandriva/Mageia).
+- Fixed the prototypes of vc_callback (thanks to P. Martin).
+- Cast a vc_callback parameter to "unsigned char *" instead of "char *",
+becuase the former is what it accepts (thanks to P. Martin).
+- Check for Samples' validatity in virtch_common.c (thanks to P. Martin).
 
 Summary of changes between libmikmod 3.1.10 and libmikmod 3.1.11 (Thiers):
 ==========================================================================
