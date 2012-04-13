@@ -38,6 +38,9 @@ NEW FEATURES
   part of the API.
 - Raw samples can now be loaded using the new Sample_LoadRaw* family of functions for sound effects.
 - PowerPC 64 support
+- ALSA (Advanced Linux Sound Architecture) driver is now working with "recent"
+(actually a few years back) ALSAs.
+
 
 BUGFIXES
 
