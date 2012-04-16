@@ -631,7 +631,7 @@ static BOOL ALSA_Init_internal(void)
                     printf("Unable to get buffer size for playback: %s\n", alsa_strerror(err));
                     goto END;
                 }
-                buffer_size_in_frames = 16384;
+                buffer_size_in_frames = 1200;
                 period_size = temp_u_period_size;
             }
 
@@ -771,9 +771,9 @@ static int xrun_recovery(snd_pcm_t *handle, int err)
 	}
 	return err;
 }
+
 static void ALSA_Update(void)
 {
-	int total, count;
     int err;
 
     {
