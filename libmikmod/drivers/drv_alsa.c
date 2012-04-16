@@ -773,18 +773,12 @@ static int xrun_recovery(snd_pcm_t *handle, int err)
 }
 static void ALSA_Update(void)
 {
-    snd_pcm_sframes_t status_total;
 	int total, count;
     int err;
     int period_in_bytes;
 
     period_in_bytes = period_size * global_frame_size;
 
-#if 0
-    while ((status_total = alsa_pcm_avail_update(pcm_h)) >= period_size)
-#else
-    status_total = period_size;
-#endif
     {
         /* Using status.count would cause clicks, as this is always less than
            the freespace  in the buffer - so compute how many bytes we can
