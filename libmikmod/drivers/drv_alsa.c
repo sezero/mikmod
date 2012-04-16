@@ -775,19 +775,8 @@ static void ALSA_Update(void)
 {
 	int total, count;
     int err;
-    int period_in_bytes;
-
-    period_in_bytes = period_size * global_frame_size;
 
     {
-        /* Using status.count would cause clicks, as this is always less than
-           the freespace  in the buffer - so compute how many bytes we can
-           afford */
-        /* Don't send data if ALSA is too busy */
-#if 0
-        count = period_in_bytes > total ? total : period_in_bytes;
-#endif
-
         if (bytes_written == 0 || bytes_played == bytes_written)
         {
             bytes_written = VC_WriteBytes(audiobuffer,buffer_size_in_frames * global_frame_size);
