@@ -1,5 +1,6 @@
 \.o$
 \.lo$
+^libmikmod/autom4te\.cache$
 ^libmikmod/Makefile.in$
 ^libmikmod/dlapi/Makefile.in$
 ^libmikmod/docs/Makefile.in$
