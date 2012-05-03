@@ -648,14 +648,14 @@ enum {
 struct SAMPLOAD;
 typedef struct MDRIVER {
 struct MDRIVER* next;
-	CHAR*       Name;
-	CHAR*       Version;
+	const CHAR* Name;
+	const CHAR* Version;
 
 	UBYTE       HardVoiceLimit; /* Limit of hardware mixer voices */
 	UBYTE       SoftVoiceLimit; /* Limit of software mixer voices */
 
-	CHAR        *Alias;
-	CHAR        *CmdLineHelp;
+	const CHAR* Alias;
+	const CHAR* CmdLineHelp;
 
 	void        (*CommandLine)      (CHAR*);
 	BOOL        (*IsPresent)        (void);
