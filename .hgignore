@@ -1,5 +1,6 @@
 \.o$
 \.lo$
+^libmikmod/stamp-h1$
 ^libmikmod/autom4te\.cache$
 ^libmikmod/Makefile.in$
 ^libmikmod/dlapi/Makefile.in$
