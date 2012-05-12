@@ -842,7 +842,9 @@ static void Mix32To8(SBYTE* dste,const SLONG *srce,NATIVE count)
 // PC: ?, Mac OK
 static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 {
+	const float k = ((1.0f / 32768.0f) / (1 << FP_SHIFT));
 	int	remain=count;	
+	simd_m128 x1, x2, xk;
 
 	while(!IS_ALIGNED_16(dste) || !IS_ALIGNED_16(srce))
 	{
@@ -859,9 +861,7 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 
 	remain = count&7;	
 	
-	const float k = ((1.0f / 32768.0f) / (1 << FP_SHIFT));
-	simd_m128 x1, x2;
-	simd_m128 xk = LOAD_PS1_SIMD(&k); // Scale factor
+	xk = LOAD_PS1_SIMD(&k); // Scale factor
 
 	for(count>>=3;count;count--) {
 	   EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
