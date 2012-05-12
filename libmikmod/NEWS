@@ -14,6 +14,9 @@ THANKS
 - Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora, 
 Debian, etc.)
 - P. Martin - the macports maintainer for some patches.
+- Stéphan Kochen for two patches: one to change MDRIVER fields to "const",
+and the other with putting variable declarations at the start of block (which
+is more C89 compliant and fixes compilation on Microsoft Visual C++).
 
 NEW FEATURES
 
@@ -40,7 +43,10 @@ NEW FEATURES
 - PowerPC 64 support
 - ALSA (Advanced Linux Sound Architecture) driver is now working with "recent"
 (actually a few years back) ALSAs.
-
+- Change MDRIVER "char *" fields to "const char *".
+    - Thanks to Stéphan Kochen.
+- Fix compilation on MSVC.
+    - Thanks to Stéphan Kochen.
 
 BUGFIXES
 
