@@ -8,7 +8,7 @@ THANKS
   AIFF driver, and fixes for the wav output driver.
 - Frank Loemker, for sending me his collection of patches
   for libmikmod.
-- Anders F Björklund <afb@algonet.se>, for updates, fixes and tests on
+- Anders F BjÃ¶rklund <afb@algonet.se>, for updates, fixes and tests on
   Mac Platforms and rpm support.
 - Ivan Shmakov, for the NAS audio driver.
 - Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora, 
@@ -25,7 +25,7 @@ NEW FEATURES
   dynamic channel information about the module player. (Mikmod 3.2.2 uses
   it for it's dynamic panels).
 - Mixing with floating point output. The MacOSX CoreAudio driver uses it. 
-  Thanks goes to Anders F Björklund for implementing this.
+  Thanks goes to Anders F BjÃ¶rklund for implementing this.
 - AIFF disk writer driver.  
 - RPM support. To build a rpm, download the tar.gz, and run this:
    % rpmbuild -tb libmikmod-3.2.0-beta2.tar.gz
@@ -48,7 +48,7 @@ BUGFIXES
   for sending me Jonathan Perkin's fix)
 - The wav output driver had problems on big endian systems. Thanks to
   Axel "awe" Wefers for fixing this.
-- A warning reported by Stéphane LOEUILLET in libmikmod.m4 with autoconf 1.8 was fixed.
+- A warning reported by StÃ©phane LOEUILLET in libmikmod.m4 with autoconf 1.8 was fixed.
 - The 'card' argument, supported by the OSS driver was not documented via
   the MDRIVER->CmdLineHelp string.
 - libmikmod-3.1.11-CVE-2010-2546,2971.diff (from Mandriva/Mageia).
