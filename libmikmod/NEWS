@@ -45,8 +45,6 @@ NEW FEATURES
 (actually a few years back) ALSAs.
 - Change MDRIVER "char *" fields to "const char *".
     - Thanks to Stéphan Kochen.
-- Fix compilation on MSVC.
-    - Thanks to Stéphan Kochen.
 
 BUGFIXES
 
@@ -72,6 +70,8 @@ BUGFIXES
 - Cast a vc_callback parameter to "unsigned char *" instead of "char *",
 becuase the former is what it accepts (thanks to P. Martin).
 - Check for Samples' validatity in virtch_common.c (thanks to P. Martin).
+- Fix compilation on MSVC.
+    - Thanks to Stéphan Kochen.
 
 Summary of changes between libmikmod 3.1.10 and libmikmod 3.1.11 (Thiers):
 ==========================================================================
