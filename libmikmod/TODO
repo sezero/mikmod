@@ -4,12 +4,16 @@ TODO list for future versions (or ROADMAP if you prefer)
 **** for the next major release, libmikmod 3.2:
 
 - bugfixes
+    - Make sure the ALSA driver can share the output with other programs
+    (including other instances of MikMod). Currently it takes all the sound
+    card for itself.
 - ability to have several modules in memory (it doesn't work in all cases in
   the current version)
 - integration of the LINA (LINA Is Not A3D) companion library written by
   David Banz.
 - total module length computation
 - ability to seek in modules in smaller chunks than patterns
+- Create a PulseAudio driver.
 
 **** during 3.2.x maintenance releases:
 
