@@ -74,6 +74,8 @@ static int (*alsa_pcm_sw_params_set_avail_min)(snd_pcm_t *, snd_pcm_sw_params_t 
 static int (*alsa_pcm_sw_params)(snd_pcm_t *, snd_pcm_sw_params_t *);
 static int (*alsa_pcm_resume)(snd_pcm_t *);
 static int (*alsa_pcm_prepare)(snd_pcm_t *);
+static int (*alsa_pcm_sw_params_sizeof)(void);
+static int (*alsa_pcm_hw_params_sizeof)(void);
 #endif
 static int(*alsa_ctl_close)(snd_ctl_t*);
 #ifdef OLD_ALSA
@@ -220,6 +222,8 @@ static BOOL ALSA_Link(void)
     if (!(alsa_strerror = dlsym(libasound,"snd_strerror"))) return 1;
     if (!(alsa_pcm_sw_params = dlsym(libasound,"snd_pcm_sw_params"))) return 1;
     if (!(alsa_pcm_prepare = dlsym(libasound,"snd_pcm_prepare"))) return 1;
+    if (!(alsa_pcm_sw_params_sizeof = dlsym(libasound,"snd_pcm_sw_params_sizeof"))) return 1;
+    if (!(alsa_pcm_hw_params_sizeof = dlsym(libasound,"snd_pcm_hw_params_sizeof"))) return 1;
     if (!(alsa_pcm_resume = dlsym(libasound,"snd_pcm_resume"))) return 1;
     if (!(alsa_pcm_sw_params_set_avail_min = dlsym(libasound,"snd_pcm_sw_params_set_avail_min"))) return 1;
     if (!(alsa_pcm_sw_params_current = dlsym(libasound,"snd_pcm_sw_params_current"))) return 1;
@@ -330,6 +334,16 @@ static void ALSA_Unlink(void)
 	}
 }
 #endif /* MIKMOD_DYNAMIC */
+
+#ifdef MIKMOD_DYNAMIC
+/* This is done to override the identifiers expanded
+ * in the macros provided by the ALSA includes which are
+ * not available.
+ * */
+#define snd_strerror alsa_strerror
+#define snd_pcm_sw_params_sizeof alsa_pcm_sw_params_sizeof
+#define snd_pcm_hw_params_sizeof alsa_pcm_hw_params_sizeof
+#endif
 
 static void ALSA_CommandLine(CHAR *cmdline)
 {

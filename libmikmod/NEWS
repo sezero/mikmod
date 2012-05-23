@@ -45,6 +45,11 @@ NEW FEATURES
 (actually a few years back) ALSAs.
 - Change MDRIVER "char *" fields to "const char *".
     - Thanks to Stéphan Kochen.
+- Implement a fix to the ALSA driver in MIKMOD_DYNAMIC mode so it will allow
+linking against libmikmdo when "-Wl,--no-undefined" is passed.
+    - Reported by Andrey Bondrov from Mandriva.
+    - The problem was that we used some snd_... identifiers indirectly in
+    some macro expansions.
 
 BUGFIXES
 
