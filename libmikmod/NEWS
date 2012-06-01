@@ -26,7 +26,7 @@ NEW FEATURES
   as used in crusader games.
 - New function 'Player_QueryVoices' added, which is used to return
   dynamic channel information about the module player. (Mikmod 3.2.2 uses
-  it for it's dynamic panels).
+  it for its dynamic panels).
 - Mixing with floating point output. The MacOSX CoreAudio driver uses it. 
   Thanks goes to Anders F Björklund for implementing this.
 - AIFF disk writer driver.  
