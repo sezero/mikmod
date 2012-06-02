@@ -501,7 +501,10 @@ static BOOL ALSA_Init_internal(void)
 		if (alsa_ctl_open(&ctl_h,card)<0)
 			continue;
 #else
-        if ((err = alsa_pcm_open(&pcm_h, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, 0)) < 0)
+
+#define MIKMOD_ALSA_DEVICE "default"
+
+        if ((err = alsa_pcm_open(&pcm_h, MIKMOD_ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0)) < 0)
         {
             printf("snd_pcm_open() call failed: %s\n", alsa_strerror(err));
             goto END;
