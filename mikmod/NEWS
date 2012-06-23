@@ -17,7 +17,7 @@ THANKS
   (with lcc), fixed problems with DJGPP, and fixed a lot of small bugs.
   (please note that some of theses changes may have been done by
   Andrew Zabolotny. Frank Loemker sent me a big patch so I cannot know for
-  sure who did whay).
+  sure who did what).
 
 
 NEW FEATURES
