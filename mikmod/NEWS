@@ -10,12 +10,12 @@ THANKS
 - The winner of the ``it's rainy day, so I'll rewrite MikMod'' contest this
   time is Andrew Zabolotny. The colored MikMod looks great ! Thanks a lot !
 
-- To Frank Loemker, who has done many changes since the last release in 1999, 
-  has improved the widget system a lot, added a file selector, theme support, 
-  improved the configuration routines, recursive directory scanning, made 
-  the player and library run in a separate thread, added win32 support 
+- To Frank Loemker, who has done many changes since the last release in 1999,
+  has improved the widget system a lot, added a file selector, theme support,
+  improved the configuration routines, recursive directory scanning, made
+  the player and library run in a separate thread, added win32 support
   (with lcc), fixed problems with DJGPP, and fixed a lot of small bugs.
-  (please note that some of theses changes may have been done by 
+  (please note that some of theses changes may have been done by
   Andrew Zabolotny. Frank Loemker sent me a big patch so I cannot know for
   sure who did whay).
 
@@ -24,12 +24,12 @@ NEW FEATURES
 
 - On terminals that support it, colors. There is a built-in theme editor
   in the configuration panel. Themes are loaded and saved from the
-  config file. Set the environment variable TERM to mono to 
+  config file. Set the environment variable TERM to mono to
   disable this under OS/2 and DOS.
 
 - Mikmod will now display it's version and the song name or filename
   currently being played in the terminal title bar. On unix, there is
-  support for xterm compatible title setting (rxvt, Eterm, aixterm, 
+  support for xterm compatible title setting (rxvt, Eterm, aixterm,
   dtterm...), and a few others (iris-ansi, hpterm). It is also supported
   under win32.
 
@@ -45,8 +45,8 @@ NEW FEATURES
   - Editable hotlist allows quick switching to preferred directories.
   - Recursive directory scanning if "Add" or "Toggle" is used if a
     directory is selected.
-	
-- Recursive directory scanning at startup with the option 
+
+- Recursive directory scanning at startup with the option
     "-y, -di[rectory] dir  Scan directory recursively for modules".
 
 - Threaded player (that is an own thread for MikMod_Update()),
