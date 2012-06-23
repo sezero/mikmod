@@ -24,14 +24,14 @@ Unix mainteners
 * Peter Amstutz <amstpi@freenet.tlh.fl.us>
   maintained MikMod'Unix version 3.0, and wrote the playlist support.
 * Miodrag Vallat <miodrag@mikmod.darkorb.net>
-  Maintained and developped MikMod from version 3.0.4 up to version 3.1.6, 
+  Maintained and developped MikMod from version 3.0.4 up to version 3.1.6,
   made an audit of the code resulting in many bugs fixed.
 * Raphael Assenat <raph@raphnet.net>
   Current maintainer of mikmod. Initially added color to Mikmod 3.1.6, thus
   releasing version 3.2.0. Using patchs contributed by Frank Loemker, has
   finally released MikMod 3.2.2, which contains many changes and improvements
   that had been made since version 3.1.6 but never officially released.
-  
+
 
 Contributors on the Unix side
 -----------------------------
