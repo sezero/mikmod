@@ -65,6 +65,9 @@ PLATFORM SPECIFIC
 - DOS is a supported platform again.
 - Can be compiled on WIN32 with lcc
 - Fixes for DJGPP
+- the MIKMOD_SRAND_CONSTANT environment variable can be used to set the
+  srandom() seed on UNIX platforms. Its primary intent is to assist in
+  testing - see https://bitbucket.org/shlomif/mikmod-test-suite .
 
 Summary of changes between MikMod 3.1.5 and MikMod 3.1.6 (Riom):
 ================================================================
