@@ -3,7 +3,7 @@ dnl
 dnl $Id: configure.in,v 1.2 2004/01/29 14:26:35 raph Exp $
 
 AC_INIT(src/mikmod.c)
-AM_INIT_AUTOMAKE(mikmod, 3.2.2-beta1)
+AM_INIT_AUTOMAKE(mikmod, 3.2.2)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
