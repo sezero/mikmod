@@ -61,3 +61,11 @@
 ^mikmod/config\.status$
 ^mikmod/mik\.val$
 ^mikmod/stamp-h1$
+^mikmod/Makefile\.in$
+^mikmod/aclocal\.m4$
+mikmod/autom4te.cache
+^mikmod/configure$
+^mikmod/dos/Makefile\.in$
+^mikmod/os2/Makefile\.in$
+^mikmod/src/Makefile\.in$
+^mikmod/win32/Makefile\.in$
