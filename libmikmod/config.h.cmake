@@ -9,38 +9,38 @@
 /* ========== Features selected */
 
 /* Define if your system supports binary pipes (i.e. Unix) */
-#undef DRV_PIPE
+#cmakedefine DRV_PIPE 1
 
 /* Define if you want a .aiff file writer driver */
-#undef DRV_AIFF
+#cmakedefine DRV_AIFF 1
 
 /* Define if the AudioFile driver is compiled */
-#undef DRV_AF
+#cmakedefine DRV_AF 1
 /* Define if the AIX audio driver is compiled */
-#undef DRV_AIX
+#cmakedefine DRV_AIX 1
 /* Define if the Linux ALSA driver is compiled */
-#undef DRV_ALSA
+#cmakedefine DRV_ALSA 1
 /* Define if the Enlightened Sound Daemon driver is compiled */
-#undef DRV_ESD
+#cmakedefine DRV_ESD 1
 /* Define if the HP-UX audio driver is compiled */
-#undef DRV_HP
+#cmakedefine DRV_HP 1
 /* Define if the Network Audio System driver is compiled */
-#undef DRV_NAS
+#cmakedefine DRV_NAS 1
 /* Define if the Open Sound System driver is compiled */
-#undef DRV_OSS
+#cmakedefine DRV_OSS 1
 /* Define if the Linux SAM9407 driver is compiled */
 #undef DRV_SAM9407
 /* Define if the SGI audio driver is compiled */
-#undef DRV_SGI
+#cmakedefine DRV_SGI 1
 /* Define if the Sun audio driver or compatible (NetBSD, OpenBSD)
    is compiled */
-#undef DRV_SUN
+#cmakedefine DRV_SUN 1
 /* Define if the Linux Ultra driver is compiled */
-#undef DRV_ULTRA
+#cmakedefine DRV_ULTRA 1
 /* Define this if you want the MacOS X CoreAudio driver */
-#undef DRV_OSX
+#cmakedefine DRV_OSX 1
 /* Define this if you want the Carbon Mac Audio driver */
-#undef DRV_MAC
+#cmakedefine DRV_MAC 1
 
 /* Define if you want a debug version of the library */
 #undef MIKMOD_DEBUG
@@ -72,22 +72,22 @@
 #undef AC_APPLE_UNIVERSAL_BUILD
 
 /* Define to 1 if you have the <AF/AFlib.h> header file. */
-#undef HAVE_AF_AFLIB_H
+#cmakedefine HAVE_AF_AFLIB_H 1
 
 /* Define to 1 if you have the <alsa/asoundlib.h> header file. */
-#undef HAVE_ALSA_ASOUNDLIB_H
+#cmakedefine HAVE_ALSA_ASOUNDLIB_H 1
 
 /* Define to 1 if you have the <audio/audiolib.h> header file. */
-#undef HAVE_AUDIO_AUDIOLIB_H
+#cmakedefine HAVE_AUDIO_AUDIOLIB_H 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
+#cmakedefine HAVE_DLFCN_H 1
 
 /* Define to 1 if you have the <dl.h> header file. */
-#undef HAVE_DL_H
+#cmakedefine HAVE_DL_H 1
 
 /* Define to 1 if you have the <dmedia/audio.h> header file. */
-#undef HAVE_DMEDIA_AUDIO_H
+#cmakedefine HAVE_DMEDIA_AUDIO_H 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine HAVE_FCNTL_H 1
