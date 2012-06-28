@@ -209,9 +209,18 @@ ENDFOREACH(CFLAG_TO_CHECK)
 
 # So it can find the includes when building libavl.avl.h.
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # So it can find config.h
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+
+CHECK_MULTI_INCLUDE_FILES(
+    "fcntl.h" "malloc.h" "memory.h" "strings.h" "sys/ioctl.h" "unistd.h"
+)
+
+ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 
 SET (MIKMOD_LIB_MODULES
     drivers/drv_AF.c
@@ -226,7 +235,6 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_mac.c
     drivers/drv_nas.c
     drivers/drv_nos.c
-    drivers/drv_os2.c
     drivers/drv_oss.c
     drivers/drv_osx.c
     drivers/drv_pipe.c

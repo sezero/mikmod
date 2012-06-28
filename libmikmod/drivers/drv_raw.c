@@ -33,14 +33,14 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
 #ifndef macintosh
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
 
 #include "mikmod_internals.h"
 
