@@ -240,14 +240,12 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_pipe.c
     drivers/drv_raw.c
     drivers/drv_sam9407.c
-    drivers/drv_sb.c
     drivers/drv_sgi.c
     drivers/drv_stdout.c
     drivers/drv_sun.c
     drivers/drv_ultra.c
     drivers/drv_wav.c
     drivers/drv_win.c
-    drivers/drv_wss.c
     playercode/mdreg.c
     playercode/mdriver.c
     playercode/mdulaw.c
