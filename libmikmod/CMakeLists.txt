@@ -249,23 +249,6 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_ultra.c
     drivers/drv_wav.c
     drivers/drv_win.c
-    mmio/mmalloc.c
-    mmio/mmerror.c
-    mmio/mmio.c
-    playercode/mdreg.c
-    playercode/mdriver.c
-    playercode/mdulaw.c
-    playercode/mloader.c
-    playercode/mlreg.c
-    playercode/mlutil.c
-    playercode/mplayer.c
-    playercode/munitrk.c
-    playercode/mwav.c
-    playercode/npertab.c
-    playercode/sloader.c
-    playercode/virtch2.c
-    playercode/virtch.c
-    playercode/virtch_common.c
     loaders/load_669.c
     loaders/load_amf.c
     loaders/load_asy.c
@@ -286,6 +269,23 @@ SET (MIKMOD_LIB_MODULES
     loaders/load_ult.c
     loaders/load_uni.c
     loaders/load_xm.c
+    mmio/mmalloc.c
+    mmio/mmerror.c
+    mmio/mmio.c
+    playercode/mdreg.c
+    playercode/mdriver.c
+    playercode/mdulaw.c
+    playercode/mloader.c
+    playercode/mlreg.c
+    playercode/mlutil.c
+    playercode/mplayer.c
+    playercode/munitrk.c
+    playercode/mwav.c
+    playercode/npertab.c
+    playercode/sloader.c
+    playercode/virtch.c
+    playercode/virtch2.c
+    playercode/virtch_common.c
 )
 
 SET (FREECELL_SOLVER_LIBS)
