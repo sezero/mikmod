@@ -153,7 +153,10 @@ ADD_SUBDIRECTORY ("win32")
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(COMPILER_FLAGS_TO_CHECK
-    "-Wall" "-Werror=implicit-function-declaration" "-fvisibility=hidden"
+    "-Wall" "-Werror=implicit-function-declaration"
+    # Cancelling because libmikmod does not like it.
+    # Should be restored in the future.
+    # "-fvisibility=hidden"
 )
 
 IF (CPU_ARCH)
@@ -246,6 +249,9 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_ultra.c
     drivers/drv_wav.c
     drivers/drv_win.c
+    mmio/mmalloc.c
+    mmio/mmerror.c
+    mmio/mmio.c
     playercode/mdreg.c
     playercode/mdriver.c
     playercode/mdulaw.c
@@ -306,3 +312,14 @@ IF (BUILD_STATIC_LIBRARY)
         PROPERTIES CLEAN_DIRECT_OUTPUT 1
     )
 ENDIF (BUILD_STATIC_LIBRARY)
+
+SET_TARGET_PROPERTIES(mikmod
+    PROPERTIES VERSION 3.0.0 SOVERSION 3
+    )
+
+INSTALL(
+    TARGETS ${FREECELL_SOLVER_LIBS}
+    LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+    ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+)
+
