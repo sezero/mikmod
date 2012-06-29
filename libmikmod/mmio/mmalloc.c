@@ -69,7 +69,7 @@ void* MikMod_realloc(void *data, size_t size)
 #elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
 		return _aligned_realloc(data, size, ALIGN_STRIDE);
 #else
-		unsigned char *newPtr = (unsigned char *)realloc(get_pointer(data), size + ALIGN_STRIDE + sizeof(void*));
+		char *newPtr = (char *)realloc(get_pointer(data), size + ALIGN_STRIDE + sizeof(void*));
 		return align_pointer(newPtr, ALIGN_STRIDE);
 #endif
 	}

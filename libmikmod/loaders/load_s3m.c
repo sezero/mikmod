@@ -172,9 +172,9 @@ static BOOL S3M_GetNumChannels(void)
 		if(flag) {
 			ch=flag&31;
 			if(mh->channels[ch]<32) remap[ch] = 0;
-			if(flag&32) {_mm_read_UBYTE(modreader);_mm_read_UBYTE(modreader);}
-			if(flag&64) _mm_read_UBYTE(modreader);
-			if(flag&128){_mm_read_UBYTE(modreader);_mm_read_UBYTE(modreader);}
+			if(flag&32) {_mm_skip_BYTE(modreader);_mm_skip_BYTE(modreader);}
+			if(flag&64) _mm_skip_BYTE(modreader);
+			if(flag&128){_mm_skip_BYTE(modreader);_mm_skip_BYTE(modreader);}
 		} else row++;
 	}
 	return 0;

@@ -238,10 +238,10 @@ static BOOL IT_GetNumChannels(UWORD patrows)
 			ch=(flag-1)&63;
 			remap[ch]=0;
 			if(flag & 128) mask[ch]=_mm_read_UBYTE(modreader);
-			if(mask[ch]&1)   _mm_read_UBYTE(modreader);
-			if(mask[ch]&2)   _mm_read_UBYTE(modreader);
-			if(mask[ch]&4)   _mm_read_UBYTE(modreader);
-			if(mask[ch]&8) { _mm_read_UBYTE(modreader);_mm_read_UBYTE(modreader); }
+			if(mask[ch]&1)   _mm_skip_BYTE(modreader);
+			if(mask[ch]&2)   _mm_skip_BYTE(modreader);
+			if(mask[ch]&4)   _mm_skip_BYTE(modreader);
+			if(mask[ch]&8) { _mm_skip_BYTE(modreader);_mm_skip_BYTE(modreader); }
 		}
 	} while(row<patrows);
 
@@ -446,7 +446,9 @@ BOOL IT_Load(BOOL curious)
 	int t,u,lp;
 	INSTRUMENT *d;
 	SAMPLE *q;
+#ifdef WITH_COMPRESSED
 	BOOL compressed=0;
+#endif
 
 	numtrk=0;
 	filters=0;
@@ -672,7 +674,9 @@ BOOL IT_Load(BOOL curious)
 		if(s.flag&2) q->flags|=SF_16BITS;
 		if((s.flag&8)&&(mh->cwt>=0x214)) {
 			q->flags|=SF_ITPACKED;
+#ifdef WITH_COMPRESSED
 			compressed=1;
+#endif
 		}
 		if(s.flag&16) q->flags|=SF_LOOP;
 		if(s.flag&64) q->flags|=SF_BIDI;
@@ -726,7 +730,7 @@ BOOL IT_Load(BOOL curious)
 
 			ih.trkvers   = _mm_read_I_UWORD(modreader);
 			ih.numsmp    = _mm_read_UBYTE(modreader);
-			_mm_read_UBYTE(modreader);
+			_mm_skip_BYTE(modreader);
 			_mm_read_string(ih.name,26,modreader);
 			_mm_read_UBYTES(ih.blank01,6,modreader);
 			_mm_read_I_UWORDS(ih.samptable,ITNOTECNT,modreader);
@@ -753,7 +757,7 @@ BOOL IT_Load(BOOL curious)
 					ih. name##node[lp]=_mm_read_##type (modreader);		\
 					ih. name##tick[lp]=_mm_read_I_UWORD(modreader);		\
 				}														\
-				_mm_read_UBYTE(modreader)
+				_mm_skip_BYTE(modreader)
 #else
 #define IT_LoadEnvelope(name,type) 										\
 				ih. name/**/flg   =_mm_read_UBYTE(modreader);			\
@@ -768,7 +772,7 @@ BOOL IT_Load(BOOL curious)
 					ih. name/**/node[lp]=_mm_read_/**/type (modreader);	\
 					ih. name/**/tick[lp]=_mm_read_I_UWORD(modreader);	\
 				}														\
-				_mm_read_UBYTE(modreader)
+				_mm_skip_BYTE(modreader)
 #endif
 
 				IT_LoadEnvelope(vol,UBYTE);
@@ -776,7 +780,7 @@ BOOL IT_Load(BOOL curious)
 				IT_LoadEnvelope(pit,SBYTE);
 #undef IT_LoadEnvelope
 			}
- 
+
 			if(_mm_eof(modreader)) {
 				_mm_errno = MMERR_LOADING_SAMPLEINFO;
 				return 0;
@@ -963,7 +967,9 @@ BOOL IT_Load(BOOL curious)
 	if(!AllocTracks()) return 0;
 
 	for(t=0;t<of.numpat;t++) {
+#ifdef WITH_PACKLEN
 		UWORD packlen;
+#endif
 
 		/* seek to pattern position */
 		if(!paraptr[mh->insnum+mh->smpnum+t]) { /* 0 -> empty 64 row pattern */
@@ -976,8 +982,13 @@ BOOL IT_Load(BOOL curious)
 				of.tracks[numtrk++]=UniDup();
 			}
 		} else {
-			_mm_fseek(modreader,((long)paraptr[mh->insnum+mh->smpnum+t]),SEEK_SET);
+		 	_mm_fseek(modreader,((long)paraptr[mh->insnum+mh->smpnum+t]),SEEK_SET);
+#ifdef WITH_PACKLEN
 			packlen=_mm_read_I_UWORD(modreader);
+#else
+            _mm_skip_BYTE(modreader);
+            _mm_skip_BYTE(modreader);
+#endif
 			of.pattrows[t]=_mm_read_I_UWORD(modreader);
 			_mm_read_I_ULONG(modreader);
 			if(!IT_ReadPattern(of.pattrows[t])) return 0;

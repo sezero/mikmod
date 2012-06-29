@@ -514,9 +514,13 @@ BOOL UNI_Load(BOOL curious)
 
 	if(universion>=6) {
 		if (universion==6)
-			_mm_read_UBYTE(modreader);
+        {
+			_mm_skip_BYTE(modreader);
+        }
 		else
+        {
 			universion=_mm_read_M_UWORD(modreader);
+        }
 
 		mh.flags     =_mm_read_M_UWORD(modreader);
 		mh.numchn    =_mm_read_UBYTE(modreader);
