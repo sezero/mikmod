@@ -141,13 +141,9 @@ void S3MIT_CreateOrders(BOOL curious)
 /*========== Effect stuff */
 
 /* handles S3M and IT effects */
-void S3MIT_ProcessCmd(UBYTE cmd,UBYTE inf,unsigned int flags)
+void S3MIT_ProcessCmd(UBYTE cmd, UBYTE inf, unsigned int flags)
 {
-	UBYTE hi,lo;
-
-	lo=inf&0xf;
-	hi=inf>>4;
-
+	UBYTE lo = inf&0xF;
 	/* process S3M / IT specific command structure */
 
 	if(cmd!=255) {
