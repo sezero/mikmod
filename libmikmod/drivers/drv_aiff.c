@@ -189,9 +189,9 @@ static void	AIFF_PutHeader(void)
 {
     ULONG	myFrames;
     UBYTE	myIEEE[10];
-    
+
     myFrames = gAiffDumpSize / (((md_mode&DMODE_STEREO) ? 2 : 1) * ((md_mode & DMODE_16BITS) ? 2 : 1));
-    AIFF_ConvertToIeeeExtended ((double) md_mixfreq, myIEEE);
+    AIFF_ConvertToIeeeExtended ((double) md_mixfreq, (char *)myIEEE);
 
     _mm_fseek (gAiffOut, 0, SEEK_SET);
     _mm_write_string  ("FORM", gAiffOut);				/* chunk 'FORM' */

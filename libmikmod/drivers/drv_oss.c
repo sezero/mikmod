@@ -333,7 +333,7 @@ static void OSS_Update(void)
 						   buffinf.bytes:buffinf.fragsize);
 #ifdef AFMT_MU_LAW
 		if (play_precision==AFMT_MU_LAW)
-			unsignedtoulaw(audiobuffer,done);
+			unsignedtoulaw((char *)audiobuffer,done);
 #endif
 		write(sndfd,audiobuffer,done);
 	}

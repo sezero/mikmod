@@ -120,6 +120,7 @@ extern BOOL _mm_FileExists(CHAR *fname);
 
 #define _mm_read_SBYTE(x) (SBYTE)x->Get(x)
 #define _mm_read_UBYTE(x) (UBYTE)x->Get(x)
+#define _mm_skip_BYTE(x)  (void)x->Get(x)
 
 #define _mm_write_SBYTES(x,y,z) z->Write(z,(void *)x,y)
 #define _mm_write_UBYTES(x,y,z) z->Write(z,(void *)x,y)
