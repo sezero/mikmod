@@ -495,7 +495,7 @@ case `uname` in
 		fi
 	;;
 esac
-			
+
 if test $libmikmod_driver_af = yes
 then
 	libmikmod_driverlist="$libmikmod_driverlist audiofile"
