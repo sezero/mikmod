@@ -289,7 +289,7 @@ CHAR *DupStr(CHAR* s,UWORD len,BOOL strict)
 	return d;
 }
 
-CHAR *StrDup(CHAR *s)
+CHAR *StrDup(const CHAR *s)
 {
 	size_t l = strlen(s) + 1;
 	CHAR *d = MikMod_malloc(l);

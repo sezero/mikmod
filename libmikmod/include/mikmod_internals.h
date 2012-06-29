@@ -50,7 +50,7 @@ typedef long		SLONGLONG;
 typedef __int64		SLONGLONG;
 #elif defined(WIN32) && !defined(__MWERKS__)
 typedef LONGLONG	SLONGLONG;
-#elif macintosh && !TYPE_LONGLONG
+#elif defined(macintosh) && !TYPE_LONGLONG
 #include <Types.h>
 typedef SInt64	    SLONGLONG;
 #else
@@ -122,8 +122,8 @@ extern BOOL _mm_FileExists(CHAR *fname);
 #define _mm_read_UBYTE(x) (UBYTE)x->Get(x)
 #define _mm_skip_BYTE(x)  (void)x->Get(x)
 
-#define _mm_write_SBYTES(x,y,z) z->Write(z,(void *)x,y)
-#define _mm_write_UBYTES(x,y,z) z->Write(z,(void *)x,y)
+#define _mm_write_SBYTES(x,y,z) z->Write(z,(const void *)x,y)
+#define _mm_write_UBYTES(x,y,z) z->Write(z,(const void *)x,y)
 #define _mm_read_SBYTES(x,y,z)  z->Read(z,(void *)x,y)
 #define _mm_read_UBYTES(x,y,z)  z->Read(z,(void *)x,y)
 
@@ -137,7 +137,7 @@ extern void _mm_iobase_setcur(MREADER*);
 extern void _mm_iobase_revert(MREADER*);
 extern FILE *_mm_fopen(CHAR*,CHAR*);
 extern int	_mm_fclose(FILE *);
-extern void _mm_write_string(CHAR*,MWRITER*);
+extern void _mm_write_string(const CHAR*,MWRITER*);
 extern int  _mm_read_string (CHAR*,int,MREADER*);
 
 extern SWORD _mm_read_M_SWORD(MREADER*);
@@ -534,9 +534,9 @@ typedef struct MP_VOICE {
 /*========== Loaders */
 
 typedef struct MLOADER {
-struct MLOADER* next;
-	CHAR*       type;
-	CHAR*       version;
+    struct MLOADER* next;
+	const CHAR*       type;
+	const CHAR*       version;
 	BOOL        (*Init)(void);
 	BOOL        (*Test)(void);
 	BOOL        (*Load)(BOOL);
@@ -573,7 +573,7 @@ extern BOOL   AllocTracks(void);
 extern BOOL   AllocInstruments(void);
 extern BOOL   AllocSamples(void);
 extern CHAR*  DupStr(CHAR*,UWORD,BOOL);
-extern CHAR*  StrDup(CHAR *s);
+extern CHAR*  StrDup(const CHAR *s);
 
 /* loader utility functions */
 extern int*   AllocLinear(void);
@@ -631,7 +631,7 @@ extern ULONG  MD_SampleLength(int,SAMPLE*);
 extern void unsignedtoulaw(char *,int);
 
 /* Parameter extraction helper */
-extern CHAR  *MD_GetAtom(CHAR*,CHAR*,BOOL);
+extern CHAR  *MD_GetAtom(const CHAR*, const CHAR*, BOOL);
 
 /* Internal software mixer stuff */
 extern void VC_SetupPointers(void);
@@ -640,7 +640,7 @@ extern BOOL VC2_Init(void);
 
 #if defined(unix) || defined(__APPLE__) && defined(__MACH__)
 /* POSIX helper functions */
-extern BOOL MD_Access(CHAR *);
+extern BOOL MD_Access(const CHAR *);
 extern BOOL MD_DropPrivileges(void);
 #endif
 

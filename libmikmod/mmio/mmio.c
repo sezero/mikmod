@@ -185,7 +185,7 @@ static long _mm_FileWriter_Tell(MWRITER* writer)
 	return ftell(((MFILEWRITER*)writer)->file);
 }
 
-static BOOL _mm_FileWriter_Write(MWRITER* writer,void* ptr,size_t size)
+static BOOL _mm_FileWriter_Write(MWRITER* writer, const void* ptr, size_t size)
 {
 	return (fwrite(ptr,size,1,((MFILEWRITER*)writer)->file)==size);
 }
@@ -293,7 +293,7 @@ static int _mm_MemReader_Get(MREADER* reader)
 	pos = ((MMEMREADER*)reader)->pos;
 	((MMEMREADER*)reader)->pos++;
 
-	return ((unsigned char*)(((MMEMREADER*)reader)->buffer))[pos];
+	return ((const unsigned char*)(((MMEMREADER*)reader)->buffer))[pos];
 }
 
 static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
@@ -329,7 +329,7 @@ static long _mm_MemReader_Tell(MREADER* reader)
 
 /*========== Write functions */
 
-void _mm_write_string(CHAR* data,MWRITER* writer)
+void _mm_write_string(const CHAR* data,MWRITER* writer)
 {
 	if(data)
 		_mm_write_UBYTES(data,strlen(data),writer);

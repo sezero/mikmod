@@ -88,7 +88,7 @@ static AMFNOTE *track = NULL;
 
 /*========== Loader code */
 
-BOOL AMF_Test(void)
+static BOOL AMF_Test(void)
 {
 	UBYTE id[3],ver;
 
@@ -100,7 +100,7 @@ BOOL AMF_Test(void)
 	return 0;
 }
 
-BOOL AMF_Init(void)
+static BOOL AMF_Init(void)
 {
 	if(!(mh=(AMFHEADER*)MikMod_malloc(sizeof(AMFHEADER)))) return 0;
 	if(!(track=(AMFNOTE*)MikMod_calloc(64,sizeof(AMFNOTE)))) return 0;
@@ -108,13 +108,13 @@ BOOL AMF_Init(void)
 	return 1;
 }
 
-void AMF_Cleanup(void)
+static void AMF_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(track);
 }
 
-static BOOL AMF_UnpackTrack(MREADER* modreader)
+static BOOL AMF_UnpackTrack(MREADER* local_modreader)
 {
 	ULONG tracksize;
 	UBYTE row,cmd;
@@ -124,14 +124,14 @@ static BOOL AMF_UnpackTrack(MREADER* modreader)
 	memset(track,0,64*sizeof(AMFNOTE));
 
 	/* read packed track */
-	if (modreader) {
-		tracksize=_mm_read_I_UWORD(modreader);
-		tracksize+=((ULONG)_mm_read_UBYTE(modreader))<<16;
+	if (local_modreader) {
+		tracksize=_mm_read_I_UWORD(local_modreader);
+		tracksize+=((ULONG)_mm_read_UBYTE(local_modreader))<<16;
 		if (tracksize)
 			while(tracksize--) {
-				row=_mm_read_UBYTE(modreader);
-				cmd=_mm_read_UBYTE(modreader);
-				arg=_mm_read_SBYTE(modreader);
+				row=_mm_read_UBYTE(local_modreader);
+				cmd=_mm_read_UBYTE(local_modreader);
+				arg=_mm_read_SBYTE(local_modreader);
 				/* unexpected end of track */
 				if(!tracksize) {
 					if((row==0xff)&&(cmd==0xff)&&(arg==-1))
@@ -330,7 +330,7 @@ static UBYTE* AMF_ConvertTrack(void)
 	return UniDup();
 }
 
-BOOL AMF_Load(BOOL curious)
+static BOOL AMF_Load(BOOL curious)
 {
 	int t,u,realtrackcnt,realsmpcnt,defaultpanning;
 	AMFSAMPLE s;
@@ -543,7 +543,7 @@ BOOL AMF_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *AMF_LoadTitle(void)
+static CHAR *AMF_LoadTitle(void)
 {
 	CHAR s[32];
 

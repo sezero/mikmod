@@ -172,8 +172,6 @@ ENDIF(CPU_ARCH)
 SET (IS_DEBUG "")
 IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
     SET (IS_DEBUG 1)
-    LIST(APPEND COMPILER_FLAGS_TO_CHECK "-DFCS_COMPILE_DEBUG_FUNCTIONS=1")
-    LIST(APPEND COMPILER_FLAGS_TO_CHECK "-DDEBUG=1")
 
     # Removed these flags because they emitted spurious warnings, which were of
     # no use to us:

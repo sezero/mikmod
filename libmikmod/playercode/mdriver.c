@@ -768,7 +768,7 @@ MIKMODAPI BOOL MikMod_Active(void)
    criticals).
 
    Returns the voice that the sound is being played on.                       */
-SBYTE Sample_Play_internal(SAMPLE *s,ULONG start,UBYTE flags)
+static SBYTE Sample_Play_internal(SAMPLE *s,ULONG start,UBYTE flags)
 {
 	int orig=sfxpool;/* for cases where all channels are critical */
 	int c;
@@ -883,7 +883,7 @@ MIKMODAPI void MikMod_Lock(void)
 
 /*========== Parameter extraction helper */
 
-CHAR *MD_GetAtom(CHAR *atomname,CHAR *cmdline,BOOL implicit)
+CHAR *MD_GetAtom(const CHAR *atomname, const CHAR *cmdline, BOOL implicit)
 {
 	CHAR *ret=NULL;
 
@@ -919,7 +919,7 @@ CHAR *MD_GetAtom(CHAR *atomname,CHAR *cmdline,BOOL implicit)
    reasonable. Returns 1 if it is safe to rewrite the file, 0 otherwise.
    The goal is to prevent a setuid root libmikmod application from overriding
    files like /etc/passwd with digital sound... */
-BOOL MD_Access(CHAR *filename)
+BOOL MD_Access(const CHAR * filename)
 {
 	struct stat buf;
 

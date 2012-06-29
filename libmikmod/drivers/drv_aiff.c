@@ -137,7 +137,7 @@ void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
         mySign = 0;
     }
 
-    if (theValue == 0)
+    if (theValue < 1e-18)
     {
         myExponent = 0;
         myHiMant = 0;
