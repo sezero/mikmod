@@ -668,6 +668,13 @@ extern void Voice_SetVolume_internal(SBYTE,UWORD);
 extern void Voice_Stop_internal(SBYTE);
 extern BOOL Voice_Stopped_internal(SBYTE);
 
+extern BOOL  VC1_PlayStart(void);
+extern BOOL  VC2_PlayStart(void);
+extern void  VC1_PlayStop(void);
+extern void  VC2_PlayStop(void);
+extern BOOL VC1_SetNumVoices(void);
+extern BOOL VC2_SetNumVoices(void);
+
 extern MikMod_callback_t vc_callback;
 #ifdef __cplusplus
 }

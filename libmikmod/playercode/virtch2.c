@@ -275,16 +275,16 @@ static SLONG Mix32StereoSurround(const SWORD* const srce,SLONG* dest,SLONG index
 
 /*========== 64 bit mixers */
 
-static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,SLONG todo)
+static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,SLONG todo)
 {
 	SWORD sample=0;
 	SLONGLONG i,f;
 
 	while(todo--) {
-		i=index>>FRACBITS,f=index&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)((((SLONGLONG)(srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONGLONG)srce[i+1]*f)) >> FRACBITS));
-		index+=increment;
+		local_index+=increment;
 
 		if(vnf->rampvol) {
 			*dest++ += (long)(
@@ -304,7 +304,7 @@ static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG ind
 	}
 	vnf->lastvalL=vnf->lvolsel * sample;
 
-	return index;
+	return local_index;
 }
 
 // Slowest part...
@@ -434,7 +434,7 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 #endif
 
 
-static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,ULONG todo)
+static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	SLONGLONG i,f;
@@ -442,10 +442,10 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 	if (vnf->rampvol)	
 	while(todo) {
 		todo--;
-		i=index>>FRACBITS,f=index&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-		index += increment;
+		local_index += increment;
 		
 		
 		*dest++ += (long)(
@@ -465,10 +465,10 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 	if (vnf->click)
 	while(todo) {
 		todo--;
-		i=index>>FRACBITS,f=index&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-		index += increment;
+		local_index += increment;
 
 		*dest++ += (long)(
 			  ( ( (SLONGLONG)(vnf->lvolsel*(CLICK_BUFFER-vnf->click)) *
@@ -491,7 +491,7 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 		if (md_mode & DMODE_SIMDMIXER)
 		{
-			index = MixSIMDStereoNormal(srce, dest, index, increment, todo);		
+			local_index = MixSIMDStereoNormal(srce, dest, local_index, increment, todo);		
 		}
 		else
 #endif
@@ -499,11 +499,11 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 			
 			while(todo) 
 			{		
-				i=index>>FRACBITS,
-				f=index&FRACMASK;
+				i=local_index>>FRACBITS,
+				f=local_index&FRACMASK;
 				sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
 								((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-				index += increment;
+				local_index += increment;
 
 				*dest++ +=vnf->lvolsel*sample;
 				*dest++ +=vnf->rvolsel*sample;		
@@ -511,20 +511,20 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 			}
 		}	
 	}
-	return index;
+	return local_index;
 }
 
-static SLONGLONG MixStereoSurround(SWORD* srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,ULONG todo)
+static SLONGLONG MixStereoSurround(SWORD* srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	long whoop;
 	SLONGLONG i, f;
 
 	while(todo--) {
-		i=index>>FRACBITS,f=index&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONGLONG)srce[i+1]*f)) >> FRACBITS));
-		index+=increment;
+		local_index+=increment;
 
 		if(vnf->rampvol) {
 			whoop=(long)(
@@ -551,7 +551,7 @@ static SLONGLONG MixStereoSurround(SWORD* srce,SLONG* dest,SLONGLONG index,SLONG
 	vnf->lastvalL=vnf->lvolsel*sample;
 	vnf->lastvalR=vnf->lvolsel*sample;
 
-	return index;
+	return local_index;
 }
 
 static	void(*Mix32toFP)(float* dste,const SLONG *srce,NATIVE count);

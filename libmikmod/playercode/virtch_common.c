@@ -27,80 +27,80 @@
 
 ==============================================================================*/
 
-#ifndef _IN_VIRTCH_
-
 #include "mikmod_internals.h"
+
+extern ULONG VC1_SilenceBytes(SBYTE*,ULONG);
+extern ULONG VC2_SilenceBytes(SBYTE*,ULONG);
+extern ULONG VC1_WriteBytes(SBYTE*,ULONG);
+extern ULONG VC2_WriteBytes(SBYTE*,ULONG);
+extern void  VC1_Exit(void);
+extern void  VC2_Exit(void);
+extern UWORD VC1_VoiceGetVolume(UBYTE);
+extern UWORD VC2_VoiceGetVolume(UBYTE);
+extern ULONG VC1_VoiceGetPanning(UBYTE);
+extern ULONG VC2_VoiceGetPanning(UBYTE);
+extern void  VC1_VoiceSetFrequency(UBYTE,ULONG);
+extern void  VC2_VoiceSetFrequency(UBYTE,ULONG);
+extern ULONG VC1_VoiceGetFrequency(UBYTE);
+extern ULONG VC2_VoiceGetFrequency(UBYTE);
+extern void  VC1_VoicePlay(UBYTE,SWORD,ULONG,ULONG,ULONG,ULONG,UWORD);
+extern void  VC2_VoicePlay(UBYTE,SWORD,ULONG,ULONG,ULONG,ULONG,UWORD);
+extern void  VC1_VoiceStop(UBYTE);
+extern void  VC2_VoiceStop(UBYTE);
+extern BOOL  VC1_VoiceStopped(UBYTE);
+extern BOOL  VC2_VoiceStopped(UBYTE);
+extern SLONG VC1_VoiceGetPosition(UBYTE);
+extern SLONG VC2_VoiceGetPosition(UBYTE);
+extern void  VC1_VoiceSetVolume(UBYTE,UWORD);
+extern void  VC2_VoiceSetVolume(UBYTE,UWORD);
+extern void  VC1_VoiceSetPanning(UBYTE,ULONG);
+extern void  VC2_VoiceSetPanning(UBYTE,ULONG);
+extern void  VC1_SampleUnload(SWORD);
+extern void  VC2_SampleUnload(SWORD);
+extern SWORD VC1_SampleLoad(struct SAMPLOAD*,int);
+extern SWORD VC2_SampleLoad(struct SAMPLOAD*,int);
+extern ULONG VC1_SampleSpace(int);
+extern ULONG VC2_SampleSpace(int);
+extern ULONG VC1_SampleLength(int,SAMPLE*);
+extern ULONG VC2_SampleLength(int,SAMPLE*);
+extern ULONG VC1_VoiceRealVolume(UBYTE);
+extern ULONG VC2_VoiceRealVolume(UBYTE);
+
+
+#ifndef _IN_VIRTCH_
 
 extern BOOL  VC1_Init(void);
 extern BOOL  VC2_Init(void);
 static BOOL (*VC_Init_ptr)(void)=VC1_Init;
-extern void  VC1_Exit(void);
-extern void  VC2_Exit(void);
 static void (*VC_Exit_ptr)(void)=VC1_Exit;
 extern BOOL  VC1_SetNumVoices(void);
 extern BOOL  VC2_SetNumVoices(void);
 static BOOL (*VC_SetNumVoices_ptr)(void);
-extern ULONG VC1_SampleSpace(int);
-extern ULONG VC2_SampleSpace(int);
 static ULONG (*VC_SampleSpace_ptr)(int);
-extern ULONG VC1_SampleLength(int,SAMPLE*);
-extern ULONG VC2_SampleLength(int,SAMPLE*);
 static ULONG (*VC_SampleLength_ptr)(int,SAMPLE*);
 
-extern BOOL  VC1_PlayStart(void);
 extern BOOL  VC2_PlayStart(void);
 static BOOL (*VC_PlayStart_ptr)(void);
-extern void  VC1_PlayStop(void);
 extern void  VC2_PlayStop(void);
 static void (*VC_PlayStop_ptr)(void);
 
-extern SWORD VC1_SampleLoad(struct SAMPLOAD*,int);
-extern SWORD VC2_SampleLoad(struct SAMPLOAD*,int);
 static SWORD (*VC_SampleLoad_ptr)(struct SAMPLOAD*,int);
-extern void  VC1_SampleUnload(SWORD);
-extern void  VC2_SampleUnload(SWORD);
 static void (*VC_SampleUnload_ptr)(SWORD);
 
-extern ULONG VC1_WriteBytes(SBYTE*,ULONG);
-extern ULONG VC2_WriteBytes(SBYTE*,ULONG);
 static ULONG (*VC_WriteBytes_ptr)(SBYTE*,ULONG);
-extern ULONG VC1_SilenceBytes(SBYTE*,ULONG);
-extern ULONG VC2_SilenceBytes(SBYTE*,ULONG);
 static ULONG (*VC_SilenceBytes_ptr)(SBYTE*,ULONG);
 
-extern void  VC1_VoiceSetVolume(UBYTE,UWORD);
-extern void  VC2_VoiceSetVolume(UBYTE,UWORD);
 static void (*VC_VoiceSetVolume_ptr)(UBYTE,UWORD);
-extern UWORD VC1_VoiceGetVolume(UBYTE);
-extern UWORD VC2_VoiceGetVolume(UBYTE);
 static UWORD (*VC_VoiceGetVolume_ptr)(UBYTE);
-extern void  VC1_VoiceSetFrequency(UBYTE,ULONG);
-extern void  VC2_VoiceSetFrequency(UBYTE,ULONG);
 static void (*VC_VoiceSetFrequency_ptr)(UBYTE,ULONG);
-extern ULONG VC1_VoiceGetFrequency(UBYTE);
-extern ULONG VC2_VoiceGetFrequency(UBYTE);
 static ULONG (*VC_VoiceGetFrequency_ptr)(UBYTE);
-extern void  VC1_VoiceSetPanning(UBYTE,ULONG);
-extern void  VC2_VoiceSetPanning(UBYTE,ULONG);
 static void (*VC_VoiceSetPanning_ptr)(UBYTE,ULONG);
-extern ULONG VC1_VoiceGetPanning(UBYTE);
-extern ULONG VC2_VoiceGetPanning(UBYTE);
 static ULONG (*VC_VoiceGetPanning_ptr)(UBYTE);
-extern void  VC1_VoicePlay(UBYTE,SWORD,ULONG,ULONG,ULONG,ULONG,UWORD);
-extern void  VC2_VoicePlay(UBYTE,SWORD,ULONG,ULONG,ULONG,ULONG,UWORD);
 static void (*VC_VoicePlay_ptr)(UBYTE,SWORD,ULONG,ULONG,ULONG,ULONG,UWORD);
 
-extern void  VC1_VoiceStop(UBYTE);
-extern void  VC2_VoiceStop(UBYTE);
 static void (*VC_VoiceStop_ptr)(UBYTE);
-extern BOOL  VC1_VoiceStopped(UBYTE);
-extern BOOL  VC2_VoiceStopped(UBYTE);
 static BOOL (*VC_VoiceStopped_ptr)(UBYTE);
-extern SLONG VC1_VoiceGetPosition(UBYTE);
-extern SLONG VC2_VoiceGetPosition(UBYTE);
 static SLONG (*VC_VoiceGetPosition_ptr)(UBYTE);
-extern ULONG VC1_VoiceRealVolume(UBYTE);
-extern ULONG VC2_VoiceRealVolume(UBYTE);
 static ULONG (*VC_VoiceRealVolume_ptr)(UBYTE);
 
 #if defined __STDC__ || defined _MSC_VER || defined MPW_C
