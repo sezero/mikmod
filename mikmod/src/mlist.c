@@ -97,7 +97,17 @@ void PL_InitList(PLAYLIST * pl)
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
 	srand(time(NULL));
 #else
-	srandom(time(NULL));
+	{
+		const char * s = getenv("MIKMOD_SRAND_CONSTANT");
+		if (s)
+		{
+			srandom((unsigned int)atoi(s));
+		}
+		else
+		{
+			srandom(time(NULL));
+		}
+	}
 #endif
 }
 

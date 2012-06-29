@@ -185,9 +185,9 @@ static char *get_text(MENTRY *entry, int width)
 					pos[i] = ch;
 				}
 			} else
-				sprintf(storage, text);
+				sprintf(storage, "%s", text);
 		} else
-			sprintf(storage, text);
+			sprintf(storage, "%s", text);
 		free (text);
 
 		/* '...%>' -> '...>' */

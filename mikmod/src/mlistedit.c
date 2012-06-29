@@ -930,7 +930,7 @@ static BOOL cb_list_scan_dir (char *path, int added, int removed, void *data)
 		for (i=strlen(str); i<70; i++)
 			*pos++ = ' ';
 		*pos = '\0';
-		printf (str);
+		printf ("%s", str);
 		fflush(stdout);
 	}
 	return 0;

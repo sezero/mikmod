@@ -7,16 +7,16 @@ MikMod main authors
   made decisive contributions to the code (esp. IT support) and maintained
   MikMod version 3 until it was discontinued.
 * Frank Loemker <floemker@techfak.uni-bielefeld.de>
-  rewrote nearly all the player, adding lots of features (independant panels,
+  rewrote nearly all the player, adding lots of features (independent panels,
   windowing system, playlist editor, better archive support, etc).
 * Andrew Zabolotny <bit@eltech.ru>
   ported to DOS, added color support, volume panel, dynamic panels.
 
-Unix mainteners
+Unix maintainers
 ---------------
 
-* Raphael Assenat <raph@raphnet.net>
-  Revived the project after many years of inactivity, in 2003. Is
+* Shlomi Fish, http://www.shlomifish.org/
+  Revived the project after many years of inactivity, in 2012. Is
   the current maintainer.
 * Steve McIntyre <steven@chiark.greenend.org.uk>
   maintained MikMod'Unix version 2, and wrote the curses interface and the
@@ -24,14 +24,15 @@ Unix mainteners
 * Peter Amstutz <amstpi@freenet.tlh.fl.us>
   maintained MikMod'Unix version 3.0, and wrote the playlist support.
 * Miodrag Vallat <miodrag@mikmod.darkorb.net>
-  Maintained and developped MikMod from version 3.0.4 up to version 3.1.6, 
+  Maintained and developed MikMod from version 3.0.4 up to version 3.1.6,
   made an audit of the code resulting in many bugs fixed.
 * Raphael Assenat <raph@raphnet.net>
-  Current maintainer of mikmod. Initially added color to Mikmod 3.1.6, thus
-  releasing version 3.2.0. Using patchs contributed by Frank Loemker, has
+  Initially added color to Mikmod 3.1.6, thus
+  releasing version 3.2.0. Using patches contributed by Frank Loemker, has
   finally released MikMod 3.2.2, which contains many changes and improvements
-  that had been made since version 3.1.6 but never officially released.
-  
+  that had been made since version 3.1.6 but never officially released. Revived
+  the project in 2003, and passed the baton to Shlomi Fish in 2012.
+
 
 Contributors on the Unix side
 -----------------------------
@@ -46,7 +47,7 @@ Contributors on other platforms
   ported MikMod 3 to the Macintosh.
 * Dimitri Boldyrev <demos@komkon.org>
   ported MikMod 2 to the Macintosh.
-* Shlomi Fish <shlomif@vipe.techion.ac.il>
+* Shlomi Fish, http://www.shlomifish.org/
   ported MikMod to Java, and contributed bug fixes.
 * Stefan Tibus <Stefan_Tibus@ThePentagon.com>
   ported MikMod to OS/2.
@@ -55,4 +56,4 @@ Contributors on other platforms
 
 --
 If your name is missing, don't hesitate to remind me at
-<mikmid@raphnet.net>
+http://www.shlomifish.org/me/contact-me/ .
