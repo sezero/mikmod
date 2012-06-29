@@ -77,7 +77,7 @@ static long _mm_MemReader_Tell(MREADER* reader);
 
 //static long _mm_iobase=0,temp_iobase=0;
 
-FILE* _mm_fopen(CHAR* fname,CHAR* attrib)
+FILE* _mm_fopen(const CHAR* fname, const CHAR* attrib)
 {
 	FILE *fp;
 

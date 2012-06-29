@@ -64,7 +64,7 @@ typedef struct WAV {
 	UWORD nFormatSpecific;
 } WAV;
 
-BOOL isWaveFile(MREADER* reader)
+static BOOL isWaveFile(MREADER* reader)
 {
 	WAV wh;
 
@@ -82,7 +82,7 @@ BOOL isWaveFile(MREADER* reader)
 	return 1;
 }
 
-SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
+static SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
 {
 	SAMPLE *si=NULL;
 	WAV wh;
@@ -168,7 +168,7 @@ SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
 	return si;
 }
 
-SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG channel, ULONG flags)
+static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG channel, ULONG flags)
 {
 	SAMPLE *si;
 	long len;
@@ -247,7 +247,7 @@ SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG channe
 	return si;
 }
 
-SAMPLE* Sample_LoadGeneric_internal(MREADER* reader, const char *options)
+static SAMPLE* Sample_LoadGeneric_internal(MREADER* reader, const char *options)
 {
 	if (isWaveFile(reader)) {
 		return Sample_LoadGeneric_internal_wav(reader);

@@ -90,7 +90,7 @@ static STMNOTE *stmbuf = NULL;
 static STMHEADER *mh = NULL;
 
 /* tracker identifiers */
-static CHAR* STM_Version[STM_NTRACKERS] = {
+static const CHAR * STM_Version[STM_NTRACKERS] = {
 	"Screamtracker 2",
 	"Converted by MOD2STM (STM format)",
 	"Wuzamod (STM format)"
@@ -98,7 +98,7 @@ static CHAR* STM_Version[STM_NTRACKERS] = {
 
 /*========== Loader code */
 
-BOOL STM_Test(void)
+static BOOL STM_Test(void)
 {
 	UBYTE str[44];
 	int t;
@@ -118,7 +118,7 @@ BOOL STM_Test(void)
 	return 0;
 }
 
-BOOL STM_Init(void)
+static BOOL STM_Init(void)
 {
 	if(!(mh=(STMHEADER*)MikMod_malloc(sizeof(STMHEADER)))) return 0;
 	if(!(stmbuf=(STMNOTE*)MikMod_calloc(64U*4,sizeof(STMNOTE)))) return 0;
@@ -249,9 +249,9 @@ static BOOL STM_LoadPatterns(void)
 	return 1;
 }
 
-BOOL STM_Load(BOOL curious)
+static BOOL STM_Load(BOOL curious)
 {
-	int t; 
+	int t;
 	ULONG MikMod_ISA; /* We must generate our own ISA, it's not stored in stm */
 	SAMPLE *q;
 
@@ -347,7 +347,7 @@ BOOL STM_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *STM_LoadTitle(void)
+static CHAR *STM_LoadTitle(void)
 {
 	CHAR s[20];
 

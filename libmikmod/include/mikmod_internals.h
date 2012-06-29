@@ -135,7 +135,7 @@ extern BOOL _mm_FileExists(CHAR *fname);
 
 extern void _mm_iobase_setcur(MREADER*);
 extern void _mm_iobase_revert(MREADER*);
-extern FILE *_mm_fopen(CHAR*,CHAR*);
+extern FILE * _mm_fopen(const CHAR *, const CHAR *);
 extern int	_mm_fclose(FILE *);
 extern void _mm_write_string(const CHAR*,MWRITER*);
 extern int  _mm_read_string (CHAR*,int,MREADER*);
@@ -593,7 +593,7 @@ extern ULONG  getfrequency(UWORD,ULONG);
 
 /* loader shared data */
 #define STM_NTRACKERS 3
-extern CHAR *STM_Signatures[STM_NTRACKERS];
+extern const CHAR *STM_Signatures[STM_NTRACKERS];
 
 /*========== Player interface */
 

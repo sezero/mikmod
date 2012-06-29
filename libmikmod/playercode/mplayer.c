@@ -2304,7 +2304,7 @@ static void DoNNAEffects(MODULE *mod, MP_CONTROL *a, UBYTE dat)
 	}
 }
 
-void pt_UpdateVoices(MODULE *mod, int max_volume)
+static void pt_UpdateVoices(MODULE *mod, int max_volume)
 {
 	SWORD envpan,envvol,envpit,channel;
 	UWORD playperiod;
@@ -2507,7 +2507,7 @@ void pt_UpdateVoices(MODULE *mod, int max_volume)
 }
 
 /* Handles new notes or instruments */
-void pt_Notes(MODULE *mod)
+static void pt_Notes(MODULE *mod)
 {
 	SWORD channel;
 	MP_CONTROL *a;
@@ -2645,7 +2645,7 @@ void pt_Notes(MODULE *mod)
 }
 
 /* Handles effects */
-void pt_EffectsPass1(MODULE *mod)
+static void pt_EffectsPass1(MODULE *mod)
 {
 	SWORD channel;
 	MP_CONTROL *a;
@@ -2696,7 +2696,7 @@ void pt_EffectsPass1(MODULE *mod)
 }
 
 /* NNA management */
-void pt_NNA(MODULE *mod)
+static void pt_NNA(MODULE *mod)
 {
 	SWORD channel;
 	MP_CONTROL *a;
@@ -2777,7 +2777,7 @@ void pt_NNA(MODULE *mod)
 }
 
 /* Setup module and NNA voices */
-void pt_SetupVoices(MODULE *mod)
+static void pt_SetupVoices(MODULE *mod)
 {
 	SWORD channel;
 	MP_CONTROL *a;
@@ -2818,7 +2818,7 @@ void pt_SetupVoices(MODULE *mod)
 }
 
 /* second effect pass */
-void pt_EffectsPass2(MODULE *mod)
+static void pt_EffectsPass2(MODULE *mod)
 {
 	SWORD channel;
 	MP_CONTROL *a;

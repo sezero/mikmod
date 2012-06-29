@@ -136,7 +136,7 @@ static	XMWAVHEADER *wh=NULL,*s=NULL;
 
 /*========== Loader code */
 
-BOOL XM_Test(void)
+static BOOL XM_Test(void)
 {
 	UBYTE id[38];
 
@@ -146,13 +146,13 @@ BOOL XM_Test(void)
 	return 0;
 }
 
-BOOL XM_Init(void)
+static BOOL XM_Init(void)
 {
 	if(!(mh=(XMHEADER *)MikMod_malloc(sizeof(XMHEADER)))) return 0;
 	return 1;
 }
 
-void XM_Cleanup(void)
+static void XM_Cleanup(void)
 {
 	MikMod_free(mh);
 }
@@ -667,7 +667,7 @@ static BOOL LoadInstruments(void)
 	return 1;
 }
 
-BOOL XM_Load(BOOL curious)
+static BOOL XM_Load(BOOL curious)
 {
 	INSTRUMENT *d;
 	SAMPLE *q;
@@ -813,14 +813,14 @@ BOOL XM_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *XM_LoadTitle(void)
+static CHAR *XM_LoadTitle(void)
 {
-	CHAR s[21];
+	CHAR my_str[21];
 
 	_mm_fseek(modreader,17,SEEK_SET);
-	if(!_mm_read_UBYTES(s,21,modreader)) return NULL;
+	if(!_mm_read_UBYTES(my_str, 21, modreader)) return NULL;
 
-	return(DupStr(s,21,1));
+	return(DupStr(my_str,21,1));
 }
 
 /*========== Loader information */

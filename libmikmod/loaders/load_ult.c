@@ -86,7 +86,7 @@ static	ULTEVENT ev;
 
 /*========== Loader code */
 
-BOOL ULT_Test(void)
+static BOOL ULT_Test(void)
 {
 	CHAR id[16];
 
@@ -96,12 +96,12 @@ BOOL ULT_Test(void)
 	return 1;
 }
 
-BOOL ULT_Init(void)
+static BOOL ULT_Init(void)
 {
 	return 1;
 }
 
-void ULT_Cleanup(void)
+static void ULT_Cleanup(void)
 {
 }
 
@@ -124,7 +124,7 @@ static UBYTE ReadUltEvent(ULTEVENT* event)
 	return rep;
 }
 
-BOOL ULT_Load(BOOL curious)
+static BOOL ULT_Load(BOOL curious)
 {
 	int t,u,tracks=0;
 	SAMPLE *q;
@@ -315,7 +315,7 @@ BOOL ULT_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *ULT_LoadTitle(void)
+static CHAR * ULT_LoadTitle(void)
 {
 	CHAR s[32];
 

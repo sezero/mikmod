@@ -43,13 +43,13 @@ extern int fprintf(FILE *, const char *, ...);
 
 /*========== Shared tracker identifiers */
 
-CHAR *STM_Signatures[STM_NTRACKERS] = {
+const CHAR *STM_Signatures[STM_NTRACKERS] = {
 	"!Scream!",
 	"BMOD2STM",
 	"WUZAMOD!"
 };
 
-CHAR *STM_Version[STM_NTRACKERS] = {
+const CHAR *STM_Version[STM_NTRACKERS] = {
 	"Screamtracker 2",
 	"Converted by MOD2STM (STM format)",
 	"Wuzamod (STM format)"
@@ -93,7 +93,7 @@ void FreeLinear(void)
 
 int speed_to_finetune(ULONG speed,int sample)
 {
-    int ctmp=0,tmp,note=1,finetune=0;
+    int ctmp=0,tmp,note=1,local_finetune=0;
 
     speed>>=1;
     while((tmp=getfrequency(of.flags,getlinearperiod(note<<1,0)))<speed) {
@@ -104,16 +104,16 @@ int speed_to_finetune(ULONG speed,int sample)
     if(tmp!=speed) {
         if((tmp-speed)<(speed-ctmp))
             while(tmp>speed)
-                tmp=getfrequency(of.flags,getlinearperiod(note<<1,--finetune));
+                tmp=getfrequency(of.flags,getlinearperiod(note<<1,--local_finetune));
         else {
             note--;
             while(ctmp<speed)
-                ctmp=getfrequency(of.flags,getlinearperiod(note<<1,++finetune));
+                ctmp=getfrequency(of.flags,getlinearperiod(note<<1,++local_finetune));
         }
     }
 
     noteindex[sample]=note-4*OCTAVE;
-    return finetune;
+    return local_finetune;
 }
 
 /*========== Order stuff */

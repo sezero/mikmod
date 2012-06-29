@@ -347,7 +347,7 @@ static MODULE *ML_AllocUniMod(void)
 	return (mf=MikMod_malloc(sizeof(MODULE)));
 }
 
-void Player_Free_internal(MODULE *mf)
+static void Player_Free_internal(MODULE *mf)
 {
 	if(mf) {
 		Player_Exit_internal(mf);
@@ -448,7 +448,7 @@ MIKMODAPI CHAR* Player_LoadTitle(CHAR* filename)
 }
 
 /* Loads a module given an reader */
-MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curious)
+static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curious)
 {
 	int t;
 	MLOADER *l;
