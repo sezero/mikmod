@@ -104,7 +104,7 @@ static unsigned int tracker;	/* tracker id */
 
 /* tracker identifiers */
 #define NUMTRACKERS 4
-static CHAR* S3M_Version[] = {
+static const CHAR * S3M_Version[] = {
 	"Screamtracker x.xx",
 	"Imago Orpheus x.xx (S3M format)",
 	"Impulse Tracker x.xx (S3M format)",
@@ -117,7 +117,7 @@ static int numeric[NUMTRACKERS]={14,14,16,16};
 
 /*========== Loader code */
 
-BOOL S3M_Test(void)
+static BOOL S3M_Test(void)
 {
 	UBYTE id[4];
 
@@ -127,7 +127,7 @@ BOOL S3M_Test(void)
 	return 0;
 }
 
-BOOL S3M_Init(void)
+static BOOL S3M_Init(void)
 {
 	if(!(s3mbuf=(S3MNOTE*)MikMod_malloc(32*64*sizeof(S3MNOTE)))) return 0;
 	if(!(mh=(S3MHEADER*)MikMod_malloc(sizeof(S3MHEADER)))) return 0;
@@ -137,7 +137,7 @@ BOOL S3M_Init(void)
 	return 1;
 }
 
-void S3M_Cleanup(void)
+static void S3M_Cleanup(void)
 {
 	MikMod_free(s3mbuf);
 	MikMod_free(paraptr);
@@ -250,7 +250,7 @@ static UBYTE* S3M_ConvertTrack(S3MNOTE* tr)
 	return UniDup();
 }
 
-BOOL S3M_Load(BOOL curious)
+static BOOL S3M_Load(BOOL curious)
 {
 	int t,u,track = 0;
 	SAMPLE *q;
@@ -444,7 +444,7 @@ BOOL S3M_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *S3M_LoadTitle(void)
+static CHAR *S3M_LoadTitle(void)
 {
 	CHAR s[28];
 
