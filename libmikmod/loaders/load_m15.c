@@ -79,7 +79,7 @@ static BOOL ust_loader = 0;		/* if TRUE, load as an ust module. */
 
 /* known file formats which can confuse the loader */
 #define REJECT 2
-static char *signatures[REJECT]={
+static const char *signatures[REJECT]={
 	"CAKEWALK",	/* cakewalk midi files */
 	"SZDD"		/* Microsoft compressed files */
 };
@@ -87,22 +87,22 @@ static int siglen[REJECT]={8,4};
 
 /*========== Loader code */
 
-static BOOL LoadModuleHeader(MODULEHEADER *mh)
+static BOOL LoadModuleHeader(MODULEHEADER *local_mh)
 {
 	int t,u;
 
-	_mm_read_string(mh->songname,20,modreader);
-	mh->songname[20]=0;	/* just in case */
+	_mm_read_string(local_mh->songname,20,modreader);
+	local_mh->songname[20]=0;	/* just in case */
 
 	/* sanity check : title should contain printable characters and a bunch
 	   of null chars */
 	for(t=0;t<20;t++)
-		if((mh->songname[t])&&(mh->songname[t]<32)) return 0;
-	for(t=0;(mh->songname[t])&&(t<20);t++);
-	if(t<20) for(;t<20;t++) if(mh->songname[t]) return 0;
+		if((local_mh->songname[t])&&(local_mh->songname[t]<32)) return 0;
+	for(t=0;(local_mh->songname[t])&&(t<20);t++);
+	if(t<20) for(;t<20;t++) if(local_mh->songname[t]) return 0;
 
 	for(t=0;t<15;t++) {
-		MSAMPINFO *s=&mh->samples[t];
+		MSAMPINFO *s=&local_mh->samples[t];
 
 		_mm_read_string(s->samplename,22,modreader);
 		s->samplename[22]=0;	/* just in case */
@@ -123,19 +123,19 @@ static BOOL LoadModuleHeader(MODULEHEADER *mh)
 		if(s->finetune>>4) return 0;
 	}
 
-	mh->songlength  =_mm_read_UBYTE(modreader);
-	mh->magic1      =_mm_read_UBYTE(modreader);	/* should be 127 */
+	local_mh->songlength  =_mm_read_UBYTE(modreader);
+	local_mh->magic1      =_mm_read_UBYTE(modreader);	/* should be 127 */
 
 	/* sanity check : no more than 128 positions, restart position in range */
-	if((!mh->songlength)||(mh->songlength>128)) return 0;
+	if((!local_mh->songlength)||(local_mh->songlength>128)) return 0;
 	/* values encountered so far are 0x6a and 0x78 */
-	if(((mh->magic1&0xf8)!=0x78)&&(mh->magic1!=0x6a)&&(mh->magic1>mh->songlength)) return 0;
+	if(((local_mh->magic1&0xf8)!=0x78)&&(local_mh->magic1!=0x6a)&&(local_mh->magic1>local_mh->songlength)) return 0;
 
-	_mm_read_UBYTES(mh->positions,128,modreader);
+	_mm_read_UBYTES(local_mh->positions,128,modreader);
 
 	/* sanity check : pattern range is 0..63 */
 	for(t=0;t<128;t++)
-		if(mh->positions[t]>63) return 0;
+		if(local_mh->positions[t]>63) return 0;
 
 	return(!_mm_eof(modreader));
 }
@@ -177,45 +177,45 @@ static int CheckPatternType(int numpat)
 static BOOL M15_Test(void)
 {
 	int t, numpat;
-	MODULEHEADER mh;
+	MODULEHEADER local_mh;
 
 	ust_loader = 0;
-	if(!LoadModuleHeader(&mh)) return 0;
+	if(!LoadModuleHeader(&local_mh)) return 0;
 
 	/* reject other file types */
 	for(t=0;t<REJECT;t++)
-		if(!memcmp(mh.songname,signatures[t],siglen[t])) return 0;
+		if(!memcmp(local_mh.songname,signatures[t],siglen[t])) return 0;
 
-	if(mh.magic1>127) return 0;
-	if((!mh.songlength)||(mh.songlength>mh.magic1)) return 0;
+	if(local_mh.magic1>127) return 0;
+	if((!local_mh.songlength)||(local_mh.songlength>local_mh.magic1)) return 0;
 
 	for(t=0;t<15;t++) {
 		/* all finetunes should be zero */
-		if(mh.samples[t].finetune) return 0;
+		if(local_mh.samples[t].finetune) return 0;
 
 		/* all volumes should be <= 64 */
-		if(mh.samples[t].volume>64) return 0;
+		if(local_mh.samples[t].volume>64) return 0;
 
 		/* all instrument names should begin with s, st-, or a number */
-		if((mh.samples[t].samplename[0]=='s')||
-		   (mh.samples[t].samplename[0]=='S')) {
-			if((memcmp(mh.samples[t].samplename,"st-",3)) &&
-			   (memcmp(mh.samples[t].samplename,"ST-",3)) &&
-			   (*mh.samples[t].samplename))
+		if((local_mh.samples[t].samplename[0]=='s')||
+		   (local_mh.samples[t].samplename[0]=='S')) {
+			if((memcmp(local_mh.samples[t].samplename,"st-",3)) &&
+			   (memcmp(local_mh.samples[t].samplename,"ST-",3)) &&
+			   (*local_mh.samples[t].samplename))
 				ust_loader = 1;
 		} else
-		  if(!isdigit((int)mh.samples[t].samplename[0]))
+		  if(!isdigit((int)local_mh.samples[t].samplename[0]))
 				ust_loader = 1;
 
-		if(mh.samples[t].length>4999||mh.samples[t].reppos>9999) {
+		if(local_mh.samples[t].length>4999||local_mh.samples[t].reppos>9999) {
 			ust_loader = 0;
-			if(mh.samples[t].length>32768) return 0;
+			if(local_mh.samples[t].length>32768) return 0;
 		}
 
 		/* if loop information is incorrect as words, but correct as bytes,
 		   this is likely to be an ust-style module */
-		if((mh.samples[t].reppos+mh.samples[t].replen>mh.samples[t].length)&&
-		   (mh.samples[t].reppos+mh.samples[t].replen<(mh.samples[t].length<<1))){
+		if((local_mh.samples[t].reppos+local_mh.samples[t].replen>local_mh.samples[t].length)&&
+		   (local_mh.samples[t].reppos+local_mh.samples[t].replen<(local_mh.samples[t].length<<1))){
 			ust_loader = 1;
 			return 1;
 		}
@@ -223,9 +223,9 @@ static BOOL M15_Test(void)
 		if(!ust_loader) return 1; 
 	}
 
-	for(numpat=0,t=0;t<mh.songlength;t++) 
-		if(mh.positions[t]>numpat)
-			numpat = mh.positions[t];
+	for(numpat=0,t=0;t<local_mh.songlength;t++)
+		if(local_mh.positions[t]>numpat)
+			numpat = local_mh.positions[t];
 	numpat++;
 	switch(CheckPatternType(numpat)) {
 		case 0:   /* indecisive, so check more clues... */

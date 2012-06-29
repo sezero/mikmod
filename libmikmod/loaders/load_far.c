@@ -96,7 +96,7 @@ static	unsigned char FARSIG[4+3]={'F','A','R',0xfe,13,10,26};
 
 /*========== Loader code */
 
-BOOL FAR_Test(void)
+static BOOL FAR_Test(void)
 {
 	UBYTE id[47];
 
@@ -105,7 +105,7 @@ BOOL FAR_Test(void)
 	return 1;
 }
 
-BOOL FAR_Init(void)
+static BOOL FAR_Init(void)
 {
 	if(!(mh1 = (FARHEADER1*)MikMod_malloc(sizeof(FARHEADER1)))) return 0;
 	if(!(mh2 = (FARHEADER2*)MikMod_malloc(sizeof(FARHEADER2)))) return 0;
@@ -114,7 +114,7 @@ BOOL FAR_Init(void)
 	return 1;
 }
 
-void FAR_Cleanup(void)
+static void FAR_Cleanup(void)
 {
 	MikMod_free(mh1);
 	MikMod_free(mh2);
@@ -173,7 +173,7 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 	return UniDup();
 }
 
-BOOL FAR_Load(BOOL curious)
+static BOOL FAR_Load(BOOL curious)
 {
 	int t,u,tracks=0;
 	SAMPLE *q;
@@ -327,7 +327,7 @@ BOOL FAR_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *FAR_LoadTitle(void)
+static CHAR *FAR_LoadTitle(void)
 {
 	CHAR s[40];
 

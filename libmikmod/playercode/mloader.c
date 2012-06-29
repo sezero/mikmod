@@ -263,7 +263,7 @@ static BOOL ML_LoadSamples(void)
 
 /* Creates a CSTR out of a character buffer of 'len' bytes, but strips any
    terminating non-printing characters like 0, spaces etc.                    */
-CHAR *DupStr(CHAR* s,UWORD len,BOOL strict)
+CHAR *DupStr(const CHAR* s, UWORD len, BOOL strict)
 {
 	UWORD t;
 	CHAR *d=NULL;

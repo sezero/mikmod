@@ -89,9 +89,9 @@ typedef struct DSMNOTE {
 
 /*========== Loader variables */
 
-static	CHAR* SONGID="SONG";
-static	CHAR* INSTID="INST";
-static	CHAR* PATTID="PATT";
+static	const CHAR* SONGID="SONG";
+static	const CHAR* INSTID="INST";
+static	const CHAR* PATTID="PATT";
 
 static	UBYTE blockid[4];
 static	ULONG blockln;
@@ -105,7 +105,7 @@ static	unsigned char DSMSIG[4+4]={'R','I','F','F','D','S','M','F'};
 
 /*========== Loader code */
 
-BOOL DSM_Test(void)
+static BOOL DSM_Test(void)
 {
 	UBYTE id[12];
 
@@ -115,14 +115,14 @@ BOOL DSM_Test(void)
 	return 0;
 }
 
-BOOL DSM_Init(void)
+static BOOL DSM_Init(void)
 {
 	if(!(dsmbuf=(DSMNOTE *)MikMod_malloc(DSM_MAXCHAN*64*sizeof(DSMNOTE)))) return 0;
 	if(!(mh=(DSMSONG *)MikMod_calloc(1,sizeof(DSMSONG)))) return 0;
 	return 1;
 }
 
-void DSM_Cleanup(void)
+static void DSM_Cleanup(void)
 {
 	MikMod_free(dsmbuf);
 	MikMod_free(mh);
@@ -231,7 +231,7 @@ static UBYTE *DSM_ConvertTrack(DSMNOTE *tr)
 	return UniDup();
 }
 
-BOOL DSM_Load(BOOL curious)
+static BOOL DSM_Load(BOOL curious)
 {
 	int t;
 	DSMINST s;
@@ -337,7 +337,7 @@ BOOL DSM_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *DSM_LoadTitle(void)
+static CHAR *DSM_LoadTitle(void)
 {
 	CHAR s[28];
 

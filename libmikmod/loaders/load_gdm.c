@@ -116,7 +116,7 @@ static GDMNOTE *gdmbuf=NULL;	/* pointer to a complete GDM pattern */
 
 CHAR GDM_Version[]="General DigiMusic 1.xx";
 
-BOOL GDM_Test(void)
+static BOOL GDM_Test(void)
 {
 	/* test for gdm magic numbers */
 	UBYTE id[4];
@@ -134,7 +134,7 @@ BOOL GDM_Test(void)
 	return 0;
 }
 
-BOOL GDM_Init(void)
+static BOOL GDM_Init(void)
 {
 	if (!(gdmbuf=(GDMNOTE*)MikMod_malloc(32*64*sizeof(GDMNOTE)))) return 0;
 	if (!(mh=(GDMHEADER*)MikMod_malloc(sizeof(GDMHEADER)))) return 0;
@@ -142,13 +142,13 @@ BOOL GDM_Init(void)
 	return 1;
 }
 
-void GDM_Cleanup(void)
+static void GDM_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(gdmbuf);
 }
 
-BOOL GDM_ReadPattern(void)
+static BOOL GDM_ReadPattern(void)
 {
 	int pos,flag,ch,i,maxch;
 	GDMNOTE n;
@@ -200,7 +200,7 @@ BOOL GDM_ReadPattern(void)
 	return 1;
 }
 
-UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
+static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 {
 	int t,i=0;
 	UBYTE note,ins,inf;
@@ -337,7 +337,7 @@ UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 	return UniDup();
 }
 
-BOOL GDM_Load(BOOL curious)
+static BOOL GDM_Load(BOOL curious)
 {
 	int i,x,u,track;
 	SAMPLE *q;
@@ -533,7 +533,7 @@ BOOL GDM_Load(BOOL curious)
 	return 1;
 }
 
-CHAR *GDM_LoadTitle(void)
+static CHAR *GDM_LoadTitle(void)
 {
 	CHAR s[32];
 

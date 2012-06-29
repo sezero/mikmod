@@ -377,9 +377,7 @@ static BOOL ASY_Load(BOOL curious)
 
 static CHAR *ASY_LoadTitle(void)
 {
-	CHAR *s = ""; // no titles
-
-	return (DupStr(s, 21, 1));
+	return (DupStr("", 21, 1));
 }
 
 /*========== Loader information */
