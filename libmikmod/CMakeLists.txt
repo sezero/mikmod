@@ -79,7 +79,7 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/CPackConfig\\\\.cmake$"
     "/CPackSourceConfig\\\\.cmake$"
     "/tags$"
-    "/freecell-solver-config$"
+    "/libmikmod-config$"
     "/libfreecell-solver\\\\.pc$"
     "/([0-9]+)\\\\.board$"
     "/config\\\\.h$"
@@ -371,6 +371,7 @@ ENDIF (ALSA_FOUND)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
 
 LIST (APPEND EXTRA_LIBS ${ALSA_LIBRARIES})
 
@@ -386,3 +387,8 @@ INSTALL(
     ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
 )
 
+INSTALL(
+    FILES "libmikmod-config"
+    PERMISSIONS GROUP_EXECUTE GROUP_READ OWNER_EXECUTE OWNER_READ OWNER_WRITE WORLD_EXECUTE WORLD_READ
+    DESTINATION "bin"
+)
