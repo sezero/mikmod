@@ -232,7 +232,12 @@ static BOOL SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefacto
 
 	int result,c_block=0;	/* compression bytes until next block */
 	ITPACK status;
-	UWORD incnt;
+	UWORD incnt = 0;
+
+	status.buf = 0;
+	status.last = 0;
+	status.bufbits = 0;
+	status.bits = 0;
 
 	while(length) {
 		stodo=(length<SLBUFSIZE)?length:SLBUFSIZE;
