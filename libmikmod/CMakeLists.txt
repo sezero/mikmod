@@ -136,6 +136,8 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 SET (ENABLE_AF 1 CACHE BOOL "Include the Audio File driver")
+SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
+SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
 SET (ENABLE_DL 1 CACHE BOOL "Load ALSA and Ultra Drivers at Runtime")
 SET (ENABLE_THREADS 1 CACHE BOOL "build a thread-safe version of libmikmod")
 
