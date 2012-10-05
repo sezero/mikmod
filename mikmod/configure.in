@@ -64,7 +64,7 @@ if test "$mikmod_threads" = "yes"; then
         dnl AC_CHECK_HEADERS(pthread.h) unreliable
         AC_CHECK_LIB(
                 pthread,
-                pthread_attr_init,
+                pthread_create,
                 mikmod_threads=-lpthread,
                 AC_CHECK_LIB(
                         c_r,
@@ -201,7 +201,7 @@ then
 	EXTRA_OBJ="musleep.o $EXTRA_OBJ"
 fi
 
-PLAYER_LIB="-l$libcurses"
+PLAYER_LIB="$PLAYER_LIB -l$libcurses"
 
 dnl =================
 dnl Create Makefiles.

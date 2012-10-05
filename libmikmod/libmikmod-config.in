@@ -1,14 +1,14 @@
 #! /bin/sh
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix="$prefix/bin"
 exec_prefix_set=no
 
 usage="\
 Usage: libmikmod-config [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--libs] [--cflags] [--ldadd]"
 
 if test $# -eq 0 ; then
-	echo "${usage}" 1>&2
+	echo "$usage" 1>&2
 	exit 1
 fi
 
@@ -39,7 +39,7 @@ while test $# -gt 0 ; do
 		echo @LIBMIKMOD_VERSION@
 	;;
 	--cflags)
-		includedir=${prefix}/include
+		includedir="$prefix/include"
 		if test $includedir != /usr/include ; then
 			includes=-I$includedir
 		fi
@@ -49,7 +49,7 @@ while test $# -gt 0 ; do
 		echo @LIB_LDADD@
 	;;
 	--libs)
-		libdir=-L${exec_prefix}/lib
+		libdir=-L"$exec_prefix/lib"
 		echo $libdir -lmikmod @LIBRARY_LIB@
 	;;
 	*)
