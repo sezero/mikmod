@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -178,7 +178,7 @@ static BOOL S3M_GetNumChannels(void)
 		} else row++;
 	}
 	return 0;
-}    
+}
 
 static BOOL S3M_ReadPattern(void)
 {
@@ -411,11 +411,11 @@ static BOOL S3M_Load(BOOL curious)
 
 	/* build the remap array  */
 	for(t=0;t<32;t++)
-		if(!remap[t]) 
+		if(!remap[t])
 			remap[t]=of.numchn++;
 
 	/* set panning positions after building remap chart! */
-	for(t=0;t<32;t++) 
+	for(t=0;t<32;t++)
 		if((mh->channels[t]<32)&&(remap[t]!=-1)) {
 			if(mh->channels[t]<8)
 				of.panning[remap[t]]=0x30;

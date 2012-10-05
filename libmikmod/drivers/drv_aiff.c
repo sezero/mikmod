@@ -7,12 +7,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -28,12 +28,12 @@
 ==============================================================================*/
 
 /*
-        
+
 	Written by Axel "awe" Wefers <awe@fruitz-of-dojo.de>
-   
-	
+
+
 	Raphael Assenat: 19 Feb 2004: Command line options documented in the MDRIVER structure,
-					 and I added #if 0 's around pragmas, since gcc complaines about them. 
+					 and I added #if 0 's around pragmas, since gcc complaines about them.
 					 Hopefully, the IDE which uses them wont care about that?
 */
 
@@ -87,7 +87,7 @@
 #endif
 /*___________________________________________________________________________________________________vARS
 */
-#if 0 
+#if 0
 #pragma mark VARIABLES
 #endif
 static	MWRITER	*gAiffOut = NULL;
@@ -161,15 +161,15 @@ void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
                 myExponent = 0;
             }
             myExponent |= mySign;
-            myFMant = ldexp (myFMant, 32);          
-            myFsMant = floor (myFMant); 
+            myFMant = ldexp (myFMant, 32);
+            myFsMant = floor (myFMant);
             myHiMant = AIFF_FLOAT_TO_UNSIGNED (myFsMant);
-            myFMant = ldexp (myFMant - myFsMant, 32); 
-            myFsMant = floor (myFMant); 
+            myFMant = ldexp (myFMant - myFsMant, 32);
+            myFsMant = floor (myFMant);
             myLoMant = AIFF_FLOAT_TO_UNSIGNED (myFsMant);
         }
     }
-    
+
     theBytes[0] = myExponent >> 8;
     theBytes[1] = myExponent;
     theBytes[2] = myHiMant >> 24;
@@ -277,7 +277,7 @@ static BOOL	AIFF_Init (void)
         gAiffOut = NULL;
         return 1;
     }
-    
+
     gAiffDumpSize = 0;
     AIFF_PutHeader ();
 
@@ -322,7 +322,7 @@ static void	AIFF_Update (void)
     else
     {
         ULONG	i;
-        
+
         for (i = 0; i < myByteCount; i++)
         {
             gAiffAudioBuffer[i] -= 0x80;				/* convert to signed PCM */

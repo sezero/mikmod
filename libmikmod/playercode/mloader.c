@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -89,7 +89,7 @@ void _mm_registerloader(MLOADER* ldr)
 		while(cruise->next) cruise = cruise->next;
 		cruise->next=ldr;
 	} else
-		firstloader=ldr; 
+		firstloader=ldr;
 }
 
 MIKMODAPI void MikMod_RegisterLoader(struct MLOADER* ldr)
@@ -111,7 +111,7 @@ BOOL ReadComment(UWORD len)
 
 		if(!(of.comment=(CHAR*)MikMod_malloc(len+1))) return 0;
 		_mm_read_UBYTES(of.comment,len,modreader);
-		
+
 		/* translate IT linefeeds */
 		for(i=0;i<len;i++)
 			if(of.comment[i]=='\r') of.comment[i]='\n';
@@ -212,7 +212,7 @@ BOOL AllocTracks(void)
 BOOL AllocInstruments(void)
 {
 	int t,n;
-	
+
 	if(!of.numins) {
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
@@ -221,11 +221,11 @@ BOOL AllocInstruments(void)
 		return 0;
 
 	for(t=0;t<of.numins;t++) {
-		for(n=0;n<INSTNOTES;n++) { 
+		for(n=0;n<INSTNOTES;n++) {
 			/* Init note / sample lookup table */
 			of.instruments[t].samplenote[n]   = n;
 			of.instruments[t].samplenumber[n] = t;
-		}   
+		}
 		of.instruments[t].globvol = 64;
 	}
 	return 1;
@@ -412,15 +412,15 @@ MIKMODAPI CHAR* Player_LoadTitleMem(const char *buffer,int len)
 		MUTEX_UNLOCK(lists);
 		_mm_delete_mem_reader(reader);
 	}
-	
-	
+
+
 	return result;
 }
 
 MIKMODAPI CHAR* Player_LoadTitleGeneric(MREADER *reader)
-{	
+{
 	CHAR *result=NULL;
-	
+
 	if (reader) {
 		MUTEX_LOCK(lists);
 		result=Player_LoadTitle_internal(reader);
@@ -492,7 +492,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	if (!l->Init || l->Init()) {
 		_mm_rewind(modreader);
 		ok = l->Load(curious);
-		if (ok) {			
+		if (ok) {
 			/* propagate inflags=flags for in-module samples */
 			for (t = 0; t < of.numsmp; t++)
 				if (of.samples[t].inflags == 0)
@@ -525,7 +525,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 		if(_mm_errorhandler) _mm_errorhandler();
 		return NULL;
 	}
-	
+
 	/* If the module doesn't have any specific panning, create a
 	   MOD-like panning, with the channels half-separated. */
 	if (!(of.flags & UF_PANNING))

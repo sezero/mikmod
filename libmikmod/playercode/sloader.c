@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -292,7 +292,7 @@ static BOOL SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefacto
 				sl_old = sl_buffer[t];
 			}
 
-		if((infmt^outfmt) & SF_SIGNED) 
+		if((infmt^outfmt) & SF_SIGNED)
 			for(t=0;t<stodo;t++)
 				sl_buffer[t]^= 0x8000;
 
@@ -361,7 +361,7 @@ SAMPLOAD* SL_RegisterSample(SAMPLE* s,int type,MREADER* reader)
 		cruise = sndfxlist;
 	} else
 		return NULL;
-	
+
 	/* Allocate and add structure to the END of the list */
 	if(!(news=(SAMPLOAD*)MikMod_malloc(sizeof(SAMPLOAD)))) return NULL;
 
@@ -411,7 +411,7 @@ static ULONG SampleTotal(SAMPLOAD* samplist,int type)
 static ULONG RealSpeed(SAMPLOAD *s)
 {
 	return(s->sample->speed/(s->scalefactor?s->scalefactor:1));
-}    
+}
 
 static BOOL DitherSamples(SAMPLOAD* samplist,int type)
 {
@@ -421,7 +421,7 @@ static BOOL DitherSamples(SAMPLOAD* samplist,int type)
 
 	if(!samplist) return 0;
 
-	if((maxsize=MD_SampleSpace(type)*1024)) 
+	if((maxsize=MD_SampleSpace(type)*1024))
 		while(SampleTotal(samplist,type)>maxsize) {
 			/* First Pass - check for any 16 bit samples */
 			s = samplist;

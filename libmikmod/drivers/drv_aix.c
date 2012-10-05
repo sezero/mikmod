@@ -6,18 +6,18 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 	02111-1307, USA.
 */
-  
+
 /*==============================================================================
 
   $Id$
@@ -92,24 +92,24 @@ static BOOL AIX_Init(void)
 		_mm_errno=MMERR_16BIT_ONLY;
 		return 1;
 	}
-	
+
 	if((fd=open("/dev/acpa0/1",O_WRONLY))<0)
 		if((fd=open("/dev/paud0/1",O_WRONLY))<0)
 			if((fd=open("/dev/baud0/1",O_WRONLY))<0) {
 				_mm_errno=MMERR_OPENING_AUDIO;
 				return 1;
 			}
-	
+
 	t_info.master_volume=0x7fff;
 	t_info.dither_percent=0;
-	
+
 	a_init.srate=md_mixfreq;
 	a_init.bits_per_sample=16;
 	a_init.channels=(md_mode&DMODE_STEREO)?2:1;
 	a_init.mode=PCM;
 	a_init.flags=FIXED|BIG_ENDIAN|TWOS_COMPLEMENT;
 	a_init.operation=PLAY;
-	
+
 	a_change.balance=0x3fff0000;
 	a_change.balance_delay=0;
 	a_change.volume=(long)((float)1.0*(float)0x7FFFFFFF);
@@ -138,9 +138,9 @@ static BOOL AIX_Init(void)
 		_mm_errno=MMERR_AIX_CONFIG_START;
 		return 1;
 	}
-	
+
 	if (!(audiobuffer=(SBYTE*)MikMod_malloc(buffersize))) return 1;
-	
+
 	return VC_Init();
 }
 

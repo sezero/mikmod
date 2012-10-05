@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -166,7 +166,7 @@ typedef struct xENV_CHUNK {
 	UWORD	envelope_number;
 	CHAR	name[21]; /* 20 in file */
 	UWORD	keyoff_offset;
-	UBYTE	*data;	
+	UBYTE	*data;
 } xENV_CHUNK;
 
 typedef struct ENDC_CHUNK {
@@ -193,14 +193,14 @@ typedef union GT_CHUNK
 } GT_CHUNK;
 
 static GT_CHUNK *loadChunk(void)
-{	
+{
 	GT_CHUNK *new_chunk = MikMod_malloc(sizeof(GT_CHUNK));
 
 	/* the file chunk id only use 3 bytes, others 4 */
 	_mm_read_UBYTES(new_chunk->id, 3, modreader);
 	if (!	(new_chunk->id[0]=='G' &&
 			new_chunk->id[1]=='T' &&
-			new_chunk->id[2]=='2') 
+			new_chunk->id[2]=='2')
 		)
 	{
 		_mm_read_UBYTES(&new_chunk->id[3], 1, modreader);
@@ -211,7 +211,7 @@ static GT_CHUNK *loadChunk(void)
 	}
 
 	printf(">> %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
-	
+
 	if (!memcmp(new_chunk, "GT2", 3)) {
 		_mm_read_UBYTES(&new_chunk->gt2.version, 1, modreader);
 		_mm_read_M_ULONGS(&new_chunk->gt2.chunk_size, 1, modreader);
@@ -233,23 +233,23 @@ static GT_CHUNK *loadChunk(void)
 		return new_chunk;
 	}
 
-	if (!memcmp(new_chunk, "TVOL", 4)) { 
+	if (!memcmp(new_chunk, "TVOL", 4)) {
 		new_chunk->tvol.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->tvol.num_tracks = _mm_read_M_UWORD(modreader);
 		new_chunk->tvol.track_volumes = MikMod_malloc(new_chunk->tvol.num_tracks * 2);
 		_mm_read_M_UWORDS(new_chunk->tvol.track_volumes, new_chunk->tvol.num_tracks, modreader);
 		return new_chunk;
 	}
-	
-	if (!memcmp(new_chunk, "XCOM", 4)) { 
+
+	if (!memcmp(new_chunk, "XCOM", 4)) {
 		new_chunk->xcom.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->xcom.comment_len = _mm_read_M_ULONG(modreader);
 		new_chunk->xcom.comment = MikMod_malloc(new_chunk->xcom.comment_len + 1);
 		_mm_read_UBYTES(new_chunk->xcom.comment, new_chunk->xcom.comment_len, modreader);
 		return new_chunk;
 	}
-	
-	if (!memcmp(new_chunk, "SONG", 4)) { 
+
+	if (!memcmp(new_chunk, "SONG", 4)) {
 		new_chunk->song.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->song.song_length = _mm_read_M_UWORD(modreader);
 		new_chunk->song.song_repeat_point = _mm_read_M_UWORD(modreader);
@@ -257,8 +257,8 @@ static GT_CHUNK *loadChunk(void)
 		_mm_read_M_UWORDS(new_chunk->song.patterns, new_chunk->song.song_length, modreader);
 		return new_chunk;
 	}
-	
-	if (!memcmp(new_chunk, "PATS", 4)) { 
+
+	if (!memcmp(new_chunk, "PATS", 4)) {
 		new_chunk->pats.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->pats.num_tracks = _mm_read_M_UWORD(modreader);
 		new_chunk->pats.num_patterns = _mm_read_M_UWORD(modreader);
@@ -273,41 +273,41 @@ static GT_CHUNK *loadChunk(void)
 		new_chunk->patd.codage_version = _mm_read_M_UWORD(modreader);
 		new_chunk->patd.num_lines = _mm_read_M_UWORD(modreader);
 		new_chunk->patd.num_tracks = _mm_read_M_UWORD(modreader);
-		new_chunk->patd.notes = MikMod_malloc(5 * 
-										new_chunk->patd.num_lines * 
+		new_chunk->patd.notes = MikMod_malloc(5 *
+										new_chunk->patd.num_lines *
 										new_chunk->patd.num_tracks);
-		_mm_read_UBYTES(new_chunk->patd.notes, 
+		_mm_read_UBYTES(new_chunk->patd.notes,
 						new_chunk->patd.num_lines * new_chunk->patd.num_tracks * 5,
 						modreader);
 		return new_chunk;
 	}
-	
-	if (!memcmp(new_chunk, "ORCH", 4)) { 
+
+	if (!memcmp(new_chunk, "ORCH", 4)) {
 		new_chunk->orch.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->orch.num_instruments = _mm_read_M_UWORD(modreader);
 		return new_chunk;
 	}
-	if (!memcmp(new_chunk, "INST", 4)) { 
+	if (!memcmp(new_chunk, "INST", 4)) {
 		return new_chunk;
 	}
-	if (!memcmp(new_chunk, "SAMP", 4)) { 
+	if (!memcmp(new_chunk, "SAMP", 4)) {
 		return new_chunk;
 	}
-	if (!memcmp(new_chunk, "VENV", 4)) { 
+	if (!memcmp(new_chunk, "VENV", 4)) {
 		return new_chunk;
 	}
-	if (!memcmp(new_chunk, "TENV", 4)) { 
+	if (!memcmp(new_chunk, "TENV", 4)) {
 		return new_chunk;
 	}
-	if (!memcmp(new_chunk, "PENV", 4)) { 
+	if (!memcmp(new_chunk, "PENV", 4)) {
 		return new_chunk;
 	}
-	if (!memcmp(new_chunk, "ENDC", 4)) { 
+	if (!memcmp(new_chunk, "ENDC", 4)) {
 		return new_chunk;
 	}
 
 	printf("?? %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
-	
+
 	MikMod_free(new_chunk);
 	return NULL; // unknown chunk
 }
@@ -325,7 +325,7 @@ static BOOL GT2_Test(void)
 	_mm_read_UBYTES(magic, 3, modreader);
 
 	if (magic[0] == 'G' && magic[1] == 'T' && magic[2] == '2') { return 1; }
-	
+
 	return 0;
 }
 
@@ -334,12 +334,12 @@ static BOOL GT2_Load(BOOL curious)
 	GT_CHUNK *tmp;
 
 	_mm_fseek(modreader, 0, SEEK_SET);
-	while (	(tmp = loadChunk() )) 
+	while (	(tmp = loadChunk() ))
 	{
 		printf("%c%c%c%c\n", tmp->id[0], tmp->id[1], tmp->id[2], tmp->id[3]);
 
 	}
-	
+
 	return 0;
 }
 

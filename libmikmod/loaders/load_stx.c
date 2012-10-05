@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -120,7 +120,7 @@ static BOOL STX_Test(void)
 
 	_mm_fseek(modreader,0x14,SEEK_SET);
 	if(!_mm_read_UBYTES(id,8,modreader)) return 0;
-	
+
 	for(t=0;t<STM_NTRACKERS;t++)
 		if(!memcmp(id,STM_Signatures[t],8)) return 1;
 
@@ -343,7 +343,7 @@ static BOOL STX_Load(BOOL curious)
 		if(order==255) order=LAST_PATTERN;
 		of.positions[of.numpos]=order;
 		poslookup[t]=of.numpos;	/* bug fix for freaky S3Ms */
-		if(of.positions[t]<254) of.numpos++;        
+		if(of.positions[t]<254) of.numpos++;
 		else
 		  /* special end of song pattern */
 		  if((order==LAST_PATTERN)&&(!curious)) break;

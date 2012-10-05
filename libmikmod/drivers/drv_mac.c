@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -34,12 +34,12 @@
 	- Antoine Rosset <RossetAntoine@bluewin.ch> (author of PlayerPRO)
 	- John Stiles <stiles@emulation.net>
 	- Pierre-Olivier Latour <pol@french-touch.net>
-	
+
 	This code uses two different ways of filling the buffers:
 	- Classic code uses SndPlayDoubleBuffer callbacks
 	- Carbon code uses SndCallBacks with Deferred Tasks
-    
-    Updated by Axel Wefers <awe@fruitz-of-dojo.de>:  
+
+    Updated by Axel Wefers <awe@fruitz-of-dojo.de>:
     - changed code for compatibility with ProjectBuilder/OSX:
     - "NewSndCallBackProc()" to "NewSndCallBackUPP()".
     - "NewDeferredTaskProc()" to "NewDeferredTaskUPP()".
@@ -155,7 +155,7 @@ static pascal void MyDoubleBackProc(SndChannelPtr channel,SndDoubleBufferPtr dou
 
 	if (doubleHeader.dbhNumChannels==2) written>>=1;
 	if (doubleHeader.dbhSampleSize==16) written>>=1;
-        
+
 	doubleBuffer->dbNumFrames=written;
 	doubleBuffer->dbFlags|=dbBufferReady;
 
@@ -212,10 +212,10 @@ static pascal void SoundCallback(SndChannelPtr channel, SndCommand *command )
 #else
 	{
 		long	bytes;
-		
+
 		currentBuffer = (currentBuffer == sndBuffer1) ? sndBuffer2 : sndBuffer1;
 		FILL_BUFFER( currentBuffer, SOUND_BUFFER_SIZE, bytes )
-		
+
 		if (sndHeader.numChannels == 2) bytes >>= 1;
 		if (sndHeader.sampleSize == 16) bytes >>= 1;
 
@@ -337,7 +337,7 @@ static BOOL MAC_Init(void)
 	doubleHeader.dbhSampleSize   =(md_mode&DMODE_16BITS)?16:8;
 	doubleHeader.dbhNumChannels  =(md_mode&DMODE_STEREO)?2:1;
 	doubleHeader.dbhDoubleBack   =NewSndDoubleBackProc(&MyDoubleBackProc);
-    
+
 	for(i=0;i<2;i++) {
 		doubleBuffer=(SndDoubleBufferPtr)NewPtrClear(sizeof(SndDoubleBuffer)+
 		                                             SOUND_BUFFER_SIZE);
@@ -372,7 +372,7 @@ static BOOL MAC_Init(void)
 		return 1;
 	}
 	currentBuffer = sndBuffer1;
-	
+
   	/* Setup sound header */
   	memset( &sndHeader, 0, sizeof(sndHeader) );
 	sndHeader.numChannels = (md_mode&DMODE_STEREO)? 2: 1;
@@ -382,7 +382,7 @@ static BOOL MAC_Init(void)
 	sndHeader.numFrames = SOUND_BUFFER_SIZE >> (((md_mode&DMODE_STEREO)? 1: 0) + ((md_mode&DMODE_16BITS)?1: 0));
 	sndHeader.sampleSize = (md_mode&DMODE_16BITS)? 16: 8;
 	sndHeader.samplePtr = currentBuffer;
-    
+
 #if USE_DEFERREDTASKS
   	/* Setup deferred task record */
 	memset( &dtask, 0, sizeof(dtask) );
@@ -394,7 +394,7 @@ static BOOL MAC_Init(void)
 #endif /* USE_DEFERREDTASKS */
 
 #endif
-    
+
 	return VC_Init();
 }
 
@@ -411,7 +411,7 @@ static void MAC_Exit(void)
 		SndDisposeChannel(soundChannel,true); // "true" means to flush and quiet
 		soundChannel=NULL;
 	}
-		
+
 #if USE_SNDDOUBLEBUFFER
 
 	DisposeRoutineDescriptor((UniversalProcPtr)doubleHeader.dbhDoubleBack);
@@ -439,7 +439,7 @@ static void MAC_Exit(void)
 	while (!deferredTaskDone)
 		;
 #endif
-		
+
 	DisposePtr( temp1 );
 	DisposePtr( temp2 );
 #endif
@@ -473,7 +473,7 @@ static BOOL MAC_PlayStart(void)
 	}
 
  #endif
-       
+
 	return VC_PlayStart();
 }
 

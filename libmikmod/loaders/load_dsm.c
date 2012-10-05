@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -133,7 +133,7 @@ static BOOL GetBlockHeader(void)
 	/* make sure we're at the right position for reading the
 	   next riff block, no matter how many bytes read */
 	_mm_fseek(modreader, blocklp+blockln, SEEK_SET);
-   
+
 	while(1) {
 		_mm_read_UBYTES(blockid,4,modreader);
 		blockln=_mm_read_I_ULONG(modreader);
@@ -343,7 +343,7 @@ static CHAR *DSM_LoadTitle(void)
 
 	_mm_fseek(modreader,12,SEEK_SET);
 	if(!_mm_read_UBYTES(s,28,modreader)) return NULL;
-   
+
 	return(DupStr(s,28,1));
 }
 

@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -67,7 +67,7 @@ typedef struct ITHEADER {
 	UBYTE	initspeed;
 	UBYTE	inittempo;
 	UBYTE	pansep;		/* panning separation between channels */
-	UBYTE	zerobyte;       
+	UBYTE	zerobyte;
 	UWORD	msglength;
 	ULONG	msgoffset;
 	UBYTE	blank02[4];
@@ -107,19 +107,19 @@ typedef struct ITINSTHEADER {
 	CHAR	filename[12];	/* (char) Instrument filename */
 	UBYTE	zerobyte;		/* (byte) Instrument type (always 0) */
 	UBYTE	volflg;
-	UBYTE	volpts;   
+	UBYTE	volpts;
 	UBYTE	volbeg;			/* (byte) Volume loop start (node) */
 	UBYTE	volend;			/* (byte) Volume loop end (node) */
 	UBYTE	volsusbeg;		/* (byte) Volume sustain begin (node) */
 	UBYTE	volsusend;		/* (byte) Volume Sustain end (node) */
 	UBYTE	panflg;
-	UBYTE	panpts;  
+	UBYTE	panpts;
 	UBYTE	panbeg;			/* (byte) channel loop start (node) */
 	UBYTE	panend;			/* (byte) channel loop end (node) */
 	UBYTE	pansusbeg;		/* (byte) channel sustain begin (node) */
 	UBYTE	pansusend;		/* (byte) channel Sustain end (node) */
 	UBYTE	pitflg;
-	UBYTE	pitpts;   
+	UBYTE	pitpts;
 	UBYTE	pitbeg;			/* (byte) pitch loop start (node) */
 	UBYTE	pitend;			/* (byte) pitch loop end (node) */
 	UBYTE	pitsusbeg;		/* (byte) pitch sustain begin (node) */
@@ -149,7 +149,7 @@ typedef struct ITINSTHEADER {
 	UWORD	pantick[ITENVCNT];   /* tick value of panning nodes */
 	SBYTE	pitnode[ITENVCNT];   /* pitchenv - node points */
 	UWORD	pittick[ITENVCNT];   /* tick value of pitch nodes */
-} ITINSTHEADER;                       
+} ITINSTHEADER;
 
 /* unpacked note */
 
@@ -217,7 +217,7 @@ static void IT_Cleanup(void)
 /* Because so many IT files have 64 channels as the set number used, but really
    only use far less (usually from 8 to 24 still), I had to make this function,
    which determines the number of channels that are actually USED by a pattern.
- 
+
    NOTE: You must first seek to the file location of the pattern before calling
          this procedure.
 
@@ -282,7 +282,7 @@ static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
 		/* process volume / panning column
 		   volume / panning effects do NOT all share the same memory address
 		   yet. */
-		if(volpan<=64) 
+		if(volpan<=64)
 			UniVolEffect(VOL_VOLUME,volpan);
 		else if(volpan==65) /* fine volume slide up (65-74) - A0 case */
 			UniVolEffect(VOL_VOLSLIDE,0);
@@ -342,13 +342,13 @@ static BOOL IT_ReadPattern(UWORD patrows)
 			if(ch!=-1) {
 				n=&itt[ch];
 				l=&last[ch];
-			} else 
+			} else
 				n=l=&dummy;
 
 			if(flag&128) mask[ch]=_mm_read_UBYTE(modreader);
 			if(mask[ch]&1)
 				/* convert IT note off to internal note off */
-				if((l->note=n->note=_mm_read_UBYTE(modreader))==255) 
+				if((l->note=n->note=_mm_read_UBYTE(modreader))==255)
 					l->note=n->note=253;
 			if(mask[ch]&2)
 				l->ins=n->ins=_mm_read_UBYTE(modreader);
@@ -683,7 +683,7 @@ static BOOL IT_Load(BOOL curious)
 
 		if(mh->cwt>=0x200) {
 			if(s.convert&1) q->flags|=SF_SIGNED;
-			if(s.convert&4) q->flags|=SF_DELTA;   
+			if(s.convert&4) q->flags|=SF_DELTA;
 		}
 		q++;
 	}
@@ -740,7 +740,7 @@ static BOOL IT_Load(BOOL curious)
 				for(lp=0;lp<ITENVCNT;lp++) {
 					ih.oldvoltick[lp] = _mm_read_UBYTE(modreader);
 					ih.volnode[lp]    = _mm_read_UBYTE(modreader);
-				} 
+				}
 			} else {
 				/* load IT 2xx volume, pan and pitch envelopes */
 #if defined __STDC__ || defined _MSC_VER || defined MPW_C
@@ -799,10 +799,10 @@ static BOOL IT_Load(BOOL curious)
 
 				if(ih.volflg&1) d->volflg|=EF_ON;
 				if(ih.volflg&2) d->volflg|=EF_LOOP;
-				if(ih.volflg&4) d->volflg|=EF_SUSTAIN;      
+				if(ih.volflg&4) d->volflg|=EF_SUSTAIN;
 
 				/* XM conversion of IT envelope Array */
-				d->volbeg    = ih.volbeg;   
+				d->volbeg    = ih.volbeg;
 				d->volend    = ih.volend;
 				d->volsusbeg = ih.volsusbeg;
 				d->volsusend = ih.volsusend;
@@ -815,7 +815,7 @@ static BOOL IT_Load(BOOL curious)
 							d->volpts++;
 						} else
 							break;
-				}  
+				}
 			} else {
 				d->panning=((ih.chanpan&127)==64)?255:(ih.chanpan&127)<<2;
 				if(!(ih.chanpan&128)) d->flags|=IF_OWNPAN;
@@ -870,7 +870,7 @@ static BOOL IT_Load(BOOL curious)
 #endif
 
 				IT_ProcessEnvelope(vol);
-			
+
 				for(u=0;u<ih.volpts;u++)
 					d->volenv[u].val=(ih.volnode[u]<<2);
 
@@ -891,7 +891,7 @@ static BOOL IT_Load(BOOL curious)
 #ifdef MIKMOD_DEBUG
 					{
 						static int warn=0;
-						
+
 						if(!warn)
 							fprintf(stderr, "\rFilter envelopes not supported yet\n");
 						warn=1;
@@ -912,7 +912,7 @@ static BOOL IT_Load(BOOL curious)
 				}
 			}
 
-			d++;                  
+			d++;
 		}
 	} else if(of.flags & UF_LINEAR) {
 		if(!AllocInstruments()) return 0;
@@ -955,7 +955,7 @@ static BOOL IT_Load(BOOL curious)
 	}
 
 	/* give each of them a different number */
-	for(t=0;t<UF_MAXCHAN;t++) 
+	for(t=0;t<UF_MAXCHAN;t++)
 		if(!remap[t])
 			remap[t]=of.numchn++;
 
@@ -1004,7 +1004,7 @@ static CHAR *IT_LoadTitle(void)
 
 	_mm_fseek(modreader,4,SEEK_SET);
 	if(!_mm_read_UBYTES(s,26,modreader)) return NULL;
-   
+
 	return(DupStr(s,26,0));
 }
 

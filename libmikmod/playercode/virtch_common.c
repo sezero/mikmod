@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -158,7 +158,7 @@ VC_PROC2(VoiceSetFrequency,UBYTE,ULONG)
 VC_FUNC1(VoiceGetFrequency,ULONG,UBYTE)
 VC_PROC2(VoiceSetPanning,UBYTE,ULONG)
 VC_FUNC1(VoiceGetPanning,ULONG,UBYTE)
-		
+
 void  VC_VoicePlay(UBYTE a,SWORD b,ULONG c,ULONG d,ULONG e,ULONG f,UWORD g)
 { VC_VoicePlay_ptr(a,b,c,d,e,f,g); }
 
@@ -166,7 +166,7 @@ VC_PROC1(VoiceStop,UBYTE)
 VC_FUNC1(VoiceStopped,BOOL,UBYTE)
 VC_FUNC1(VoiceGetPosition,SLONG,UBYTE)
 VC_FUNC1(VoiceRealVolume,ULONG,UBYTE)
-		
+
 void VC_SetupPointers(void)
 {
 	if (md_mode&DMODE_HQMIXER) {
@@ -281,7 +281,7 @@ void VC1_Exit(void)
 	vc_tickbuf = NULL;
 	vinf = NULL;
 	Samples = NULL;
-	
+
 	VC_SetupPointers();
 }
 
@@ -319,7 +319,7 @@ void VC1_VoicePlay(UBYTE voice,SWORD handle,ULONG start,ULONG size,ULONG reppos,
 void VC1_VoiceStop(UBYTE voice)
 {
 	vinf[voice].active = 0;
-}  
+}
 
 BOOL VC1_VoiceStopped(UBYTE voice)
 {
@@ -332,7 +332,7 @@ SLONG VC1_VoiceGetPosition(UBYTE voice)
 }
 
 void VC1_VoiceSetVolume(UBYTE voice,UWORD vol)
-{    
+{
 	/* protect against clicks if volume variation is too high */
 	if(abs((int)vinf[voice].vol-(int)vol)>32)
 		vinf[voice].rampvol=CLICK_BUFFER;
@@ -374,7 +374,7 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 		_mm_errno = MMERR_OUT_OF_HANDLES;
 		return -1;
 	}
-	
+
 	/* Reality check for loop settings */
 	if (s->loopend > s->length)
 		s->loopend = s->length;

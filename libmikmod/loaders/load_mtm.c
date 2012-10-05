@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -192,7 +192,7 @@ static BOOL MTM_Load(BOOL curious)
 		s.attribute =_mm_read_UBYTE(modreader);
 
 		if(_mm_eof(modreader)) {
-			_mm_errno = MMERR_LOADING_SAMPLEINFO; 
+			_mm_errno = MMERR_LOADING_SAMPLEINFO;
 			return 0;
 		}
 

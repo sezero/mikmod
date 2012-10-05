@@ -7,12 +7,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -69,7 +69,7 @@ static BOOL isWaveFile(MREADER* reader)
 	WAV wh;
 
 	_mm_fseek(reader, SEEK_SET, 0);
-	
+
 	/* read wav header */
 	_mm_read_string(wh.rID,4,reader);
 	wh.rLen = _mm_read_I_ULONG(reader);
@@ -87,7 +87,7 @@ static SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
 	SAMPLE *si=NULL;
 	WAV wh;
 	BOOL have_fmt=0;
-	
+
 	_mm_fseek(reader, SEEK_SET, 0);
 
 	/* read wav header */
@@ -154,7 +154,7 @@ static SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
 			si->inflags = si->flags;
 			SL_RegisterSample(si,MD_SNDFX,reader);
 			SL_LoadSamples();
-			
+
 			/* skip any other remaining blocks - so in case of repeated sample
 			   fragments, we'll return the first anyway instead of an error */
 			break;
@@ -175,13 +175,13 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 	int samp_size=1;
 
 	if(!(si=(SAMPLE*)MikMod_malloc(sizeof(SAMPLE)))) return NULL;
-	
+
 	/* length */
 	_mm_fseek(reader, 0, SEEK_END);
 	len = _mm_ftell(reader);
-	
+
 	si->panning = PAN_CENTER;
-	si->speed = rate/1; 
+	si->speed = rate/1;
 	si->volume = 64;
 	si->length = len;
 	si->loopstart=0;
@@ -195,19 +195,19 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 		si->loopend >>= 1;
 		samp_size = 2;
 	}
-	
+
 	if (si->flags & SF_STEREO)
 	{
 		char *data, *channel_data;
 		int num_samp = si->length/samp_size/2;
 		MREADER *chn_reader;
-	
-		data = (char*)MikMod_malloc(si->length);	
+
+		data = (char*)MikMod_malloc(si->length);
 		if (!data) { MikMod_free(si); return NULL; }
-		
+
 		channel_data = (char*)MikMod_malloc(si->length/2);
 		if (!channel_data) { MikMod_free(data); MikMod_free(si); return NULL; }
-		
+
 		/* load the raw samples completely, and fully extract the
 		 * requested channel. Create a memory reader pointing to
 		 * the channel data. */
@@ -227,14 +227,14 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 		si->loopstart=0;
 		si->length=num_samp;
 		si->loopend=num_samp;
-		
+
 		SL_RegisterSample(si, MD_SNDFX, chn_reader);
 		SL_LoadSamples();
 
 		_mm_delete_mem_reader(chn_reader);
 		MikMod_free(channel_data);
 		MikMod_free(data);
-		
+
 		return si;
 	}
 
@@ -242,8 +242,8 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 	SL_RegisterSample(si, MD_SNDFX, reader);
 	SL_LoadSamples();
 
-	
-	
+
+
 	return si;
 }
 
@@ -298,7 +298,7 @@ MIKMODAPI SAMPLE* Sample_LoadRaw(CHAR* filename, ULONG rate, ULONG channel, ULON
 	SAMPLE *si=NULL;
 
 	printf("filename: %s\n", filename);
-	
+
 	if(!(md_mode & DMODE_SOFT_SNDFX)) return NULL;
 	if((fp=_mm_fopen(filename,"rb"))) {
 		si = Sample_LoadRawFP(fp, rate, channel, flags);
@@ -377,16 +377,16 @@ static void extract_channel(const char *src, char *dst, int num_chan, int num_sa
 {
 	int i;
 	printf("Extract channel: %p %p, num_chan=%d, num_samples=%d, samp_size=%d, channel=%d\n",
-			src,dst,num_chan,num_samples,samp_size,channel);	
-	src += channel * samp_size;	
-	
+			src,dst,num_chan,num_samples,samp_size,channel);
+	src += channel * samp_size;
+
 	while (num_samples--)
-	{		
+	{
 		for (i=0; i<samp_size; i++) {
 			dst[i] = src[i];
 		}
 		src += samp_size * num_chan;
-		dst += samp_size;	
+		dst += samp_size;
 	}
 }
 

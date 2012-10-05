@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -22,7 +22,7 @@
 
   $Id$
 
-  Driver for output on Linux and FreeBSD Open Sound System (OSS) (/dev/dsp) 
+  Driver for output on Linux and FreeBSD Open Sound System (OSS) (/dev/dsp)
 
 ==============================================================================*/
 
@@ -132,7 +132,7 @@ static void OSS_CommandLine(CHAR *cmdline)
 static char *OSS_GetDeviceName(void)
 {
 	static char sounddevice[20];
-	
+
 	/* First test for devfs enabled Linux sound devices */
 	if (card)
 		sprintf(sounddevice,"/dev/sound/dsp%d",card);
@@ -149,7 +149,7 @@ static char *OSS_GetDeviceName(void)
 		if(access("/dev/dsp0",F_OK))
 			strcpy(sounddevice,"/dev/dsp");
 	}
-	
+
 	return sounddevice;
 }
 
@@ -247,7 +247,7 @@ static BOOL OSS_Init_internal(void)
 		ioctl(sndfd,SNDCTL_DSP_GETBLKSIZE,&buffinf.fragsize);
 	if(!(audiobuffer=(SBYTE*)MikMod_malloc(buffinf.fragsize)))
 		return 1;
-	
+
 	buffersize = buffinf.fragsize;
 #else
 	ioctl(sndfd,SNDCTL_DSP_GETBLKSIZE,&buffersize);
@@ -280,7 +280,7 @@ static BOOL OSS_Init(void)
 	}
 
 	fragmentsize=(numfrags<<16)|fragsize;
-	
+
 	if(ioctl(sndfd,SNDCTL_DSP_SETFRAGMENT,&fragmentsize)<0) {
 		_mm_errno=MMERR_OSS_SETFRAGMENT;
 		return 1;
@@ -363,7 +363,7 @@ MIKMODAPI MDRIVER drv_oss={
 #ifdef SNDCTL_DSP_SETFRAGMENT
 	"buffer:r:7,17,14:Audio buffer log2 size\n"
 	"count:r:2,255,16:Audio buffer count\n"
-#endif	
+#endif
 	"card:r:0,99,0:Sound card id\n",
 	OSS_CommandLine,
 	OSS_IsThere,

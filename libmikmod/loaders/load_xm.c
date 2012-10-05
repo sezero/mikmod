@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -59,7 +59,7 @@ typedef struct XMHEADER {
 	UWORD numchn;          /* Number of channels (2,4,6,8,10,...,32) */
 	UWORD numpat;          /* Number of patterns (max 256) */
 	UWORD numins;          /* Number of instruments (max 128) */
-	UWORD flags;       
+	UWORD flags;
 	UWORD tempo;           /* Default tempo */
 	UWORD bpm;             /* Default BPM */
 	UBYTE orders[256];     /* Pattern order table  */
@@ -359,8 +359,8 @@ static BOOL LoadPatterns(BOOL dummypat)
 				return 0;
 
 			/* when packsize is 0, don't try to load a pattern.. it's empty. */
-			if(ph.packsize) 
-				for(u=0;u<ph.numrows;u++) 
+			if(ph.packsize)
+				for(u=0;u<ph.numrows;u++)
 					for(v=0;v<of.numchn;v++) {
 						if(!ph.packsize) break;
 
@@ -566,7 +566,7 @@ static BOOL LoadInstruments(void)
 																			\
 				if ((d-> name/**/flg&EF_ON)&&(d-> name/**/pts<2))			\
 					d-> name/**/flg&=~EF_ON
-#endif			
+#endif
 
 				XM_ProcessEnvelope(vol);
 				XM_ProcessEnvelope(pan);
@@ -705,11 +705,11 @@ static BOOL XM_Load(BOOL curious)
 	}
 
 	/* set module variables */
-	of.initspeed = mh->tempo;         
+	of.initspeed = mh->tempo;
 	of.inittempo = mh->bpm;
 	strncpy(tracker,mh->trackername,20);tracker[20]=0;
 	for(t=20;(tracker[t]<=' ')&&(t>=0);t--) tracker[t]=0;
-	
+
 	/* some modules have the tracker name empty */
 	if (!tracker[0])
 		strcpy(tracker,"Unknown tracker");

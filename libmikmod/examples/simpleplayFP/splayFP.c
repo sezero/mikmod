@@ -44,14 +44,14 @@ int main(int argc, char **argv)
 
 	/* open the file */
 	fptr = fopen(argv[1], "rb");
-	if (fptr==NULL) { 
+	if (fptr==NULL) {
 		perror("fopen");
 		MikMod_Exit();
 		return 1;
 	}
 
 	/* load module */
-	module = Player_LoadFP(fptr, 64, 0);	
+	module = Player_LoadFP(fptr, 64, 0);
 	if (module) {
 		/* start module */
 		printf("Playing %s\n", module->songname);

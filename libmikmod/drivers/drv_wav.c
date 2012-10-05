@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -65,7 +65,7 @@ static void putheader(void)
 	_mm_write_I_ULONG(md_mixfreq*((md_mode&DMODE_STEREO)?2:1)*
 	                  ((md_mode&DMODE_16BITS)?2:1),wavout);
 	/* block alignment (8/16 bit) */
-	_mm_write_I_UWORD(((md_mode&DMODE_16BITS)?2:1)* 
+	_mm_write_I_UWORD(((md_mode&DMODE_16BITS)?2:1)*
 	                  ((md_mode&DMODE_STEREO)?2:1),wavout);
 	_mm_write_I_UWORD((md_mode&DMODE_16BITS)?16:8,wavout);
 	_mm_write_string("data",wavout);
@@ -151,8 +151,8 @@ static void WAV_Update(void)
 
 /*    <AWE> Fix for 16bit samples on big endian systems:				*/
 /*	      Just swap bytes via "_mm_write_I_UWORDS ()" if we have 16 bit output.	*/
-        if (md_mode & DMODE_16BITS)		
-            _mm_write_I_UWORDS((UWORD *) audiobuffer,done>>1,wavout);       
+        if (md_mode & DMODE_16BITS)
+            _mm_write_I_UWORDS((UWORD *) audiobuffer,done>>1,wavout);
         else
             _mm_write_UBYTES(audiobuffer,done,wavout);
 	dumpsize+=done;

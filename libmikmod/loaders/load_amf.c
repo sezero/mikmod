@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -137,7 +137,7 @@ static BOOL AMF_UnpackTrack(MREADER* local_modreader)
 					if((row==0xff)&&(cmd==0xff)&&(arg==-1))
 						break;
 					/* the last triplet should be FF FF FF, but this is not
-					   always the case... maybe a bug in m2amf ? 
+					   always the case... maybe a bug in m2amf ?
 					else
 						return 0;
 					*/
@@ -164,7 +164,7 @@ static BOOL AMF_UnpackTrack(MREADER* local_modreader)
 				  if (cmd==0x83) {
 					/* volume without note */
 					track[row].volume=(UBYTE)arg+1;
-				} else 
+				} else
 				  if (cmd==0xff) {
 					/* apparently, some M2AMF version fail to estimate the
 					   size of the compressed patterns correctly, and end
@@ -322,7 +322,7 @@ static UBYTE* AMF_ConvertTrack(void)
 					of.flags |= UF_PANNING;
 					break;
 			}
-			
+
 		}
 		if (track[row].volume) UniVolEffect(VOL_VOLUME,track[row].volume-1);
 		UniNewline();
@@ -398,7 +398,7 @@ static BOOL AMF_Load(BOOL curious)
 	/* XXX whenever possible, we should try to determine the original format.
 	   Here we assume it was S3M-style wrt bpmlimit... */
 	of.bpmlimit = 32;
-	
+
 	/*
 	 * Play with the panning table. Although the AMF format embeds a
 	 * panning table, if the module was a MOD or an S3M with default
@@ -473,7 +473,7 @@ static BOOL AMF_Load(BOOL curious)
 		}
 
 		if(_mm_eof(modreader)) {
-			_mm_errno = MMERR_LOADING_SAMPLEINFO; 
+			_mm_errno = MMERR_LOADING_SAMPLEINFO;
 			return 0;
 		}
 
@@ -539,7 +539,7 @@ static BOOL AMF_Load(BOOL curious)
 		q->seekpos=samplepos;
 		samplepos+=q->length;
 	}
-		
+
 	return 1;
 }
 

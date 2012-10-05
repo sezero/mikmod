@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -147,7 +147,7 @@ static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size
 }
 
 static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, size_t increment,size_t todo)
-{	
+{
 	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
 	SWORD sample;
 	SLONG remain = todo;
@@ -163,11 +163,11 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 	// Srce is always aligned ...
 
 #if defined HAVE_SSE2
-	remain = todo&3;	
+	remain = todo&3;
 	{
-		__m128i v0 = _mm_set_epi16(0, vol[1], 
-								   0, vol[0], 
-								   0, vol[1], 
+		__m128i v0 = _mm_set_epi16(0, vol[1],
+								   0, vol[0],
+								   0, vol[1],
 								   0, vol[0]);
 		for(todo>>=2;todo; todo--)
 		{
@@ -181,7 +181,7 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 			__m128i v4 = _mm_load_si128((__m128i*)(dest+4));
 			_mm_store_si128((__m128i*)(dest+0), _mm_add_epi32(v3, _mm_madd_epi16(v0, v1)));
 			_mm_store_si128((__m128i*)(dest+4), _mm_add_epi32(v4, _mm_madd_epi16(v0, v2)));
-			dest+=8;				
+			dest+=8;
 		}
 	}
 
@@ -195,11 +195,11 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 																		 2, 1, // r
 																		 0, 1, // l
 																		 0, 1, // l
-																		 2, 3, // r 
+																		 2, 3, // r
 																		 2, 3 // r
 																		 ));
 		SWORD s[8];
-			
+
 		for(todo>>=2;todo; todo--)
 		{
 			// Load constants
@@ -208,7 +208,7 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 			s[2] = srce[(index += increment) >> FRACBITS];
 			s[3] = srce[(index += increment) >> FRACBITS];
 			s[4] = 0;
-	
+
 			vector short int r1 = vec_ld(0, s);
 			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
 																			 4*2, 4*2+1, // 0
@@ -219,7 +219,7 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 																			 1*2, 1*2+1, // s1
 																			 4*2, 4*2+1  // 0
 																			 ));
-																			 
+
 			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, // s2
 																			 4*2, 4*2+1, // 0
 																			 2*2, 2*2+1, // s2
@@ -234,7 +234,7 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 			vector signed int v5 = vec_mule(v0, v1);
 			vector signed int v6 = vec_mule(v0, v2);
 
-			vec_st(vec_add(v3, v5), 0, dest);				
+			vec_st(vec_add(v3, v5), 0, dest);
 			vec_st(vec_add(v4, v6), 0x10, dest);
 
 			dest+=8;
@@ -268,11 +268,11 @@ static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG inc
 	{
 		SWORD sample;
 		SLONG lvolsel = vnf->lvolsel;
-	
+
 		while(todo--) {
 			sample = srce[index >> FRACBITS];
 			index += increment;
-	
+
 			*dest++ += lvolsel * sample;
 		}
 	}
@@ -280,7 +280,7 @@ static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG inc
 }
 
 // FIXME: This mixer should works also on 64-bit platform
-// Hint : changes SLONG / SLONGLONG mess with size_t 
+// Hint : changes SLONG / SLONGLONG mess with size_t
 static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
 #if defined HAVE_ALTIVEC || defined HAVE_SSE2
@@ -849,7 +849,7 @@ static void Mix32To8(SBYTE* dste,const SLONG *srce,NATIVE count)
 static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 {
 	const float k = ((1.0f / 32768.0f) / (1 << FP_SHIFT));
-	int	remain=count;	
+	int	remain=count;
 	simd_m128 x1, x2, xk;
 
 	while(!IS_ALIGNED_16(dste) || !IS_ALIGNED_16(srce))
@@ -865,8 +865,8 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 		}
 	}
 
-	remain = count&7;	
-	
+	remain = count&7;
+
 	xk = LOAD_PS1_SIMD(&k); // Scale factor
 
 	for(count>>=3;count;count--) {
@@ -876,15 +876,15 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 	PUT_SAMPLE_SIMD_F(dste+4, x2); // Store 4 samples
 	srce+=8;
 	dste+=8;
-	}	
+	}
 
 	if (remain&4) {
 	   EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
 	PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
 	srce+=4;
 	dste+=4;
-	remain &= 3;	
-	}	
+	remain &= 3;
+	}
 
 	while(remain--) {
 		float x1;
@@ -913,7 +913,7 @@ static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)
 
 	remain = count&7;
 
-	for(count>>=3;count;count--) 
+	for(count>>=3;count;count--)
 	{
 		simd_m128i x1,x2;
 		EXTRACT_SAMPLE_SIMD_16(srce, x1);  // Load 4 samples
@@ -945,7 +945,7 @@ static void Mix32To8_SIMD(SBYTE* dste,SLONG* srce,NATIVE count)
 			return;
 		}
 	}
-	
+
 	remain = count&15;
 
 	for(count>>=4;count;count--) {
@@ -1072,7 +1072,7 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 					if (md_mode & DMODE_SIMDMIXER)
 						vnf->current=MixSIMDStereoNormal
 						               (s,ptr,vnf->current,vnf->increment,done);
-    
+
 					else
 #endif
 						vnf->current=Mix32StereoNormal
@@ -1105,7 +1105,7 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 					if (md_mode & DMODE_SIMDMIXER)
 						vnf->current=MixSIMDStereoNormal
 						               (s,ptr,vnf->current,vnf->increment,done);
-    
+
 					else
 #endif
 						vnf->current=MixStereoNormal
@@ -1225,7 +1225,7 @@ void VC1_WriteSamples(SBYTE* buf,ULONG todo)
 BOOL VC1_Init(void)
 {
 	VC_SetupPointers();
-	
+
 	if (md_mode&DMODE_HQMIXER)
 		return VC2_Init();
 

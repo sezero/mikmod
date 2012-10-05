@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -117,12 +117,12 @@ static int(*alsa_pcm_open)(snd_pcm_t**,int,int,int);
 static int(*alsa_pcm_playback_format)(snd_pcm_t*,snd_pcm_format_t*);
 static int(*alsa_pcm_playback_info)(snd_pcm_t*,snd_pcm_playback_info_t*);
 static int(*alsa_pcm_playback_params)(snd_pcm_t*,snd_pcm_playback_params_t*);
-#endif 
+#endif
 #ifdef OLD_ALSA
 static int(*alsa_pcm_playback_status)(snd_pcm_t*,snd_pcm_playback_status_t*);
 #else
 snd_pcm_sframes_t (*alsa_pcm_avail_update)(snd_pcm_t*);
-#endif 
+#endif
 
 #ifdef OLD_ALSA
 static int(*alsa_pcm_write)(snd_pcm_t*,const void*,size_t);
@@ -587,7 +587,7 @@ static BOOL ALSA_Init_internal(void)
 			/* set new parameters */
 			if(alsa_pcm_playback_format(pcm_h,&pformat)<0)
 #else
-            if( alsa_pcm_set_params(pcm_h, pformat, 
+            if( alsa_pcm_set_params(pcm_h, pformat,
                 SND_PCM_ACCESS_RW_INTERLEAVED,
                 channels,
                 rate,
@@ -701,7 +701,7 @@ static BOOL ALSA_Init(void)
 {
 #ifdef HAVE_SSE2
 	// TODO : Detect SSE2, then set
-	// md_mode |= DMODE_SIMDMIXER; 
+	// md_mode |= DMODE_SIMDMIXER;
 #endif
 #ifdef MIKMOD_DYNAMIC
 	if (ALSA_Link()) {
@@ -754,7 +754,7 @@ static void ALSA_Update(void)
 			total = fragmentsize;
 	} else
 		total = fragmentsize;
-	
+
 	/* Don't send data if ALSA is too busy */
 	while (total) {
 		count = fragmentsize > total ? total : fragmentsize;
@@ -768,7 +768,7 @@ static void ALSA_Update(void)
  *   Underrun and suspend recovery .
  *   This was copied from test/pcm.c in the alsa-lib distribution.
  */
- 
+
 static int xrun_recovery(snd_pcm_t *handle, int err)
 {
 	if (err == -EPIPE) {	/* under-run */
@@ -823,7 +823,7 @@ static void ALSA_Update(void)
 static void ALSA_PlayStop(void)
 {
 	VC_PlayStop();
-	
+
 #ifdef OLD_ALSA
 	alsa_pcm_flush_playback(pcm_h);
 #else
@@ -845,7 +845,7 @@ MIKMODAPI MDRIVER drv_alsa={
 	"alsa",
 	"card:r:0,31,0:Soundcard number\n"
         "pcm:r:0,3,0:PCM device number\n"
-        "buffer:r:2,16,4:Number of buffer fragments\n",	
+        "buffer:r:2,16,4:Number of buffer fragments\n",
 	ALSA_CommandLine,
 	ALSA_IsThere,
 	VC_SampleLoad,

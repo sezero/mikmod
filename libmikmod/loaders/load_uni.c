@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -98,7 +98,7 @@ static char * readstring(void)
 {
 	char *my_string=NULL;
 	UWORD len;
-	
+
 	len=_mm_read_I_UWORD(modreader);
 	if(len) {
 		my_string=MikMod_malloc(len+1);
@@ -504,7 +504,7 @@ static BOOL UNI_Load(BOOL curious)
 	char *modtype,*oldtype=NULL;
 	INSTRUMENT *d;
 	SAMPLE *q;
-	
+
 	/* read module header */
 	_mm_read_UBYTES(mh.id,4,modreader);
 	if(mh.id[3]!='N')
@@ -559,7 +559,7 @@ static BOOL UNI_Load(BOOL curious)
 		mh.flags &= UF_XMPERIODS | UF_LINEAR;
 		mh.flags |= UF_INST | UF_NOWRAP | UF_PANNING;
 	}
-	
+
 	/* set module parameters */
 	of.flags     =mh.flags;
 	of.numchn    =mh.numchn;

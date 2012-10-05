@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -290,7 +290,7 @@ static BOOL FAR_Load(BOOL curious)
 	of.numins = 0;
 	for(t=0;t<64;t++)
 		if(smap[t>>3]&(1<<(t&7))) of.numins=t+1;
-	of.numsmp = of.numins;             
+	of.numsmp = of.numins;
 
 	/* alloc sample structs */
 	if(!AllocSamples()) return 0;
@@ -320,7 +320,7 @@ static BOOL FAR_Load(BOOL curious)
 
 			q->seekpos    = _mm_ftell(modreader);
 			_mm_fseek(modreader,q->length,SEEK_CUR);
-		} else 
+		} else
 			q->samplename = DupStr(NULL,0,0);
 		q++;
 	}
@@ -333,7 +333,7 @@ static CHAR *FAR_LoadTitle(void)
 
 	_mm_fseek(modreader,4,SEEK_SET);
 	if(!_mm_read_UBYTES(s,40,modreader)) return NULL;
-   
+
 	return(DupStr(s,40,1));
 }
 

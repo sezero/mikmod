@@ -19,7 +19,7 @@
 #endif
 
 SAMPLE *Load(char *fn)
-{	
+{
 	char *file_data;
 	long sysFileGetLength;
 	FILE *fptr;
@@ -28,7 +28,7 @@ SAMPLE *Load(char *fn)
 
 	/* open the file */
 	fptr = fopen(fn, "rb");
-	if (fptr==NULL) { 
+	if (fptr==NULL) {
 		perror("fopen");
 		return 0;
 	}

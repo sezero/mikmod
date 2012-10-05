@@ -264,10 +264,10 @@ static void Ultra_Unlink(void)
 static void Ultra_CommandLine(CHAR *cmdline)
 {
 	CHAR *ptr = MD_GetAtom("card", cmdline, 0);
-	
+
 	if (ptr) {
 		int buf = atoi(ptr);
-		
+
 		if (buf >= 0 && buf <= 8)
 			ultra_dev = buf;
 		MikMod_free(ptr);

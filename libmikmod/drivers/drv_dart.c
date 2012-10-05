@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -74,14 +74,14 @@ static void Dart_CommandLine(CHAR *cmdline)
 			BufferSize = 1 << buf;
 		MikMod_free(ptr);
 	}
-	
+
 	if ((ptr = MD_GetAtom("count", cmdline, 0))) {
 		buf = atoi(ptr);
 		if (buf >= 2 && buf <= MAX_BUFFERCOUNT)
 			BufferCount = buf;
 		MikMod_free(ptr);
 	}
-	
+
 	if ((ptr = MD_GetAtom("device", cmdline, 0))) {
 		buf = atoi(ptr);
 		if (buf >= 0 && buf <= 8)
@@ -99,7 +99,7 @@ static LONG APIENTRY Dart_UpdateBuffers(ULONG ulStatus, PMCI_MIX_BUFFER pBuffer,
 	/* sanity check */
 	if (!pBuffer)
 		return TRUE;
-	
+
 	/* if we have finished a buffer, we're ready to play a new one */
 	if ((ulFlags == MIX_WRITE_COMPLETE) ||
 		((ulFlags == (MIX_WRITE_COMPLETE | MIX_STREAM_ERROR)) &&
@@ -182,7 +182,7 @@ static BOOL Dart_Init(void)
 		/* DART suggested buffer size is somewhat too big. We compute a size
 		   for circa 1/4" of playback. */
 		int bit;
-		
+
 		BufferSize = md_mixfreq >> 2;
 		if (md_mode & DMODE_STEREO)
 			BufferSize <<= 1;

@@ -40,8 +40,8 @@ int main(int argc, char **argv)
 	MikMod_RegisterAllLoaders();
 
 	/* init the library */
-	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION | DMODE_HQMIXER | DMODE_SIMDMIXER; 
-	
+	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION | DMODE_HQMIXER | DMODE_SIMDMIXER;
+
 	if (MikMod_Init("")) {
 		fprintf(stderr, "Could not initialize sound, reason: %s\n",
 				MikMod_strerror(MikMod_errno));
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
 	/* open the file */
 	fptr = fopen(argv[1], "rb");
-	if (fptr==NULL) { 
+	if (fptr==NULL) {
 		perror("fopen");
 		MikMod_Exit();
 		return 1;
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 	}
 
 	/* load module */
-	module = Player_LoadGeneric(mem_reader, 64, 0);	
+	module = Player_LoadGeneric(mem_reader, 64, 0);
 	if (module) {
 		/* start module */
 		printf("Playing %s\n", module->songname);

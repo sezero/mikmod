@@ -337,20 +337,20 @@ static BOOL OKT_Load(BOOL curious)
 
 	of.modtype = StrDup("Amiga Oktalyzer");
 	of.numpos = of.reppos = 0;
-	
+
 	/* default values */
 	of.initspeed = 6;
 	of.inittempo = 125;
-	
+
 	while (1) {
 		/* read block header */
 		_mm_read_UBYTES(id, 4, modreader);
 		len = _mm_read_M_ULONG(modreader);
-		
+
 		if (_mm_eof(modreader))
 			break;
 		fp = _mm_ftell(modreader);
-		
+
 		if (!memcmp(id, "CMOD", 4)) {
 			if (!seen_cmod) {
 				OKT_doCMOD();

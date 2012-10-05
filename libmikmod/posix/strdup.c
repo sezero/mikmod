@@ -14,7 +14,7 @@ char* strdup(const char *__s)
 		return NULL;
 
 	charptr=(char *)MikMod_malloc(sizeof(char) * (strlen(__s) + 1));
-	if (charptr) 
+	if (charptr)
 		strcpy(charptr, __s);
 
 	return charptr;

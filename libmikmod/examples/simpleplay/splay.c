@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	}
 
 	/* load module */
-	module = Player_Load(argv[1], 64, 0);	
+	module = Player_Load(argv[1], 64, 0);
 	if (module) {
 		/* */
 		printf("Playing %s (%d chn) - SIMD: %s\n", module->songname, module->numchn,

@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -607,10 +607,10 @@ static void DoToneSlide(UWORD tick, MP_CONTROL *a)
 			/* ...make tmpperiod equal tperiod */
 			a->tmpperiod=a->main.period=a->wantedperiod;
 		else if (dist>0) {
-			a->tmpperiod-=a->portspeed;	
+			a->tmpperiod-=a->portspeed;
 			a->main.period-=a->portspeed; /* dist>0, slide up */
 		} else {
-			a->tmpperiod+=a->portspeed;	
+			a->tmpperiod+=a->portspeed;
 			a->main.period+=a->portspeed; /* dist<0, slide down */
 		}
 	} else
@@ -1027,7 +1027,7 @@ static int DoPTEffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	if (tick||mod->patdly2) return 0;
 	if (mod->extspd&&(dat>=mod->bpmlimit))
 		mod->bpm=dat;
-	else 
+	else
 	  if (dat) {
 		mod->sngspd=(dat>=mod->bpmlimit)?mod->bpmlimit-1:dat;
 		mod->vbtick=0;
@@ -1392,7 +1392,7 @@ static int DoXMEffectA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 		a->s3mvolslide = inf;
 	else
 		inf = a->s3mvolslide;
-	
+
 	if (tick) {
 		lo=inf&0xf;
 		hi=inf>>4;
@@ -1624,10 +1624,10 @@ static void DoITToneSlide(UWORD tick, MP_CONTROL *a, UBYTE dat)
 			/* ... make tmpperiod equal tperiod */
 			a->tmpperiod=a->main.period=a->wantedperiod;
 		else
-		  if (dist>0) {	
+		  if (dist>0) {
 			a->tmpperiod-=a->portspeed<<2;
 			a->main.period-=a->portspeed<<2; /* dist>0 slide up */
-		} else {				
+		} else {
 			a->tmpperiod+=a->portspeed<<2;
 			a->main.period+=a->portspeed<<2; /* dist<0 slide down */
 		}
@@ -1743,7 +1743,7 @@ static int DoITEffectN(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	lo=inf&0xf;
 	hi=inf>>4;
 
-	if (!hi) 
+	if (!hi)
 		a->main.chanvol-=lo;
 	else
 	  if (!lo) {
@@ -1967,13 +1967,13 @@ static int DoITEffectS0(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	switch (c) {
 	case SS_GLISSANDO: /* S1x set glissando voice */
 		DoEEffects(tick, flags, a, mod, channel, 0x30|inf);
-		break;              
+		break;
 	case SS_FINETUNE: /* S2x set finetune */
 		DoEEffects(tick, flags, a, mod, channel, 0x50|inf);
 		break;
 	case SS_VIBWAVE: /* S3x set vibrato waveform */
 		DoEEffects(tick, flags, a, mod, channel, 0x40|inf);
-		break;   
+		break;
 	case SS_TREMWAVE: /* S4x set tremolo waveform */
 		DoEEffects(tick, flags, a, mod, channel, 0x70|inf);
 		break;
@@ -1992,7 +1992,7 @@ static int DoITEffectS0(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	case SS_SURROUND: /* S9x set surround sound */
 		if (mod->panflag)
 			a->main.panning = mod->panning[channel] = PAN_SURROUND;
-		break;    
+		break;
 	case SS_HIOFFSET: /* SAy set high order sample offset yxx00h */
 		if (!tick) {
 			a->hioffset=inf<<16;
@@ -2030,9 +2030,9 @@ static int DoITEffectS0(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 static int DoVolEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE c, inf;
-	
-	c = UniGetByte(); 
-	inf = UniGetByte(); 
+
+	c = UniGetByte();
+	inf = UniGetByte();
 
 	if ((!c)&&(!inf)) {
 		c=a->voleffect;
@@ -2242,7 +2242,7 @@ static void DoNNAEffects(MODULE *mod, MP_CONTROL *a, UBYTE dat)
 	int t;
 	MP_VOICE *aout;
 
-	dat&=0xf; 
+	dat&=0xf;
 	aout=(a->slave)?a->slave:NULL;
 
 	switch (dat) {
@@ -2273,7 +2273,7 @@ static void DoNNAEffects(MODULE *mod, MP_CONTROL *a, UBYTE dat)
 		break;
 	case 0x5: /* set NNA note off */
 		a->main.nna=(a->main.nna&~NNA_MASK)|NNA_OFF;
-		break;   
+		break;
 	case 0x6: /* set NNA note fade */
 		a->main.nna=(a->main.nna&~NNA_MASK)|NNA_FADE;
 		break;
@@ -2288,7 +2288,7 @@ static void DoNNAEffects(MODULE *mod, MP_CONTROL *a, UBYTE dat)
 	case 0x9: /* disable panning envelope */
 		if (aout)
 			aout->main.panflg&=~EF_ON;
-		break;    
+		break;
 	case 0xa: /* enable panning envelope */
 		if (aout)
 			aout->main.panflg|=EF_ON;
@@ -2797,7 +2797,7 @@ static void pt_SetupVoices(MODULE *mod)
 					if ((newchn=MP_FindEmptyChannel(mod))!=-1)
 						a->slave=&mod->voice[a->slavechn=newchn];
 				}
-			} else 
+			} else
 				a->slave=&mod->voice[a->slavechn=channel];
 
 			/* assign parts of MP_VOICE only done for a KICK_NOTE */
@@ -2862,7 +2862,7 @@ void Player_HandleTick(void)
 	pf->sngremainder%=pf->bpm;
 
 	if (++pf->vbtick>=pf->sngspd) {
-		if (pf->pat_repcrazy) 
+		if (pf->pat_repcrazy)
 			pf->pat_repcrazy=0; /* play 2 times row 0 */
 		else
 			pf->patpos++;
@@ -2939,7 +2939,7 @@ static void Player_Init_internal(MODULE* mod)
 		mod->control[t].main.chanvol=mod->chanvol[t];
 		mod->control[t].main.panning=mod->panning[t];
 	}
-	
+
 	mod->sngtime=0;
 	mod->sngremainder=0;
 
@@ -3149,12 +3149,12 @@ MIKMODAPI void Player_SetPosition(UWORD pos)
 			pf->control[t].main.s=NULL;
 		}
 		pf->forbid=0;
-		
+
 		if (!pos)
 			Player_Init_internal(pf);
 	}
 	MUTEX_UNLOCK(vars);
-}    
+}
 
 static void Player_Unmute_internal(SLONG arg1,va_list ap)
 {
@@ -3264,7 +3264,7 @@ static void Player_ToggleMute_internal(SLONG arg1,va_list ap)
 			}
 			break;
 		default:
-			if (arg1<pf->numchn) 
+			if (arg1<pf->numchn)
 				pf->control[arg1].muted=1-pf->control[arg1].muted;
 			break;
 		}
@@ -3345,7 +3345,7 @@ MIKMODAPI void Player_TogglePause(void)
 MIKMODAPI void Player_SetSpeed(UWORD speed)
 {
 	MUTEX_LOCK(vars);
-	if (pf) 
+	if (pf)
 		pf->sngspd=speed?(speed<32?speed:32):1;
 	MUTEX_UNLOCK(vars);
 }

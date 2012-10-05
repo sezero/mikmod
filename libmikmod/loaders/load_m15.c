@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -141,8 +141,8 @@ static BOOL LoadModuleHeader(MODULEHEADER *local_mh)
 }
 
 /* Checks the patterns in the modfile for UST / 15-inst indications.
-   For example, if an effect 3xx is found, it is assumed that the song 
-   is 15-inst.  If a 1xx effect has dat greater than 0x20, it is UST.   
+   For example, if an effect 3xx is found, it is assumed that the song
+   is 15-inst.  If a 1xx effect has dat greater than 0x20, it is UST.
 
    Returns:  0 indecisive; 1 = UST; 2 = 15-inst                               */
 static int CheckPatternType(int numpat)
@@ -220,7 +220,7 @@ static BOOL M15_Test(void)
 			return 1;
 		}
 
-		if(!ust_loader) return 1; 
+		if(!ust_loader) return 1;
 	}
 
 	for(numpat=0,t=0;t<local_mh.songlength;t++)
@@ -331,7 +331,7 @@ static UBYTE M15_ConvertNote(MODNOTE* n, UBYTE lasteffect)
 			case 1:
 				UniPTEffect(0,effdat);
 				break;
-			case 2:  
+			case 2:
 				if(effdat&0xf) UniPTEffect(1,effdat&0xf);
 				else if(effdat>>2)  UniPTEffect(2,effdat>>2);
 				break;
@@ -351,7 +351,7 @@ static UBYTE M15_ConvertNote(MODNOTE* n, UBYTE lasteffect)
 	}
 	if (effect == 8)
 		of.flags |= UF_PANNING;
-	
+
 	return effect;
 }
 
@@ -415,7 +415,7 @@ static BOOL M15_Load(BOOL curious)
 	/* set module variables */
 	of.initspeed = 6;
 	of.inittempo = 125;
-	of.numchn    = 4;				
+	of.numchn    = 4;
 	of.songname  = DupStr(mh->songname,21,1);
 	of.numpos    = mh->songlength;
 	of.reppos    = 0;

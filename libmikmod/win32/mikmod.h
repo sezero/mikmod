@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -205,7 +205,7 @@ enum {
 
 	MMERR_DOSWSS_STARTDMA,
 	MMERR_DOSSB_STARTDMA,
-	
+
 	MMERR_MAX
 };
 
@@ -604,9 +604,9 @@ MIKMODAPI extern void    Player_Mute(SLONG,...);
 MIKMODAPI extern void    Player_ToggleMute(SLONG,...);
 MIKMODAPI extern int     Player_GetChannelVoice(UBYTE);
 MIKMODAPI extern UWORD   Player_GetChannelPeriod(UBYTE);
-MIKMODAPI extern int     Player_QueryVoices(UWORD numvoices, VOICEINFO *vinfo); 
+MIKMODAPI extern int     Player_QueryVoices(UWORD numvoices, VOICEINFO *vinfo);
 MIKMODAPI extern int     Player_GetRow(void);
-MIKMODAPI extern int     Player_GetOrder(void); 
+MIKMODAPI extern int     Player_GetOrder(void);
 
 typedef void (*MikMod_callback_t)(unsigned char *data, size_t len);
 typedef void (*MikMod_player_t)(void);
@@ -720,7 +720,7 @@ MIKMODAPI extern struct MDRIVER drv_aix;    /* AIX audio device */
 MIKMODAPI extern struct MDRIVER drv_alsa;   /* Advanced Linux Sound Architecture (ALSA) */
 MIKMODAPI extern struct MDRIVER drv_esd;    /* Enlightened sound daemon (EsounD) */
 MIKMODAPI extern struct MDRIVER drv_hp;     /* HP-UX audio device */
-MIKMODAPI extern struct MDRIVER drv_nas;    /* Network Audio System (NAS) */	
+MIKMODAPI extern struct MDRIVER drv_nas;    /* Network Audio System (NAS) */
 MIKMODAPI extern struct MDRIVER drv_oss;    /* OpenSound System (Linux,FreeBSD...) */
 MIKMODAPI extern struct MDRIVER drv_sgi;    /* SGI audio library */
 MIKMODAPI extern struct MDRIVER drv_sun;    /* Sun/NetBSD/OpenBSD audio device */

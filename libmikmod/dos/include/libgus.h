@@ -313,7 +313,7 @@ int gus_memory_pack(void);
    */
 int gus_memory_reset(int mode);
   /*
-   * input value:   see to GUS_DOWNLOAD_MODE_XXXX constants (gus.h) 
+   * input value:   see to GUS_DOWNLOAD_MODE_XXXX constants (gus.h)
    * return value:  zero if samples & instruments was successfully removed
    *            from GF1 memory manager
    */

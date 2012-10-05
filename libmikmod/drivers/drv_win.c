@@ -84,7 +84,7 @@ static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD 
 {
 	if (uMsg==WOM_DONE) --buffersout;
 }
-  
+
 static BOOL WIN_Init(void)
 {
 	WAVEFORMATEX	wfe;

@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -108,7 +108,7 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 		*numchn = 4;
 		return 1;
 	}
-	
+
 	/* Star Tracker */
 	if (((!memcmp(id, "FLT", 3)) || (!memcmp(id, "EXO", 3))) &&
 		(isdigit(id[3]))) {
@@ -277,7 +277,7 @@ static UBYTE ConvertNote(MODNOTE *n, UBYTE lasteffect)
 	/* Handle ``heavy'' volumes correctly */
 	if ((effect == 0xc) && (effdat > 0x40))
 		effdat = 0x40;
-	
+
 	/* An isolated 100, 200 or 300 effect should be ignored (no
 	   "standalone" porta memory in mod files). However, a sequence such
 	   as 1XX, 100, 100, 100 is fine. */
@@ -288,7 +288,7 @@ static UBYTE ConvertNote(MODNOTE *n, UBYTE lasteffect)
 	UniPTEffect(effect, effdat);
 	if (effect == 8)
 		of.flags |= UF_PANNING;
-	
+
 	return effect;
 }
 
@@ -315,7 +315,7 @@ static BOOL ML_LoadPatterns(void)
 		return 0;
 	if (!AllocTracks())
 		return 0;
-	
+
 	/* Allocate temporary buffer for loading and converting the patterns */
 	if (!(patbuf = (MODNOTE *)MikMod_calloc(64U * of.numchn, sizeof(MODNOTE))))
 		return 0;
@@ -384,10 +384,10 @@ static BOOL MOD_Load(BOOL curious)
 
 	mh->songlength = _mm_read_UBYTE(modreader);
 
-	/* this fixes mods which declare more than 128 positions. 
+	/* this fixes mods which declare more than 128 positions.
 	 * eg: beatwave.mod */
 	if (mh->songlength > 128) { mh->songlength = 128; }
-	
+
 	mh->magic1 = _mm_read_UBYTE(modreader);
 	_mm_read_UBYTES(mh->positions, 128, modreader);
 	_mm_read_UBYTES(mh->magic2, 4, modreader);
@@ -480,7 +480,7 @@ static BOOL MOD_Load(BOOL curious)
 
 	if (!ML_LoadPatterns())
 		return 0;
-	
+
 	return 1;
 }
 

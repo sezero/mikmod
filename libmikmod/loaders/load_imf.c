@@ -540,7 +540,7 @@ static BOOL IMF_Load(BOOL curious)
 		_mm_read_UBYTES(id,4,modreader);
 		/* Looks like Imago Orpheus forgets the signature for empty
 		   instruments following a multi-sample instrument... */
-		if(memcmp(id,"II10",4) && 
+		if(memcmp(id,"II10",4) &&
 		   (oldnumsmp && memcmp(id,"\x0\x0\x0\x0",4))) {
 			if(nextwav) MikMod_free(nextwav);
 			if(wh) MikMod_free(wh);

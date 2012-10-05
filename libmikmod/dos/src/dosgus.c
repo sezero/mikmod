@@ -21,7 +21,7 @@
 /*==============================================================================
 
   $Id$
-  
+
   Driver for GUS cards under DOS
 
 ==============================================================================*/
@@ -1742,7 +1742,7 @@ int gus_memory_free_block(int w_16bit)
 	return w_16bit ? __gus_mem_get_free_16() : __gus_mem_get_free_8();
 }
 
-/* input value:	see to GUS_DOWNLOAD_MODE_XXXX constants (gus.h) 
+/* input value:	see to GUS_DOWNLOAD_MODE_XXXX constants (gus.h)
    return value: zero if samples & instruments was successfully removed	from
    GF1 memory manager */
 int gus_memory_reset(int mode)

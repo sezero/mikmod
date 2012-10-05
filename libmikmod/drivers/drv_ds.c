@@ -6,12 +6,12 @@
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
- 
+
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -104,7 +104,7 @@ static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 
 			if (pSoundBuffer->lpVtbl->Lock
 						(pSoundBuffer,start,fragsize,&pBlock1,&blockBytes1,
-						 &pBlock2,&blockBytes2,0)==DSERR_BUFFERLOST) {	
+						 &pBlock2,&blockBytes2,0)==DSERR_BUFFERLOST) {
 				pSoundBuffer->lpVtbl->Restore(pSoundBuffer);
 				pSoundBuffer->lpVtbl->Lock
 						(pSoundBuffer,start,fragsize,&pBlock1,&blockBytes1,
@@ -122,7 +122,7 @@ static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 					VC_WriteBytes((SBYTE*)pBlock2,(ULONG)blockBytes2);
 			}
 			MUTEX_UNLOCK(vars);
-			
+
 			pSoundBuffer->lpVtbl->Unlock
 						(pSoundBuffer,pBlock1,blockBytes1,pBlock2,blockBytes2);
 		}
@@ -142,7 +142,7 @@ static void DS_CommandLine(CHAR *cmdline)
 
 		MikMod_free(ptr);
 	}
-	
+
 	if ((ptr=MD_GetAtom("globalfocus",cmdline,1))) {
 		controlflags |= DSBCAPS_GLOBALFOCUS;
 		MikMod_free(ptr);
@@ -208,7 +208,7 @@ static BOOL DS_Init(void)
     soundBufferFormat.dwFlags      =controlflags|DSBCAPS_GETCURRENTPOSITION2 ;
     soundBufferFormat.dwBufferBytes=fragsize*UPDATES;
     soundBufferFormat.lpwfxFormat  =&pcmwf;
-	
+
 	if (pSoundCard->lpVtbl->CreateSoundBuffer
 				(pSoundCard,&soundBufferFormat,&pSoundBuffer,NULL)!=DS_OK) {
 		_mm_errno=MMERR_DS_BUFFER;
