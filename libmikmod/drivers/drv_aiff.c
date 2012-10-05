@@ -292,7 +292,7 @@ static void	AIFF_Exit (void)
     VC_Exit ();
 
     /* write in the actual sizes now */
-    if (gAiffOut != NULL)
+    if (gAiffOut)
     {
         AIFF_PutHeader ();
         _mm_delete_file_writer (gAiffOut);
@@ -300,9 +300,9 @@ static void	AIFF_Exit (void)
         gAiffFile = NULL;
         gAiffOut = NULL;
     }
-    if (gAiffAudioBuffer != NULL)
+    if (gAiffAudioBuffer)
     {
-        free (gAiffAudioBuffer);
+        MikMod_free (gAiffAudioBuffer);
         gAiffAudioBuffer = NULL;
     }
 }
