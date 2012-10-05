@@ -394,6 +394,13 @@ INSTALL(
     DESTINATION "bin"
 )
 
+INSTALL(
+    FILES
+        "include/mikmod.h"
+    DESTINATION
+        "include"
+)
+
 ADD_CUSTOM_TARGET(
     "test"
     "perl" "${CMAKE_CURRENT_SOURCE_DIR}/run-tests.pl"
