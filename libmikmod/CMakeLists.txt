@@ -375,6 +375,12 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CUR
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
 
+CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc
+    @ONLY
+    )
+
 LIST (APPEND EXTRA_LIBS ${ALSA_LIBRARIES})
 
 IF (UNIX)
@@ -408,6 +414,13 @@ INSTALL(
         "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h"
     DESTINATION
         "include"
+)
+
+INSTALL(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc"
+    DESTINATION
+        "lib${LIB_SUFFIX}/pkgconfig"
 )
 
 ADD_CUSTOM_TARGET(
