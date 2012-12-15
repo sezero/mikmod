@@ -141,6 +141,7 @@ SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
 SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
 SET (ENABLE_DL 1 CACHE BOOL "Load ALSA and Ultra Drivers at Runtime")
 SET (ENABLE_THREADS 1 CACHE BOOL "build a thread-safe version of libmikmod")
+SET (BUILD_STATIC_LIBRARY "1" CACHE BOOL "Whether to build the static library (which takes more time)" )
 
 INCLUDE(CPack)
 
