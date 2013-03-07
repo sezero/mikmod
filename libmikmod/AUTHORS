@@ -27,7 +27,7 @@ Previous Unix maintainers
   for MikMod.
 * Peter Amstutz <tetron@student.umass.edu>
   maintained MikMod'Unix version 3 up to version 3.0.3.
-  
+
 General contributors
 --------------------
 
@@ -129,6 +129,6 @@ Contributors on the BeOS side
 * Thomas Neumann <tneumann@polycode.dk>
   integrated libmikmod into his BeOS APlayer, and contributed many bug fixes.
 
--- 
+--
 If your name is missing, don't hesitate to remind me at
 <mikmod@mikmod.raphnet.net>
