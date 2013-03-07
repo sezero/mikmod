@@ -22,7 +22,7 @@ libmikmod main authors
 Previous Unix maintainers
 -------------------------
 
-* Steve McIntyre <steven@chiark.greenend.org.uk>
+* Steve McIntyre <steve@einval.com>
   maintained MikMod'Unix version 2. Used to maintain the Debian package
   for MikMod.
 * Peter Amstutz <tetron@student.umass.edu>
