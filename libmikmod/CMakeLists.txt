@@ -24,8 +24,7 @@
 #
 # (This copyright notice applies only to this file)
 
-
-INCLUDE( "${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake" )
+INCLUDE(Shlomif_Common)
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
