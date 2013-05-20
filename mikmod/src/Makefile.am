@@ -9,15 +9,13 @@ man_MANS = mikmod.1
 mikmod_SOURCES = \
 	display.c marchive.c mikmod.c mlist.c mconfig.c mwindow.c mmenu.c \
 	mwidget.c mdialog.c mconfedit.c mutilities.c mplayer.c mlistedit.c \
-	rcfile.c
+	rcfile.c \
+	mfnmatch.c mgetopt.c mgetopt1.c musleep.c
 
 noinst_HEADERS = \
 	display.h keys.h marchive.h mconfedit.h mconfig.h mdialog.h mlist.h \
 	mlistedit.h mmenu.h mplayer.h mthreads.h mutilities.h mwidget.h \
 	mwindow.h player.h rcfile.h
-
-EXTRA_mikmod_SOURCES = \
-	mfnmatch.c mgetopt.c mgetopt1.c musleep.c
 
 EXTRA_DIST = \
 	mfnmatch.h mgetopt.h $(man_MANS)
