@@ -86,7 +86,7 @@ AC_CHECK_HEADERS(ncurses.h)
 AC_CHECK_HEADERS(sched.h)
 
 dnl Checks for bogus Linux old libc5 sched.h
-case "$host_os" in                                                                              
+case "$host_os" in
     linux*)
 	AC_MSG_CHECKING([whether sched.h is correct])
 	AC_TRY_COMPILE([#include <sched.h>], [sched_yield();],
