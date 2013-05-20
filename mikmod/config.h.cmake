@@ -125,7 +125,7 @@
 #cmakedefine PACKAGE_VERSION
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#cmakedefine RETSIGTYPE
+#cmakedefine RETSIGTYPE ${RETSIGTYPE}
 
 /* Define if your system is SOLARIS. */
 #cmakedefine SOLARIS
