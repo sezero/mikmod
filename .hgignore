@@ -1,6 +1,7 @@
 \.o$
 \.lo$
 ^libmikmod/stamp-h1$
+^libmikmod/B$
 ^libmikmod/build$
 ^libmikmod/autom4te\.cache$
 ^libmikmod/Makefile.in$
@@ -49,6 +50,7 @@
 ^libmikmod/macintosh/_libmikmodversion\.r$
 ^libmikmod/macintosh/mikmod\.h$
 ^libmikmod/stamp-h$
+^mikmod/B
 ^mikmod/src/Makefile$
 ^mikmod/src/mikmod$
 ^mikmod/src/stamp-h1$
