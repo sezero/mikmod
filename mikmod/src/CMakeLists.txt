@@ -22,9 +22,19 @@ SET(mikmod_SRCS
    musleep.c
 )
 
+find_library(LIBMIKMOD_LIB "mikmod")
+IF(LIBMIKMOD_LIB STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
+    # Do nothing.
+    MESSAGE (FATAL_ERROR "libmikmod must be present")
+ELSE(LIBMIKMOD_LIB STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
+    SET(LIBMIKMOD_LIB_LIST ${LIBMIKMOD_LIB})
+ENDIF(LIBMIKMOD_LIB STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
+
+include_directories(${libmikmod_INCLUDE_DIRS})
+
 add_executable(mikmod ${mikmod_SRCS})
 
-target_link_libraries(mikmod)
+target_link_libraries(mikmod "ncurses" ${LIBMIKMOD_LIB_LIST})
 
 install(TARGETS mikmod DESTINATION bin)
 
