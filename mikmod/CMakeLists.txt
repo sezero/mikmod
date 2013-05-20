@@ -49,6 +49,10 @@ CHECK_MULTI_FUNCTIONS_EXISTS(
     vprintf
 )
 
+IF (HAVE_USLEEP)
+    SET (HAVE_USLEEP_PROTO 1)
+ENDIF (HAVE_USLEEP)
+
 IF (NOT CURSES_FOUND)
     MESSAGE(FATAL_ERROR "Curses not found.")
 ENDIF (NOT CURSES_FOUND)
@@ -138,6 +142,7 @@ endif(RETSIGTYPE_TEST)
 ########### install files ###############
 
 ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+SET (PACKAGE_DATA_DIR "${DATADIR}/mikmod")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 

@@ -107,7 +107,7 @@
 #cmakedefine PACKAGE_BUGREPORT
 
 /* Define the directory for shared data. */
-#cmakedefine PACKAGE_DATA_DIR
+#cmakedefine PACKAGE_DATA_DIR "${PACKAGE_DATA_DIR}"
 
 /* Define to the full name of this package. */
 #cmakedefine PACKAGE_NAME
