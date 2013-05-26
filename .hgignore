@@ -5,6 +5,7 @@
 ^libmikmod/build$
 ^libmikmod/autom4te\.cache$
 ^libmikmod/Makefile.in$
+^libmikmod/cmake/Shlomif_Common\.cmake$
 ^libmikmod/dlapi/Makefile.in$
 ^libmikmod/docs/Makefile.in$
 ^libmikmod/dos/Makefile.in$

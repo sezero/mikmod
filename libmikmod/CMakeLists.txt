@@ -24,7 +24,11 @@
 #
 # (This copyright notice applies only to this file)
 
+SET (private_mod_path "${CMAKE_SOURCE_DIR}/cmake")
+LIST (APPEND CMAKE_MODULE_PATH "${private_mod_path}")
 INCLUDE(Shlomif_Common)
+
+SHLOMIF_COMMON_SETUP("${private_mod_path}")
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
