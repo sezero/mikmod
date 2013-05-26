@@ -52,6 +52,7 @@
 ^libmikmod/macintosh/mikmod\.h$
 ^libmikmod/stamp-h$
 ^mikmod/B
+^mikmod/CMake/Shlomif_Common\.cmake$
 ^mikmod/src/Makefile$
 ^mikmod/src/mikmod$
 ^mikmod/src/stamp-h1$

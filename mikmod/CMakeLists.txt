@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
+SET (private_mod_path "${CMAKE_SOURCE_DIR}/CMake")
+LIST (APPEND CMAKE_MODULE_PATH "${private_mod_path}")
 INCLUDE(Shlomif_Common)
 
-
+SHLOMIF_COMMON_SETUP("${private_mod_path}")
 
 SET (VERSION "3.1.5")
 
