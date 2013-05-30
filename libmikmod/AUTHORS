@@ -94,6 +94,8 @@ Contributors on the Windows side
   created the DirectSound driver.
 * Bjornar Henden <bhenden@online.no>
   created the Multimedia API windows driver.
+* Paul Spark <sparkynz74@gmail.com>
+  created the SDL windows driver and made changes to build with MSVC++ 6.
 
 Contributors on the Dos side
 ----------------------------
