@@ -22,7 +22,7 @@
 
   $Id$
 
-  Driver for output on SDL platforms 
+  Driver for output on SDL platforms
 
 ==============================================================================*/
 
@@ -64,12 +64,12 @@ void SDLSoundCallback( void *userdata, Uint8 *pbStream, int nDataLen );
 BOOL SetupSDLAudio( void )
 {
   g_AudioSpec.freq     = 44100;
-  g_AudioSpec.format   = ( md_mode & DMODE_16BITS ) ? AUDIO_S16SYS : AUDIO_S8; 
+  g_AudioSpec.format   = ( md_mode & DMODE_16BITS ) ? AUDIO_S16SYS : AUDIO_S8;
   g_AudioSpec.channels = ( md_mode & DMODE_STEREO ) ?  2 : 1;
   g_AudioSpec.silence  = 0;
   g_AudioSpec.samples  = g_Samples;
   g_AudioSpec.padding  = 0;
-  g_AudioSpec.size     = 0;  
+  g_AudioSpec.size     = 0;
   g_AudioSpec.userdata = 0;
 
   g_AudioSpec.callback = SDLSoundCallback;
@@ -92,7 +92,7 @@ void SDLSoundCallback( void *userdata, Uint8 *pbStream, int nDataLen )
   // PDS: Looks as though SDL knows how many bytes to ask for for stereo and 16 bit..
   int nSampleDataBytes = nDataLen;
 
-  if( ( ! g_BigTuneAvailStarted ) || ( ! g_Playing ) ) 
+  if( ( ! g_BigTuneAvailStarted ) || ( ! g_Playing ) )
   {
     memset( pbStream, 0, nSampleDataBytes );
     return;
@@ -148,7 +148,7 @@ static BOOL SDLDrv_Init(void)
   g_BigTuneAvailW = 0;
   g_BigTunePlayed = 0;
 
-  // initialize the library 
+  // initialize the library
   md_mode |= DMODE_SOFT_MUSIC;
 
 	return VC_Init();
@@ -202,11 +202,11 @@ static void SDLDrv_Update( void )
     return;
   }
 
-	if( Player_Paused_internal() ) 
+	if( Player_Paused_internal() )
   {
 		VC_SilenceBytes( (SBYTE *) &g_BigTuneBuffer[ g_BigTuneAvailW ], (ULONG) g_BigTuneUpdateNumSamples );
-	} 
-  else 
+	}
+  else
   {
 		VC_WriteBytes( (SBYTE *) &g_BigTuneBuffer[ g_BigTuneAvailW ], (ULONG) g_BigTuneUpdateNumSamples );
 	}
