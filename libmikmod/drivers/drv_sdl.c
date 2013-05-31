@@ -29,6 +29,11 @@
 /* Written by Paul Spark <sparkynz74@gmail.com> */
 
 #include <time.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "mikmod_internals.h"
 
 #ifdef DRV_SDL
@@ -44,16 +49,16 @@ SDL_AudioSpec  g_AudioSpec;
 
 int    g_Samples = 2048;
 
-BYTE  *g_SampleBuffer            = NULL;
-BYTE  *g_BigTuneBuffer           = NULL;
+UBYTE  *g_SampleBuffer            = NULL;
+UBYTE  *g_BigTuneBuffer           = NULL;
 ULONG  g_BigTuneAvailW           = 0;
 ULONG  g_BigTunePlayed           = 0;
 ULONG  g_BigTuneBufferMax        = 512 * 1024 * 2 * 2;
 ULONG  g_BigTuneUpdateNumSamples = 65536;
-BOOL   g_BigTuneAvailStarted     = FALSE;
-BOOL   g_WrapOccurred            = FALSE;
-BOOL   g_WrapToZeroPending       = FALSE;
-BOOL   g_Playing                 = FALSE;
+BOOL   g_BigTuneAvailStarted     = 0;
+BOOL   g_WrapOccurred            = 0;
+BOOL   g_WrapToZeroPending       = 0;
+BOOL   g_Playing                 = 0;
 
 void SDLSoundCallback( void *userdata, Uint8 *pbStream, int nDataLen );
 
@@ -75,10 +80,10 @@ BOOL SetupSDLAudio( void )
     g_AudioSpec.callback = SDLSoundCallback;
 
     if( SDL_OpenAudio( &g_AudioSpec, NULL ) < 0 )
-        return FALSE;
+        return 0;
 
     SDL_PauseAudio( 0 );
-    return TRUE;
+    return 1;
 }
 
 //--------------------------------------------------------------------------------------------
@@ -107,7 +112,7 @@ void SDLSoundCallback( void *userdata, Uint8 *pbStream, int nDataLen )
     {
         // PDS: Writer will have wrapped before we do.. but we clear its flag when reader reaches end of buffer
         //      and wraps also..
-        g_WrapOccurred  = FALSE;
+        g_WrapOccurred  = 0;
     }
 
     // PDS: Start playing from beginning of buffer again if end reached..
@@ -139,14 +144,14 @@ static BOOL SDLDrv_Init(void)
 {
     if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
     {
-        return FALSE;
+        return 0;
     }
 
     // PDS: Set up callback etc
     SetupSDLAudio();
 
     // PDS: Set up big buffer which will get updated by MikMod Update function..
-    g_BigTuneBuffer = (BYTE *) malloc( g_BigTuneBufferMax );
+    g_BigTuneBuffer = (UBYTE *) malloc( g_BigTuneBufferMax );
     g_BigTuneAvailW = 0;
     g_BigTunePlayed = 0;
 
@@ -183,7 +188,7 @@ static void SDLDrv_Update( void )
     //      ..however, we have a circular buffer ..
     if( ( g_WrapOccurred ) &&
         ( g_BigTuneAvailW + g_BigTuneUpdateNumSamples >= g_BigTunePlayed ) &&
-        ( g_BigTuneAvailStarted == TRUE ) )
+        g_BigTuneAvailStarted)
     {
         return;
     }
@@ -192,15 +197,15 @@ static void SDLDrv_Update( void )
     {
         // PDS: Wrap and continue..
         g_BigTuneAvailW     = 0;
-        g_WrapToZeroPending = FALSE;
+        g_WrapToZeroPending = 0;
     }
 
     // PDS: Start writing data at start of buffer again..
     if( g_BigTuneAvailW + g_BigTuneUpdateNumSamples > g_BigTuneBufferMax )
     {
         // PDS: Reader/player will clear wrap flag when it wraps itself..
-        g_WrapOccurred = TRUE;
-        g_WrapToZeroPending = TRUE;
+        g_WrapOccurred = 1;
+        g_WrapToZeroPending = 1;
         return;
     }
 
@@ -215,19 +220,19 @@ static void SDLDrv_Update( void )
 
     g_BigTuneAvailW += g_BigTuneUpdateNumSamples;
 
-    g_BigTuneAvailStarted = TRUE;
+    g_BigTuneAvailStarted = 1;
 }
 
 static void SDLDrv_PlayStop(void)
 {
-    g_Playing = FALSE;
+    g_Playing = 0;
 
     VC_PlayStop();
 }
 
 static BOOL SDLDrv_PlayStart(void)
 {
-    g_Playing = TRUE;
+    g_Playing = 1;
     return VC_PlayStart();
 }
 

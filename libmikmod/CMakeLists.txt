@@ -259,6 +259,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_pipe.c
     drivers/drv_raw.c
     drivers/drv_sam9407.c
+    drivers/drv_sdl.c
     drivers/drv_sgi.c
     drivers/drv_stdout.c
     drivers/drv_sun.c
@@ -374,6 +375,13 @@ IF (ALSA_FOUND)
     ADD_DEFINITIONS("-DHAVE_ALSA_ASOUNDLIB_H=1")
     SET (DRV_ALSA 1)
 ENDIF (ALSA_FOUND)
+
+include(FindSDL)
+
+IF (SDL_FOUND)
+    SET (DRV_SDL 1)
+ENDIF (SDL_FOUND)
+
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
@@ -385,7 +393,7 @@ CONFIGURE_FILE(
     @ONLY
     )
 
-LIST (APPEND EXTRA_LIBS ${ALSA_LIBRARIES})
+LIST (APPEND EXTRA_LIBS ${ALSA_LIBRARIES} ${SDL_LIBRARY})
 
 IF (UNIX)
     SET(MATH_LIB "m")
@@ -398,7 +406,7 @@ LIST (APPEND EXTRA_LIBS ${MATH_LIB})
 FOREACH (TGT ${FREECELL_SOLVER_LIBS})
     TARGET_LINK_LIBRARIES ("${TGT}"
         ${EXTRA_LIBS})
-    INCLUDE_DIRECTORIES(AFTER ${ALSA_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(AFTER ${ALSA_INCLUDE_DIRS} ${SDL_INCLUDE_DIR})
 ENDFOREACH (TGT)
 
 INSTALL(

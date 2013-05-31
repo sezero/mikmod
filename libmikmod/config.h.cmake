@@ -1,6 +1,3 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
-/* ========== Package information */
-
 /* Package name (libmikmod) */
 #undef PACKAGE
 /* Package version */
@@ -30,6 +27,8 @@
 #cmakedefine DRV_OSS 1
 /* Define if the Linux SAM9407 driver is compiled */
 #undef DRV_SAM9407
+/* Define if the SDL audio driver is compiled */
+#cmakedefine DRV_SDL 1
 /* Define if the SGI audio driver is compiled */
 #cmakedefine DRV_SGI 1
 /* Define if the Sun audio driver or compatible (NetBSD, OpenBSD)
