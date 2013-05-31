@@ -40,6 +40,12 @@ extern "C" {
 
 #include <mikmod_build.h>
 
+
+#ifdef MSVC6
+#pragma warning (disable : 4090)
+#pragma warning (disable : 4022)
+#endif
+
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
@@ -692,8 +698,10 @@ extern MikMod_callback_t vc_callback;
 
 #elif defined WIN32 || defined __WIN64 || (defined __APPLE__ && defined (__i386__) && defined __VEC__)
 
+#ifndef MSVC6
 // FIXME: emmintrin.h requires VC6 processor pack or VC2003+
 #define HAVE_SSE2
+#endif
 
 /* Fixes couples warnings */
 #ifdef _MSC_VER

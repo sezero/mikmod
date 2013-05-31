@@ -67,7 +67,11 @@ void* MikMod_realloc(void *data, size_t size)
 		}
 		return 0;
 #elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
+#ifdef MSVC6
+		return realloc(data, size);
+#else
 		return _aligned_realloc(data, size, ALIGN_STRIDE);
+#endif
 #else
 		char *newPtr = (char *)realloc(get_pointer(data), size + ALIGN_STRIDE + sizeof(void*));
 		return align_pointer(newPtr, ALIGN_STRIDE);
@@ -88,7 +92,11 @@ void* MikMod_malloc(size_t size)
 	}
 	return 0;
 #elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
+#ifdef MSVC6
+	void * d = malloc(size);
+#else
 	void * d = _aligned_malloc(size, ALIGN_STRIDE);
+#endif
 	if (d)
 	{
 		ZeroMemory(d, size);
@@ -117,7 +125,11 @@ void* MikMod_calloc(size_t nitems,size_t size)
 	}
 	return 0;
 #elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
+#ifdef MSVC6
+	void * d = malloc(size * nitems);
+#else
 	void * d = _aligned_malloc(size * nitems, ALIGN_STRIDE);
+#endif
 	if (d)
 	{
 		ZeroMemory(d, size * nitems);
@@ -142,7 +154,11 @@ void MikMod_free(void *data)
 #if defined __MACH__
 		free(data);
 #elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
+#ifdef MSVC6
+		free(data);
+#else
 		_aligned_free(data);
+#endif
 #else
 		free(get_pointer(data));
 #endif

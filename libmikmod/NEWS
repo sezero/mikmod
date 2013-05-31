@@ -1,6 +1,19 @@
 Summary of changes between libmikmod 3.1.11 and libmikmod 3.2.0 (Xorigad):
 ==========================================================================
 
+libmikmod 3.4.0 was released on TBD
+
+THANKS
+
+- Paul Spark <sparkynz74@gmail.com> for allowing libmikmod to build
+  on Microsoft Visual C++ 6.0 compiler with the new SDL driver.
+
+NEW FEATURES
+
+- CMake build system.
+- Windows SDL driver
+
+
 libmikmod 3.2.0 was released on 01-June-2012.
 
 THANKS
