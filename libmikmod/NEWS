@@ -26,7 +26,7 @@ THANKS
 - Anders F Björklund <afb@algonet.se>, for updates, fixes and tests on
   Mac Platforms and rpm support.
 - Ivan Shmakov, for the NAS audio driver.
-- Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora, 
+- Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora,
 Debian, etc.)
 - P. Martin - the macports maintainer for some patches.
 - Stéphan Kochen for two patches: one to change MDRIVER fields to "const",
@@ -42,9 +42,9 @@ NEW FEATURES
 - New function 'Player_QueryVoices' added, which is used to return
   dynamic channel information about the module player. (Mikmod 3.2.2 uses
   it for its dynamic panels).
-- Mixing with floating point output. The MacOSX CoreAudio driver uses it. 
+- Mixing with floating point output. The MacOSX CoreAudio driver uses it.
   Thanks goes to Anders F Björklund for implementing this.
-- AIFF disk writer driver.  
+- AIFF disk writer driver.
 - RPM support. To build a rpm, download the tar.gz, and run this:
    % rpmbuild -tb libmikmod-3.2.0-beta2.tar.gz
 - New NAS driver (Network Audio System). Tested with nasd and NCD X terminals.
@@ -82,7 +82,7 @@ BUGFIXES
 - Apply the libmikmod-CVE-2007-6720.patch (from Mandriva/Mageia).
 - Implement a fix for sprintf-of-list
     - sprintf(list, "%sSOMETHING", list) does not work as expected and
-    suffers from the 
+    suffers from the
     http://en.wikipedia.org/wiki/Schlemiel_the_Painter%27s_algorithm
     syndrome.
 - Apply a patch for non-blocking opening of the OSS driver. (from Mandriva/Mageia).
@@ -181,7 +181,7 @@ BUGFIXES
 - ProTracker effect F (change speed or bpm) should now be correctly handled
   when its value is 32, depending on the module type (some formats will use
   it as a speed value, others as a bpm value).
-  
+
 - XM playback stopped when reaching pattern 255 in the order list.
 
 - Corrupted envelopes in XM instruments are detected and some repair is
@@ -250,10 +250,10 @@ THANKS
 
 - Many thanks to ``UFO'', Thomas Neumann, James Kehl and Vito Caputo for their
   help, code and feedback.
-  
+
 - Special thanks to Gerd Rausch, for writing both the Linux sam9407 driver and
   the associated Mikmod driver. Nice work !
-  
+
 - Thanks to Bastien Nocera for letting me do some tests under Linux/PPC.
 
 
@@ -263,20 +263,20 @@ BUGFIXES
   case, the first envelope point was correct, the remaining half points were
   bogus, and the other half completely random. This fix is definitely worth
   the upgrade.
- 
+
 - In MOD files, effect 0xc (set channel volume) with effect parameter 0xff was
   misplayed as a note cut.
-  
+
 - In MOD files too, effects 0x1, 0x2 and 0x3 (portamentos) with effect
   parameter 0x00 were using the command memory, but these commands do not have
   effect memory for MOD files.
-  
+
 - The Wuzamod check for STM modules wasn't present in 3.1.8, despite what the
   release notes said )-:
- 
+
 - Enabling the envelope (with an effect) for a sample with no associated
   envelope would cause immediate coredumps. Now fixed.
-  
+
 - Panning was ignored in GDM modules.
 
 - Sample rate was incorrect for STM and STX modules.
@@ -296,11 +296,11 @@ NEW FEATURES
 
 - Due to popular request, the function Player_LoadTitleFP() has been added to
   the library.
-  
+
 - Under Unix systems, make targets "check" and "uninstall" have been added.
   However, due to a bug in automake, "make uninstall" will only work correctly
   with the next release of automake (or the current CVS tree).
-  
+
 - New output driver for sam9407-based soundcards under Linux, featuring
   hardware playback.
 
@@ -477,7 +477,7 @@ NEW FEATURES
   parameters to the drivers. This makes libmikmod 3.1.7 incompatible with the
   previous versions, but updated libmikmod-based players will be released soon.
   The shared library version has increased (now 2.0). This number scheme is
-  going to be as crazy as ncurses' one... 
+  going to be as crazy as ncurses' one...
 
 
 PLATFORM SPECIFIC
