@@ -12,7 +12,7 @@ NEW FEATURES
 
 - CMake build system.
 - Windows SDL driver
-
+- ALSA driver now supports only the new ALSA (to remove unnecessary #ifdefs.)
 
 libmikmod 3.2.0 was released on 01-June-2012.
 
