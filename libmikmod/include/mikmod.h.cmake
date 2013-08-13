@@ -40,12 +40,8 @@ extern "C" {
  * ========== Compiler magic for shared libraries
  */
 
-#if defined WIN32 && defined _DLL
-#ifdef DLL_EXPORTS
+#if defined(_WIN32) && defined(MIKMOD_DLL_BUILD)
 #define MIKMODAPI __declspec(dllexport)
-#else
-#define MIKMODAPI __declspec(dllimport)
-#endif
 #else
 #define MIKMODAPI
 #endif
@@ -69,11 +65,22 @@ MIKMODAPI extern long MikMod_GetVersion(void);
  *  ========== Platform independent-type definitions
  */
 
-#ifdef WIN32
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <io.h>
 #include <mmsystem.h>
+/* Avoid conflicts with windef.h */
+#define SBYTE _mm_SBYTE
+#define UBYTE _mm_UBYTE
+#define SWORD _mm_SWORD
+#define UWORD _mm_UWORD
+#define SLONG _mm_SLONG
+#define ULONG _mm_ULONG
+#define BOOL  _mm_BOOL
+#define CHAR  _mm_CHAR
 #endif
 
 #if defined(__OS2__)||defined(__EMX__)
@@ -102,7 +109,7 @@ typedef unsigned char   UBYTE;      /* 1 byte, unsigned */
 typedef signed short    SWORD;      /* 2 bytes, signed */
 typedef unsigned short  UWORD;      /* 2 bytes, unsigned */
 typedef signed long     SLONG;      /* 4 bytes, signed */
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)
 typedef unsigned long   ULONG;      /* 4 bytes, unsigned */
 typedef int             BOOL;       /* 0=false, <>0 true */
 #endif

@@ -180,11 +180,7 @@ const CHAR *_mm_errmsg[MMERR_MAX+1] =
 	"Invalid error code"
 };
 
-#ifdef MSVC6
-MIKMODAPI char *MikMod_strerror(int code)
-#else
 MIKMODAPI const char *MikMod_strerror(int code)
-#endif
 {
 	if ((code<0)||(code>MMERR_MAX)) code=MMERR_MAX+1;
 	return _mm_errmsg[code];

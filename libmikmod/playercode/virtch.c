@@ -47,7 +47,6 @@
 #include <string.h>
 
 #include "mikmod_internals.h"
-#include "mikmod.h"
 
 /*
    Constant definitions

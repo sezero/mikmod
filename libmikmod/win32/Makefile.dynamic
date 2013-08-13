@@ -11,7 +11,7 @@
 # Your compiler here
 CC=cl
 # Compiler flags
-CFLAGS=/nologo /O2 /MTd /Zi /Fm /c /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H
+CFLAGS=/nologo /O2 /MTd /Zi /Fm /c /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H /DMIKMOD_DLL_BUILD
 COMPILE=$(CC) $(CFLAGS) /I..\include /I.. /I..\win32
 
 .SUFFIXES:
@@ -25,8 +25,8 @@ LIBS=$(DLLNAME)
 DRIVER_OBJ=drv_ds.o drv_win.o
 
 OBJ=$(DRIVER_OBJ) \
-    drv_nos.o drv_raw.o drv_stdout.o drv_wav.o \
-    load_669.o load_amf.o load_dsm.o load_far.o load_gdm.o load_it.o  \
+    drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
+    load_669.o load_amf.o load_dsm.o load_far.o load_gdm.o load_gt2.o load_it.o \
     load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
@@ -61,6 +61,9 @@ drv_raw.o:      ..\drivers\drv_raw.c \
 drv_stdout.o:   ..\drivers\drv_stdout.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\drivers\drv_stdout.c
+drv_aiff.o:      ..\drivers\drv_aiff.c \
+	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
+	$(COMPILE) /Fo$@ ..\drivers\drv_aiff.c
 drv_wav.o:      ..\drivers\drv_wav.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\drivers\drv_wav.c
@@ -82,6 +85,9 @@ load_far.o:     ..\loaders\load_far.c \
 load_gdm.o:     ..\loaders\load_gdm.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\loaders\load_gdm.c
+load_gt2.o:     ..\loaders\load_gt2.c \
+	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
+	$(COMPILE) /Fo$@ ..\loaders\load_gt2.c
 load_it.o:      ..\loaders\load_it.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\loaders\load_it.c

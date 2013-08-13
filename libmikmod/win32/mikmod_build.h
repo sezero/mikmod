@@ -40,12 +40,8 @@ extern "C" {
  * ========== Compiler magic for shared libraries
  */
 
-#if defined WIN32 && defined _DLL
-#ifdef DLL_EXPORTS
+#if defined(_WIN32) && defined(MIKMOD_DLL_BUILD)
 #define MIKMODAPI __declspec(dllexport)
-#else
-#define MIKMODAPI __declspec(dllimport)
-#endif
 #else
 #define MIKMODAPI
 #endif
@@ -55,8 +51,8 @@ extern "C" {
  */
 
 #define LIBMIKMOD_VERSION_MAJOR 3L
-#define LIBMIKMOD_VERSION_MINOR 2L
-#define LIBMIKMOD_REVISION      0L
+#define LIBMIKMOD_VERSION_MINOR 3L
+#define LIBMIKMOD_REVISION      2L
 
 #define LIBMIKMOD_VERSION \
 	((LIBMIKMOD_VERSION_MAJOR<<16)| \
@@ -69,11 +65,22 @@ MIKMODAPI extern long MikMod_GetVersion(void);
  *	========== Platform independent-type definitions
  */
 
-#ifdef WIN32
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <io.h>
 #include <mmsystem.h>
+/* Avoid conflicts with windef.h */
+#define SBYTE _mm_SBYTE
+#define UBYTE _mm_UBYTE
+#define SWORD _mm_SWORD
+#define UWORD _mm_UWORD
+#define SLONG _mm_SLONG
+#define ULONG _mm_ULONG
+#define BOOL  _mm_BOOL
+#define CHAR  _mm_CHAR
 #endif
 
 #if defined(__OS2__)||defined(__EMX__)
@@ -104,7 +111,7 @@ typedef unsigned char   UBYTE;      /* 1 byte, unsigned */
 typedef signed short    SWORD;      /* 2 bytes, signed */
 typedef unsigned short  UWORD;      /* 2 bytes, unsigned */
 typedef signed long     SLONG;      /* 4 bytes, signed */
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)
 typedef unsigned long   ULONG;      /* 4 bytes, unsigned */
 typedef int             BOOL;       /* 0=false, <>0 true */
 #endif
@@ -218,7 +225,7 @@ typedef MikMod_handler *MikMod_handler_t;
 
 MIKMODAPI extern int  MikMod_errno;
 MIKMODAPI extern BOOL MikMod_critical;
-MIKMODAPI extern char *MikMod_strerror(int);
+MIKMODAPI extern const char *MikMod_strerror(int);
 
 MIKMODAPI extern MikMod_handler_t MikMod_RegisterErrorHandler(MikMod_handler_t);
 
@@ -270,7 +277,7 @@ typedef struct MREADER {
 typedef struct MWRITER {
 	BOOL (*Seek)(struct MWRITER*,long,int);
 	long (*Tell)(struct MWRITER*);
-	BOOL (*Write)(struct MWRITER*,void*,size_t);
+	BOOL (*Write)(struct MWRITER*,const void*,size_t);
 	BOOL (*Put)(struct MWRITER*,int);
 } MWRITER;
 
@@ -604,6 +611,8 @@ MIKMODAPI extern void    Player_ToggleMute(SLONG,...);
 MIKMODAPI extern int     Player_GetChannelVoice(UBYTE);
 MIKMODAPI extern UWORD   Player_GetChannelPeriod(UBYTE);
 MIKMODAPI extern int     Player_QueryVoices(UWORD numvoices, VOICEINFO *vinfo);
+MIKMODAPI extern int     Player_GetRow(void);
+MIKMODAPI extern int     Player_GetOrder(void);
 
 typedef void (*MikMod_player_t)(void);
 typedef void (*MikMod_callback_t)(unsigned char *data, size_t len);
@@ -640,20 +649,20 @@ enum {
 #define DMODE_SURROUND   0x0100 /* enable surround sound */
 #define DMODE_INTERP     0x0200 /* enable interpolation */
 #define DMODE_REVERSE    0x0400 /* reverse stereo */
-#define DMODE_SIMDMIXER	 0x0800 /* enable SIMD mixing */
+#define DMODE_SIMDMIXER    0x0800 /* enable SIMD mixing */
 #define DMODE_NOISEREDUCTION 0x1000 /* Low pass filtering */
 
 struct SAMPLOAD;
 typedef struct MDRIVER {
 struct MDRIVER* next;
-	CHAR*       Name;
-	CHAR*       Version;
+	const CHAR* Name;
+	const CHAR* Version;
 
 	UBYTE       HardVoiceLimit; /* Limit of hardware mixer voices */
 	UBYTE       SoftVoiceLimit; /* Limit of software mixer voices */
 
-	CHAR        *Alias;
-	CHAR        *CmdLineHelp;
+	const CHAR* Alias;
+	const CHAR* CmdLineHelp;
 
 	void        (*CommandLine)      (CHAR*);
 	BOOL        (*IsPresent)        (void);

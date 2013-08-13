@@ -45,7 +45,6 @@
 #include <string.h>
 
 #include "mikmod_internals.h"
-#include "mikmod.h"
 
 /*
    Constant Definitions
@@ -130,7 +129,7 @@ static	SLONGLONG idxsize,idxlpos,idxlend;
 static	SLONG *vc_tickbuf=NULL;
 static	UWORD vc_mode;
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 // Weird bug in compiler
 typedef void (*MikMod_callback_t)(unsigned char *data, size_t len);
 #endif
@@ -322,7 +321,6 @@ static __inline SWORD GetSample(const SWORD* const srce, SLONGLONG index)
 static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,ULONG todo)
 {
 	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
-	SWORD s[8];
 	SWORD sample=0;
 	SLONG remain = todo;
 
@@ -363,6 +361,7 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 	remain = todo&3;
 		remain = todo&3;
 	{
+		SWORD s[8];
 		vector signed short r0 = vec_ld(0, vol);
 		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
 																		 0, 1, // l
@@ -810,7 +809,7 @@ static void Mix32To8_Stereo(SBYTE* dste,const SLONG *srce,NATIVE count)
 #if defined HAVE_SSE2
 #define SHIFT_MIX_TO_16 (BITSHIFT + 16 - 16)
 // TEST: Ok
-static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
+static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE count)
 {
 	int remain = count;
 
@@ -832,8 +831,8 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
 		{
          // Load 32bit sample. 1st average
 		__m128i v0 = _mm_add_epi32(
-		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+0)), SHIFT_MIX_TO_16),
- 		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+4)), SHIFT_MIX_TO_16)
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+0)), SHIFT_MIX_TO_16),
+ 		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+4)), SHIFT_MIX_TO_16)
 		);
 		// v0: s0.l+s2.l | s0.r+s2.r | s1.l+s3.l | s1.r+s3.r
 
@@ -844,8 +843,8 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
 
 
 		__m128i v2 = _mm_add_epi32(
-		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+8)), SHIFT_MIX_TO_16),
-  		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+12)), SHIFT_MIX_TO_16)
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+8)), SHIFT_MIX_TO_16),
+  		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+12)), SHIFT_MIX_TO_16)
 		);
 		// v2: s4.l+s6.l | s4.r+s6.r | s5.l+s7.l | s5.r+s7.r
 
@@ -859,16 +858,16 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
 
         // Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r)
 		v0 = _mm_add_epi32(
-		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+16)), SHIFT_MIX_TO_16),
- 		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+20)), SHIFT_MIX_TO_16)
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+16)), SHIFT_MIX_TO_16),
+ 		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+20)), SHIFT_MIX_TO_16)
 		);  //128bit = 2 stereo samples
 
 		// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
         v1 = _mm_srai_epi32(_mm_add_epi32(v0, mm_hiqq(v0)), 2);
 
 		v2 = _mm_add_epi32(
-		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+24)), SHIFT_MIX_TO_16),
-  		_mm_srai_epi32(_mm_loadu_si128((__m128i*)(srce+28)), SHIFT_MIX_TO_16)
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+24)), SHIFT_MIX_TO_16),
+  		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+28)), SHIFT_MIX_TO_16)
 		);
 
         v3 = _mm_srai_epi32(_mm_add_epi32(v2, mm_hiqq(v2)), 2);  //Upper 64bit is unused

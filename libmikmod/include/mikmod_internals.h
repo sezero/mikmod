@@ -37,11 +37,13 @@ extern "C" {
 #if defined(__OS2__)||defined(__EMX__)||defined(WIN32)
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
+#if defined(_WIN32) && defined(unix)
+#undef unix
+#endif
 
 #include <mikmod_build.h>
 
-
-#ifdef MSVC6
+#if defined(_MSC_VER) && (_MSC_VER < 1300)
 #pragma warning (disable : 4090)
 #pragma warning (disable : 4022)
 #endif
@@ -49,7 +51,7 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if defined (__arch64__) || defined(__alpha) || defined (__x64_64) || defined (_LP64) || defined (__powerpc64__)
+#if !defined(WIN32) && (defined (__arch64__) || defined(__alpha) || defined (__x64_64) || defined (_LP64) || defined (__powerpc64__))
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
 #elif defined(__WATCOMC__)
@@ -696,13 +698,20 @@ extern MikMod_callback_t vc_callback;
 #define HAVE_ALTIVEC
 #endif // __VEC__
 
-#elif defined WIN32 || defined __WIN64 || (defined __APPLE__ && defined (__i386__) && defined __VEC__)
+#elif defined(__APPLE__) && defined(__i386__)
 
-#ifndef MSVC6
-// FIXME: emmintrin.h requires VC6 processor pack or VC2003+
+#if defined(__SSE2__)
 #define HAVE_SSE2
-#endif
+#endif // __SSE2__
 
+#elif defined(_WIN64) /* both _MSC_VER and __MINGW32__ */
+
+#define HAVE_SSE2
+
+#elif (defined(_MSC_VER) && (_MSC_VER >= 1300)) || (defined(__MINGW32__) && defined(__SSE2__))
+// FIXME: emmintrin.h requires VC6 processor pack or VC2003+
+// FIXME: x86 MinGW needs proper -march=xx or -msse2 to define __SSE2__
+#define HAVE_SSE2
 /* Fixes couples warnings */
 #ifdef _MSC_VER
 #pragma warning(disable:4761)
@@ -714,7 +723,11 @@ extern MikMod_callback_t vc_callback;
 
 /*========== SIMD mixing helper functions =============*/
 
-#define IS_ALIGNED_16(ptr) (!(((int)(ptr)) & 15))
+#if defined(_WIN64)
+#define IS_ALIGNED_16(ptr) (!(((long long)(ptr)) & 15))
+#else /* long cast should be OK for all else */
+#define IS_ALIGNED_16(ptr) (!(((long)(ptr)) & 15))
+#endif
 
 /* Altivec helper function */
 #if defined HAVE_ALTIVEC

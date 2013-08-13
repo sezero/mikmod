@@ -42,7 +42,12 @@
 
 #include <windows.h>
 
+#if defined(_MSC_VER)
 #pragma comment(lib,"winmm.lib")
+#if (_MSC_VER < 1300)
+typedef DWORD DWORD_PTR;
+#endif
+#endif
 
 #define NUMBUFFERS	6				/* number of buffers */
 #define BUFFERSIZE	120				/* buffer size in milliseconds */
@@ -104,13 +109,7 @@ static BOOL WIN_Init(void)
 	wfe.wBitsPerSample=md_mode&DMODE_16BITS?16:8;
 	wfe.cbSize=sizeof(wfe);
 
-#ifdef MSVC6
-    // PDS: Wrong as it seems, the MMSYSTEM.H file defines the callback as a DWORD rather than a
-	//      pointer.. dodgy.. bug in the VC6 header file I reckon..
-    mmr=waveOutOpen(&hwaveout,WAVE_MAPPER,&wfe,(DWORD)WIN_CallBack,0,CALLBACK_FUNCTION);
-#else
 	mmr=waveOutOpen(&hwaveout,WAVE_MAPPER,&wfe,(DWORD_PTR)WIN_CallBack,0,CALLBACK_FUNCTION);
-#endif
 	if (mmr!=MMSYSERR_NOERROR) {
 		_mm_errno=WIN_GetError(mmr);
 		return 1;
@@ -134,7 +133,7 @@ static BOOL WIN_Init(void)
 
 	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
 
-#ifndef MSVC6
+#if !(defined(_MSC_VER) && (_MSC_VER < 1300))
 	// This test only works on Windows XP or later
 	if (IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE))
 	{

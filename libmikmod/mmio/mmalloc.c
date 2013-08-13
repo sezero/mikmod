@@ -34,10 +34,30 @@
 
 #define ALIGN_STRIDE 16
 
+#undef WIN32_ALIGNED_MALLOC
+#undef NEED_ALIGN_POINTER
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+# if defined(_WIN64) /* OK with MSVC and MinGW */
+#  define WIN32_ALIGNED_MALLOC
+# elif defined(_MSC_VER) && (_MSC_VER >= 1300)
+#  define WIN32_ALIGNED_MALLOC
+# elif defined(__MINGW32__)
+  /* no guarantees that msvcrt.dll will have it */
+# endif
+#endif
+#if !(defined(WIN32_ALIGNED_MALLOC) || defined(__MACH__))
+# define NEED_ALIGN_POINTER
+#endif
+
+#ifdef NEED_ALIGN_POINTER
 static void * align_pointer(char *ptr, size_t stride)
 {
 	char *pptr = ptr + sizeof(void*);
 	char *fptr;
+
+	if (ptr == NULL)
+		return NULL;
+
 	size_t err = ((size_t)pptr)&(stride-1);
 	if (err)
 		fptr = pptr + (stride - err);
@@ -53,7 +73,7 @@ static void *get_pointer(void *data)
 	size_t _ptr = *(size_t*)_pptr;
 	return (void*)_ptr;
 }
-
+#endif/* NEED_ALIGN_POINTER */
 
 void* MikMod_realloc(void *data, size_t size)
 {
@@ -66,12 +86,8 @@ void* MikMod_realloc(void *data, size_t size)
 			return d;
 		}
 		return 0;
-#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
-#ifdef MSVC6
-		return realloc(data, size);
-#else
+#elif defined(WIN32_ALIGNED_MALLOC)
 		return _aligned_realloc(data, size, ALIGN_STRIDE);
-#endif
 #else
 		char *newPtr = (char *)realloc(get_pointer(data), size + ALIGN_STRIDE + sizeof(void*));
 		return align_pointer(newPtr, ALIGN_STRIDE);
@@ -91,12 +107,8 @@ void* MikMod_malloc(size_t size)
 		return d;
 	}
 	return 0;
-#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
-#ifdef MSVC6
-	void * d = malloc(size);
-#else
+#elif defined(WIN32_ALIGNED_MALLOC)
 	void * d = _aligned_malloc(size, ALIGN_STRIDE);
-#endif
 	if (d)
 	{
 		ZeroMemory(d, size);
@@ -124,12 +136,8 @@ void* MikMod_calloc(size_t nitems,size_t size)
 		return d;
 	}
 	return 0;
-#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
-#ifdef MSVC6
-	void * d = malloc(size * nitems);
-#else
+#elif defined(WIN32_ALIGNED_MALLOC)
 	void * d = _aligned_malloc(size * nitems, ALIGN_STRIDE);
-#endif
 	if (d)
 	{
 		ZeroMemory(d, size * nitems);
@@ -153,12 +161,8 @@ void MikMod_free(void *data)
 	{
 #if defined __MACH__
 		free(data);
-#elif (defined _WIN32 || defined _WIN64) && !defined(_WIN32_WCE)
-#ifdef MSVC6
-		free(data);
-#else
+#elif defined(WIN32_ALIGNED_MALLOC)
 		_aligned_free(data);
-#endif
 #else
 		free(get_pointer(data));
 #endif

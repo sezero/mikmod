@@ -54,7 +54,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "mikmod.h"
 #include "mikmod_internals.h"
 
 #ifdef SUNOS
