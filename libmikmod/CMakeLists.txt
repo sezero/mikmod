@@ -164,6 +164,7 @@ ADD_SUBDIRECTORY ("mmio")
 ADD_SUBDIRECTORY ("os2")
 ADD_SUBDIRECTORY ("playercode")
 ADD_SUBDIRECTORY ("posix")
+ADD_SUBDIRECTORY ("t")
 ADD_SUBDIRECTORY ("win32")
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -385,7 +386,13 @@ ENDIF (SDL_FOUND)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
+
+# There may be some trailing space - so remove it.
+SET (dest "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${dest}")
+EXECUTE_PROCESS(
+    COMMAND "perl" "-lpi" "-e" "s/[\\t ]+$//" "${dest}"
+)
 
 CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.in
