@@ -519,7 +519,7 @@ static OSStatus OSX_AudioIOProcFloat (AudioDeviceID 		inDevice,
 }
 //________________________________________________________________________________________OSX_HasAltivec()
 
-
+#ifdef HAVE_ALTIVEC
 static BOOL OSX_HasAltivec (void)
 {
     int result = 0;
@@ -528,6 +528,7 @@ static BOOL OSX_HasAltivec (void)
     sysctl(selectors, 2, &result, &length, NULL, 0);
 	return !!result;
 }
+#endif
 
 //________________________________________________________________________________________OSX_IsPresent()
 
