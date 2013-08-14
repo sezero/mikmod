@@ -54,7 +54,7 @@ typedef DWORD DWORD_PTR;
 
 HWAVEOUT	hwaveout;
 WAVEHDR		header[NUMBUFFERS];
-LPSTR		buffer[NUMBUFFERS];		/* pointers to buffers */
+HPSTR		buffer[NUMBUFFERS];		/* pointers to buffers */
 WORD		buffersout;				/* number of buffers playing/about to be played */
 WORD		nextbuffer;				/* next buffer to be mixed */
 ULONG		buffersize;				/* buffer size in bytes */
@@ -165,7 +165,7 @@ static void WIN_Update(void)
 	ULONG done;
 
 	while (buffersout<NUMBUFFERS) {
-		done=VC_WriteBytes(buffer[nextbuffer],buffersize);
+		done=VC_WriteBytes((SBYTE*)buffer[nextbuffer],buffersize);
 		if (!done) break;
 		header[nextbuffer].dwBufferLength=done;
 		waveOutWrite(hwaveout,&header[nextbuffer],sizeof(WAVEHDR));
