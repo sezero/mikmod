@@ -164,6 +164,7 @@ static BOOL DS_Init(void)
 	WAVEFORMATEX pcmwf;
 	DSBPOSITIONNOTIFY positionNotifications[2];
 	DWORD updateBufferThreadID;
+	LPVOID p = NULL;
 
 	if (DirectSoundCreate(NULL,&pSoundCard,NULL)!=DS_OK) {
 		_mm_errno=MMERR_OPENING_AUDIO;
@@ -215,12 +216,12 @@ static BOOL DS_Init(void)
 		return 1;
 	}
 
-	pSoundBuffer->lpVtbl->QueryInterface
-				(pSoundBuffer,&IID_IDirectSoundNotify,(LPVOID*)&pSoundBufferNotify);
-	if (!pSoundBufferNotify) {
+	pSoundBuffer->lpVtbl->QueryInterface(pSoundBuffer,&IID_IDirectSoundNotify,&p);
+	if (!p) {
 		_mm_errno=MMERR_DS_NOTIFY;
 		return 1;
 	}
+	pSoundBufferNotify = (LPDIRECTSOUNDNOTIFY) p;
 
 	notifyUpdateHandle=CreateEvent
 				(NULL,FALSE,FALSE,"libmikmod DirectSound Driver positionNotify Event");
