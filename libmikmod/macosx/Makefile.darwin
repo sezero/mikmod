@@ -1,0 +1,246 @@
+# libmikmod Makefile for targetting Darwin (Mac OS X)
+# Edit the compiler/linker flags, etc. to meet your needs
+
+ifeq ($(CROSS),)
+CC=gcc
+AS=as
+AR=ar
+RANLIB=ranlib
+LIPO=lipo
+else
+CC=$(CROSS)-gcc
+AS=$(CROSS)-as
+AR=$(CROSS)-ar
+RANLIB=$(CROSS)-ranlib
+LIPO=$(CROSS)-lipo
+endif
+
+CPPFLAGS=
+LDLIBS=
+
+# SSE2 support (for x86 builds)
+SSE2FLAGS=-msse2
+
+# altivec support (for ppc builds)
+#VECFLAGS=-maltivec
+# use -faltivec or -mpim-altivec instead. (see Apple gcc man page.)
+VECFLAGS=-faltivec
+
+# support for output to stdout, raw file and wav file
+# are not configurable by default
+
+# support for CoreAudio sound output:
+LDLIBS+=-Wl,-framework,CoreAudio
+CPPFLAGS+=-DDRV_OSX
+
+# support for output via a pipe to another command:
+CPPFLAGS+=-DDRV_PIPE
+
+# support for aiff file output:
+CPPFLAGS+=-DDRV_AIFF
+
+CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SNPRINTF
+
+# compiler flags
+CFLAGS=-O2 -Wall
+CFLAGS+=-ffast-math -fno-common
+#CFLAGS+=-g
+LDFLAGS=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
+# do I need these ones?
+LDFLAGS+=-Wl,-compatibility_version,9 -Wl,-current_version,9.1
+# specifically for 10.6 and newer:
+#CFLAGS+=-mmacosx-version-min=10.6
+#LDFLAGS+=-mmacosx-version-min=10.6 -Wl,-lbundle1.o
+
+COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I.. -I../macosx
+
+.SUFFIXES:
+.SUFFIXES: .o .c
+
+DYLIB_VER=3
+#LIBSHARED=libmikmod.$(DYLIB_VER).dylib
+LIBSHARED=libmikmod.dylib
+LIBSTATIC=libmikmod.a
+
+LIBS=$(LIBSHARED)
+
+DRIVER_OBJ=drv_osx.o drv_pipe.o
+
+OBJ=$(DRIVER_OBJ) \
+    drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
+    load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
+    load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
+    load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
+    mmalloc.o mmerror.o mmio.o mdriver.o mdreg.o \
+    mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
+    npertab.o sloader.o virtch.o virtch2.o virtch_common.o
+#   mdulaw.o
+
+help:
+	@echo "* $(MAKE) dylib : build libmikmod.dylib shared lib"
+	@echo "* $(MAKE) static: build libmikmod.a static library"
+	@echo "*"
+	@echo "* $(MAKE) dylib-sse2 : build libmikmod.dylib with sse2 support (x86)"
+	@echo "* $(MAKE) dylib-altivec : build libmikmod.dylib with altivec support (ppc)"
+	@echo "* $(MAKE) static-sse2 : build libmikmod.a with sse2 support (x86)"
+	@echo "* $(MAKE) static-altivec : build libmikmod.a with altivec support (ppc)"
+
+clean:
+	rm -f $(LIBSHARED) $(LIBSTATIC) *.o
+
+dylib-sse2: CFLAGS+=$(SSE2FLAGS)
+dylib-sse2: dylib
+
+dylib-altivec: CFLAGS+=$(VECFLAGS)
+dylib-altivec: dylib
+
+static-sse2: CFLAGS+=$(SSE2FLAGS)
+static-sse2: static
+
+static-altivec: CFLAGS+=$(VECFLAGS)
+static-altivec: static
+
+dylib: $(LIBSHARED)
+static: $(LIBSTATIC)
+
+$(LIBSHARED): $(OBJ)
+	$(CC) -dynamiclib -o $(LIBSHARED) $(OBJ) $(LDFLAGS) $(LDLIBS)
+
+$(LIBSTATIC): $(OBJ)
+	$(AR) rc $@ $(OBJ)
+	$(RANLIB) $@
+
+
+drv_osx.o:       ../drivers/drv_osx.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_osx.c -o drv_osx.o
+drv_nos.o:      ../drivers/drv_nos.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_nos.c -o drv_nos.o
+drv_raw.o:      ../drivers/drv_raw.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_raw.c -o drv_raw.o
+drv_stdout.o:   ../drivers/drv_stdout.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_stdout.c -o drv_stdout.o
+drv_aiff.o:      ../drivers/drv_aiff.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_aiff.c -o drv_aiff.o
+drv_wav.o:      ../drivers/drv_wav.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_wav.c -o drv_wav.o
+drv_pipe.o:       ../drivers/drv_pipe.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_pipe.c -o drv_pipe.o
+load_669.o:     ../loaders/load_669.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_669.c -o load_669.o
+load_amf.o:     ../loaders/load_amf.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_amf.c -o load_amf.o
+load_asy.o:     ../loaders/load_asy.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_asy.c -o load_asy.o
+load_dsm.o:     ../loaders/load_dsm.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_dsm.c -o load_dsm.o
+load_far.o:     ../loaders/load_far.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_far.c -o load_far.o
+load_gdm.o:     ../loaders/load_gdm.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_gdm.c -o load_gdm.o
+load_gt2.o:     ../loaders/load_gt2.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_gt2.c -o load_gt2.o
+load_it.o:      ../loaders/load_it.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_it.c -o load_it.o
+load_imf.o:     ../loaders/load_imf.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_imf.c -o load_imf.o
+load_m15.o:     ../loaders/load_m15.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_m15.c -o load_m15.o
+load_med.o:     ../loaders/load_med.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_med.c -o load_med.o
+load_mod.o:     ../loaders/load_mod.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_mod.c -o load_mod.o
+load_mtm.o:     ../loaders/load_mtm.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_mtm.c -o load_mtm.o
+load_okt.o:     ../loaders/load_okt.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_okt.c -o load_okt.o
+load_s3m.o:     ../loaders/load_s3m.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_s3m.c -o load_s3m.o
+load_stm.o:     ../loaders/load_stm.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_stm.c -o load_stm.o
+load_stx.o:     ../loaders/load_stx.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_stx.c -o load_stx.o
+load_ult.o:     ../loaders/load_ult.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_ult.c -o load_ult.o
+load_uni.o:     ../loaders/load_uni.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_uni.c -o load_uni.o
+load_xm.o:      ../loaders/load_xm.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_xm.c -o load_xm.o
+mmalloc.o:      ../mmio/mmalloc.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../mmio/mmalloc.c -o mmalloc.o
+mmerror.o:      ../mmio/mmerror.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../mmio/mmerror.c -o mmerror.o
+mmio.o:         ../mmio/mmio.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../mmio/mmio.c -o mmio.o
+mdriver.o:      ../playercode/mdriver.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mdriver.c -o mdriver.o
+mdreg.o:        ../playercode/mdreg.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mdreg.c -o mdreg.o
+mdulaw.o:        ../playercode/mdulaw.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mdulaw.c -o mdulaw.o
+mloader.o:      ../playercode/mloader.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mloader.c -o mloader.o
+mlreg.o:        ../playercode/mlreg.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mlreg.c -o mlreg.o
+mlutil.o:       ../playercode/mlutil.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mlutil.c -o mlutil.o
+mplayer.o:      ../playercode/mplayer.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mplayer.c -o mplayer.o
+munitrk.o:      ../playercode/munitrk.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/munitrk.c -o munitrk.o
+mwav.o:         ../playercode/mwav.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/mwav.c -o mwav.o
+npertab.o:      ../playercode/npertab.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/npertab.c -o npertab.o
+sloader.o:      ../playercode/sloader.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/sloader.c -o sloader.o
+virtch.o:       ../playercode/virtch.c ../playercode/virtch_common.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/virtch.c -o virtch.o
+virtch2.o:      ../playercode/virtch2.c ../playercode/virtch_common.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/virtch2.c -o virtch2.o
+virtch_common.o:        ../playercode/virtch_common.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../playercode/virtch_common.c -o virtch_common.o
+
