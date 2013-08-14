@@ -755,9 +755,9 @@ static inline vector float vec_load_ps1(const float *pF )
 }
 
 // Set vector to 0
-static inline const vector float vec_setzero()
+static inline vector float vec_setzero()
 {
-    return (const vector float) (0.);
+    return (vector float) (0.);
 }
 
 static inline vector signed char vec_set1_8(unsigned char splatchar)
