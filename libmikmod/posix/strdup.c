@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "mikmod.h"
+#include "mikmod_internals.h"
 
 char* strdup(const char *__s)
 {
