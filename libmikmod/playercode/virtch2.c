@@ -891,7 +891,7 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 #elif defined HAVE_ALTIVEC
 #define SHIFT_MIX_TO_16 vec_splat_u32(BITSHIFT + 16 - 16)
 // TEST: Ok
-static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, SLONG* srce, NATIVE count)
+static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE count)
 {
 	int remain = count;
 
