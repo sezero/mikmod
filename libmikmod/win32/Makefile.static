@@ -26,8 +26,8 @@ DRIVER_OBJ=drv_ds.o drv_win.o
 
 OBJ=$(DRIVER_OBJ) \
     drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
-    load_669.o load_amf.o load_dsm.o load_far.o load_gdm.o load_gt2.o load_it.o \
-    load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
+    load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
+    load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
@@ -76,6 +76,9 @@ load_669.o:     ..\loaders\load_669.c \
 load_amf.o:     ..\loaders\load_amf.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\loaders\load_amf.c
+load_asy.o:     ..\loaders\load_asy.c \
+	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
+	$(COMPILE) /Fo$@ ..\loaders\load_asy.c
 load_dsm.o:     ..\loaders\load_dsm.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\loaders\load_dsm.c
