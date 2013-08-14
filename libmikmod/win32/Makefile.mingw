@@ -1,15 +1,8 @@
-# Makefile template for use under win32
-#
-# libmikmod subdirectory
+# Makefile for targetting win32/win64
+# Required:
+#   - a native or cross MinGW or MinGW-w64 compiler toolchain
+#   - GNU make (gmake or mingw32-make or whatever)
 
-# Make utilities that can't be used :
-#   - Borland Make (complains that some command lines are too long)
-
-# Compilers that can't be used :
-#   - Borland C++ 4 (doesn't like DirectX header files)
-#   - LCC-win32 (preprocessor is *awfully broken*)
-
-# Your compiler here
 ifeq ($(CROSS),)
 CC=gcc
 AS=as
