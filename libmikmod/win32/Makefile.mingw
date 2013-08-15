@@ -1,18 +1,15 @@
 # Makefile for targetting win32/win64
-# Required:
-#   - a native or cross MinGW or MinGW-w64 compiler toolchain
-#   - GNU make (gmake or mingw32-make or whatever)
+# Requires a native or cross MinGW or MinGW-w64 compiler-set
+# and GNU make (gmake or mingw32-make or whatever)
 
 ifeq ($(CROSS),)
 CC=gcc
 AS=as
-DLLTOOL=dlltool
 AR=ar
 RANLIB=ranlib
 else
 CC=$(CROSS)-gcc
 AS=$(CROSS)-as
-DLLTOOL=$(CROSS)-dlltool
 AR=$(CROSS)-ar
 RANLIB=$(CROSS)-ranlib
 endif
@@ -54,6 +51,9 @@ COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I.. -I../win32
 
 DLL_VER=3
 
+CPPFLAGS_DLL=-DMIKMOD_DLL_BUILD=1
+CPPFLAGS_STATIC=-DMIKMOD_STATIC=1
+
 LIBNAME=libmikmod.dll.a
 LIBSTATIC=libmikmod.a
 DLLNAME=libmikmod-$(DLL_VER).dll
@@ -82,31 +82,16 @@ help:
 clean:
 	$(RM) $(DLLNAME) $(LIBNAME) $(LIBSTATIC) $(DEFNAME) *.o
 
-DLLTOOL_FLAGS=
-ifneq ($(CROSS),)
-DLLTOOL_FLAGS+=--as=$(AS)
-endif
-# DLLTOOL_FLAGS for W32/64:
-DLLTOOL_32=-m i386
-DLLTOOL_64=-m i386:x86-64
-
 w32-dll: CFLAGS+=$(SSE2FLAGS)
-w32-dll: DLLTOOL_FLAGS+=$(DLLTOOL_32)
 w32-dll: $(DLLNAME) $(LIBNAME)
 
-w64-dll: DLLTOOL_FLAGS+=$(DLLTOOL_64)
 w64-dll: $(DLLNAME) $(LIBNAME)
 
 w32-static: CFLAGS+=$(SSE2FLAGS)
 w32-static: $(LIBSTATIC)
 w64-static: $(LIBSTATIC)
 
-$(DLLNAME): CPPFLAGS+=-DMIKMOD_DLL_BUILD=1
-#$(DLLNAME): $(OBJ)
-#	$(CC) -shared -o $(DLLNAME) $(OBJ) $(LDFLAGS) $(LDLIBS)
-#$(LIBNAME): $(OBJ)
-#	$(DLLTOOL) $(DLLTOOL_FLAGS) -z $(DEFNAME) $(OBJ)
-#	$(DLLTOOL) $(DLLTOOL_FLAGS) -k --dllname $(DLLNAME) --output-lib $(LIBNAME) --def $(DEFNAME)
+$(DLLNAME): CPPFLAGS+=$(CPPFLAGS_DLL)
 $(LIBNAME): $(DLLNAME)
 $(DLLNAME): $(OBJ)
 	$(CC) -shared -o $(DLLNAME) $(OBJ) $(LDFLAGS) $(LDLIBS) \
@@ -114,6 +99,7 @@ $(DLLNAME): $(OBJ)
 		-Xlinker --output-def -Xlinker $(DEFNAME) \
 		-Xlinker --out-implib -Xlinker $(LIBNAME)
 
+$(LIBSTATIC): CPPFLAGS+=$(CPPFLAGS_STATIC)
 $(LIBSTATIC): $(OBJ)
 	$(AR) rc $@ $(OBJ)
 	$(RANLIB) $@

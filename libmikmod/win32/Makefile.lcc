@@ -11,8 +11,8 @@ LINK=lcclnk.exe
 # and comment the next two.
 #LIBS=$(DLLNAME)
 #CFLAGS= -A /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H /DMIKMOD_DLL_BUILD
-LIBS=$(LIBNAME)
-CFLAGS= -A /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H
+LIBS=$(LIBSTATIC)
+CFLAGS= -A /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H /DMIKMOD_STATIC
 
 # Compile command
 COMPILE=$(CC) -errout=err.out $(CFLAGS) /I..\include /I.. /I..\win32
@@ -22,6 +22,7 @@ COMPILE=$(CC) -errout=err.out $(CFLAGS) /I..\include /I.. /I..\win32
 
 LIBNAME=mikmod.lib
 DLLNAME=mikmod.dll
+LIBSTATIC=mikmod_static.lib
 
 DRIVER_OBJ=drv_ds.o drv_win.o
 
@@ -37,7 +38,7 @@ OBJ=$(DRIVER_OBJ) \
 all:            $(LIBS)
 
 clean:
-	FOR %F IN ( $(LIBNAME) $(DLLNAME) mikmod.exp *.o ) DO IF EXIST %F ERASE %F
+	FOR %F IN ( $(LIBNAME) $(LIBSTATIC) $(DLLNAME) mikmod.exp *.o ) DO IF EXIST %F ERASE %F
 
 distclean:
 	FOR %F IN ( ..\include\mikmod.h ..\win32\mikmod_build.h Makefile ) DO IF EXIST %F ERASE %F
@@ -46,8 +47,8 @@ distclean:
 $(DLLNAME):     $(OBJ) mikmod.def
 	$(LINK) /DLL /NOUNDERSCORES /OUT:$(DLLNAME) *.o mikmod.def dsound.lib winmm.lib
 
-$(LIBNAME):     $(OBJ)
-	$(LIB) /OUT:$(LIBNAME) *.o
+$(LIBSTATIC):   $(OBJ)
+	$(LIB) /OUT:$(LIBSTATIC) *.o
 
 ..\include\mikmod.h ..\win32\mikmod_build.h:	mikmod_build.h
 	COPY mikmod_build.h ..\win32\mikmod_build.h
