@@ -49,6 +49,11 @@ typedef DWORD DWORD_PTR;
 #endif
 #endif
 
+/* PF_XMMI64_INSTRUCTIONS_AVAILABLE not in all SDKs. */
+#ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
+#define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
+#endif
+
 #define NUMBUFFERS	6				/* number of buffers */
 #define BUFFERSIZE	120				/* buffer size in milliseconds */
 
@@ -92,10 +97,11 @@ static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD 
 
 static BOOL WIN_Init(void)
 {
+	OSVERSIONINFO	vinfo;
 	WAVEFORMATEX	wfe;
 	WORD			samplesize;
 	MMRESULT		mmr;
-	int				n;
+	int		n, is_winxp;
 
 	samplesize=1;
 	if (md_mode&DMODE_STEREO) samplesize<<=1;
@@ -133,13 +139,19 @@ static BOOL WIN_Init(void)
 
 	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
 
-#if !(defined(_MSC_VER) && (_MSC_VER < 1300))
+	memset (&vinfo, 0, sizeof(OSVERSIONINFO));
+	GetVersionEx (&vinfo);
+	if (vinfo.dwPlatformId < VER_PLATFORM_WIN32_NT || vinfo.dwMajorVersion < 5 ||
+			    (vinfo.dwMajorVersion == 5 && vinfo.dwMinorVersion == 0))
+		is_winxp = 0;
+	else	is_winxp = 1;
+
 	// This test only works on Windows XP or later
-	if (IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE))
+	if (is_winxp && IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE))
 	{
 		md_mode|=DMODE_SIMDMIXER;
 	}
-#endif
+
 	buffersout=nextbuffer=0;
 	return VC_Init();
 }
