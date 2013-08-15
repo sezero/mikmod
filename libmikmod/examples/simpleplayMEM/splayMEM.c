@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	fclose(fptr);
 
 	/* Create the memory reader */
-	mem_reader = _mm_new_mem_reader(file_data, sysFileGetLength);
+	mem_reader = my_new_mem_reader(file_data, sysFileGetLength);
 	if (mem_reader == NULL) {
 		fprintf(stderr, "failed to create mem reader\n");
 		MikMod_free(file_data);
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 				MikMod_strerror(MikMod_errno));
 
 	MikMod_free(file_data);
-	_mm_delete_mem_reader(mem_reader);
+	my_delete_mem_reader(mem_reader);
 	MikMod_Exit();
 
 	return 0;

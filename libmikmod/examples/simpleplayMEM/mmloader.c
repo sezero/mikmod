@@ -18,14 +18,14 @@ static int _mm_MemReader_Get(MREADER* reader);
 static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
 static long _mm_MemReader_Tell(MREADER* reader);
 
-void _mm_delete_mem_reader(MREADER* reader)
+void my_delete_mem_reader(MREADER* reader)
 {
 	if (reader) { MikMod_free(reader); }
 }
 
-MREADER *_mm_new_mem_reader(void *buffer, int len)
+MREADER *my_new_mem_reader(void *buffer, int len)
 {
-	MMEMREADER* reader=(MMEMREADER*)MikMod_malloc(sizeof(MMEMREADER));
+	MY_MEMREADER* reader=(MY_MEMREADER*)MikMod_malloc(sizeof(MY_MEMREADER));
 	if (reader)
 	{
 		reader->core.Eof =&_mm_MemReader_Eof;
@@ -43,7 +43,7 @@ MREADER *_mm_new_mem_reader(void *buffer, int len)
 static BOOL _mm_MemReader_Eof(MREADER* reader)
 {
 	if (!reader) { return 1; }
-	if ( ((MMEMREADER*)reader)->pos > ((MMEMREADER*)reader)->len ) {
+	if ( ((MY_MEMREADER*)reader)->pos > ((MY_MEMREADER*)reader)->len ) {
 		return 1;
 	}
 	return 0;
@@ -57,16 +57,16 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 
 	if (reader->Eof(reader)) { return 0; }
 
-	s = ((MMEMREADER*)reader)->buffer;
-	s += ((MMEMREADER*)reader)->pos;
+	s = ((MY_MEMREADER*)reader)->buffer;
+	s += ((MY_MEMREADER*)reader)->pos;
 
-	if ( ((MMEMREADER*)reader)->pos + size >= ((MMEMREADER*)reader)->len)
+	if ( ((MY_MEMREADER*)reader)->pos + size >= ((MY_MEMREADER*)reader)->len)
 	{
-		((MMEMREADER*)reader)->pos = ((MMEMREADER*)reader)->len;
+		((MY_MEMREADER*)reader)->pos = ((MY_MEMREADER*)reader)->len;
 		return 0; /* not enough remaining bytes */
 	}
 
-	((MMEMREADER*)reader)->pos += size;
+	((MY_MEMREADER*)reader)->pos += size;
 
 	while (size--)
 	{
@@ -84,10 +84,10 @@ static int _mm_MemReader_Get(MREADER* reader)
 
 	if (reader->Eof(reader)) { return 0; }
 
-	pos = ((MMEMREADER*)reader)->pos;
-	((MMEMREADER*)reader)->pos++;
+	pos = ((MY_MEMREADER*)reader)->pos;
+	((MY_MEMREADER*)reader)->pos++;
 
-	return ((unsigned char*)(((MMEMREADER*)reader)->buffer))[pos];
+	return ((unsigned char*)(((MY_MEMREADER*)reader)->buffer))[pos];
 }
 
 static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
@@ -97,18 +97,18 @@ static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 	switch(whence)
 	{
 		case SEEK_CUR:
-			((MMEMREADER*)reader)->pos += offset;
+			((MY_MEMREADER*)reader)->pos += offset;
 			break;
 		case SEEK_SET:
-			((MMEMREADER*)reader)->pos = offset;
+			((MY_MEMREADER*)reader)->pos = offset;
 			break;
 		case SEEK_END:
-			((MMEMREADER*)reader)->pos = ((MMEMREADER*)reader)->len - offset - 1;
+			((MY_MEMREADER*)reader)->pos = ((MY_MEMREADER*)reader)->len - offset - 1;
 			break;
 	}
-	if ( ((MMEMREADER*)reader)->pos < 0) { ((MMEMREADER*)reader)->pos = 0; }
-	if ( ((MMEMREADER*)reader)->pos > ((MMEMREADER*)reader)->len ) {
-		((MMEMREADER*)reader)->pos = ((MMEMREADER*)reader)->len;
+	if ( ((MY_MEMREADER*)reader)->pos < 0) { ((MY_MEMREADER*)reader)->pos = 0; }
+	if ( ((MY_MEMREADER*)reader)->pos > ((MY_MEMREADER*)reader)->len ) {
+		((MY_MEMREADER*)reader)->pos = ((MY_MEMREADER*)reader)->len;
 	}
 	return 0;
 }
@@ -116,7 +116,7 @@ static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 static long _mm_MemReader_Tell(MREADER* reader)
 {
 	if (reader) {
-		return ((MMEMREADER*)reader)->pos;
+		return ((MY_MEMREADER*)reader)->pos;
 	}
 	return 0;
 }
