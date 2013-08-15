@@ -10,9 +10,9 @@ LINK=lcclnk.exe
 # If you want to build a dynamic library, uncomment the following two lines
 # and comment the next two.
 #LIBS=$(DLLNAME)
-#CFLAGS= -A -ansic /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H /DMIKMOD_DLL_BUILD
+#CFLAGS= -A /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H /DMIKMOD_DLL_BUILD
 LIBS=$(LIBNAME)
-CFLAGS= -A -ansic /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H
+CFLAGS= -A /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H
 
 # Compile command
 COMPILE=$(CC) -errout=err.out $(CFLAGS) /I..\include /I.. /I..\win32
@@ -42,8 +42,9 @@ clean:
 distclean:
 	FOR %F IN ( ..\include\mikmod.h ..\win32\mikmod_build.h Makefile ) DO IF EXIST %F ERASE %F
 
-$(DLLNAME):     $(OBJ)
-	$(LINK) /DLL /OUT:$@ *.o dsound.lib winmm.lib
+# lcc doesn't seem to do well without a *.def with dll exports
+$(DLLNAME):     $(OBJ) mikmod.def
+	$(LINK) /DLL /NOUNDERSCORES /OUT:$(DLLNAME) *.o mikmod.def dsound.lib winmm.lib
 
 $(LIBNAME):     $(OBJ)
 	$(LIB) /OUT:$(LIBNAME) *.o
