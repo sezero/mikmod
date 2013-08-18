@@ -3,13 +3,13 @@
 
 typedef struct _MY_MEMREADER {
 	MREADER core;
-	void *buffer;
+	const void *buffer;
 	long len;
 	long pos;
 } MY_MEMREADER;
 
-MREADER *my_new_mem_reader (void *buffer, int len);
-void my_delete_mem_reader (MREADER* reader);
+MREADER *my_new_mem_reader(const void *buffer, int len);
+void my_delete_mem_reader(MREADER* reader);
 
 #endif
 

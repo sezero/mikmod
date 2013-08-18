@@ -33,6 +33,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	/* initialize MikMod threads */
+	MikMod_InitThreads ();
+
 	/* register all the drivers */
 	MikMod_RegisterAllDrivers();
 
@@ -106,8 +109,9 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Could not load module, reason: %s\n",
 				MikMod_strerror(MikMod_errno));
 
-	MikMod_free(file_data);
 	my_delete_mem_reader(mem_reader);
+	mem_reader = NULL;
+	MikMod_free(file_data);
 	MikMod_Exit();
 
 	return 0;
