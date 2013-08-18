@@ -684,8 +684,8 @@ driver. Registering the nosound driver first would not be a very good
 idea@enddots{}
 
 You can get some printable information regarding the registered drivers with
-@code{MikMod_InfoDriver}; don't forget to call @code{free} on the returned
-string when you don't need it anymore.
+@code{MikMod_InfoDriver}; don't forget to call @code{MikMod_free} on the
+returned string when you don't need it anymore.
 
 After you've registered your drivers, you can initialize the sound playback
 with @code{MikMod_Init}, passing specific information to the driver if
