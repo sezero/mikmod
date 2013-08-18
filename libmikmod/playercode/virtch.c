@@ -128,8 +128,10 @@ static	SLONG *RVbufR1=NULL,*RVbufR2=NULL,*RVbufR3=NULL,*RVbufR4=NULL,
 #else
 #define NATIVE SLONG
 #endif
+
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 
+# if !defined(NATIVE_64BIT_INT)
 static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size_t increment,size_t todo)
 {
 	// TODO:
@@ -144,6 +146,7 @@ static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size
 	}
 	return index;
 }
+# endif /* !NATIVE_64BIT_INT */
 
 static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, size_t increment,size_t todo)
 {
