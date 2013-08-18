@@ -45,7 +45,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 @c ========================================================== Title page
 @titlepage
-@title{MikMod Sound Library}
+@title MikMod Sound Library
 @subtitle Documentation edition @value{documentation-version}
 @subtitle @value{documentation-date}
 @author @value{authorname}
@@ -1732,7 +1732,7 @@ This error occurs if the driver failed to start the cyclic DMA transfer.
 @item Description
 This function returns whether sound output is enabled or not.
 @item Result
-@itemx 0
+@item 0
 Sound output is disabled.
 @item 1
 Sound output is enabled.
@@ -1765,9 +1765,9 @@ Calls to @code{MikMod_Update} will be ignored when sound output is disabled.
 @item Description
 This function starts the sound mixing.
 @item Result
-@itemx 0
+@item 0
 Sound mixing is ready.
-@itemx nonzero
+@item nonzero
 An error occurred during the operation.
 @item Notes
 Calls to @code{MikMod_Update} will be ignored when sound output is disabled.
@@ -1848,13 +1848,13 @@ no longer necessary.
 This function performs the library initialization, including the sound driver
 choice and configuration, and all the necessary memory allocations.
 @item Parameters
-@itemx parameters
+@item parameters
 Optional parameters given to the sound driver. These parameters are ignored if
 the value of @code{md_device} is zero (autodetection).
 @item Result
-@itemx 0
+@item 0
 Initialization was successful.
-@itemx nonzero
+@item nonzero
 An error occurred during initialization.
 @item Notes
 When the initialization fails, the library uses the nosound sound driver to
@@ -1872,9 +1872,9 @@ let other the other MikMod functions work without crashing the application.
 @item Description
 This function returns whether libmikmod is thread-safe.
 @item Result
-@itemx 0
+@item 0
 The library is not thread-safe.
-@itemx 1
+@item 1
 The library is thread-safe.
 @item Notes
 This function should be called before any call to @code{MikMod_Lock} or
@@ -1939,7 +1939,7 @@ This function registers all the available module loaders.
 This function adds the specified driver to the internal list of usable
 drivers.
 @item Parameters
-@itemx newdriver
+@item newdriver
 A pointer to the @code{MDRIVER} structure identifying the driver.
 @item Notes
 It is safe to register the same driver several times, although it will not
@@ -1960,7 +1960,7 @@ If you want to register all the available drivers, use
 @item Description
 This function selects the function which should be called in case of error.
 @item Parameters
-@itemx newhandler
+@item newhandler
 The new error callback function.
 @item Result
 The previous error callback function, or @code{NULL} if there was none.
@@ -1983,7 +1983,7 @@ your callback).
 This function adds the specified module loader to the internal list of usable
 module loaders.
 @item Parameters
-@itemx newloader
+@item newloader
 A pointer to the @code{MLOADER} structure identifying the loader.
 @item Notes
 It is safe to register the same loader several times, although it will not be
@@ -2007,7 +2007,7 @@ last.
 This function selects the function which should be used to process module
 playback.
 @item Parameters
-@itemx newplayer
+@item newplayer
 The new playback function
 @item Result
 The previous playback function.
@@ -2060,7 +2060,7 @@ Optional parameters given to the sound driver. If you set the value of
 @item Result
 @itemx 0
 Reinitialization was successful.
-@itemx nonzero
+@item nonzero
 An error occurred during reinitialization.
 @item Notes
 Use this function when you have changed the global configuration variables:
@@ -2088,7 +2088,7 @@ The number of voices to reserve for sound effects.
 @item Result
 @itemx 0
 Initialization was successful.
-@itemx nonzero
+@item nonzero
 An error occurred during initialization.
 @item Notes
 A value of @code{-1} for any of the parameters will retain the current number
@@ -2175,7 +2175,7 @@ This function returns whether the module player is active or not.
 @item Result
 @itemx 0
 No module is playing.
-@itemx nonzero
+@item nonzero
 A module is currently playing.
 @item Notes
 This function will still report that the player is active if the playing module
@@ -2388,7 +2388,7 @@ The module channel to test (starting from zero).
 @item Result
 @itemx 0
 The channel is not muted.
-@itemx 1
+@item 1
 The channel is muted.
 @item See also
 @code{Player_Mute}, @code{Player_ToggleMute}, @code{Player_Unmute}.
@@ -2905,7 +2905,7 @@ The number of the voice to be checked (starting from zero).
 @item Result
 @itemx 0
 The voice is stopped or has no sample assigned.
-@itemx nonzero
+@item nonzero
 The voice is playing a sample.
 @item Notes
 This function may not work with some drivers (especially for hardware mixed
