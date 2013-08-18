@@ -54,6 +54,9 @@ extern "C" {
 #if !defined(WIN32) && (defined (__arch64__) || defined(__alpha) || defined (__x64_64) || defined (_LP64) || defined (__powerpc64__))
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
+#elif defined(_WIN64) /* win64 is LLP64, not LP64  */
+#define NATIVE_64BIT_INT
+typedef long long	SLONGLONG;
 #elif defined(__WATCOMC__)
 typedef __int64		SLONGLONG;
 #elif defined(WIN32) && !defined(__MWERKS__)
