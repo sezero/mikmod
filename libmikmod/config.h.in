@@ -98,6 +98,9 @@
 /* Define to 1 if you have the <libgus.h> header file. */
 #undef HAVE_LIBGUS_H
 
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
+
 /* Define to 1 if you have the <machine/soundcard.h> header file. */
 #undef HAVE_MACHINE_SOUNDCARD_H
 

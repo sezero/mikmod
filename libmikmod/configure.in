@@ -1,5 +1,4 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl
 dnl $Id$
 
 AC_INIT(include/mikmod.h.in)
@@ -405,7 +404,7 @@ fi
 
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h malloc.h memory.h strings.h sys/ioctl.h unistd.h)
+AC_CHECK_HEADERS(fcntl.h limits.h malloc.h memory.h strings.h sys/ioctl.h unistd.h)
 
 # =============================================================
 # Check for typedefs, structures, and compiler characteristics.
