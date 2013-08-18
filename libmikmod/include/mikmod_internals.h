@@ -695,13 +695,13 @@ extern MikMod_callback_t vc_callback;
 #undef HAVE_ALTIVEC
 #undef HAVE_SSE2
 
-#if defined(__APPLE__) && !defined (__i386__)
+#if defined(__APPLE__) && (defined(__ppc__) || defined(__ppc64__))
 
 #if defined __VEC__ && !(defined(__GNUC__) && (__GNUC__ < 3))
 #define HAVE_ALTIVEC
 #endif // __VEC__
 
-#elif defined(__APPLE__) && defined(__i386__)
+#elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
 
 #if defined(__SSE2__)
 #define HAVE_SSE2
