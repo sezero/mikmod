@@ -83,7 +83,7 @@ static int (*alsa_pcm_set_params)(snd_pcm_t *, snd_pcm_format_t, snd_pcm_access_
 static int (*alsa_ctl_pcm_info)(snd_ctl_t*, int, snd_pcm_info_t*);
 static int (*alsa_pcm_close)(snd_pcm_t*);
 static int (*alsa_pcm_drain)(snd_pcm_t*);
-static int (*alsa_pcm_pause)(snd_pcm_t*, int);
+static int (*alsa_pcm_drop)(snd_pcm_t*);
 static snd_pcm_sframes_t (*alsa_pcm_avail_update)(snd_pcm_t*);
 static snd_pcm_sframes_t (*alsa_pcm_writei)(snd_pcm_t*,const void*,snd_pcm_uframes_t);
 
@@ -106,7 +106,7 @@ static void* libasound = NULL;
 #define alsa_ctl_pcm_info			snd_ctl_pcm_info
 #define alsa_pcm_close				snd_pcm_close
 #define alsa_pcm_drain				snd_pcm_drain
-#define alsa_pcm_pause				snd_pcm_pause
+#define alsa_pcm_drop				snd_pcm_drop
 #define alsa_pcm_open				snd_pcm_open
 #define alsa_pcm_avail_update			snd_pcm_avail_update
 #define alsa_pcm_writei				snd_pcm_writei
@@ -118,7 +118,6 @@ static snd_pcm_t *pcm_h = NULL;
 static int numfrags = DEFAULT_NUMFRAGS;
 static SBYTE *audiobuffer = NULL;
 static snd_pcm_sframes_t period_size;
-static snd_pcm_sframes_t buffer_size_in_frames;
 static int bytes_written = 0, bytes_played = 0;
 static int global_frame_size;
 static int device = -1;
@@ -150,7 +149,7 @@ static BOOL ALSA_Link(void)
 	if (!(alsa_ctl_pcm_info = dlsym(libasound,"snd_ctl_pcm_info"))) return 1;
 	if (!(alsa_pcm_close = dlsym(libasound,"snd_pcm_close"))) return 1;
 	if (!(alsa_pcm_drain = dlsym(libasound,"snd_pcm_drain"))) return 1;
-	if (!(alsa_pcm_pause = dlsym(libasound,"snd_pcm_pause"))) return 1;
+	if (!(alsa_pcm_drop = dlsym(libasound,"snd_pcm_drop"))) return 1;
 	if (!(alsa_pcm_open = dlsym(libasound,"snd_pcm_open"))) return 1;
 	if (!(alsa_pcm_avail_update = dlsym(libasound,"snd_pcm_avail_update"))) return 1;
 	if (!(alsa_pcm_writei = dlsym(libasound,"snd_pcm_writei"))) return 1;
@@ -176,7 +175,7 @@ static void ALSA_Unlink(void)
 	alsa_ctl_pcm_info = NULL;
 	alsa_pcm_close = NULL;
 	alsa_pcm_drain = NULL;
-	alsa_pcm_pause = NULL;
+	alsa_pcm_drop = NULL;
 	alsa_pcm_open = NULL;
 	alsa_pcm_avail_update = NULL;
 	alsa_pcm_writei = NULL;
@@ -227,39 +226,6 @@ static BOOL ALSA_IsThere(void)
 	ALSA_Unlink();
 #endif
 	return retval;
-}
-
-static int set_swparams(snd_pcm_t *handle, snd_pcm_sw_params_t *swparams)
-{
-	int err;
-
-	/* get the current swparams */
-	err = alsa_pcm_sw_params_current(handle, swparams);
-	if (err < 0) {
-		printf("Unable to determine current swparams for playback: %s\n", alsa_strerror(err));
-		return err;
-	}
-	/* start the transfer when the buffer is almost full: */
-	/* (buffer_size / avail_min) * avail_min */
-	err = alsa_pcm_sw_params_set_start_threshold(handle, swparams, (buffer_size_in_frames / period_size) * period_size);
-	if (err < 0) {
-		printf("Unable to set start threshold mode for playback: %s\n", alsa_strerror(err));
-		return err;
-	}
-	/* allow the transfer when at least period_size samples can be processed */
-	/* or disable this mechanism when period event is enabled (aka interrupt like style processing) */
-	err = alsa_pcm_sw_params_set_avail_min(handle, swparams, period_size);
-	if (err < 0) {
-		printf("Unable to set avail min for playback: %s\n", alsa_strerror(err));
-		return err;
-	}
-	/* write the parameters to the playback device */
-	err = alsa_pcm_sw_params(handle, swparams);
-	if (err < 0) {
-		printf("Unable to set sw params for playback: %s\n", alsa_strerror(err));
-		return err;
-	}
-	return 0;
 }
 
 static BOOL ALSA_Init_internal(void)
@@ -316,17 +282,9 @@ static BOOL ALSA_Init_internal(void)
 		printf("Unable to get buffer size for playback: %s\n", alsa_strerror(err));
 		goto END;
 	}
-	buffer_size_in_frames = 1200;
 	period_size = temp_u_period_size;
 
-	/* The set_swparams function was taken from test/pcm.c
-	 * in the alsa-lib distribution*/
-	if ((err = set_swparams(pcm_h, swparams)) < 0) {
-		printf("Setting of swparams failed: %s\n", snd_strerror(err));
-		goto END;
-	}
-
-	if (!(audiobuffer=(SBYTE*)MikMod_malloc(buffer_size_in_frames * global_frame_size))) {
+	if (!(audiobuffer=(SBYTE*)MikMod_malloc(period_size * global_frame_size))) {
 		printf("Out of memory for ALSA buffer\n");
 		goto END;
 	}
@@ -404,7 +362,7 @@ static void ALSA_Update(void)
 	int err;
 
 	if (bytes_written == 0 || bytes_played == bytes_written) {
-		bytes_written = VC_WriteBytes(audiobuffer,buffer_size_in_frames * global_frame_size);
+		bytes_written = VC_WriteBytes(audiobuffer,period_size * global_frame_size);
 		bytes_played = 0;
 	}
 
@@ -427,7 +385,7 @@ static void ALSA_Update(void)
 static void ALSA_PlayStop(void)
 {
 	VC_PlayStop();
-	alsa_pcm_pause(pcm_h, 1);
+	alsa_pcm_drop(pcm_h);
 }
 
 static BOOL ALSA_Reset(void)
