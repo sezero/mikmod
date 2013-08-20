@@ -211,7 +211,6 @@ static BOOL UniExpand(int wanted)
 
 		/* Check if MikMod_realloc succeeded */
 		if(newbuf) {
-			memset(&newbuf[unimax],0,BUFPAGE);
 			unibuf = newbuf;
 			unimax+=BUFPAGE;
 			return 1;
