@@ -359,20 +359,18 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 
 #elif defined HAVE_ALTIVEC
 	remain = todo&3;
-		remain = todo&3;
 	{
 		SWORD s[8];
 		vector signed short r0 = vec_ld(0, vol);
 		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
-																		 0, 1, // l
-																		 2, 3, // r
-																		 2, 1, // r
-																		 0, 1, // l
-																		 0, 1, // l
-																		 2, 3, // r
-																		 2, 3 // r
-																		 ));
-
+										 0, 1, // l
+										 2, 3, // r
+										 2, 1, // r
+										 0, 1, // l
+										 0, 1, // l
+										 2, 3, // r
+										 2, 3 // r
+										 ));
 
 		for(todo>>=2;todo; todo--)
 		{
@@ -385,24 +383,24 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 
 			vector short int r1 = vec_ld(0, s);
 			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
-																			 4*2, 4*2+1, // 0
-																			 0*2, 0*2+1, // s0
-																			 4*2, 4*2+1, // 0
-																			 1*2, 1*2+1, // s1
-																			 4*2, 4*2+1, // 0
-																			 1*2, 1*2+1, // s1
-																			 4*2, 4*2+1  // 0
-																			 ));
+											 4*2, 4*2+1, // 0
+											 0*2, 0*2+1, // s0
+											 4*2, 4*2+1, // 0
+											 1*2, 1*2+1, // s1
+											 4*2, 4*2+1, // 0
+											 1*2, 1*2+1, // s1
+											 4*2, 4*2+1  // 0
+											 ));
 
 			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, // s2
-																			 4*2, 4*2+1, // 0
-																			 2*2, 2*2+1, // s2
-																			 4*2, 4*2+1, // 0
-																			 3*2, 3*2+1, // s3
-																			 4*2, 4*2+1, // 0
-																			 3*2, 3*2+1, // s3
-																			 4*2, 4*2+1  // 0
-																			 ));
+											 4*2, 4*2+1, // 0
+											 2*2, 2*2+1, // s2
+											 4*2, 4*2+1, // 0
+											 3*2, 3*2+1, // s3
+											 4*2, 4*2+1, // 0
+											 3*2, 3*2+1, // s3
+											 4*2, 4*2+1  // 0
+											 ));
 			vector signed int v3 = vec_ld(0, dest);
 			vector signed int v4 = vec_ld(0x10, dest);
 			vector signed int v5 = vec_mule(v0, v1);
@@ -414,7 +412,7 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 			dest+=8;
 		}
 	}
-	#endif // HAVE_ALTIVEC
+#endif // HAVE_ALTIVEC
 
 	// Remaining bits ...
 	while(remain--) {
