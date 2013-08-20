@@ -851,11 +851,11 @@ static int DoPTEffectC(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 {
 	UBYTE dat;
 
-			dat=UniGetByte();
-			if (tick) return 0;
-			if (dat==(UBYTE)-1) a->anote=dat=0; /* note cut */
-			else if (dat>64) dat=64;
-			a->tmpvolume=dat;
+	dat=UniGetByte();
+	if (tick) return 0;
+	if (dat==(UBYTE)-1) a->anote=dat=0; /* note cut */
+	else if (dat>64) dat=64;
+	a->tmpvolume=dat;
 
 	return 0;
 }
@@ -864,26 +864,26 @@ static int DoPTEffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 {
 	UBYTE dat;
 
-			dat=UniGetByte();
-			if ((tick)||(mod->patdly2)) return 0;
-			if ((mod->positions[mod->sngpos]!=LAST_PATTERN)&&
-			   (dat>mod->pattrows[mod->positions[mod->sngpos]]))
-				dat=mod->pattrows[mod->positions[mod->sngpos]];
-			mod->patbrk=dat;
-			if (!mod->posjmp) {
-				/* don't ask me to explain this code - it makes
-				   backwards.s3m and children.xm (heretic's version) play
-				   correctly, among others. Take that for granted, or write
-				   the page of comments yourself... you might need some
-				   aspirin - Miod */
-				if ((mod->sngpos==mod->numpos-1)&&(dat)&&((mod->loop)||
-				               (mod->positions[mod->sngpos]==(mod->numpat-1)
-								&& !(flags&UF_NOWRAP)))) {
-					mod->sngpos=0;
-					mod->posjmp=2;
-				} else
-					mod->posjmp=3;
-			}
+	dat=UniGetByte();
+	if ((tick)||(mod->patdly2)) return 0;
+	if ((mod->positions[mod->sngpos]!=LAST_PATTERN)&&
+	    (dat>mod->pattrows[mod->positions[mod->sngpos]])) {
+		dat=mod->pattrows[mod->positions[mod->sngpos]];
+	}
+	mod->patbrk=dat;
+	if (!mod->posjmp) {
+		/* don't ask me to explain this code - it makes
+		   backwards.s3m and children.xm (heretic's version) play
+		   correctly, among others. Take that for granted, or write
+		   the page of comments yourself... you might need some
+		   aspirin - Miod */
+		if ((mod->sngpos==mod->numpos-1)&&(dat)&&
+		    ((mod->loop) || (mod->positions[mod->sngpos]==(mod->numpat-1) && !(flags&UF_NOWRAP)))) {
+			mod->sngpos=0;
+			mod->posjmp=2;
+		} else
+			mod->posjmp=3;
+	}
 
 	return 0;
 }
@@ -1808,7 +1808,7 @@ static int DoITEffectT(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	UBYTE tempo;
 	SWORD temp;
 
-   	tempo = UniGetByte();
+	tempo = UniGetByte();
 
 	if (mod->patdly2)
 		return 0;
@@ -2233,7 +2233,7 @@ static int pt_playeffects(MODULE *mod, SWORD channel, MP_CONTROL *a)
 	while((c=UniGetByte())) {
 		f = effects[c];
 		if (f != DoNothing)
-				a->sliding = 0;
+		    a->sliding = 0;
 		explicitslides |= f(tick, flags, a, mod, channel);
 	}
 	return explicitslides;
@@ -3318,7 +3318,7 @@ MIKMODAPI UWORD Player_GetChannelPeriod(UBYTE chan)
 	UWORD result=0;
 
 	MUTEX_LOCK(vars);
-    if (pf)
+	if (pf)
 	    result=(chan<pf->numchn)?pf->control[chan].main.period:0;
 	MUTEX_UNLOCK(vars);
 
@@ -3411,6 +3411,5 @@ MIKMODAPI int Player_GetRow(void)
 	MUTEX_UNLOCK(vars);
 	return ret;
 }
-
 
 /* ex:set ts=4: */
