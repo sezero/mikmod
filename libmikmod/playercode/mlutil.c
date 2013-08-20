@@ -71,7 +71,7 @@ FILTER filtersettings[UF_MAXFILTER]; /* computed filter settings */
 /*========== Linear periods stuff */
 
 int*   noteindex=NULL;      /* remap value for linear period modules */
-static int noteindexcount=0;
+static unsigned noteindexcount=0;
 
 int *AllocLinear(void)
 {
