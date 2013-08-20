@@ -160,13 +160,11 @@ static BOOL DS_IsPresent(void)
 
 static BOOL DS_Init(void)
 {
-	OSVERSIONINFO vinfo;
 	DSBUFFERDESC soundBufferFormat;
 	WAVEFORMATEX pcmwf;
 	DSBPOSITIONNOTIFY positionNotifications[2];
 	DWORD updateBufferThreadID;
 	LPVOID p = NULL;
-	int is_winxp;
 
 	if (DirectSoundCreate(NULL,&pSoundCard,NULL)!=DS_OK) {
 		_mm_errno=MMERR_OPENING_AUDIO;
@@ -250,18 +248,12 @@ static BOOL DS_Init(void)
 		return 1;
 	}
 
-	memset (&vinfo, 0, sizeof(OSVERSIONINFO));
-	GetVersionEx (&vinfo);
-	if (vinfo.dwPlatformId < VER_PLATFORM_WIN32_NT || vinfo.dwMajorVersion < 5 ||
-			    (vinfo.dwMajorVersion == 5 && vinfo.dwMinorVersion == 0))
-		is_winxp = 0;
-	else	is_winxp = 1;
-
-	// This test only works on Windows XP or later
-	if (is_winxp && IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE))
-	{
+#if defined HAVE_SSE2
+	/* this test only works on Windows XP or later */
+	if (IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE)) {
 		md_mode|=DMODE_SIMDMIXER;
 	}
+#endif
 	return VC_Init();
 }
 
