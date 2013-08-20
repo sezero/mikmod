@@ -296,7 +296,8 @@ static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG i
 		SLONG rvolsel = vnf->rvolsel;
 
 		while(todo--) {
-			sample=srce[(index += increment) >> FRACBITS];
+			sample=srce[index >> FRACBITS];
+			index += increment;
 
 			*dest++ += lvolsel * sample;
 			*dest++ += rvolsel * sample;
