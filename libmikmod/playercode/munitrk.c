@@ -236,7 +236,7 @@ void UniWriteWord(UWORD data)
 	}
 }
 
-static BOOL MyCmp(UBYTE* a,UBYTE* b,UWORD l)
+static BOOL MyCmp(const UBYTE* a,const UBYTE* b,UWORD l)
 {
 	UWORD t;
 
