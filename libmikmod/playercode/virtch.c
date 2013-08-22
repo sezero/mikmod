@@ -34,13 +34,10 @@
     (c) Dolby Surround Sound
 */
 
-#include <assert.h>
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <stddef.h>
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -132,7 +129,7 @@ static	SLONG *RVbufR1=NULL,*RVbufR2=NULL,*RVbufR3=NULL,*RVbufR4=NULL,
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 
 # if !defined(NATIVE_64BIT_INT)
-static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size_t increment,size_t todo)
+static SINTPTR_T MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T index,SINTPTR_T increment,SINTPTR_T todo)
 {
 	// TODO:
 	SWORD sample;
@@ -148,7 +145,7 @@ static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size
 }
 # endif /* !NATIVE_64BIT_INT */
 
-static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, size_t increment,size_t todo)
+static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T index,SINTPTR_T increment,SINTPTR_T todo)
 {
 	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
 	SWORD sample;
@@ -281,7 +278,7 @@ static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG inc
 }
 
 // FIXME: This mixer should works also on 64-bit platform
-// Hint : changes SLONG / SLONGLONG mess with size_t
+// Hint : changes SLONG / SLONGLONG mess with intptr
 static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
 #if defined HAVE_ALTIVEC || defined HAVE_SSE2
