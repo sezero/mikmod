@@ -101,7 +101,7 @@ typedef char CHAR;
 
 
 
-#if defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(__powerpc64__)
+#if defined (_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(__powerpc64__)
 /* 64 bit architectures */
 
 typedef signed char     SBYTE;      /* 1 byte, signed */

@@ -51,7 +51,7 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if !defined(WIN32) && (defined (__arch64__) || defined(__alpha) || defined (__x64_64) || defined (_LP64) || defined (__powerpc64__))
+#if !defined(WIN32) && (defined(_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x64_64) || defined(__powerpc64__))
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
 #elif defined(_WIN64) /* win64 is LLP64, not LP64  */
@@ -63,7 +63,7 @@ typedef __int64		SLONGLONG;
 typedef LONGLONG	SLONGLONG;
 #elif defined(macintosh) && !TYPE_LONGLONG
 #include <Types.h>
-typedef SInt64	    SLONGLONG;
+typedef SInt64		SLONGLONG;
 #else
 typedef long long	SLONGLONG;
 #endif
