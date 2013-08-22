@@ -68,6 +68,14 @@ typedef SInt64		SLONGLONG;
 typedef long long	SLONGLONG;
 #endif
 
+/* pointer-sized signed int (ssize_t/intptr_t) : */
+#if defined(_WIN64) /* win64 is LLP64, not LP64  */
+typedef long long	SINTPTR_T;
+#else
+/* long should be pointer-sized for all others : */
+typedef long		SINTPTR_T;
+#endif
+
 /*========== Error handling */
 
 #define _mm_errno MikMod_errno
