@@ -326,7 +326,8 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 
 	// Dest can be misaligned ...
 	while(!IS_ALIGNED_16(dest)) {
-		sample=srce[(index += increment) >> FRACBITS];
+		sample=srce[index >> FRACBITS];
+		index += increment;
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 		todo--;
@@ -343,10 +344,11 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 								   0, vol[0]);
 		for(todo>>=2;todo; todo--)
 		{
-			SWORD s0 = GetSample(srce, index += increment);
+			SWORD s0 = GetSample(srce, index);
 			SWORD s1 = GetSample(srce, index += increment);
 			SWORD s2 = GetSample(srce, index += increment);
 			SWORD s3 = GetSample(srce, index += increment);
+			index += increment;
 			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
 			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
 			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
@@ -375,11 +377,12 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 		for(todo>>=2;todo; todo--)
 		{
 			// Load constants
-			s[0] = GetSample(srce, index += increment);
+			s[0] = GetSample(srce, index);
 			s[1] = GetSample(srce, index += increment);
 			s[2] = GetSample(srce, index += increment);
 			s[3] = GetSample(srce, index += increment);
 			s[4] = 0;
+			index += increment;
 
 			vector short int r1 = vec_ld(0, s);
 			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
@@ -416,8 +419,8 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 
 	// Remaining bits ...
 	while(remain--) {
-		sample=GetSample(srce, index+= increment);
-
+		sample=GetSample(srce, index);
+		index+= increment;
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 	}

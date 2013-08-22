@@ -153,7 +153,8 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T ind
 
 	// Dest can be misaligned ...
 	while(!IS_ALIGNED_16(dest)) {
-		sample=srce[(index += increment) >> FRACBITS];
+		sample=srce[index >> FRACBITS];
+		index += increment;
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 		todo--;
@@ -170,10 +171,11 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T ind
 								   0, vol[0]);
 		for(todo>>=2;todo; todo--)
 		{
-			SWORD s0 = srce[(index += increment) >> FRACBITS];
+			SWORD s0 = srce[index >> FRACBITS];
 			SWORD s1 = srce[(index += increment) >> FRACBITS];
 			SWORD s2 = srce[(index += increment) >> FRACBITS];
 			SWORD s3 = srce[(index += increment) >> FRACBITS];
+			index += increment;
 			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
 			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
 			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
@@ -202,11 +204,12 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T ind
 		for(todo>>=2;todo; todo--)
 		{
 			// Load constants
-			s[0] = srce[(index += increment) >> FRACBITS];
+			s[0] = srce[index >> FRACBITS];
 			s[1] = srce[(index += increment) >> FRACBITS];
 			s[2] = srce[(index += increment) >> FRACBITS];
 			s[3] = srce[(index += increment) >> FRACBITS];
 			s[4] = 0;
+			index += increment;
 
 			vector short int r1 = vec_ld(0, s);
 			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
@@ -243,7 +246,8 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T ind
 
 	// Remaining bits ...
 	while(remain--) {
-		sample=srce[(index += increment) >> FRACBITS];
+		sample=srce[index >> FRACBITS];
+		index += increment;
 
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
@@ -857,10 +861,7 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 		CHECK_SAMPLE_FP(x1,1.0f);
 		PUT_SAMPLE_FP(x1);
 		count--;
-		if (!count)
-		{
-			return;
-		}
+		if (!count) return;
 	}
 
 	remain = count&7;
@@ -903,10 +904,7 @@ static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)
 		CHECK_SAMPLE(x1,32768);
 		PUT_SAMPLE(x1);
 		count--;
-		if (!count)
-		{
-			return;
-		}
+		if (!count) return;
 	}
 
 	remain = count&7;
@@ -938,10 +936,7 @@ static void Mix32To8_SIMD(SBYTE* dste,SLONG* srce,NATIVE count)
 		CHECK_SAMPLE(x1,128);
 		PUT_SAMPLE(x1+128);
 		count--;
-		if (!count)
-		{
-			return;
-		}
+		if (!count) return;
 	}
 
 	remain = count&15;
