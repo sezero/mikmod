@@ -791,23 +791,33 @@ static void __gus_timer_update()
 			vmask = (1 << gus.cur_voice);
 			break;
 		  case PCMD_FREQ:
-			__gus_outregw(GF1R_FREQUENCY, GET_W++);
+		/*	__gus_outregw(GF1R_FREQUENCY, GET_W++);*/
+			__gus_outregw(GF1R_FREQUENCY, *(unsigned short *)src);
+			src += 2;
 			break;
 		  case PCMD_PAN:
 			__gus_outregb(GF1R_BALANCE, GET_B++);
 			break;
 		  case PCMD_VOLUME:
 			__gus_volume_ramp_to(gus.cur_vol[gus.cur_voice] =
-								 GET_W++, GUS_VOLCHANGE_RAMP, GF1VL_IRQ);
+							/*	 GET_W++, GUS_VOLCHANGE_RAMP, GF1VL_IRQ);*/
+						  *(unsigned short *)src, GUS_VOLCHANGE_RAMP, GF1VL_IRQ);
+								src += 2;
 			break;
 		  case PCMD_VOLUME_PREPARE:
-			gus.cur_vol[gus.cur_voice] = GET_W++;
+		/*	gus.cur_vol[gus.cur_voice] = GET_W++;*/
+			gus.cur_vol[gus.cur_voice] = *(unsigned short *)src;
+			src += 2;
 			break;
 		  case PCMD_OFFSET:
-			wave_offset = GET_L++;
+		/*	wave_offset = GET_L++;*/
+			wave_offset = *(unsigned long *)src;
+			src += 4;
 			break;
 		  case PCMD_START:
-			wave = (gus_wave_t *) GET_L++;
+		/*	wave = (gus_wave_t *) GET_L++;*/
+			wave = (gus_wave_t *) *(unsigned long *)src;
+			src += 4;
 			gus.cur_wave[gus.cur_voice] = wave;
 			gus.kick_offs[gus.cur_voice] = wave_offset;
 			if (__gus_volume_ramp_to(0, GUS_VOLCHANGE_RAMP, GF1VL_IRQ)) {
