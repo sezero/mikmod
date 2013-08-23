@@ -23,6 +23,7 @@
 #include <dpmi.h>
 #include <sys/nearptr.h>
 #include <malloc.h>
+#include "mikmod_build.h" /* for MikMod_malloc() & co */
 
 __dma_regs dma[8] = {
 /* *INDENT-OFF* */
