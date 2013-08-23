@@ -722,8 +722,9 @@ ppc|ppc64|powerpc|powerpc64)
 			CFLAGS="$CFLAGS -faltivec -force_cpusubtype_ALL"
 			;;
 		Linux)
-			dnl force_cpusubtype_ALL not allowed for Linux as
-			CFLAGS="$CFLAGS -faltivec"
+			dnl -faltivec and -force_cpusubtype_ALL are Apple-only
+			dnl features.  -maltivec compiles all code for AltiVec..
+			CFLAGS="$CFLAGS -maltivec"
 			;;
 		esac
 	fi
