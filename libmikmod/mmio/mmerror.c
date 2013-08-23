@@ -40,7 +40,7 @@
 
 #include "mikmod_internals.h"
 
-const CHAR *_mm_errmsg[MMERR_MAX+1] =
+static const char *_mm_errmsg[MMERR_MAX+1] =
 {
 /* No error */
 
@@ -182,7 +182,7 @@ const CHAR *_mm_errmsg[MMERR_MAX+1] =
 
 MIKMODAPI const char *MikMod_strerror(int code)
 {
-	if ((code<0)||(code>MMERR_MAX)) code=MMERR_MAX+1;
+	if ((code<0)||(code>MMERR_MAX)) code=MMERR_MAX;
 	return _mm_errmsg[code];
 }
 
