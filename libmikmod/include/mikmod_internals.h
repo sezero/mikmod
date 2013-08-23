@@ -837,6 +837,13 @@ static __inline __m128i mm_hiqq(const __m128i a)
 
 #endif
 
+/* MikMod_malloc_aligned16() returns a 16 byte aligned zero-filled
+   memory in SIMD-enabled builds.
+ - the returned memory MIGHT NOT be realloc()'ed safely.
+ - the returned can be reclaimed using MikMod_free_aligned16() who
+   does check for a NULL pointer. */
+void* MikMod_malloc_aligned16(size_t);
+void MikMod_free_aligned16(void *);
 
 #endif
 

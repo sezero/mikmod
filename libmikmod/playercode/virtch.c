@@ -1222,15 +1222,16 @@ BOOL VC1_Init(void)
 	if (md_mode&DMODE_HQMIXER)
 		return VC2_Init();
 
-	if(!(Samples=(SWORD**)MikMod_calloc(MAXSAMPLEHANDLES,sizeof(SWORD*)))) {
+	if(!(Samples=(SWORD**)MikMod_malloc_aligned16(MAXSAMPLEHANDLES*sizeof(SWORD*)))) {
 		_mm_errno = MMERR_INITIALIZING_MIXER;
 		return 1;
 	}
-	if(!vc_tickbuf)
-		if(!(vc_tickbuf=(SLONG*)MikMod_malloc((TICKLSIZE+32)*sizeof(SLONG)))) {
+	if(!vc_tickbuf) {
+		if(!(vc_tickbuf=(SLONG*)MikMod_malloc_aligned16((TICKLSIZE+32)*sizeof(SLONG)))) {
 			_mm_errno = MMERR_INITIALIZING_MIXER;
 			return 1;
 		}
+	}
 
 	MixReverb=(md_mode&DMODE_STEREO)?MixReverb_Stereo:MixReverb_Normal;
 	MixLowPass=(md_mode&DMODE_STEREO)?MixLowPass_Stereo:MixLowPass_Normal;
