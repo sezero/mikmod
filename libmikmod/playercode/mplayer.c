@@ -3019,8 +3019,10 @@ void Player_Exit(MODULE* mod)
 MIKMODAPI void Player_SetVolume(SWORD volume)
 {
 	MUTEX_LOCK(vars);
-	if (pf)
+	if (pf) {
 		pf->volume=(volume<0)?0:(volume>128)?128:volume;
+		pf->initvolume=pf->volume;
+	}
 	MUTEX_UNLOCK(vars);
 }
 
