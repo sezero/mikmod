@@ -47,7 +47,23 @@
 __sb_state sb;
 
 /* Wait for SoundBlaster for some time */
-volatile void __sb_wait()
+#if !defined(__GNUC__) || (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ == 0)
+# define _func_noinline volatile /* match original code */
+# define _func_noclone
+#else
+/* avoid warnings from newer gcc:
+ * "function definition has qualified void return type" and
+ * function return types not compatible due to 'volatile' */
+# define _func_noinline __attribute__((__noinline__))
+# if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#  define _func_noclone
+# else
+#  define _func_noclone __attribute__((__noclone__))
+# endif
+#endif
+_func_noinline
+_func_noclone
+ void __sb_wait()
 {
 	inportb(SB_DSP_RESET);
 	inportb(SB_DSP_RESET);

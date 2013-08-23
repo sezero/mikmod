@@ -143,7 +143,23 @@ static unsigned short __gus_volume_table[512] = {
  * Mark function as volatile: don't allow it to be inlined.
  * It *should* be slow, no need to make it work faster :-)
  */
-volatile void __gus_delay()
+#if !defined(__GNUC__) || (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ == 0)
+# define _func_noinline volatile /* match original code */
+# define _func_noclone
+#else
+/* avoid warnings from newer gcc:
+ * "function definition has qualified void return type" and
+ * function return types not compatible due to 'volatile' */
+# define _func_noinline __attribute__((__noinline__))
+# if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#  define _func_noclone
+# else
+#  define _func_noclone __attribute__((__noclone__))
+# endif
+#endif
+_func_noinline
+_func_noclone
+ void __gus_delay()
 {
 	inportb(GF1_MIX_CTRL);
 	inportb(GF1_MIX_CTRL);
