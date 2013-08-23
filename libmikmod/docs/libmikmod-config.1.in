@@ -16,7 +16,7 @@ and link programs that use \fIlibmikmod\fP. It is also used internally
 to the .m4 macros for GNU autoconf that are included with \fIlibmikmod\fP.
 
 .SH OPTIONS
-.l
+
 \fIlibmikmod-config\fP accepts the following options:
 .TP 8
 .B  \-\-version
