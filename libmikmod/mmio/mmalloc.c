@@ -26,18 +26,16 @@
 
 ==============================================================================*/
 
-#define _XOPEN_SOURCE 600 /* for posix_memalign */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
+#ifdef HAVE_POSIX_MEMALIGN
+#define _XOPEN_SOURCE 600 /* for posix_memalign */
+#endif
+
 #include "string.h"
 #include "mikmod_internals.h"
-
-#undef POSIX_MEMALIGN
-#if defined(__linux__)
-/*#define POSIX_MEMALIGN*/
-#endif
 
 #undef WIN32_ALIGNED_MALLOC
 #if defined(_WIN32) && !defined(_WIN32_WCE)
@@ -66,7 +64,7 @@ void MikMod_free_aligned16(void *data)
 void* MikMod_malloc_aligned16(size_t size)
 {
 	void *d;
-#if defined(POSIX_MEMALIGN)
+#if defined(HAVE_POSIX_MEMALIGN)
 	if (!posix_memalign(&d, 16, size)) {
 		memset(d, 0, size);
 		return d;
@@ -98,7 +96,7 @@ void* MikMod_malloc_aligned16(size_t size)
 void MikMod_free_aligned16(void *data)
 {
 	if (!data) return;
-#if defined(POSIX_MEMALIGN)
+#if defined(HAVE_POSIX_MEMALIGN)
 	free(data);
 #elif defined(WIN32_ALIGNED_MALLOC)
 	_aligned_free(data);

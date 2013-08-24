@@ -109,6 +109,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
 
+/* Define to 1 if you have the `posix_memalign' function. */
+#cmakedefine HAVE_POSIX_MEMALIGN 1
+
 /* Define to 1 if you have the `setenv' function. */
 #cmakedefine HAVE_SETENV 1
 

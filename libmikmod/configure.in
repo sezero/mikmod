@@ -434,7 +434,7 @@ fi
 # Check for library functions.
 # ============================
 
-AC_CHECK_FUNCS(setenv snprintf srandom)
+AC_CHECK_FUNCS(posix_memalign setenv snprintf srandom)
 AC_REPLACE_FUNCS(strcasecmp strdup strstr)
 # Change extension, as we use libtool
 LIBOBJS="`echo $LIBOBJS|sed -e 's/\.o/\.lo/g'`"
@@ -807,4 +807,3 @@ Library configuration:
   Drivers to be compiled: $libmikmod_driverlist
   Install path: $prefix/lib, $prefix/include
 "
-
