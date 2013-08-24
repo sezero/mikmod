@@ -364,7 +364,7 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 {
 	SAMPLE *s = sload->sample;
 	int handle;
-	ULONG t, length,loopstart,loopend;
+	ULONG t, length,loopstart,loopend,looplen;
 
 	if(type==MD_HARDWARE) return -1;
 
@@ -401,11 +401,12 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 
 	/* Unclick sample */
 	if(s->flags & SF_LOOP) {
+		looplen = loopend - loopstart;/* handle short samples */
 		if(s->flags & SF_BIDI)
-			for(t=0;t<16;t++)
+			for(t=0;t<16 && t<looplen;t++)
 				Samples[handle][loopend+t]=Samples[handle][(loopend-t)-1];
 		else
-			for(t=0;t<16;t++)
+			for(t=0;t<16 && t<looplen;t++)
 				Samples[handle][loopend+t]=Samples[handle][t+loopstart];
 	} else
 		for(t=0;t<16;t++)
