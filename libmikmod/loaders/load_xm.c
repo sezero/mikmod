@@ -694,13 +694,15 @@ static BOOL XM_Load(BOOL curious)
 	mh->flags       =_mm_read_I_UWORD(modreader);
 	mh->tempo       =_mm_read_I_UWORD(modreader);
 	mh->bpm         =_mm_read_I_UWORD(modreader);
-	if(!mh->bpm) {
+	if(!mh->bpm || mh->songlength > 256) {
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
 	}
-	_mm_read_UBYTES(mh->orders,mh->headersize-20,modreader);
-
-	if(_mm_eof(modreader)) {
+/*	_mm_read_UBYTES(mh->orders,256,modreader);*/
+/*	_mm_read_UBYTES(mh->orders,mh->headersize-20,modreader);*/
+	_mm_read_UBYTES(mh->orders,mh->songlength,modreader);
+	if(_mm_fseek(modreader, mh->headersize+60, SEEK_SET) ||
+	   _mm_eof(modreader)) {
 		_mm_errno = MMERR_LOADING_HEADER;
 		return 0;
 	}
