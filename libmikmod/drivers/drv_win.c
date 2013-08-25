@@ -90,7 +90,7 @@ static BOOL WIN_IsThere(void)
 	return waveOutGetNumDevs()>0?1:0;
 }
 
-static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD dwParam1,DWORD dwParam2)
+static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD_PTR dwInstance,DWORD_PTR dwParam1,DWORD_PTR dwParam2)
 {
 	if (uMsg==WOM_DONE) --buffersout;
 }
