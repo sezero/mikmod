@@ -247,11 +247,11 @@ static BOOL ALSA_Init_internal(void)
 		device=atoi(getenv("ALSA_PCM"));
 
 	/* setup playback format structure */
-#define NUM_CHANNELS() ((md_mode&DMODE_STEREO)?2:1)
-	pformat = (md_mode&DMODE_16BITS)?SND_PCM_FORMAT_S16_LE:SND_PCM_FORMAT_U8;
+	pformat = (md_mode&DMODE_FLOAT)? SND_PCM_FORMAT_FLOAT :
+			(md_mode&DMODE_16BITS)? SND_PCM_FORMAT_S16 : SND_PCM_FORMAT_U8;
 	snd_pcm_hw_params_alloca(&hwparams);
 	snd_pcm_sw_params_alloca(&swparams);
-	channels = NUM_CHANNELS();
+	channels = (md_mode&DMODE_STEREO)?2:1;
 	rate = md_mixfreq;
 
 	/* scan for appropriate sound card */
@@ -268,7 +268,8 @@ static BOOL ALSA_Init_internal(void)
 		goto END;
 	}
 
-	global_frame_size = channels*(md_mode&DMODE_16BITS?2:1);
+	global_frame_size = channels *
+				((md_mode&DMODE_FLOAT)? 4 : (md_mode&DMODE_16BITS)? 2 : 1);
 
 	/* choose all parameters */
 	err = alsa_pcm_hw_params_any(pcm_h, hwparams);
