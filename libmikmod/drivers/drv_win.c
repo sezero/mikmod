@@ -54,6 +54,10 @@ typedef DWORD DWORD_PTR;
 #define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
 #endif
 
+#ifndef WAVE_FORMAT_IEEE_FLOAT
+#define WAVE_FORMAT_IEEE_FLOAT 0x0003
+#endif
+
 #define NUMBUFFERS	6				/* number of buffers */
 #define BUFFERSIZE	120				/* buffer size in milliseconds */
 
@@ -104,14 +108,15 @@ static BOOL WIN_Init(void)
 
 	samplesize=1;
 	if (md_mode&DMODE_STEREO) samplesize<<=1;
-	if (md_mode&DMODE_16BITS) samplesize<<=1;
+	if (md_mode&DMODE_FLOAT) samplesize<<=2;
+	else if (md_mode&DMODE_16BITS) samplesize<<=1;
 
-	wfe.wFormatTag=WAVE_FORMAT_PCM;
+	wfe.wFormatTag=(md_mode&DMODE_FLOAT)? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
 	wfe.nChannels=md_mode&DMODE_STEREO?2:1;
 	wfe.nSamplesPerSec=md_mixfreq;
 	wfe.nAvgBytesPerSec=md_mixfreq*samplesize;
 	wfe.nBlockAlign=samplesize;
-	wfe.wBitsPerSample=md_mode&DMODE_16BITS?16:8;
+	wfe.wBitsPerSample=(md_mode&DMODE_FLOAT)?32:(md_mode&DMODE_16BITS)?16:8;
 	wfe.cbSize=sizeof(wfe);
 
 	mmr=waveOutOpen(&hwaveout,WAVE_MAPPER,&wfe,(DWORD_PTR)WIN_CallBack,0,CALLBACK_FUNCTION);

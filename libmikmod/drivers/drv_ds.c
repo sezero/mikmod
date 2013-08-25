@@ -59,6 +59,10 @@
 						  DSBCAPS_CTRL3D )
 #endif
 
+#ifndef WAVE_FORMAT_IEEE_FLOAT
+#define WAVE_FORMAT_IEEE_FLOAT 0x0003
+#endif
+
 /* size of each buffer */
 #define FRAGSIZE 16
 /* buffer count */
@@ -178,10 +182,10 @@ static BOOL DS_Init(void)
 	}
 
 	memset(&soundBufferFormat,0,sizeof(DSBUFFERDESC));
-    soundBufferFormat.dwSize       =sizeof(DSBUFFERDESC);
-    soundBufferFormat.dwFlags      =DSBCAPS_PRIMARYBUFFER;
-    soundBufferFormat.dwBufferBytes=0;
-    soundBufferFormat.lpwfxFormat  =NULL;
+	soundBufferFormat.dwSize = sizeof(DSBUFFERDESC);
+	soundBufferFormat.dwFlags = DSBCAPS_PRIMARYBUFFER;
+	soundBufferFormat.dwBufferBytes = 0;
+	soundBufferFormat.lpwfxFormat = NULL;
 
 	if (pSoundCard->lpVtbl->CreateSoundBuffer
 				(pSoundCard,&soundBufferFormat,&pPrimarySoundBuffer,NULL)!=DS_OK) {
@@ -190,25 +194,24 @@ static BOOL DS_Init(void)
 	}
 
 	memset(&pcmwf,0,sizeof(WAVEFORMATEX));
-	pcmwf.wFormatTag     =WAVE_FORMAT_PCM;
+	pcmwf.wFormatTag     =(md_mode&DMODE_FLOAT)? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
 	pcmwf.nChannels      =(md_mode&DMODE_STEREO)?2:1;
 	pcmwf.nSamplesPerSec =md_mixfreq;
-	pcmwf.wBitsPerSample =(md_mode&DMODE_16BITS)?16:8;
+	pcmwf.wBitsPerSample =(md_mode&DMODE_FLOAT)?32:(md_mode&DMODE_16BITS)?16:8;
 	pcmwf.nBlockAlign    =(pcmwf.wBitsPerSample * pcmwf.nChannels) / 8;
 	pcmwf.nAvgBytesPerSec=pcmwf.nSamplesPerSec*pcmwf.nBlockAlign;
 
-    if (pPrimarySoundBuffer->lpVtbl->SetFormat
-				(pPrimarySoundBuffer,&pcmwf)!=DS_OK) {
+	if (pPrimarySoundBuffer->lpVtbl->SetFormat(pPrimarySoundBuffer,&pcmwf)!=DS_OK) {
 		_mm_errno=MMERR_DS_FORMAT;
 		return 1;
 	}
-    pPrimarySoundBuffer->lpVtbl->Play(pPrimarySoundBuffer,0,0,DSBPLAY_LOOPING);
+	pPrimarySoundBuffer->lpVtbl->Play(pPrimarySoundBuffer,0,0,DSBPLAY_LOOPING);
 
 	memset(&soundBufferFormat,0,sizeof(DSBUFFERDESC));
-    soundBufferFormat.dwSize       =sizeof(DSBUFFERDESC);
-    soundBufferFormat.dwFlags      =controlflags|DSBCAPS_GETCURRENTPOSITION2 ;
-    soundBufferFormat.dwBufferBytes=fragsize*UPDATES;
-    soundBufferFormat.lpwfxFormat  =&pcmwf;
+	soundBufferFormat.dwSize	=sizeof(DSBUFFERDESC);
+	soundBufferFormat.dwFlags	=controlflags|DSBCAPS_GETCURRENTPOSITION2 ;
+	soundBufferFormat.dwBufferBytes =fragsize*UPDATES;
+	soundBufferFormat.lpwfxFormat	=&pcmwf;
 
 	if (pSoundCard->lpVtbl->CreateSoundBuffer
 				(pSoundCard,&soundBufferFormat,&pSoundBuffer,NULL)!=DS_OK) {
@@ -262,7 +265,6 @@ static void DS_Exit(void)
 	DWORD statusInfo;
 
 	if(updateBufferHandle) {
-
 		/* Signal thread to exit and wait for the exit */
 		if (threadInUse) {
 			threadInUse = 0;
