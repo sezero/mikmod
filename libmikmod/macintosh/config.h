@@ -26,6 +26,9 @@
 /* Define if your system supports binary pipes (i.e. Unix) */
 /* #undef DRV_PIPE */
 
+/* Define if you want a .aiff file writer driver */
+#define DRV_AIFF 1
+
 /* Define if the AudioFile driver is compiled */
 /* #undef DRV_AF */
 /* Define if the AIX audio driver is compiled */
@@ -108,6 +111,9 @@
 
 /* Define if you have the <libgus.h> header file.  */
 /* #undef HAVE_LIBGUS_H */
+
+/* Define if you have the <limits.h> header file. */
+#define HAVE_LIMITS_H 1
 
 /* Define if you have the <machine/soundcard.h> header file.  */
 /* #undef HAVE_MACHINE_SOUNDCARD_H */
