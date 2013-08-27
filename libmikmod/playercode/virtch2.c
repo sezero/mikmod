@@ -514,7 +514,7 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG l
 	return local_index;
 }
 
-static SLONGLONG MixStereoSurround(SWORD* srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,ULONG todo)
+static SLONGLONG MixStereoSurround(const SWORD* srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	long whoop;
@@ -962,7 +962,6 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 }
 
 #endif
-
 
 
 static void AddChannel(SLONG* ptr,NATIVE todo)
