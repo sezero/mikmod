@@ -258,7 +258,7 @@ static BOOL ALSA_Init_internal(void)
 	_mm_errno = MMERR_OPENING_AUDIO;
 
 #define MIKMOD_ALSA_DEVICE "default"
-	if ((err = alsa_pcm_open(&pcm_h, MIKMOD_ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
+	if ((err = alsa_pcm_open(&pcm_h, MIKMOD_ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0) {
 		printf("snd_pcm_open() call failed: %s\n", alsa_strerror(err));
 		goto END;
 	}
