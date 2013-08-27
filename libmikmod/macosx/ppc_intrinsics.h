@@ -499,18 +499,18 @@ __fctiwz (double b)
  * fctidz - Floating Convert to Integer Double Word with Round toward Zero
  *
  * Convert the input value to a signed 64-bit int and place in the FP
- * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1) 
+ * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1)
  * if the FP value exceeds the range representable by a int64_t.
- * 
- * WARNING: fctidz is a valid instruction only on 64-bit PowerPC 
+ *
+ * WARNING: fctidz is a valid instruction only on 64-bit PowerPC
  */
 static inline double __fctidz (double b) __attribute__((always_inline));
-static inline double 
+static inline double
 __fctidz (double b)
 {
   double result;
-  __asm__ ("fctidz %0, %1" 
-           /* outputs:  */ : "=f" (result) 
+  __asm__ ("fctidz %0, %1"
+           /* outputs:  */ : "=f" (result)
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -519,19 +519,19 @@ __fctidz (double b)
  * fctid - Floating Convert to Integer Double Word
  *
  * Convert the input value to a signed 64-bit int and place in the FP
- * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1) 
- * if the FP value exceeds the range representable by a int64_t. Use the 
+ * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1)
+ * if the FP value exceeds the range representable by a int64_t. Use the
  * rounding mode indicated in the FPSCR.
- * 
- * WARNING: fctid is a valid instruction only on 64-bit PowerPC 
+ *
+ * WARNING: fctid is a valid instruction only on 64-bit PowerPC
  */
 static inline double __fctid (double b) __attribute__((always_inline));
-static inline double 
+static inline double
 __fctid (double b)
 {
   double result;
-  __asm__ ("fctid %0, %1" 
-           /* outputs:  */ : "=f" (result) 
+  __asm__ ("fctid %0, %1"
+           /* outputs:  */ : "=f" (result)
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -539,19 +539,19 @@ __fctid (double b)
 /*
  * fcfid - Floating Convert From Integer Double Word
  *
- * Convert the 64-bit signed integer input value to a 64-bit FP value.  
+ * Convert the 64-bit signed integer input value to a 64-bit FP value.
  * Use the rounding mode indicated in the FPSCR if the integer is out of
  * double precision range.
- * 
- * WARNING: fcfid is a valid instruction only on 64-bit PowerPC 
+ *
+ * WARNING: fcfid is a valid instruction only on 64-bit PowerPC
  */
 static inline double __fcfid (double b) __attribute__((always_inline));
-static inline double 
+static inline double
 __fcfid (double b)
 {
   double result;
-  __asm__ ("fcfid %0, %1" 
-           /* outputs:  */ : "=f" (result) 
+  __asm__ ("fcfid %0, %1"
+           /* outputs:  */ : "=f" (result)
            /* inputs:   */ : "f" (b));
   return result;
 }
