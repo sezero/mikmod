@@ -750,29 +750,25 @@ extern MikMod_callback_t vc_callback;
 #include <ppc_intrinsics.h>
 #endif
 
-// Helper functions
+/* Helper functions */
 
-// Set single float across the four values
-static inline vector float vec_mul( const vector float a, const vector float b)
-{
+/* Set single float across the four values */
+static inline vector float vec_mul(const vector float a, const vector float b) {
     return vec_madd(a, b, (const vector float)(0.f));
 }
 
-// Set single float across the four values
-static inline vector float vec_load_ps1(const float *pF )
-{
+/* Set single float across the four values */
+static inline vector float vec_load_ps1(const float *pF) {
     vector float data = vec_lde(0, pF);
     return vec_splat(vec_perm(data, data, vec_lvsl(0, pF)), 0);
 }
 
-// Set vector to 0
-static inline vector float vec_setzero()
-{
+/* Set vector to 0 */
+static inline vector float vec_setzero() {
     return (vector float) (0.);
 }
 
-static inline vector signed char vec_set1_8(unsigned char splatchar)
-{
+static inline vector signed char vec_set1_8(unsigned char splatchar) {
 	vector unsigned char splatmap = vec_lvsl(0, &splatchar);
 	vector unsigned char result = vec_lde(0, &splatchar);
 	splatmap = vec_splat(splatmap, 0);
@@ -788,24 +784,22 @@ static inline vector signed char vec_set1_8(unsigned char splatchar)
 #define PERM_B2 0x18,0x19,0x1A,0x1B
 #define PERM_B3 0x1C,0x1D,0x1E,0x1F
 
-// Equivalent to _mm_unpacklo_epi32
-static inline vector signed int vec_unpacklo(vector signed int a, vector signed int b)
-{
+/* Equivalent to _mm_unpacklo_epi32 */
+static inline vector signed int vec_unpacklo(vector signed int a, vector signed int b) {
    return vec_perm(a, b, (vector unsigned char)(PERM_A0,PERM_A1,PERM_B0,PERM_B1));
 }
 
-// Equivalent to _mm_srli_si128(a, 8) (without the zeroing in high part).
-static inline vector signed int vec_hiqq(vector signed int a)
-{
+/* Equivalent to _mm_srli_si128(a, 8) (without the zeroing in high part). */
+static inline vector signed int vec_hiqq(vector signed int a) {
    vector signed int b = vec_splat_s32(0);
    return vec_perm(a, b, (vector unsigned char)(PERM_A2,PERM_A3,PERM_B2,PERM_B3));
 }
 
-// vec_sra is max +15. We have to do in two times ...
-#define EXTRACT_SAMPLE_SIMD_F(srce, var, size, mul) var = vec_mul(vec_ctf(vec_sra(vec_ld(0, (vector signed int*)(srce)), vec_splat_u32(BITSHIFT-size)),0), mul);
-#define EXTRACT_SAMPLE_SIMD_0(srce, var) var = vec_sra(vec_sra(vec_ld(0, (vector signed int*)(srce)), vec_splat_u32(15)), vec_splat_u32(BITSHIFT+16-15-0));
-#define EXTRACT_SAMPLE_SIMD_8(srce, var) var = vec_sra(vec_sra(vec_ld(0, (vector signed int*)(srce)), vec_splat_u32(15)), vec_splat_u32(BITSHIFT+16-15-8));
-#define EXTRACT_SAMPLE_SIMD_16(srce, var) var = vec_sra(vec_ld(0, (vector signed int*)(srce)), vec_splat_u32(BITSHIFT+16-16));
+/* vec_sra is max +15. We have to do in two times ... */
+#define EXTRACT_SAMPLE_SIMD_F(srce, var, size, mul) var = vec_mul(vec_ctf(vec_sra(vec_ld(0, (vector signed int const *)(srce)), vec_splat_u32(BITSHIFT-size)),0), mul);
+#define EXTRACT_SAMPLE_SIMD_0(srce, var) var = vec_sra(vec_sra(vec_ld(0, (vector signed int const *)(srce)), vec_splat_u32(15)), vec_splat_u32(BITSHIFT+16-15-0));
+#define EXTRACT_SAMPLE_SIMD_8(srce, var) var = vec_sra(vec_sra(vec_ld(0, (vector signed int const *)(srce)), vec_splat_u32(15)), vec_splat_u32(BITSHIFT+16-15-8));
+#define EXTRACT_SAMPLE_SIMD_16(srce, var) var = vec_sra(vec_ld(0, (vector signed int const *)(srce)), vec_splat_u32(BITSHIFT+16-16));
 #define PUT_SAMPLE_SIMD_W(dste, v1, v2)  vec_st(vec_packs(v1, v2), 0, dste);
 #define PUT_SAMPLE_SIMD_B(dste, v1, v2, v3, v4)  vec_st(vec_add(vec_packs((vector signed short)vec_packs(v1, v2), (vector signed short)vec_packs(v3, v4)), vec_set1_8(128)), 0, dste);
 #define PUT_SAMPLE_SIMD_F(dste, v1)  vec_st(v1, 0, dste);
@@ -813,18 +807,17 @@ static inline vector signed int vec_hiqq(vector signed int a)
 
 #elif defined HAVE_SSE2
 
-/* SSE2 helper function */
-
 #include <emmintrin.h>
 
-static __inline __m128i mm_hiqq(const __m128i a)
-{
-   return _mm_srli_si128(a, 8); // get the 64bit upper part. new 64bit upper is undefined (zeroed is fine).
+/* SSE2 helper function */
+
+static __inline __m128i mm_hiqq(const __m128i a) {
+   return _mm_srli_si128(a, 8); /* get the 64bit upper part. new 64bit upper is undefined (zeroed is fine). */
 }
 
 /* 128-bit mixing macros */
-#define EXTRACT_SAMPLE_SIMD(srce, var, size) var = _mm_srai_epi32(_mm_load_si128((__m128i*)(srce)), BITSHIFT+16-size);
-#define EXTRACT_SAMPLE_SIMD_F(srce, var, size, mul) var = _mm_mul_ps(_mm_cvtepi32_ps(_mm_srai_epi32(_mm_load_si128((__m128i*)(srce)), BITSHIFT-size)), mul);
+#define EXTRACT_SAMPLE_SIMD(srce, var, size) var = _mm_srai_epi32(_mm_load_si128((__m128i const *)(srce)), BITSHIFT+16-size);
+#define EXTRACT_SAMPLE_SIMD_F(srce, var, size, mul) var = _mm_mul_ps(_mm_cvtepi32_ps(_mm_srai_epi32(_mm_load_si128((__m128i const *)(srce)), BITSHIFT-size)), mul);
 #define EXTRACT_SAMPLE_SIMD_0(srce, var) EXTRACT_SAMPLE_SIMD(srce, var, 0)
 #define EXTRACT_SAMPLE_SIMD_8(srce, var) EXTRACT_SAMPLE_SIMD(srce, var, 8)
 #define EXTRACT_SAMPLE_SIMD_16(srce, var) EXTRACT_SAMPLE_SIMD(srce, var, 16)
