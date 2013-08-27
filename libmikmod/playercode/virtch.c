@@ -848,7 +848,7 @@ static void Mix32To8(SBYTE* dste,const SLONG *srce,NATIVE count)
 
 // Mix 32bit input to floating point. 32 samples per iteration
 // PC: ?, Mac OK
-static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
+static void Mix32ToFP_SIMD(float* dste,const SLONG* srce,NATIVE count)
 {
 	const float k = ((1.0f / 32768.0f) / (1 << FP_SHIFT));
 	int	remain=count;
@@ -856,10 +856,10 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 
 	while(!IS_ALIGNED_16(dste) || !IS_ALIGNED_16(srce))
 	{
-		float x1;
-		EXTRACT_SAMPLE_FP(x1,FP_SHIFT);
-		CHECK_SAMPLE_FP(x1,1.0f);
-		PUT_SAMPLE_FP(x1);
+		float xf;
+		EXTRACT_SAMPLE_FP(xf,FP_SHIFT);
+		CHECK_SAMPLE_FP(xf,1.0f);
+		PUT_SAMPLE_FP(xf);
 		count--;
 		if (!count) return;
 	}
@@ -869,31 +869,31 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 	xk = LOAD_PS1_SIMD(&k); // Scale factor
 
 	for(count>>=3;count;count--) {
-	   EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
-	   EXTRACT_SAMPLE_SIMD_F(srce+4, x2, FP_SHIFT, xk);  // Load 4 samples
-	PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
-	PUT_SAMPLE_SIMD_F(dste+4, x2); // Store 4 samples
-	srce+=8;
-	dste+=8;
+		EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
+		EXTRACT_SAMPLE_SIMD_F(srce+4, x2, FP_SHIFT, xk);  // Load 4 samples
+		PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
+		PUT_SAMPLE_SIMD_F(dste+4, x2); // Store 4 samples
+		srce+=8;
+		dste+=8;
 	}
 
 	if (remain&4) {
-	   EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
-	PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
-	srce+=4;
-	dste+=4;
-	remain &= 3;
+		EXTRACT_SAMPLE_SIMD_F(srce, x1, FP_SHIFT, xk);  // Load 4 samples
+		PUT_SAMPLE_SIMD_F(dste, x1); // Store 4 samples
+		srce+=4;
+		dste+=4;
+		remain &= 3;
 	}
 
 	while(remain--) {
-		float x1;
-		EXTRACT_SAMPLE_FP(x1,FP_SHIFT);
-		CHECK_SAMPLE_FP(x1,1.0f);
-		PUT_SAMPLE_FP(x1);
+		float xf;
+		EXTRACT_SAMPLE_FP(xf,FP_SHIFT);
+		CHECK_SAMPLE_FP(xf,1.0f);
+		PUT_SAMPLE_FP(xf);
 	}
 }
 // PC: Ok, Mac Ok
-static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)
+static void Mix32To16_SIMD(SWORD* dste,const SLONG* srce,NATIVE count)
 {
 	int	remain = count;
 
@@ -920,12 +920,12 @@ static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)
 	}
 
 	if (remain)
-	   Mix32To16(dste, srce, remain);
+		Mix32To16(dste, srce, remain);
 }
 
 // Mix 32bit input to 8bit. 128 samples per iteration
 // PC:OK, Mac: Ok
-static void Mix32To8_SIMD(SBYTE* dste,SLONG* srce,NATIVE count)
+static void Mix32To8_SIMD(SBYTE* dste,const SLONG* srce,NATIVE count)
 {
 	int	remain=count;
 
@@ -942,21 +942,21 @@ static void Mix32To8_SIMD(SBYTE* dste,SLONG* srce,NATIVE count)
 	remain = count&15;
 
 	for(count>>=4;count;count--) {
-	simd_m128i x1,x2,x3,x4;
-	EXTRACT_SAMPLE_SIMD_8(srce, x1);  // Load 4 samples
-	EXTRACT_SAMPLE_SIMD_8(srce+4, x2);  // Load 4 samples
-	EXTRACT_SAMPLE_SIMD_8(srce+8, x3);  // Load 4 samples
-	EXTRACT_SAMPLE_SIMD_8(srce+12, x4);  // Load 4 samples
-	PUT_SAMPLE_SIMD_B(dste, x1, x2, x3, x4); // Store 16 samples
-	srce+=16;
-	dste+=16;
+		simd_m128i x1,x2,x3,x4;
+		EXTRACT_SAMPLE_SIMD_8(srce, x1);  // Load 4 samples
+		EXTRACT_SAMPLE_SIMD_8(srce+4, x2);  // Load 4 samples
+		EXTRACT_SAMPLE_SIMD_8(srce+8, x3);  // Load 4 samples
+		EXTRACT_SAMPLE_SIMD_8(srce+12, x4);  // Load 4 samples
+		PUT_SAMPLE_SIMD_B(dste, x1, x2, x3, x4); // Store 16 samples
+		srce+=16;
+		dste+=16;
 	}
+
 	if (remain)
-	   Mix32To8(dste, srce, remain);
+		Mix32To8(dste, srce, remain);
 }
 
 #endif
-
 
 
 static void AddChannel(SLONG* ptr,NATIVE todo)
