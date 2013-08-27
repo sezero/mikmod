@@ -224,11 +224,8 @@ static BOOL ULT_Load(BOOL curious)
 	for(u=0;u<of.numchn;u++)
 		for(t=0;t<of.numpat;t++)
 			of.patterns[(t*of.numchn)+u]=tracks++;
-	/* fix for CVE-2009-3996 - snatched from SuSe's fix -- AW */
-	if (of.numchn>=UF_MAXCHAN)
-		of.numchn=UF_MAXCHAN - 1;
 
-	// SA37775
+	// Secunia SA37775 / CVE-2009-3996
 	if (of.numchn>=UF_MAXCHAN)
 		of.numchn=UF_MAXCHAN - 1;
 

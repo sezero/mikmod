@@ -39,7 +39,7 @@ CPPFLAGS+=-DDRV_PIPE
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF
 
-CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SNPRINTF
+CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SNPRINTF -DHAVE_PTHREAD -DHAVE_SRANDOM
 
 # compiler flags
 CFLAGS=-O2 -Wall
@@ -50,6 +50,7 @@ LDFLAGS=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
 LDFLAGS+=-Wl,-compatibility_version,9 -Wl,-current_version,9.1
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6
+#CPPFLAGS+=-DHAVE_POSIX_MEMALIGN
 #LDFLAGS+=-mmacosx-version-min=10.6 -Wl,-lbundle1.o
 
 COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I.. -I../macosx

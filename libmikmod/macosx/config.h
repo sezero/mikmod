@@ -76,6 +76,10 @@
 /* Define if your system needs leading underscore to function names in dlsym() calls */
 /* #undef DLSYM_NEEDS_UNDERSCORE */
 
+/* Define if you have the posix_memalign function. */
+/* posix_memalign this requires OSX 10.6 or newer! */
+/* #undef HAVE_POSIX_MEMALIGN */
+
 /* Define if you have the setenv function.  */
 #define HAVE_SETENV 1
 
@@ -111,6 +115,9 @@
 
 /* Define if you have the <libgus.h> header file.  */
 /* #undef HAVE_LIBGUS_H */
+
+/* Define if you have the <limits.h> header file. */
+#define HAVE_LIMITS_H 1
 
 /* Define if you have the <machine/soundcard.h> header file.  */
 /* #undef HAVE_MACHINE_SOUNDCARD_H */

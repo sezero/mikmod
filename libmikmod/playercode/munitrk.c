@@ -236,7 +236,7 @@ void UniWriteWord(UWORD data)
 	}
 }
 
-static BOOL MyCmp(UBYTE* a,UBYTE* b,UWORD l)
+static BOOL MyCmp(const UBYTE* a,const UBYTE* b,UWORD l)
 {
 	UWORD t;
 
@@ -275,15 +275,15 @@ void UniNewline(void)
    stream. */
 UBYTE* UniDup(void)
 {
-	UBYTE *d;
+	void *d;
 
-	if (!UniExpand(unitt-unipc)) return NULL;
+	if (!UniExpand(unipc-unitt)) return NULL;
 	unibuf[unitt] = 0;
 
-	if(!(d=(UBYTE *)MikMod_malloc(unipc))) return NULL;
+	if(!(d=MikMod_malloc(unipc))) return NULL;
 	memcpy(d,unibuf,unipc);
 
-	return d;
+	return (UBYTE *)d;
 }
 
 BOOL UniInit(void)

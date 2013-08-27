@@ -51,18 +51,29 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if !defined(WIN32) && (defined (__arch64__) || defined(__alpha) || defined (__x64_64) || defined (_LP64) || defined (__powerpc64__))
+#if !defined(WIN32) && (defined(_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x64_64) || defined(__powerpc64__))
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
+#elif defined(_WIN64) /* win64 is LLP64, not LP64  */
+#define NATIVE_64BIT_INT
+typedef long long	SLONGLONG;
 #elif defined(__WATCOMC__)
 typedef __int64		SLONGLONG;
 #elif defined(WIN32) && !defined(__MWERKS__)
 typedef LONGLONG	SLONGLONG;
 #elif defined(macintosh) && !TYPE_LONGLONG
 #include <Types.h>
-typedef SInt64	    SLONGLONG;
+typedef SInt64		SLONGLONG;
 #else
 typedef long long	SLONGLONG;
+#endif
+
+/* pointer-sized signed int (ssize_t/intptr_t) : */
+#if defined(_WIN64) /* win64 is LLP64, not LP64  */
+typedef long long	SINTPTR_T;
+#else
+/* long should be pointer-sized for all others : */
+typedef long		SINTPTR_T;
 #endif
 
 /*========== Error handling */
@@ -692,13 +703,13 @@ extern MikMod_callback_t vc_callback;
 #undef HAVE_ALTIVEC
 #undef HAVE_SSE2
 
-#if defined(__APPLE__) && !defined (__i386__)
+#if defined(__APPLE__) && (defined(__ppc__) || defined(__ppc64__))
 
 #if defined __VEC__ && !(defined(__GNUC__) && (__GNUC__ < 3))
 #define HAVE_ALTIVEC
 #endif // __VEC__
 
-#elif defined(__APPLE__) && defined(__i386__)
+#elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
 
 #if defined(__SSE2__)
 #define HAVE_SSE2
@@ -826,6 +837,13 @@ static __inline __m128i mm_hiqq(const __m128i a)
 
 #endif
 
+/* MikMod_malloc_aligned16() returns a 16 byte aligned zero-filled
+   memory in SIMD-enabled builds.
+ - the returned memory MIGHT NOT be realloc()'ed safely.
+ - the returned can be reclaimed using MikMod_free_aligned16() who
+   does check for a NULL pointer. */
+void* MikMod_malloc_aligned16(size_t);
+void MikMod_free_aligned16(void *);
 
 #endif
 

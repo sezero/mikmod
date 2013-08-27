@@ -42,6 +42,7 @@
 #include <string.h>
 
 #include "dosgus.h"
+#include "mikmod_build.h" /* for MikMod_malloc() & co */
 
 /********************************************* Private variables/routines *****/
 
@@ -142,7 +143,23 @@ static unsigned short __gus_volume_table[512] = {
  * Mark function as volatile: don't allow it to be inlined.
  * It *should* be slow, no need to make it work faster :-)
  */
-volatile void __gus_delay()
+#if !defined(__GNUC__) || (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ == 0)
+# define _func_noinline volatile /* match original code */
+# define _func_noclone
+#else
+/* avoid warnings from newer gcc:
+ * "function definition has qualified void return type" and
+ * function return types not compatible due to 'volatile' */
+# define _func_noinline __attribute__((__noinline__))
+# if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#  define _func_noclone
+# else
+#  define _func_noclone __attribute__((__noclone__))
+# endif
+#endif
+_func_noinline
+_func_noclone
+ void __gus_delay()
 {
 	inportb(GF1_MIX_CTRL);
 	inportb(GF1_MIX_CTRL);
@@ -790,23 +807,33 @@ static void __gus_timer_update()
 			vmask = (1 << gus.cur_voice);
 			break;
 		  case PCMD_FREQ:
-			__gus_outregw(GF1R_FREQUENCY, GET_W++);
+		/*	__gus_outregw(GF1R_FREQUENCY, GET_W++);*/
+			__gus_outregw(GF1R_FREQUENCY, *(unsigned short *)src);
+			src += 2;
 			break;
 		  case PCMD_PAN:
 			__gus_outregb(GF1R_BALANCE, GET_B++);
 			break;
 		  case PCMD_VOLUME:
 			__gus_volume_ramp_to(gus.cur_vol[gus.cur_voice] =
-								 GET_W++, GUS_VOLCHANGE_RAMP, GF1VL_IRQ);
+							/*	 GET_W++, GUS_VOLCHANGE_RAMP, GF1VL_IRQ);*/
+						  *(unsigned short *)src, GUS_VOLCHANGE_RAMP, GF1VL_IRQ);
+								src += 2;
 			break;
 		  case PCMD_VOLUME_PREPARE:
-			gus.cur_vol[gus.cur_voice] = GET_W++;
+		/*	gus.cur_vol[gus.cur_voice] = GET_W++;*/
+			gus.cur_vol[gus.cur_voice] = *(unsigned short *)src;
+			src += 2;
 			break;
 		  case PCMD_OFFSET:
-			wave_offset = GET_L++;
+		/*	wave_offset = GET_L++;*/
+			wave_offset = *(unsigned long *)src;
+			src += 4;
 			break;
 		  case PCMD_START:
-			wave = (gus_wave_t *) GET_L++;
+		/*	wave = (gus_wave_t *) GET_L++;*/
+			wave = (gus_wave_t *) *(unsigned long *)src;
+			src += 4;
 			gus.cur_wave[gus.cur_voice] = wave;
 			gus.kick_offs[gus.cur_voice] = wave_offset;
 			if (__gus_volume_ramp_to(0, GUS_VOLCHANGE_RAMP, GF1VL_IRQ)) {

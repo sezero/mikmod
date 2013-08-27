@@ -1,5 +1,4 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl
 dnl $Id$
 
 AC_INIT(include/mikmod.h.in)
@@ -26,7 +25,7 @@ SPEC_PRERELEASE=-beta2
 
 
 AM_INIT_AUTOMAKE(libmikmod,$LIBMIKMOD_VERSION)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AM_MAINTAINER_MODE
 AC_CONFIG_MACRO_DIR([m4])
 # ==============================================================
@@ -405,7 +404,7 @@ fi
 
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h malloc.h memory.h strings.h sys/ioctl.h unistd.h)
+AC_CHECK_HEADERS(fcntl.h limits.h malloc.h memory.h strings.h sys/ioctl.h unistd.h)
 
 # =============================================================
 # Check for typedefs, structures, and compiler characteristics.
@@ -435,7 +434,7 @@ fi
 # Check for library functions.
 # ============================
 
-AC_CHECK_FUNCS(setenv snprintf srandom)
+AC_CHECK_FUNCS(posix_memalign setenv snprintf srandom)
 AC_REPLACE_FUNCS(strcasecmp strdup strstr)
 # Change extension, as we use libtool
 LIBOBJS="`echo $LIBOBJS|sed -e 's/\.o/\.lo/g'`"
@@ -723,8 +722,9 @@ ppc|ppc64|powerpc|powerpc64)
 			CFLAGS="$CFLAGS -faltivec -force_cpusubtype_ALL"
 			;;
 		Linux)
-			dnl force_cpusubtype_ALL not allowed for Linux as
-			CFLAGS="$CFLAGS -faltivec"
+			dnl -faltivec and -force_cpusubtype_ALL are Apple-only
+			dnl features.  -maltivec compiles all code for AltiVec..
+			CFLAGS="$CFLAGS -maltivec"
 			;;
 		esac
 	fi
@@ -807,4 +807,3 @@ Library configuration:
   Drivers to be compiled: $libmikmod_driverlist
   Install path: $prefix/lib, $prefix/include
 "
-

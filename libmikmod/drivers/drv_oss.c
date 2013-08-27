@@ -310,7 +310,7 @@ static void OSS_PlayStop(void)
 {
 	VC_PlayStop();
 
-	ioctl(sndfd,SNDCTL_DSP_POST);
+	ioctl(sndfd,SNDCTL_DSP_POST,0);
 }
 
 static void OSS_Update(void)
@@ -350,7 +350,7 @@ static void OSS_Update(void)
 static BOOL OSS_Reset(void)
 {
 	OSS_Exit_internal();
-	ioctl(sndfd,SNDCTL_DSP_RESET);
+	ioctl(sndfd,SNDCTL_DSP_RESET,0);
 	return OSS_Init_internal();
 }
 

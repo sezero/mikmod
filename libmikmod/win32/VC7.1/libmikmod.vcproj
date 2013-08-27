@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\win32;..\..\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;MIKMOD_DLL_BUILD;DRV_DS;DRV_WIN;HAVE_FCNTL_H"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;MIKMOD_DLL_BUILD;DRV_DS;DRV_WIN;HAVE_LIMITS_H;HAVE_FCNTL_H"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -69,7 +69,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\win32;..\..\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;MIKMOD_DLL_BUILD;DRV_DS;DRV_WIN;HAVE_FCNTL_H"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;MIKMOD_DLL_BUILD;DRV_DS;DRV_WIN;HAVE_LIMITS_H;HAVE_FCNTL_H"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -116,6 +116,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="..\..\drivers\drv_aiff.c">
+			</File>
 			<File
 				RelativePath="..\..\drivers\drv_ds.c">
 			</File>

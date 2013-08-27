@@ -24,6 +24,7 @@ MikMod_Lock
 MikMod_Unlock
 MikMod_malloc
 MikMod_calloc
+MikMod_realloc
 MikMod_free
 Sample_LoadRaw
 Sample_LoadRawFP
@@ -97,6 +98,8 @@ Player_ToggleMute
 Player_GetChannelVoice
 Player_GetChannelPeriod
 Player_QueryVoices
+Player_GetOrder
+Player_GetRow
 MikMod_RegisterPlayer
 md_volume
 md_musicvolume
@@ -114,6 +117,7 @@ drv_aiff
 drv_mac
 VC_Init
 VC_Exit
+VC_SetCallback
 VC_SetNumVoices
 VC_SampleSpace
 VC_SampleLength

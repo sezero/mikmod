@@ -11,13 +11,13 @@
 # Your compiler here
 CC=cl
 # Compiler flags
-CFLAGS=/nologo /O2 /MTd /Zi /Fm /c /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H
+CFLAGS=/nologo /O2 /MTd /Zi /Fm /c /DWIN32 /DDRV_DS /DDRV_WIN /DHAVE_FCNTL_H /DHAVE_MALLOC_H /DHAVE_LIMITS_H /DMIKMOD_STATIC
 COMPILE=$(CC) $(CFLAGS) /I..\include /I.. /I..\win32
 
 .SUFFIXES:
 .SUFFIXES: .o .c
 
-LIBNAME=mikmod.lib
+LIBNAME=mikmod_static.lib
 
 
 LIBS=$(LIBNAME)

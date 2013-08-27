@@ -34,13 +34,10 @@
     (c) Dolby Surround Sound
 */
 
-#include <assert.h>
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <stddef.h>
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -128,9 +125,11 @@ static	SLONG *RVbufR1=NULL,*RVbufR2=NULL,*RVbufR3=NULL,*RVbufR4=NULL,
 #else
 #define NATIVE SLONG
 #endif
+
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 
-static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size_t increment,size_t todo)
+# if !defined(NATIVE_64BIT_INT)
+static SINTPTR_T MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T index,SINTPTR_T increment,SINTPTR_T todo)
 {
 	// TODO:
 	SWORD sample;
@@ -144,8 +143,9 @@ static size_t MixSIMDMonoNormal(const SWORD* srce,SLONG* dest,size_t index, size
 	}
 	return index;
 }
+# endif /* !NATIVE_64BIT_INT */
 
-static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, size_t increment,size_t todo)
+static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T index,SINTPTR_T increment,SINTPTR_T todo)
 {
 	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
 	SWORD sample;
@@ -153,7 +153,8 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 
 	// Dest can be misaligned ...
 	while(!IS_ALIGNED_16(dest)) {
-		sample=srce[(index += increment) >> FRACBITS];
+		sample=srce[index >> FRACBITS];
+		index += increment;
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 		todo--;
@@ -170,10 +171,11 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 								   0, vol[0]);
 		for(todo>>=2;todo; todo--)
 		{
-			SWORD s0 = srce[(index += increment) >> FRACBITS];
+			SWORD s0 = srce[index >> FRACBITS];
 			SWORD s1 = srce[(index += increment) >> FRACBITS];
 			SWORD s2 = srce[(index += increment) >> FRACBITS];
 			SWORD s3 = srce[(index += increment) >> FRACBITS];
+			index += increment;
 			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
 			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
 			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
@@ -187,47 +189,48 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 #elif defined HAVE_ALTIVEC
 	remain = todo&3;
 	{
+		SWORD s[8];
 		vector signed short r0 = vec_ld(0, vol);
 		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
-																		 0, 1, // l
-																		 2, 3, // r
-																		 2, 1, // r
-																		 0, 1, // l
-																		 0, 1, // l
-																		 2, 3, // r
-																		 2, 3 // r
-																		 ));
-		SWORD s[8];
+										 0, 1, // l
+										 2, 3, // r
+										 2, 1, // r
+										 0, 1, // l
+										 0, 1, // l
+										 2, 3, // r
+										 2, 3 // r
+										 ));
 
 		for(todo>>=2;todo; todo--)
 		{
 			// Load constants
-			s[0] = srce[(index += increment) >> FRACBITS];
+			s[0] = srce[index >> FRACBITS];
 			s[1] = srce[(index += increment) >> FRACBITS];
 			s[2] = srce[(index += increment) >> FRACBITS];
 			s[3] = srce[(index += increment) >> FRACBITS];
 			s[4] = 0;
+			index += increment;
 
 			vector short int r1 = vec_ld(0, s);
 			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
-																			 4*2, 4*2+1, // 0
-																			 0*2, 0*2+1, // s0
-																			 4*2, 4*2+1, // 0
-																			 1*2, 1*2+1, // s1
-																			 4*2, 4*2+1, // 0
-																			 1*2, 1*2+1, // s1
-																			 4*2, 4*2+1  // 0
-																			 ));
+											 4*2, 4*2+1, // 0
+											 0*2, 0*2+1, // s0
+											 4*2, 4*2+1, // 0
+											 1*2, 1*2+1, // s1
+											 4*2, 4*2+1, // 0
+											 1*2, 1*2+1, // s1
+											 4*2, 4*2+1  // 0
+											 ));
 
 			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, // s2
-																			 4*2, 4*2+1, // 0
-																			 2*2, 2*2+1, // s2
-																			 4*2, 4*2+1, // 0
-																			 3*2, 3*2+1, // s3
-																			 4*2, 4*2+1, // 0
-																			 3*2, 3*2+1, // s3
-																			 4*2, 4*2+1  // 0
-																			 ));
+											 4*2, 4*2+1, // 0
+											 2*2, 2*2+1, // s2
+											 4*2, 4*2+1, // 0
+											 3*2, 3*2+1, // s3
+											 4*2, 4*2+1, // 0
+											 3*2, 3*2+1, // s3
+											 4*2, 4*2+1  // 0
+											 ));
 			vector signed int v3 = vec_ld(0, dest);
 			vector signed int v4 = vec_ld(0, dest + 4);
 			vector signed int v5 = vec_mule(v0, v1);
@@ -243,7 +246,8 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 
 	// Remaining bits ...
 	while(remain--) {
-		sample=srce[(index += increment) >> FRACBITS];
+		sample=srce[index >> FRACBITS];
+		index += increment;
 
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
@@ -258,8 +262,7 @@ static size_t MixSIMDStereoNormal(const SWORD* srce, SLONG* dest, size_t index, 
 static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
 #if defined HAVE_ALTIVEC || defined HAVE_SSE2
-    if (md_mode & DMODE_SIMDMIXER)
-    {
+	if (md_mode & DMODE_SIMDMIXER) {
 		return MixSIMDMonoNormal(srce, dest, index, increment, todo);
 	}
 	else
@@ -279,12 +282,11 @@ static SLONG Mix32MonoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG inc
 }
 
 // FIXME: This mixer should works also on 64-bit platform
-// Hint : changes SLONG / SLONGLONG mess with size_t
+// Hint : changes SLONG / SLONGLONG mess with intptr
 static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
 #if defined HAVE_ALTIVEC || defined HAVE_SSE2
-    if (md_mode & DMODE_SIMDMIXER)
-    {
+	if (md_mode & DMODE_SIMDMIXER) {
 		return MixSIMDStereoNormal(srce, dest, index, increment, todo);
 	}
 	else
@@ -295,7 +297,8 @@ static SLONG Mix32StereoNormal(const SWORD* srce,SLONG* dest,SLONG index,SLONG i
 		SLONG rvolsel = vnf->rvolsel;
 
 		while(todo--) {
-			sample=srce[(index += increment) >> FRACBITS];
+			sample=srce[index >> FRACBITS];
+			index += increment;
 
 			*dest++ += lvolsel * sample;
 			*dest++ += rvolsel * sample;
@@ -858,10 +861,7 @@ static void Mix32ToFP_SIMD(float* dste,SLONG* srce,NATIVE count)
 		CHECK_SAMPLE_FP(x1,1.0f);
 		PUT_SAMPLE_FP(x1);
 		count--;
-		if (!count)
-		{
-			return;
-		}
+		if (!count) return;
 	}
 
 	remain = count&7;
@@ -904,10 +904,7 @@ static void Mix32To16_SIMD(SWORD* dste,SLONG* srce,NATIVE count)
 		CHECK_SAMPLE(x1,32768);
 		PUT_SAMPLE(x1);
 		count--;
-		if (!count)
-		{
-			return;
-		}
+		if (!count) return;
 	}
 
 	remain = count&7;
@@ -939,10 +936,7 @@ static void Mix32To8_SIMD(SBYTE* dste,SLONG* srce,NATIVE count)
 		CHECK_SAMPLE(x1,128);
 		PUT_SAMPLE(x1+128);
 		count--;
-		if (!count)
-		{
-			return;
-		}
+		if (!count) return;
 	}
 
 	remain = count&15;
@@ -1228,15 +1222,16 @@ BOOL VC1_Init(void)
 	if (md_mode&DMODE_HQMIXER)
 		return VC2_Init();
 
-	if(!(Samples=(SWORD**)MikMod_calloc(MAXSAMPLEHANDLES,sizeof(SWORD*)))) {
+	if(!(Samples=(SWORD**)MikMod_malloc_aligned16(MAXSAMPLEHANDLES*sizeof(SWORD*)))) {
 		_mm_errno = MMERR_INITIALIZING_MIXER;
 		return 1;
 	}
-	if(!vc_tickbuf)
-		if(!(vc_tickbuf=(SLONG*)MikMod_malloc((TICKLSIZE+32)*sizeof(SLONG)))) {
+	if(!vc_tickbuf) {
+		if(!(vc_tickbuf=(SLONG*)MikMod_malloc_aligned16((TICKLSIZE+32)*sizeof(SLONG)))) {
 			_mm_errno = MMERR_INITIALIZING_MIXER;
 			return 1;
 		}
+	}
 
 	MixReverb=(md_mode&DMODE_STEREO)?MixReverb_Stereo:MixReverb_Normal;
 	MixLowPass=(md_mode&DMODE_STEREO)?MixLowPass_Stereo:MixLowPass_Normal;
@@ -1310,7 +1305,7 @@ BOOL VC1_SetNumVoices(void)
 	if(!(vc_softchn=md_softchn)) return 0;
 
 	if(vinf) MikMod_free(vinf);
-	if(!(vinf= MikMod_calloc(sizeof(VINFO),vc_softchn))) return 1;
+	if(!(vinf= MikMod_calloc(vc_softchn,sizeof(VINFO)))) return 1;
 
 	for(t=0;t<vc_softchn;t++) {
 		vinf[t].frq=10000;

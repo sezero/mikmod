@@ -97,6 +97,9 @@
 /* Define to 1 if you have the <libgus.h> header file. */
 #cmakedefine HAVE_LIBGUS_H 1
 
+/* Define to 1 if you have the <limits.h> header file. */
+#cmakedefine HAVE_LIMITS_H 1
+
 /* Define to 1 if you have the <machine/soundcard.h> header file. */
 #cmakedefine HAVE_MACHINE_SOUNDCARD_H 1
 
@@ -105,6 +108,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
+
+/* Define to 1 if you have the `posix_memalign' function. */
+#cmakedefine HAVE_POSIX_MEMALIGN 1
 
 /* Define to 1 if you have the `setenv' function. */
 #cmakedefine HAVE_SETENV 1

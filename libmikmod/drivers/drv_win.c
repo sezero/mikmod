@@ -49,6 +49,15 @@ typedef DWORD DWORD_PTR;
 #endif
 #endif
 
+/* PF_XMMI64_INSTRUCTIONS_AVAILABLE not in all SDKs. */
+#ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
+#define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
+#endif
+
+#ifndef WAVE_FORMAT_IEEE_FLOAT
+#define WAVE_FORMAT_IEEE_FLOAT 0x0003
+#endif
+
 #define NUMBUFFERS	6				/* number of buffers */
 #define BUFFERSIZE	120				/* buffer size in milliseconds */
 
@@ -85,7 +94,7 @@ static BOOL WIN_IsThere(void)
 	return waveOutGetNumDevs()>0?1:0;
 }
 
-static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD dwParam1,DWORD dwParam2)
+static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD_PTR dwInstance,DWORD_PTR dwParam1,DWORD_PTR dwParam2)
 {
 	if (uMsg==WOM_DONE) --buffersout;
 }
@@ -95,18 +104,19 @@ static BOOL WIN_Init(void)
 	WAVEFORMATEX	wfe;
 	WORD			samplesize;
 	MMRESULT		mmr;
-	int				n;
+	int		n;
 
 	samplesize=1;
 	if (md_mode&DMODE_STEREO) samplesize<<=1;
-	if (md_mode&DMODE_16BITS) samplesize<<=1;
+	if (md_mode&DMODE_FLOAT) samplesize<<=2;
+	else if (md_mode&DMODE_16BITS) samplesize<<=1;
 
-	wfe.wFormatTag=WAVE_FORMAT_PCM;
+	wfe.wFormatTag=(md_mode&DMODE_FLOAT)? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
 	wfe.nChannels=md_mode&DMODE_STEREO?2:1;
 	wfe.nSamplesPerSec=md_mixfreq;
 	wfe.nAvgBytesPerSec=md_mixfreq*samplesize;
 	wfe.nBlockAlign=samplesize;
-	wfe.wBitsPerSample=md_mode&DMODE_16BITS?16:8;
+	wfe.wBitsPerSample=(md_mode&DMODE_FLOAT)?32:(md_mode&DMODE_16BITS)?16:8;
 	wfe.cbSize=sizeof(wfe);
 
 	mmr=waveOutOpen(&hwaveout,WAVE_MAPPER,&wfe,(DWORD_PTR)WIN_CallBack,0,CALLBACK_FUNCTION);
@@ -132,11 +142,9 @@ static BOOL WIN_Init(void)
 	}
 
 	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
-
-#if !(defined(_MSC_VER) && (_MSC_VER < 1300))
-	// This test only works on Windows XP or later
-	if (IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE))
-	{
+#if defined HAVE_SSE2
+	/* This test only works on Windows XP or later */
+	if (IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE)) {
 		md_mode|=DMODE_SIMDMIXER;
 	}
 #endif

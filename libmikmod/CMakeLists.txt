@@ -235,7 +235,7 @@ FILE (MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
 INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 CHECK_MULTI_INCLUDE_FILES(
-    "fcntl.h" "malloc.h" "memory.h" "strings.h" "sys/ioctl.h" "unistd.h"
+    "fcntl.h" "limits.h" "malloc.h" "memory.h" "strings.h" "sys/ioctl.h" "unistd.h"
 )
 
 

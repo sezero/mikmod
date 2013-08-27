@@ -28,6 +28,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	/* initialize MikMod threads */
+	MikMod_InitThreads ();
+
 	/* register all the drivers */
 	MikMod_RegisterAllDrivers();
 

@@ -277,9 +277,9 @@ ULONG VC1_WriteBytes(SBYTE* buf,ULONG todo)
 
 void VC1_Exit(void)
 {
-	if(vc_tickbuf) MikMod_free(vc_tickbuf);
 	if(vinf) MikMod_free(vinf);
-	if(Samples) MikMod_free(Samples);
+	MikMod_free_aligned16(vc_tickbuf);
+	MikMod_free_aligned16(Samples);
 
 	vc_tickbuf = NULL;
 	vinf = NULL;
@@ -355,8 +355,7 @@ void VC1_VoiceSetPanning(UBYTE voice,ULONG pan)
 void VC1_SampleUnload(SWORD handle)
 {
 	if (Samples && (handle < MAXSAMPLEHANDLES)) {
-		if (Samples[handle])
-			MikMod_free(Samples[handle]);
+		MikMod_free_aligned16(Samples[handle]);
 		Samples[handle]=NULL;
 	}
 }
@@ -365,7 +364,7 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 {
 	SAMPLE *s = sload->sample;
 	int handle;
-	ULONG t, length,loopstart,loopend;
+	ULONG t, length,loopstart,loopend,looplen;
 
 	if(type==MD_HARDWARE) return -1;
 
@@ -391,7 +390,7 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 	SL_SampleSigned(sload);
 	SL_Sample8to16(sload);
 
-	if(!(Samples[handle]=(SWORD*)MikMod_malloc((length+20)<<1))) {
+	if(!(Samples[handle]=(SWORD*)MikMod_malloc_aligned16((length+20)<<1))) {
 		_mm_errno = MMERR_SAMPLE_TOO_BIG;
 		return -1;
 	}
@@ -402,11 +401,12 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 
 	/* Unclick sample */
 	if(s->flags & SF_LOOP) {
+		looplen = loopend - loopstart;/* handle short samples */
 		if(s->flags & SF_BIDI)
-			for(t=0;t<16;t++)
+			for(t=0;t<16 && t<looplen;t++)
 				Samples[handle][loopend+t]=Samples[handle][(loopend-t)-1];
 		else
-			for(t=0;t<16;t++)
+			for(t=0;t<16 && t<looplen;t++)
 				Samples[handle][loopend+t]=Samples[handle][t+loopstart];
 	} else
 		for(t=0;t<16;t++)

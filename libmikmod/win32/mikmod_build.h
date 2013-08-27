@@ -38,10 +38,19 @@ extern "C" {
 
 /*
  * ========== Compiler magic for shared libraries
+ *
+ * ========== NOTE TO WINDOWS DEVELOPERS:
+ * If you are compiling for Windows and will link to the static library
+ * (libmikmod.a with MinGW, or mikmod_static.lib with MSVC or LCC, etc),
+ * you must define MIKMOD_STATIC in your project.  Otherwise, dllimport
+ * will be assumed.
  */
-
-#if defined(_WIN32) && defined(MIKMOD_DLL_BUILD)
+#if defined(MIKMOD_STATIC)
+#define MIKMODAPI
+#elif defined(_WIN32) && defined(MIKMOD_DLL_BUILD)		/* private for building libmikmod dll itself only */
 #define MIKMODAPI __declspec(dllexport)
+#elif defined(_WIN32)
+#define MIKMODAPI __declspec(dllimport)
 #else
 #define MIKMODAPI
 #endif
@@ -92,7 +101,7 @@ typedef char CHAR;
 
 
 
-#if defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(__powerpc64__)
+#if defined (_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(__powerpc64__)
 /* 64 bit architectures */
 
 typedef signed char     SBYTE;      /* 1 byte, signed */
