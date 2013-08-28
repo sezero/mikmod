@@ -93,7 +93,7 @@ void FreeLinear(void)
 
 int speed_to_finetune(ULONG speed,int sample)
 {
-    int ctmp=0,tmp,note=1,local_finetune=0;
+    int ctmp=0,tmp,note=1,ft=0;
 
     speed>>=1;
     while((tmp=getfrequency(of.flags,getlinearperiod(note<<1,0)))<speed) {
@@ -104,16 +104,16 @@ int speed_to_finetune(ULONG speed,int sample)
     if(tmp!=speed) {
         if((tmp-speed)<(speed-ctmp))
             while(tmp>speed)
-                tmp=getfrequency(of.flags,getlinearperiod(note<<1,--local_finetune));
+                tmp=getfrequency(of.flags,getlinearperiod(note<<1,--ft));
         else {
             note--;
             while(ctmp<speed)
-                ctmp=getfrequency(of.flags,getlinearperiod(note<<1,++local_finetune));
+                ctmp=getfrequency(of.flags,getlinearperiod(note<<1,++ft));
         }
     }
 
     noteindex[sample]=note-4*OCTAVE;
-    return local_finetune;
+    return ft;
 }
 
 /*========== Order stuff */
