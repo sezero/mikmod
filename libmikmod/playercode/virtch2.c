@@ -487,24 +487,23 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 	{
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 		if (md_mode & DMODE_SIMDMIXER)
-			idx = MixSIMDStereoNormal(srce, dest, idx, increment, todo);
-		else
+			return MixSIMDStereoNormal(srce, dest, idx, increment, todo);
 #endif
+		while(todo)
 		{
-			while(todo)
-			{
-				i=idx>>FRACBITS,
-				f=idx&FRACMASK;
-				sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-								((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-				idx += increment;
+			i=idx>>FRACBITS,
+			f=idx&FRACMASK;
+			sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+							((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+			idx += increment;
 
-				*dest++ +=vnf->lvolsel*sample;
-				*dest++ +=vnf->rvolsel*sample;
-				todo--;
-			}
+			*dest++ +=vnf->lvolsel*sample;
+			*dest++ +=vnf->rvolsel*sample;
+			todo--;
 		}
 	}
+	vnf->lastvalL=vnf->lvolsel*sample;
+	vnf->lastvalR=vnf->rvolsel*sample;
 
 	return idx;
 }
@@ -1069,7 +1068,7 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 		}
 
 		todo -= done;
-		ptr += (SLONG)(vc_mode & DMODE_STEREO)?(done<<1):done;
+		ptr += (vc_mode & DMODE_STEREO)?(done<<1):done;
 	}
 }
 
