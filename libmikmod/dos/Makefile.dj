@@ -17,7 +17,7 @@
 DEBUG = 0
 
 # The tools
-CC = gcc -c
+CC = gcc
 CFLAGS = -DHAVE_CONFIG_H $(INCLUDE)
 INCLUDE = -Iinclude -I../include -I../playercode
 AR = ar
@@ -47,7 +47,7 @@ vpath %.c $(SRCPATH) ../drivers src
 
 # Build rules
 $(OUT)/%.o: %.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 SRC = $(filter-out %mixer_core.c,$(wildcard $(addsuffix /*.c,$(SRCPATH)) \
   $(addsuffix .c,$(addprefix ../drivers/,$(DRIVERS))))) \
