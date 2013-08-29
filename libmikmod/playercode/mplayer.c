@@ -3393,18 +3393,17 @@ MIKMODAPI int Player_QueryVoices(UWORD numvoices, VOICEINFO *vinfo)
 	return numvoices;
 }
 
-
-// Get current module order
+/* Get current module order */
 MIKMODAPI int Player_GetOrder(void)
 {
 	int ret;
 	MUTEX_LOCK(vars);
-	ret = pf ? pf->sngpos :0; // pf->positions[pf->sngpos ? pf->sngpos-1 : 0]: 0;
+	ret = pf ? pf->sngpos :0; /* pf->positions[pf->sngpos ? pf->sngpos-1 : 0]: 0; */
 	MUTEX_UNLOCK(vars);
 	return ret;
 }
 
-// Get current module row
+/* Get current module row */
 MIKMODAPI int Player_GetRow(void)
 {
 	int ret;

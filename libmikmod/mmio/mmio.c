@@ -78,7 +78,7 @@ static int _mm_MemReader_Get(MREADER* reader);
 static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
 static long _mm_MemReader_Tell(MREADER* reader);
 
-//static long _mm_iobase=0,temp_iobase=0;
+/*static long _mm_iobase = 0, temp_iobase = 0;*/
 
 FILE* _mm_fopen(const CHAR* fname, const CHAR* attrib)
 {
@@ -217,7 +217,6 @@ void _mm_delete_file_writer (MWRITER* writer)
 }
 
 /*========== Memory Reader */
-
 
 typedef struct MMEMREADER {
 	MREADER core;

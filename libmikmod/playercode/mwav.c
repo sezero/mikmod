@@ -261,7 +261,7 @@ MIKMODAPI SAMPLE* Sample_LoadRawGeneric(MREADER* reader, ULONG rate, ULONG chann
 	SAMPLE* result;
 
 	MUTEX_LOCK(vars);
-//	result=Sample_LoadRawGeneric_internal(reader, NULL);
+/*	result = Sample_LoadRawGeneric_internal(reader, NULL);*/
 	result = Sample_LoadRawGeneric_internal(reader, rate, channel, flags);
 	MUTEX_UNLOCK(vars);
 
