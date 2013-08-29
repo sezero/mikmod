@@ -379,38 +379,38 @@ static BOOL IT_ReadPattern(UWORD patrows)
 	return 1;
 }
 
-static void LoadMidiString(MREADER* r,CHAR* dest)
+static void LoadMidiString(MREADER* local_modreader,CHAR* dest)
 {
-	CHAR *cur, *lastp;
+	CHAR *cur,*local_last;
 
-	_mm_read_UBYTES(dest,32,r);
-	cur=lastp=dest;
+	_mm_read_UBYTES(dest,32,local_modreader);
+	cur=local_last=dest;
 	/* remove blanks and uppercase all */
-	while(*lastp) {
-		if(isalnum((int)*lastp)) *(cur++)=toupper((int)*lastp);
-		lastp++;
+	while(*local_last) {
+		if(isalnum((int)*local_last)) *(cur++)=toupper((int)*local_last);
+		local_last++;
 	}
 	*cur=0;
 }
 
 /* Load embedded midi information for resonant filters */
-static void IT_LoadMidiConfiguration(MREADER* r)
+static void IT_LoadMidiConfiguration(MREADER* local_modreader)
 {
 	int i;
 
 	memset(filtermacros,0,sizeof(filtermacros));
 	memset(filtersettings,0,sizeof(filtersettings));
 
-	if (r) { /* information is embedded in file */
+	if (local_modreader) { /* information is embedded in file */
 		UWORD dat;
 		CHAR midiline[33];
 
-		dat=_mm_read_I_UWORD(r);
-		_mm_fseek(r,8*dat+0x120,SEEK_CUR);
+		dat=_mm_read_I_UWORD(local_modreader);
+		_mm_fseek(local_modreader,8*dat+0x120,SEEK_CUR);
 
 		/* read midi macros */
 		for(i=0;i<UF_MAXMACRO;i++) {
-			LoadMidiString(r,midiline);
+			LoadMidiString(local_modreader,midiline);
 			if((!strncmp(midiline,"F0F00",5))&&
 			   ((midiline[5]=='0')||(midiline[5]=='1')))
 					filtermacros[i]=(midiline[5]-'0')|0x80;
@@ -418,7 +418,7 @@ static void IT_LoadMidiConfiguration(MREADER* r)
 
 		/* read standalone filters */
 		for(i=0x80;i<0x100;i++) {
-			LoadMidiString(r,midiline);
+			LoadMidiString(local_modreader,midiline);
 			if((!strncmp(midiline,"F0F00",5))&&
 			   ((midiline[5]=='0')||(midiline[5]=='1'))) {
 				filtersettings[i].filter=(midiline[5]-'0')|0x80;

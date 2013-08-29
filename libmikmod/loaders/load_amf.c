@@ -114,7 +114,7 @@ static void AMF_Cleanup(void)
 	MikMod_free(track);
 }
 
-static BOOL AMF_UnpackTrack(MREADER* r)
+static BOOL AMF_UnpackTrack(MREADER* local_modreader)
 {
 	ULONG tracksize;
 	UBYTE row,cmd;
@@ -124,14 +124,14 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 	memset(track,0,64*sizeof(AMFNOTE));
 
 	/* read packed track */
-	if (r) {
-		tracksize=_mm_read_I_UWORD(r);
-		tracksize+=((ULONG)_mm_read_UBYTE(r))<<16;
+	if (local_modreader) {
+		tracksize=_mm_read_I_UWORD(local_modreader);
+		tracksize+=((ULONG)_mm_read_UBYTE(local_modreader))<<16;
 		if (tracksize)
 			while(tracksize--) {
-				row=_mm_read_UBYTE(r);
-				cmd=_mm_read_UBYTE(r);
-				arg=_mm_read_SBYTE(r);
+				row=_mm_read_UBYTE(local_modreader);
+				cmd=_mm_read_UBYTE(local_modreader);
+				arg=_mm_read_SBYTE(local_modreader);
 				/* unexpected end of track */
 				if(!tracksize) {
 					if((row==0xff)&&(cmd==0xff)&&(arg==-1))

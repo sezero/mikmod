@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #include <stdarg.h>
-#if defined(__OS2__) || defined(__EMX__) || defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(WIN32)
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
 #if defined(_WIN32) && defined(unix)
@@ -92,7 +92,6 @@ extern MikMod_handler_t _mm_errorhandler;
  	pthread_mutex_lock(&_mm_mutex_##name)
 #define MUTEX_UNLOCK(name)	\
 	pthread_mutex_unlock(&_mm_mutex_##name)
-
 #elif defined(__OS2__)||defined(__EMX__)
 #define DECLARE_MUTEX(name)	\
 	extern HMTX _mm_mutex_##name
@@ -102,7 +101,6 @@ extern MikMod_handler_t _mm_errorhandler;
 #define MUTEX_UNLOCK(name)	\
 	if(_mm_mutex_##name)	\
 		DosReleaseMutexSem(_mm_mutex_##name)
-
 #elif defined(WIN32)
 #include <windows.h>
 #define DECLARE_MUTEX(name)	\
@@ -113,7 +111,6 @@ extern MikMod_handler_t _mm_errorhandler;
 #define MUTEX_UNLOCK(name)	\
 	if(_mm_mutex_##name)	\
 		ReleaseMutex(_mm_mutex_##name)
-
 #else
 #define DECLARE_MUTEX(name)	\
 	extern void *_mm_mutex_##name
@@ -157,8 +154,8 @@ extern BOOL _mm_FileExists(CHAR *fname);
 
 extern void _mm_iobase_setcur(MREADER*);
 extern void _mm_iobase_revert(MREADER*);
-extern FILE* _mm_fopen(const CHAR *, const CHAR *);
-extern int  _mm_fclose(FILE *);
+extern FILE * _mm_fopen(const CHAR *, const CHAR *);
+extern int	_mm_fclose(FILE *);
 extern void _mm_write_string(const CHAR*,MWRITER*);
 extern int  _mm_read_string (CHAR*,int,MREADER*);
 
@@ -208,29 +205,29 @@ extern void _mm_write_I_ULONGS(ULONG*,int,MWRITER*);
    SL_RegisterSample.  Generally, this only need be used or changed by the
    loaders and drivers of mikmod. */
 typedef struct SAMPLOAD {
-	struct SAMPLOAD *	next;
+	struct SAMPLOAD *next;
 
-	ULONG		length;		/* length of sample (in samples!) */
-	ULONG		loopstart;	/* repeat position (relative to start, in samples) */
-	ULONG		loopend;	/* repeat end */
-	UWORD		infmt,outfmt;
-	int		scalefactor;
-	SAMPLE*		sample;
-	MREADER*	reader;
+	ULONG    length;       /* length of sample (in samples!) */
+	ULONG    loopstart;    /* repeat position (relative to start, in samples) */
+	ULONG    loopend;      /* repeat end */
+	UWORD    infmt,outfmt;
+	int      scalefactor;
+	SAMPLE*  sample;
+	MREADER* reader;
 } SAMPLOAD;
 
 /*========== Sample and waves loading interface */
 
-extern void   SL_HalveSample(SAMPLOAD*,int);
-extern void   SL_Sample8to16(SAMPLOAD*);
-extern void   SL_Sample16to8(SAMPLOAD*);
-extern void   SL_SampleSigned(SAMPLOAD*);
-extern void   SL_SampleUnsigned(SAMPLOAD*);
-extern BOOL   SL_LoadSamples(void);
+extern void      SL_HalveSample(SAMPLOAD*,int);
+extern void      SL_Sample8to16(SAMPLOAD*);
+extern void      SL_Sample16to8(SAMPLOAD*);
+extern void      SL_SampleSigned(SAMPLOAD*);
+extern void      SL_SampleUnsigned(SAMPLOAD*);
+extern BOOL      SL_LoadSamples(void);
 extern SAMPLOAD* SL_RegisterSample(SAMPLE*,int,MREADER*);
-extern BOOL   SL_Load(void*,SAMPLOAD*,ULONG);
-extern BOOL   SL_Init(SAMPLOAD*);
-extern void   SL_Exit(SAMPLOAD*);
+extern BOOL      SL_Load(void*,SAMPLOAD*,ULONG);
+extern BOOL      SL_Init(SAMPLOAD*);
+extern void      SL_Exit(SAMPLOAD*);
 
 /*========== Internal module representation (UniMod) interface */
 
@@ -250,8 +247,8 @@ extern UBYTE* UniDup(void);
 extern BOOL   UniInit(void);
 extern void   UniCleanup(void);
 extern void   UniEffect(UWORD,UWORD);
-#define UniInstrument(x)	UniEffect(UNI_INSTRUMENT,x)
-#define UniNote(x)		UniEffect(UNI_NOTE,x)
+#define UniInstrument(x) UniEffect(UNI_INSTRUMENT,x)
+#define UniNote(x)       UniEffect(UNI_NOTE,x)
 extern void   UniPTEffect(UBYTE,UBYTE);
 extern void   UniVolEffect(UWORD,UBYTE);
 
@@ -263,71 +260,71 @@ enum {
 	/* Instrument change */
 	UNI_INSTRUMENT,
 	/* Protracker effects */
-	UNI_PTEFFECT0,		/* arpeggio */
-	UNI_PTEFFECT1,		/* porta up */
-	UNI_PTEFFECT2,		/* porta down */
-	UNI_PTEFFECT3,		/* porta to note */
-	UNI_PTEFFECT4,		/* vibrato */
-	UNI_PTEFFECT5,		/* dual effect 3+A */
-	UNI_PTEFFECT6,		/* dual effect 4+A */
-	UNI_PTEFFECT7,		/* tremolo */
-	UNI_PTEFFECT8,		/* pan */
-	UNI_PTEFFECT9,		/* sample offset */
-	UNI_PTEFFECTA,		/* volume slide */
-	UNI_PTEFFECTB,		/* pattern jump */
-	UNI_PTEFFECTC,		/* set volume */
-	UNI_PTEFFECTD,		/* pattern break */
-	UNI_PTEFFECTE,		/* extended effects */
-	UNI_PTEFFECTF,		/* set speed */
+	UNI_PTEFFECT0,     /* arpeggio */
+	UNI_PTEFFECT1,     /* porta up */
+	UNI_PTEFFECT2,     /* porta down */
+	UNI_PTEFFECT3,     /* porta to note */
+	UNI_PTEFFECT4,     /* vibrato */
+	UNI_PTEFFECT5,     /* dual effect 3+A */
+	UNI_PTEFFECT6,     /* dual effect 4+A */
+	UNI_PTEFFECT7,     /* tremolo */
+	UNI_PTEFFECT8,     /* pan */
+	UNI_PTEFFECT9,     /* sample offset */
+	UNI_PTEFFECTA,     /* volume slide */
+	UNI_PTEFFECTB,     /* pattern jump */
+	UNI_PTEFFECTC,     /* set volume */
+	UNI_PTEFFECTD,     /* pattern break */
+	UNI_PTEFFECTE,     /* extended effects */
+	UNI_PTEFFECTF,     /* set speed */
 	/* Scream Tracker effects */
-	UNI_S3MEFFECTA,		/* set speed */
-	UNI_S3MEFFECTD,		/* volume slide */
-	UNI_S3MEFFECTE,		/* porta down */
-	UNI_S3MEFFECTF,		/* porta up */
-	UNI_S3MEFFECTI,		/* tremor */
-	UNI_S3MEFFECTQ,		/* retrig */
-	UNI_S3MEFFECTR,		/* tremolo */
-	UNI_S3MEFFECTT,		/* set tempo */
-	UNI_S3MEFFECTU,		/* fine vibrato */
-	UNI_KEYOFF,		/* note off */
+	UNI_S3MEFFECTA,    /* set speed */
+	UNI_S3MEFFECTD,    /* volume slide */
+	UNI_S3MEFFECTE,    /* porta down */
+	UNI_S3MEFFECTF,    /* porta up */
+	UNI_S3MEFFECTI,    /* tremor */
+	UNI_S3MEFFECTQ,    /* retrig */
+	UNI_S3MEFFECTR,    /* tremolo */
+	UNI_S3MEFFECTT,    /* set tempo */
+	UNI_S3MEFFECTU,    /* fine vibrato */
+	UNI_KEYOFF,        /* note off */
 	/* Fast Tracker effects */
-	UNI_KEYFADE,		/* note fade */
-	UNI_VOLEFFECTS,		/* volume column effects */
-	UNI_XMEFFECT4,		/* vibrato */
-	UNI_XMEFFECT6,		/* dual effect 4+A */
-	UNI_XMEFFECTA,		/* volume slide */
-	UNI_XMEFFECTE1,		/* fine porta up */
-	UNI_XMEFFECTE2,		/* fine porta down */
-	UNI_XMEFFECTEA,		/* fine volume slide up */
-	UNI_XMEFFECTEB,		/* fine volume slide down */
-	UNI_XMEFFECTG,		/* set global volume */
-	UNI_XMEFFECTH,		/* global volume slide */
-	UNI_XMEFFECTL,		/* set envelope position */
-	UNI_XMEFFECTP,		/* pan slide */
-	UNI_XMEFFECTX1,		/* extra fine porta up */
-	UNI_XMEFFECTX2,		/* extra fine porta down */
+	UNI_KEYFADE,       /* note fade */
+	UNI_VOLEFFECTS,    /* volume column effects */
+	UNI_XMEFFECT4,     /* vibrato */
+	UNI_XMEFFECT6,     /* dual effect 4+A */
+	UNI_XMEFFECTA,     /* volume slide */
+	UNI_XMEFFECTE1,    /* fine porta up */
+	UNI_XMEFFECTE2,    /* fine porta down */
+	UNI_XMEFFECTEA,    /* fine volume slide up */
+	UNI_XMEFFECTEB,    /* fine volume slide down */
+	UNI_XMEFFECTG,     /* set global volume */
+	UNI_XMEFFECTH,     /* global volume slide */
+	UNI_XMEFFECTL,     /* set envelope position */
+	UNI_XMEFFECTP,     /* pan slide */
+	UNI_XMEFFECTX1,    /* extra fine porta up */
+	UNI_XMEFFECTX2,    /* extra fine porta down */
 	/* Impulse Tracker effects */
-	UNI_ITEFFECTG,		/* porta to note */
-	UNI_ITEFFECTH,		/* vibrato */
-	UNI_ITEFFECTI,		/* tremor (xy not incremented) */
-	UNI_ITEFFECTM,		/* set channel volume */
-	UNI_ITEFFECTN,		/* slide / fineslide channel volume */
-	UNI_ITEFFECTP,		/* slide / fineslide channel panning */
-	UNI_ITEFFECTT,		/* slide tempo */
-	UNI_ITEFFECTU,		/* fine vibrato */
-	UNI_ITEFFECTW,		/* slide / fineslide global volume */
-	UNI_ITEFFECTY,		/* panbrello */
-	UNI_ITEFFECTZ,		/* resonant filters */
+	UNI_ITEFFECTG,     /* porta to note */
+	UNI_ITEFFECTH,     /* vibrato */
+	UNI_ITEFFECTI,     /* tremor (xy not incremented) */
+	UNI_ITEFFECTM,     /* set channel volume */
+	UNI_ITEFFECTN,     /* slide / fineslide channel volume */
+	UNI_ITEFFECTP,     /* slide / fineslide channel panning */
+	UNI_ITEFFECTT,     /* slide tempo */
+	UNI_ITEFFECTU,     /* fine vibrato */
+	UNI_ITEFFECTW,     /* slide / fineslide global volume */
+	UNI_ITEFFECTY,     /* panbrello */
+	UNI_ITEFFECTZ,     /* resonant filters */
 	UNI_ITEFFECTS0,
 	/* UltraTracker effects */
-	UNI_ULTEFFECT9,		/* Sample fine offset */
+	UNI_ULTEFFECT9,    /* Sample fine offset */
 	/* OctaMED effects */
 	UNI_MEDSPEED,
-	UNI_MEDEFFECTF1,	/* play note twice */
-	UNI_MEDEFFECTF2,	/* delay note */
-	UNI_MEDEFFECTF3,	/* play note three times */
+	UNI_MEDEFFECTF1,   /* play note twice */
+	UNI_MEDEFFECTF2,   /* delay note */
+	UNI_MEDEFFECTF3,   /* play note three times */
 	/* Oktalyzer effects */
-	UNI_OKTARP,		/* arpeggio */
+	UNI_OKTARP,		   /* arpeggio */
 
 	UNI_LAST
 };
@@ -365,10 +362,10 @@ enum {
 
 /* IT resonant filter information */
 
-#define	UF_MAXMACRO	0x10
+#define	UF_MAXMACRO		0x10
 #define	UF_MAXFILTER	0x100
 
-#define FILT_CUT	0x80
+#define FILT_CUT		0x80
 #define FILT_RESONANT	0x81
 
 typedef struct FILTER {
@@ -378,158 +375,158 @@ typedef struct FILTER {
 /*========== Instruments */
 
 /* Instrument format flags */
-#define IF_OWNPAN	1
-#define IF_PITCHPAN	2
+#define IF_OWNPAN       1
+#define IF_PITCHPAN     2
 
 /* Envelope flags: */
-#define EF_ON		1
-#define EF_SUSTAIN	2
-#define EF_LOOP		4
-#define EF_VOLENV	8
+#define EF_ON           1
+#define EF_SUSTAIN      2
+#define EF_LOOP         4
+#define EF_VOLENV       8
 
 /* New Note Action Flags */
-#define NNA_CUT		0
-#define NNA_CONTINUE	1
-#define NNA_OFF		2
-#define NNA_FADE	3
+#define NNA_CUT         0
+#define NNA_CONTINUE    1
+#define NNA_OFF         2
+#define NNA_FADE        3
 
-#define NNA_MASK	3
+#define NNA_MASK        3
 
-#define DCT_OFF		0
-#define DCT_NOTE	1
-#define DCT_SAMPLE	2
-#define DCT_INST	3
+#define DCT_OFF         0
+#define DCT_NOTE        1
+#define DCT_SAMPLE      2
+#define DCT_INST        3
 
-#define DCA_CUT		0
-#define DCA_OFF		1
-#define DCA_FADE	2
+#define DCA_CUT         0
+#define DCA_OFF         1
+#define DCA_FADE        2
 
-#define KEY_KICK	0
-#define KEY_OFF		1
-#define KEY_FADE	2
-#define KEY_KILL	(KEY_OFF|KEY_FADE)
+#define KEY_KICK        0
+#define KEY_OFF         1
+#define KEY_FADE        2
+#define KEY_KILL        (KEY_OFF|KEY_FADE)
 
-#define KICK_ABSENT	0
-#define KICK_NOTE	1
-#define KICK_KEYOFF	2
-#define KICK_ENV	4
+#define KICK_ABSENT     0
+#define KICK_NOTE       1
+#define KICK_KEYOFF     2
+#define KICK_ENV        4
 
-#define AV_IT		1		/* IT vs. XM vibrato info */
+#define AV_IT           1   /* IT vs. XM vibrato info */
 
 /*========== Playing */
 
-#define POS_NONE	(-2)		/* no loop position defined */
+#define POS_NONE        (-2)	/* no loop position defined */
 
 #define	LAST_PATTERN	(UWORD)(-1)	/* special ``end of song'' pattern */
 
 typedef struct ENVPR {
-	UBYTE		flg;		/* envelope flag */
-	UBYTE		pts;		/* number of envelope points */
-	UBYTE		susbeg;		/* envelope sustain index begin */
-	UBYTE		susend;		/* envelope sustain index end */
-	UBYTE		beg;		/* envelope loop begin */
-	UBYTE		end;		/* envelope loop end */
-	SWORD		p;		/* current envelope counter */
-	UWORD		a;		/* envelope index a */
-	UWORD		b;		/* envelope index b */
-	ENVPT*		env;		/* envelope points */
+	UBYTE  flg;          /* envelope flag */
+	UBYTE  pts;          /* number of envelope points */
+	UBYTE  susbeg;       /* envelope sustain index begin */
+	UBYTE  susend;       /* envelope sustain index end */
+	UBYTE  beg;          /* envelope loop begin */
+	UBYTE  end;          /* envelope loop end */
+	SWORD  p;            /* current envelope counter */
+	UWORD  a;            /* envelope index a */
+	UWORD  b;            /* envelope index b */
+	ENVPT* env;          /* envelope points */
 } ENVPR;
 
 typedef struct MP_CHANNEL {
-	INSTRUMENT*	i;
-	SAMPLE *	s;
-	UBYTE		sample;		/* which sample number */
-	UBYTE		note;		/* the audible note as heard, direct rep of period */
-	SWORD		outvolume;	/* output volume (vol + sampcol + instvol) */
-	SBYTE		chanvol;	/* channel's "global" volume */
-	UWORD		fadevol;	/* fading volume rate */
-	SWORD		panning;	/* panning position */
-	UBYTE		kick;		/* if true = sample has to be restarted */
-	UBYTE		kick_flag;	/* kick has been true */
-	UWORD		period;		/* period to play the sample at */
-	UBYTE		nna;		/* New note action type + master/slave flags */
+	INSTRUMENT* i;
+	SAMPLE*     s;
+	UBYTE       sample;       /* which sample number */
+	UBYTE       note;         /* the audible note as heard, direct rep of period */
+	SWORD       outvolume;    /* output volume (vol + sampcol + instvol) */
+	SBYTE       chanvol;      /* channel's "global" volume */
+	UWORD       fadevol;      /* fading volume rate */
+	SWORD       panning;      /* panning position */
+	UBYTE       kick;         /* if true = sample has to be restarted */
+	UBYTE       kick_flag;    /* kick has been true */
+	UWORD       period;       /* period to play the sample at */
+	UBYTE       nna;          /* New note action type + master/slave flags */
 
-	UBYTE		volflg;		/* volume envelope settings */
-	UBYTE		panflg;		/* panning envelope settings */
-	UBYTE		pitflg;		/* pitch envelope settings */
+	UBYTE       volflg;       /* volume envelope settings */
+	UBYTE       panflg;       /* panning envelope settings */
+	UBYTE       pitflg;       /* pitch envelope settings */
 
-	UBYTE		keyoff;		/* if true = fade out and stuff */
-	SWORD		handle;		/* which sample-handle */
-	UBYTE		notedelay;	/* (used for note delay) */
-	SLONG		start;		/* The starting byte index in the sample */
+	UBYTE       keyoff;       /* if true = fade out and stuff */
+	SWORD       handle;       /* which sample-handle */
+	UBYTE       notedelay;    /* (used for note delay) */
+	SLONG       start;        /* The starting byte index in the sample */
 } MP_CHANNEL;
 
 typedef struct MP_CONTROL {
 	struct MP_CHANNEL	main;
 
-	struct MP_VOICE *	slave;	/* Audio Slave of current effects control channel */
+	struct MP_VOICE	*slave;	  /* Audio Slave of current effects control channel */
 
-	UBYTE		slavechn;	/* Audio Slave of current effects control channel */
-	UBYTE		muted;		/* if set, channel not played */
-	UWORD		ultoffset;	/* fine sample offset memory */
-	UBYTE		anote;		/* the note that indexes the audible */
+	UBYTE       slavechn;     /* Audio Slave of current effects control channel */
+	UBYTE       muted;        /* if set, channel not played */
+	UWORD		ultoffset;    /* fine sample offset memory */
+	UBYTE       anote;        /* the note that indexes the audible */
 	UBYTE		oldnote;
-	SWORD		ownper;
-	SWORD		ownvol;
-	UBYTE		dca;		/* duplicate check action */
-	UBYTE		dct;		/* duplicate check type */
-	UBYTE*		row;		/* row currently playing on this channel */
-	SBYTE		retrig;		/* retrig value (0 means don't retrig) */
-	ULONG		speed;		/* what finetune to use */
-	SWORD		volume;		/* amiga volume (0 t/m 64) to play the sample at */
+	SWORD       ownper;
+	SWORD       ownvol;
+	UBYTE       dca;          /* duplicate check action */
+	UBYTE       dct;          /* duplicate check type */
+	UBYTE*      row;          /* row currently playing on this channel */
+	SBYTE       retrig;       /* retrig value (0 means don't retrig) */
+	ULONG       speed;        /* what finetune to use */
+	SWORD       volume;       /* amiga volume (0 t/m 64) to play the sample at */
 
-	SWORD		tmpvolume;	/* tmp volume */
-	UWORD		tmpperiod;	/* tmp period */
-	UWORD		wantedperiod;	/* period to slide to (with effect 3 or 5) */
+	SWORD       tmpvolume;    /* tmp volume */
+	UWORD       tmpperiod;    /* tmp period */
+	UWORD       wantedperiod; /* period to slide to (with effect 3 or 5) */
 
-	UBYTE		arpmem;		/* arpeggio command memory */
-	UBYTE		pansspd;	/* panslide speed */
-	UWORD		slidespeed;
-	UWORD		portspeed;	/* noteslide speed (toneportamento) */
+	UBYTE       arpmem;       /* arpeggio command memory */
+	UBYTE       pansspd;      /* panslide speed */
+	UWORD       slidespeed;
+	UWORD       portspeed;    /* noteslide speed (toneportamento) */
 
-	UBYTE		s3mtremor;	/* s3m tremor (effect I) counter */
-	UBYTE		s3mtronof;	/* s3m tremor ontime/offtime */
-	UBYTE		s3mvolslide;	/* last used volslide */
-	SBYTE		sliding;
-	UBYTE		s3mrtgspeed;	/* last used retrig speed */
-	UBYTE		s3mrtgslide;	/* last used retrig slide */
+	UBYTE       s3mtremor;    /* s3m tremor (effect I) counter */
+	UBYTE       s3mtronof;    /* s3m tremor ontime/offtime */
+	UBYTE       s3mvolslide;  /* last used volslide */
+	SBYTE       sliding;
+	UBYTE       s3mrtgspeed;  /* last used retrig speed */
+	UBYTE       s3mrtgslide;  /* last used retrig slide */
 
-	UBYTE		glissando;	/* glissando (0 means off) */
-	UBYTE		wavecontrol;
+	UBYTE       glissando;    /* glissando (0 means off) */
+	UBYTE       wavecontrol;
 
-	SBYTE		vibpos;		/* current vibrato position */
-	UBYTE		vibspd;		/* "" speed */
-	UBYTE		vibdepth;	/* "" depth */
+	SBYTE       vibpos;       /* current vibrato position */
+	UBYTE       vibspd;       /* "" speed */
+	UBYTE       vibdepth;     /* "" depth */
 
-	SBYTE		trmpos;		/* current tremolo position */
-	UBYTE		trmspd;		/* "" speed */
-	UBYTE		trmdepth;	/* "" depth */
+	SBYTE       trmpos;       /* current tremolo position */
+	UBYTE       trmspd;       /* "" speed */
+	UBYTE       trmdepth;     /* "" depth */
 
-	UBYTE		fslideupspd;
-	UBYTE		fslidednspd;
-	UBYTE		fportupspd;	/* fx E1 (extra fine portamento up) data */
-	UBYTE		fportdnspd;	/* fx E2 (extra fine portamento dn) data */
-	UBYTE		ffportupspd;	/* fx X1 (extra fine portamento up) data */
-	UBYTE		ffportdnspd;	/* fx X2 (extra fine portamento dn) data */
+	UBYTE       fslideupspd;
+	UBYTE       fslidednspd;
+	UBYTE       fportupspd;   /* fx E1 (extra fine portamento up) data */
+	UBYTE       fportdnspd;   /* fx E2 (extra fine portamento dn) data */
+	UBYTE       ffportupspd;  /* fx X1 (extra fine portamento up) data */
+	UBYTE       ffportdnspd;  /* fx X2 (extra fine portamento dn) data */
 
-	ULONG		hioffset;	/* last used high order of sample offset */
-	UWORD		soffset;	/* last used low order of sample-offset (effect 9) */
+	ULONG       hioffset;     /* last used high order of sample offset */
+	UWORD       soffset;      /* last used low order of sample-offset (effect 9) */
 
-	UBYTE		sseffect;	/* last used Sxx effect */
-	UBYTE		ssdata;		/* last used Sxx data info */
-	UBYTE		chanvolslide;	/* last used channel volume slide */
+	UBYTE       sseffect;     /* last used Sxx effect */
+	UBYTE       ssdata;       /* last used Sxx data info */
+	UBYTE       chanvolslide; /* last used channel volume slide */
 
-	UBYTE		panbwave;	/* current panbrello waveform */
-	UBYTE		panbpos;	/* current panbrello position */
-	SBYTE		panbspd;	/* "" speed */
-	UBYTE		panbdepth;	/* "" depth */
+	UBYTE       panbwave;     /* current panbrello waveform */
+	UBYTE       panbpos;      /* current panbrello position */
+	SBYTE       panbspd;      /* "" speed */
+	UBYTE       panbdepth;    /* "" depth */
 
-	UWORD		newsamp;	/* set to 1 upon a sample / inst change */
-	UBYTE		voleffect;	/* Volume Column Effect Memory as used by IT */
-	UBYTE		voldata;	/* Volume Column Data Memory */
+	UWORD       newsamp;      /* set to 1 upon a sample / inst change */
+	UBYTE       voleffect;    /* Volume Column Effect Memory as used by IT */
+	UBYTE       voldata;      /* Volume Column Data Memory */
 
-	SWORD		pat_reppos;	/* patternloop position */
-	UWORD		pat_repcnt;	/* times to loop */
+	SWORD       pat_reppos;   /* patternloop position */
+	UWORD       pat_repcnt;   /* times to loop */
 } MP_CONTROL;
 
 /* Used by NNA only player (audio control.  AUDTMP is used for full effects
@@ -537,51 +534,51 @@ typedef struct MP_CONTROL {
 typedef struct MP_VOICE {
 	struct MP_CHANNEL	main;
 
-	ENVPR		venv;
-	ENVPR		penv;
-	ENVPR		cenv;
+	ENVPR       venv;
+	ENVPR       penv;
+	ENVPR       cenv;
 
-	UWORD		avibpos;	/* autovibrato pos */
-	UWORD		aswppos;	/* autovibrato sweep pos */
+	UWORD       avibpos;      /* autovibrato pos */
+	UWORD       aswppos;      /* autovibrato sweep pos */
 
-	ULONG		totalvol;	/* total volume of channel (before global mixings) */
+	ULONG       totalvol;     /* total volume of channel (before global mixings) */
 
-	BOOL		mflag;
-	SWORD		masterchn;
-	UWORD		masterperiod;
+	BOOL        mflag;
+	SWORD       masterchn;
+	UWORD       masterperiod;
 
-	MP_CONTROL*	master;		/* index of "master" effects channel */
+	MP_CONTROL* master;       /* index of "master" effects channel */
 } MP_VOICE;
 
 /*========== Loaders */
 
 typedef struct MLOADER {
-	struct MLOADER *	next;
-	const CHAR*	type;
-	const CHAR*	version;
-	BOOL		(*Init)(void);
-	BOOL		(*Test)(void);
-	BOOL		(*Load)(BOOL);
-	void		(*Cleanup)(void);
-	CHAR*		(*LoadTitle)(void);
+    struct MLOADER* next;
+	const CHAR*       type;
+	const CHAR*       version;
+	BOOL        (*Init)(void);
+	BOOL        (*Test)(void);
+	BOOL        (*Load)(BOOL);
+	void        (*Cleanup)(void);
+	CHAR*       (*LoadTitle)(void);
 } MLOADER;
 
 /* internal loader variables */
 extern MREADER* modreader;
 extern UWORD   finetune[16];
-extern MODULE  of;			/* static unimod loading space */
-extern UWORD   npertab[7*OCTAVE];	/* used by the original MOD loaders */
+extern MODULE  of;                  /* static unimod loading space */
+extern UWORD   npertab[7*OCTAVE];   /* used by the original MOD loaders */
 
-extern SBYTE   remap[UF_MAXCHAN];	/* for removing empty channels */
-extern UBYTE*  poslookup;		/* lookup table for pattern jumps after
-					   blank pattern removal */
+extern SBYTE   remap[UF_MAXCHAN];   /* for removing empty channels */
+extern UBYTE*  poslookup;           /* lookup table for pattern jumps after
+                                      blank pattern removal */
 extern UWORD   poslookupcnt;
 extern UWORD*  origpositions;
 
-extern BOOL    filters;				/* resonant filters in use */
-extern UBYTE   activemacro;			/* active midi macro number for Sxx */
-extern UBYTE   filtermacros[UF_MAXMACRO];	/* midi macro settings */
-extern FILTER  filtersettings[UF_MAXFILTER];	/* computed filter settings */
+extern BOOL    filters;             /* resonant filters in use */
+extern UBYTE   activemacro;         /* active midi macro number for Sxx */
+extern UBYTE   filtermacros[UF_MAXMACRO];    /* midi macro settings */
+extern FILTER  filtersettings[UF_MAXFILTER]; /* computed filter settings */
 
 extern int*    noteindex;
 
@@ -605,16 +602,16 @@ extern void   S3MIT_ProcessCmd(UBYTE,UBYTE,unsigned int);
 extern void   S3MIT_CreateOrders(BOOL);
 
 /* flags for S3MIT_ProcessCmd */
-#define	S3MIT_OLDSTYLE		1	/* behave as old scream tracker */
+#define	S3MIT_OLDSTYLE	1	/* behave as old scream tracker */
 #define	S3MIT_IT		2	/* behave as impulse tracker */
-#define	S3MIT_SCREAM		4	/* enforce scream tracker specific limits */
+#define	S3MIT_SCREAM	4	/* enforce scream tracker specific limits */
 
 /* used to convert c4spd to linear XM periods (IT and IMF loaders). */
 extern UWORD  getlinearperiod(UWORD,ULONG);
 extern ULONG  getfrequency(UWORD,ULONG);
 
 /* loader shared data */
-#define STM_NTRACKERS		3
+#define STM_NTRACKERS 3
 extern const CHAR *STM_Signatures[STM_NTRACKERS];
 
 /*========== Player interface */
@@ -626,19 +623,19 @@ extern void   Player_HandleTick(void);
 /*========== Drivers */
 
 /* max. number of handles a driver has to provide. (not strict) */
-#define MAXSAMPLEHANDLES	384
+#define MAXSAMPLEHANDLES 384
 
 /* These variables can be changed at ANY time and results will be immediate */
-extern UWORD md_bpm;			/* current song / hardware BPM rate */
+extern UWORD md_bpm;         /* current song / hardware BPM rate */
 
 /* Variables below can be changed via MD_SetNumVoices at any time. However, a
    call to MD_SetNumVoicess while the driver is active will cause the sound to
    skip slightly. */
-extern UBYTE md_numchn;			/* number of song + sound effects voices */
-extern UBYTE md_sngchn;			/* number of song voices */
-extern UBYTE md_sfxchn;			/* number of sound effects voices */
-extern UBYTE md_hardchn;		/* number of hardware mixed voices */
-extern UBYTE md_softchn;		/* number of software mixed voices */
+extern UBYTE md_numchn;      /* number of song + sound effects voices */
+extern UBYTE md_sngchn;      /* number of song voices */
+extern UBYTE md_sfxchn;      /* number of sound effects voices */
+extern UBYTE md_hardchn;     /* number of hardware mixed voices */
+extern UBYTE md_softchn;     /* number of software mixed voices */
 
 /* This is for use by the hardware drivers only.  It points to the registered
    tickhandler function. */
@@ -690,10 +687,10 @@ extern void Voice_SetVolume_internal(SBYTE,UWORD);
 extern void Voice_Stop_internal(SBYTE);
 extern BOOL Voice_Stopped_internal(SBYTE);
 
-extern BOOL VC1_PlayStart(void);
-extern BOOL VC2_PlayStart(void);
-extern void VC1_PlayStop(void);
-extern void VC2_PlayStop(void);
+extern BOOL  VC1_PlayStart(void);
+extern BOOL  VC2_PlayStart(void);
+extern void  VC1_PlayStop(void);
+extern void  VC2_PlayStop(void);
 extern BOOL VC1_SetNumVoices(void);
 extern BOOL VC2_SetNumVoices(void);
 
@@ -710,21 +707,21 @@ extern MikMod_callback_t vc_callback;
 
 #if defined __VEC__ && !(defined(__GNUC__) && (__GNUC__ < 3))
 #define HAVE_ALTIVEC
-#endif /* __VEC__ */
+#endif // __VEC__
 
 #elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
 
 #if defined(__SSE2__)
 #define HAVE_SSE2
-#endif /* __SSE2__ */
+#endif // __SSE2__
 
 #elif defined(_WIN64) /* both _MSC_VER and __MINGW32__ */
 
 #define HAVE_SSE2
 
 #elif (defined(_MSC_VER) && (_MSC_VER >= 1300)) || (defined(__MINGW32__) && defined(__SSE2__))
-/* FIXME: emmintrin.h requires VC6 processor pack or VC2003+ */
-/* FIXME: x86 MinGW needs proper -march=xx or -msse2 to define __SSE2__ */
+// FIXME: emmintrin.h requires VC6 processor pack or VC2003+
+// FIXME: x86 MinGW needs proper -march=xx or -msse2 to define __SSE2__
 #define HAVE_SSE2
 /* Fixes couples warnings */
 #ifdef _MSC_VER
@@ -733,7 +730,7 @@ extern MikMod_callback_t vc_callback;
 #pragma warning(disable:4244)
 #endif
 #endif
-/* TODO: Test for GCC Linux */
+// TODO: Test for GCC Linux
 
 /*========== SIMD mixing helper functions =============*/
 

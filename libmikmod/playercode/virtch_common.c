@@ -162,9 +162,8 @@ VC_FUNC1(VoiceGetFrequency,ULONG,UBYTE)
 VC_PROC2(VoiceSetPanning,UBYTE,ULONG)
 VC_FUNC1(VoiceGetPanning,ULONG,UBYTE)
 
-void VC_VoicePlay(UBYTE a,SWORD b,ULONG c,ULONG d,ULONG e,ULONG f,UWORD g) {
-     VC_VoicePlay_ptr(a,b,c,d,e,f,g);
-}
+void  VC_VoicePlay(UBYTE a,SWORD b,ULONG c,ULONG d,ULONG e,ULONG f,UWORD g)
+{ VC_VoicePlay_ptr(a,b,c,d,e,f,g); }
 
 VC_PROC1(VoiceStop,UBYTE)
 VC_FUNC1(VoiceStopped,BOOL,UBYTE)
@@ -311,13 +310,13 @@ ULONG VC1_VoiceGetFrequency(UBYTE voice)
 
 void VC1_VoicePlay(UBYTE voice,SWORD handle,ULONG start,ULONG size,ULONG reppos,ULONG repend,UWORD flags)
 {
-	vinf[voice].flags  = flags;
-	vinf[voice].handle = handle;
-	vinf[voice].start  = start;
-	vinf[voice].size   = size;
-	vinf[voice].reppos = reppos;
-	vinf[voice].repend = repend;
-	vinf[voice].kick   = 1;
+	vinf[voice].flags    = flags;
+	vinf[voice].handle   = handle;
+	vinf[voice].start    = start;
+	vinf[voice].size     = size;
+	vinf[voice].reppos   = reppos;
+	vinf[voice].repend   = repend;
+	vinf[voice].kick     = 1;
 }
 
 void VC1_VoiceStop(UBYTE voice)
@@ -456,8 +455,9 @@ ULONG VC1_VoiceRealVolume(UBYTE voice)
 	return abs(k-j);
 }
 
-#endif /* _VIRTCH_COMMON_ */
 
-#endif /* _IN_VIRTCH_ */
+#endif
+
+#endif
 
 /* ex:set ts=4: */

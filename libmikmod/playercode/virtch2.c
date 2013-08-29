@@ -130,7 +130,7 @@ static	SLONG *vc_tickbuf=NULL;
 static	UWORD vc_mode;
 
 #ifdef _MSC_VER
-/* Weird bug in compiler */ /* FIXME is this still needed? */
+// Weird bug in compiler
 typedef void (*MikMod_callback_t)(unsigned char *data, size_t len);
 #endif
 
@@ -156,16 +156,16 @@ static	SLONG *RVbufR1=NULL,*RVbufR2=NULL,*RVbufR3=NULL,*RVbufR4=NULL,
 /*========== 32 bit sample mixers - only for 32 bit platforms */
 #ifndef NATIVE_64BIT_INT
 
-static SLONG Mix32MonoNormal(const SWORD* const srce,SLONG* dest,SLONG idx,SLONG increment,SLONG todo)
+static SLONG Mix32MonoNormal(const SWORD* const srce,SLONG* dest,SLONG index,SLONG increment,SLONG todo)
 {
 	SWORD sample=0;
 	SLONG i,f;
 
 	while(todo--) {
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=index>>FRACBITS,f=index&FRACMASK;
 		sample=(SWORD)( (((SLONG)(srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONG)srce[i+1]*f)) >> FRACBITS));
-		idx+=increment;
+		index+=increment;
 
 		if(vnf->rampvol) {
 			*dest++ += (long)(
@@ -185,19 +185,19 @@ static SLONG Mix32MonoNormal(const SWORD* const srce,SLONG* dest,SLONG idx,SLONG
 	}
 	vnf->lastvalL=vnf->lvolsel * sample;
 
-	return idx;
+	return index;
 }
 
-static SLONG Mix32StereoNormal(const SWORD* const srce,SLONG* dest,SLONG idx,SLONG increment,ULONG todo)
+static SLONG Mix32StereoNormal(const SWORD* const srce,SLONG* dest,SLONG index,SLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	SLONG i,f;
 
 	while(todo--) {
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=index>>FRACBITS,f=index&FRACMASK;
 		sample=(SWORD)(((((SLONG)srce[i]*(FRACMASK+1L-f)) +
 		        ((SLONG)srce[i+1] * f)) >> FRACBITS));
-		idx += increment;
+		index += increment;
 
 		if(vnf->rampvol) {
 			*dest++ += (long)(
@@ -228,20 +228,20 @@ static SLONG Mix32StereoNormal(const SWORD* const srce,SLONG* dest,SLONG idx,SLO
 	vnf->lastvalL=vnf->lvolsel*sample;
 	vnf->lastvalR=vnf->rvolsel*sample;
 
-	return idx;
+	return index;
 }
 
-static SLONG Mix32StereoSurround(const SWORD* const srce,SLONG* dest,SLONG idx,SLONG increment,ULONG todo)
+static SLONG Mix32StereoSurround(const SWORD* const srce,SLONG* dest,SLONG index,SLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	long whoop;
 	SLONG i, f;
 
 	while(todo--) {
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=index>>FRACBITS,f=index&FRACMASK;
 		sample=(SWORD)(((((SLONG)srce[i]*(FRACMASK+1L-f)) +
-			((SLONG)srce[i+1]*f)) >> FRACBITS));
-		idx+=increment;
+		        ((SLONG)srce[i+1]*f)) >> FRACBITS));
+		index+=increment;
 
 		if(vnf->rampvol) {
 			whoop=(long)(
@@ -268,22 +268,22 @@ static SLONG Mix32StereoSurround(const SWORD* const srce,SLONG* dest,SLONG idx,S
 	vnf->lastvalL=vnf->lvolsel*sample;
 	vnf->lastvalR=vnf->lvolsel*sample;
 
-	return idx;
+	return index;
 }
 #endif
 
 /*========== 64 bit mixers */
 
-static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,SLONG todo)
+static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,SLONG todo)
 {
 	SWORD sample=0;
 	SLONGLONG i,f;
 
 	while(todo--) {
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)((((SLONGLONG)(srce[i]*(FRACMASK+1L-f)) +
-			((SLONGLONG)srce[i+1]*f)) >> FRACBITS));
-		idx+=increment;
+		        ((SLONGLONG)srce[i+1]*f)) >> FRACBITS));
+		local_index+=increment;
 
 		if(vnf->rampvol) {
 			*dest++ += (long)(
@@ -303,52 +303,52 @@ static SLONGLONG MixMonoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG idx
 	}
 	vnf->lastvalL=vnf->lvolsel * sample;
 
-	return idx;
+	return local_index;
 }
 
-/* Slowest part... */
+// Slowest part...
 
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 
-static __inline SWORD GetSample(const SWORD* const srce, SLONGLONG idx)
+static __inline SWORD GetSample(const SWORD* const srce, SLONGLONG index)
 {
-	SLONGLONG i=idx>>FRACBITS;
-	SLONGLONG f=idx&FRACMASK;
+	SLONGLONG i=index>>FRACBITS;
+	SLONGLONG f=index&FRACMASK;
 	return (SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-				((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+			         ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
 }
 
-static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,ULONG todo)
+static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG index,SLONGLONG increment,ULONG todo)
 {
 	SWORD vol[8] = {vnf->lvolsel, vnf->rvolsel};
 	SWORD sample=0;
 	SLONG remain = todo;
 
-	/* Dest can be misaligned */
+	// Dest can be misaligned ...
 	while(!IS_ALIGNED_16(dest)) {
-		sample=srce[idx >> FRACBITS];
-		idx += increment;
+		sample=srce[index >> FRACBITS];
+		index += increment;
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 		todo--;
 	}
 
-	/* Srce is always aligned */
+	// Srce is always aligned ...
 
 #if defined HAVE_SSE2
 	remain = todo&3;
 	{
 		__m128i v0 = _mm_set_epi16(0, vol[1],
-					   0, vol[0],
-					   0, vol[1],
-					   0, vol[0]);
+								   0, vol[0],
+								   0, vol[1],
+								   0, vol[0]);
 		for(todo>>=2;todo; todo--)
 		{
-			SWORD s0 = GetSample(srce, idx);
-			SWORD s1 = GetSample(srce, idx += increment);
-			SWORD s2 = GetSample(srce, idx += increment);
-			SWORD s3 = GetSample(srce, idx += increment);
-			idx += increment;
+			SWORD s0 = GetSample(srce, index);
+			SWORD s1 = GetSample(srce, index += increment);
+			SWORD s2 = GetSample(srce, index += increment);
+			SWORD s3 = GetSample(srce, index += increment);
+			index += increment;
 			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
 			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
 			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
@@ -364,45 +364,45 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 	{
 		SWORD s[8];
 		vector signed short r0 = vec_ld(0, vol);
-		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, /* l */
-										 0, 1, /* l */
-										 2, 3, /* r */
-										 2, 1, /* r */
-										 0, 1, /* l */
-										 0, 1, /* l */
-										 2, 3, /* r */
-										 2, 3  /* r */
+		vector signed short v0 = vec_perm(r0, r0, (vector unsigned char)(0, 1, // l
+										 0, 1, // l
+										 2, 3, // r
+										 2, 1, // r
+										 0, 1, // l
+										 0, 1, // l
+										 2, 3, // r
+										 2, 3 // r
 										 ));
 
 		for(todo>>=2;todo; todo--)
 		{
-			/* Load constants */
-			s[0] = GetSample(srce, idx);
-			s[1] = GetSample(srce, idx += increment);
-			s[2] = GetSample(srce, idx += increment);
-			s[3] = GetSample(srce, idx += increment);
+			// Load constants
+			s[0] = GetSample(srce, index);
+			s[1] = GetSample(srce, index += increment);
+			s[2] = GetSample(srce, index += increment);
+			s[3] = GetSample(srce, index += increment);
 			s[4] = 0;
-			idx += increment;
+			index += increment;
 
 			vector short int r1 = vec_ld(0, s);
-			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, /* s0 */
-											 4*2, 4*2+1, /* 0  */
-											 0*2, 0*2+1, /* s0 */
-											 4*2, 4*2+1, /* 0  */
-											 1*2, 1*2+1, /* s1 */
-											 4*2, 4*2+1, /* 0  */
-											 1*2, 1*2+1, /* s1 */
-											 4*2, 4*2+1  /* 0  */
+			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, // s0
+											 4*2, 4*2+1, // 0
+											 0*2, 0*2+1, // s0
+											 4*2, 4*2+1, // 0
+											 1*2, 1*2+1, // s1
+											 4*2, 4*2+1, // 0
+											 1*2, 1*2+1, // s1
+											 4*2, 4*2+1  // 0
 											 ));
 
-			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, /* s2 */
-											 4*2, 4*2+1, /* 0  */
-											 2*2, 2*2+1, /* s2 */
-											 4*2, 4*2+1, /* 0  */
-											 3*2, 3*2+1, /* s3 */
-											 4*2, 4*2+1, /* 0  */
-											 3*2, 3*2+1, /* s3 */
-											 4*2, 4*2+1  /* 0  */
+			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, // s2
+											 4*2, 4*2+1, // 0
+											 2*2, 2*2+1, // s2
+											 4*2, 4*2+1, // 0
+											 3*2, 3*2+1, // s3
+											 4*2, 4*2+1, // 0
+											 3*2, 3*2+1, // s3
+											 4*2, 4*2+1  // 0
 											 ));
 			vector signed int v3 = vec_ld(0, dest);
 			vector signed int v4 = vec_ld(0x10, dest);
@@ -415,25 +415,26 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 			dest+=8;
 		}
 	}
-#endif /* HAVE_ALTIVEC */
+#endif // HAVE_ALTIVEC
 
-	/* Remaining bits */
+	// Remaining bits ...
 	while(remain--) {
-		sample=GetSample(srce, idx);
-		idx+= increment;
+		sample=GetSample(srce, index);
+		index+= increment;
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 	}
 
+
 	vnf->lastvalL=vnf->lvolsel*sample;
 	vnf->lastvalR=vnf->rvolsel*sample;
-	return idx;
+	return index;
 }
 
 #endif
 
 
-static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,ULONG todo)
+static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	SLONGLONG i,f;
@@ -441,10 +442,11 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 	if (vnf->rampvol)
 	while(todo) {
 		todo--;
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-			((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-		idx += increment;
+		        ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+		local_index += increment;
+
 
 		*dest++ += (long)(
 			( ( ((SLONGLONG)vnf->oldlvol*vnf->rampvol) +
@@ -463,10 +465,10 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 	if (vnf->click)
 	while(todo) {
 		todo--;
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-			((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-		idx += increment;
+		        ((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+		local_index += increment;
 
 		*dest++ += (long)(
 			  ( ( (SLONGLONG)(vnf->lvolsel*(CLICK_BUFFER-vnf->click)) *
@@ -483,42 +485,46 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 			break;
 	}
 
+
 	if (todo)
 	{
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 		if (md_mode & DMODE_SIMDMIXER)
-			return MixSIMDStereoNormal(srce, dest, idx, increment, todo);
-#endif
-		while(todo)
 		{
-			i=idx>>FRACBITS,
-			f=idx&FRACMASK;
-			sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-							((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-			idx += increment;
+			local_index = MixSIMDStereoNormal(srce, dest, local_index, increment, todo);
+		}
+		else
+#endif
+		{
 
-			*dest++ +=vnf->lvolsel*sample;
-			*dest++ +=vnf->rvolsel*sample;
-			todo--;
+			while(todo)
+			{
+				i=local_index>>FRACBITS,
+				f=local_index&FRACMASK;
+				sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+								((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+				local_index += increment;
+
+				*dest++ +=vnf->lvolsel*sample;
+				*dest++ +=vnf->rvolsel*sample;
+				todo--;
+			}
 		}
 	}
-	vnf->lastvalL=vnf->lvolsel*sample;
-	vnf->lastvalR=vnf->rvolsel*sample;
-
-	return idx;
+	return local_index;
 }
 
-static SLONGLONG MixStereoSurround(const SWORD* srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,ULONG todo)
+static SLONGLONG MixStereoSurround(const SWORD* srce,SLONG* dest,SLONGLONG local_index,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
 	long whoop;
 	SLONGLONG i, f;
 
 	while(todo--) {
-		i=idx>>FRACBITS,f=idx&FRACMASK;
+		i=local_index>>FRACBITS,f=local_index&FRACMASK;
 		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-			((SLONGLONG)srce[i+1]*f)) >> FRACBITS));
-		idx+=increment;
+		        ((SLONGLONG)srce[i+1]*f)) >> FRACBITS));
+		local_index+=increment;
 
 		if(vnf->rampvol) {
 			whoop=(long)(
@@ -545,7 +551,7 @@ static SLONGLONG MixStereoSurround(const SWORD* srce,SLONG* dest,SLONGLONG idx,S
 	vnf->lastvalL=vnf->lvolsel*sample;
 	vnf->lastvalR=vnf->lvolsel*sample;
 
-	return idx;
+	return local_index;
 }
 
 static	void(*Mix32toFP)(float* dste,const SLONG *srce,NATIVE count);
@@ -584,7 +590,7 @@ static void MixReverb_Normal(SLONG *srce,NATIVE count)
 
 		/* left channel */
 		*srce++ +=RVbufL1[loc1]-RVbufL2[loc2]+RVbufL3[loc3]-RVbufL4[loc4]+
-			  RVbufL5[loc5]-RVbufL6[loc6]+RVbufL7[loc7]-RVbufL8[loc8];
+		          RVbufL5[loc5]-RVbufL6[loc6]+RVbufL7[loc7]-RVbufL8[loc8];
 	}
 }
 
@@ -620,11 +626,11 @@ static void MixReverb_Stereo(SLONG *srce,NATIVE count)
 
 		/* left channel */
 		*srce++ +=RVbufL1[loc1]-RVbufL2[loc2]+RVbufL3[loc3]-RVbufL4[loc4]+
-			  RVbufL5[loc5]-RVbufL6[loc6]+RVbufL7[loc7]-RVbufL8[loc8];
+		          RVbufL5[loc5]-RVbufL6[loc6]+RVbufL7[loc7]-RVbufL8[loc8];
 
 		/* right channel */
 		*srce++ +=RVbufR1[loc1]-RVbufR2[loc2]+RVbufR3[loc3]-RVbufR4[loc4]+
-			  RVbufR5[loc5]-RVbufR6[loc6]+RVbufR7[loc7]-RVbufR8[loc8];
+		          RVbufR5[loc5]-RVbufR6[loc6]+RVbufR7[loc7]-RVbufR8[loc8];
 	}
 }
 
@@ -803,12 +809,12 @@ static void Mix32To8_Stereo(SBYTE* dste,const SLONG *srce,NATIVE count)
 
 #if defined HAVE_SSE2
 #define SHIFT_MIX_TO_16 (BITSHIFT + 16 - 16)
-/* TEST: Ok */
+// TEST: Ok
 static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE count)
 {
 	int remain = count;
 
-	/* Check unaligned dste buffer. srce is always aligned. */
+	// Check unaligned dste buffer. srce is always aligned.
 	while(!IS_ALIGNED_16(dste))
 	{
 		Mix32To16_Stereo(dste, srce, SAMPLING_FACTOR);
@@ -817,58 +823,64 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 		count--;
 	}
 
-	/* dste and srce aligned. srce is always aligned. */
-	remain = count & 15;
-	/* count / 2 for 1 sample */
-
-	for(count>>=4;count;count--)
+	// dste and srce aligned. srce is always aligned.
 	{
-		/* Load 32bit sample. 1st average */
-		__m128i v0 = _mm_add_epi32(
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+0)), SHIFT_MIX_TO_16),
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+4)), SHIFT_MIX_TO_16)
-		);  /* v0: s0.l+s2.l | s0.r+s2.r | s1.l+s3.l | s1.r+s3.r */
+		remain = count & 15;
+		// count / 2 for 1 sample
 
-		/* 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample) */
-		__m128i v1 = _mm_srai_epi32(_mm_add_epi32(v0, mm_hiqq(v0)), 2);
-		/* v1: s0.l+s2.l / 4 | s0.r+s2.r / 4 | s1.l+s3.l+s0.l+s2.l / 4 | s1.r+s3.r+s0.r+s2.r / 4 */
+		for(count>>=4;count;count--)
+		{
+         // Load 32bit sample. 1st average
+		__m128i v0 = _mm_add_epi32(
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+0)), SHIFT_MIX_TO_16),
+ 		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+4)), SHIFT_MIX_TO_16)
+		);
+		// v0: s0.l+s2.l | s0.r+s2.r | s1.l+s3.l | s1.r+s3.r
+
+
+		// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
+        __m128i v1 = _mm_srai_epi32(_mm_add_epi32(v0, mm_hiqq(v0)), 2);
+		// v1: s0.l+s2.l / 4 | s0.r+s2.r / 4 | s1.l+s3.l+s0.l+s2.l / 4 | s1.r+s3.r+s0.r+s2.r / 4
+
 
 		__m128i v2 = _mm_add_epi32(
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+8)), SHIFT_MIX_TO_16),
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+12)), SHIFT_MIX_TO_16)
-		);  /* v2: s4.l+s6.l | s4.r+s6.r | s5.l+s7.l | s5.r+s7.r */
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+8)), SHIFT_MIX_TO_16),
+  		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+12)), SHIFT_MIX_TO_16)
+		);
+		// v2: s4.l+s6.l | s4.r+s6.r | s5.l+s7.l | s5.r+s7.r
 
-		__m128i v3 = _mm_srai_epi32(_mm_add_epi32(v2, mm_hiqq(v2)), 2);  /* Upper 64bit is unused */
-		/* v3: s4.l+s6.l /4 | s4.r+s6.r / 4| s5.l+s7.l+s4.l+s6.l / 4 | s5.r+s7.r+s4.r+s6.l / 4 */
+        __m128i v3 = _mm_srai_epi32(_mm_add_epi32(v2, mm_hiqq(v2)), 2) ;  //Upper 64bit is unused
+		// v3: s4.l+s6.l /4 | s4.r+s6.r / 4| s5.l+s7.l+s4.l+s6.l / 4 | s5.r+s7.r+s4.r+s6.l / 4
 
-		/* pack two stereo samples in one */
-		__m128i v4 = _mm_unpacklo_epi64(v1, v3);  /* v4 = avg(s0,s1,s2,s3) | avg(s4,s5,s6,s7) */
+	    // pack two stereo samples in one
+        __m128i v4 = _mm_unpacklo_epi64(v1, v3); //   v4 = avg(s0,s1,s2,s3) | avg(s4,s5,s6,s7)
 
 		__m128i v6;
 
-		/* Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r) */
+        // Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r)
 		v0 = _mm_add_epi32(
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+16)), SHIFT_MIX_TO_16),
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+20)), SHIFT_MIX_TO_16)
-		);  /* 128bit = 2 stereo samples */
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+16)), SHIFT_MIX_TO_16),
+ 		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+20)), SHIFT_MIX_TO_16)
+		);  //128bit = 2 stereo samples
 
-		/* 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample) */
-		v1 = _mm_srai_epi32(_mm_add_epi32(v0, mm_hiqq(v0)), 2);
+		// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
+        v1 = _mm_srai_epi32(_mm_add_epi32(v0, mm_hiqq(v0)), 2);
 
 		v2 = _mm_add_epi32(
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+24)), SHIFT_MIX_TO_16),
-			_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+28)), SHIFT_MIX_TO_16)
+		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+24)), SHIFT_MIX_TO_16),
+  		_mm_srai_epi32(_mm_loadu_si128((__m128i const *)(srce+28)), SHIFT_MIX_TO_16)
 		);
 
-		v3 = _mm_srai_epi32(_mm_add_epi32(v2, mm_hiqq(v2)), 2);  /* Upper 64bit is unused */
+        v3 = _mm_srai_epi32(_mm_add_epi32(v2, mm_hiqq(v2)), 2);  //Upper 64bit is unused
 
-		/* pack two stereo samples in one */
-		v6 = _mm_unpacklo_epi64(v1, v3);  /* v6 = avg(s8,s9,s10,s11) | avg(s12,s13,s14,s15) */
+        // pack two stereo samples in one
+        v6 = _mm_unpacklo_epi64(v1, v3); //    v6 = avg(s8,s9,s10,s11) | avg(s12,s13,s14,s15)
 
-		_mm_store_si128((__m128i*)dste, _mm_packs_epi32(v4, v6));  /* 4 interpolated stereo sample 32bit to 4 */
+		_mm_store_si128((__m128i*)dste, _mm_packs_epi32(v4, v6));  // 4 interpolated stereo sample 32bit to 4
 
 		dste+=8;
-		srce+=32; /* 32 = 4 * 8  */
+		srce+=32; // 32 = 4 * 8
+		}
 	}
 
 	if (remain)
@@ -879,12 +891,12 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 
 #elif defined HAVE_ALTIVEC
 #define SHIFT_MIX_TO_16 vec_splat_u32(BITSHIFT + 16 - 16)
-/* TEST: Ok */
+// TEST: Ok
 static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE count)
 {
 	int remain = count;
 
-	/* Check unaligned dste buffer. srce is always aligned. */
+	// Check unaligned dste buffer. srce is always aligned.
 	while(!IS_ALIGNED_16(dste))
 	{
 		Mix32To16_Stereo(dste, srce, SAMPLING_FACTOR);
@@ -893,52 +905,54 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 		count--;
 	}
 
-	/* dste and srce aligned. srce is always aligned. */
-	remain = count & 15;
-	for(count>>=4;count;count--)
+	// dste and srce aligned. srce is always aligned.
 	{
-		/* Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r) */
-		vector signed int v0 = vec_add(
-			vec_sra(vec_ld(0, srce), SHIFT_MIX_TO_16),  /* 128bit = 2 stereo samples */
-			vec_sra(vec_ld(0x10, srce), SHIFT_MIX_TO_16)
-		);  /* 128bit = 2 stereo samples */
+		remain = count & 15;
+		for(count>>=4;count;count--)
+		{
+			// Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r)
+			vector signed int v0 = vec_add(
+				vec_sra(vec_ld(0, srce), SHIFT_MIX_TO_16),  //128bit = 2 stereo samples
+ 				vec_sra(vec_ld(0x10, srce), SHIFT_MIX_TO_16)
+			);  //128bit = 2 stereo samples
 
-		/* 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample) */
-		vector signed int v1 = vec_sra(vec_add(v0, vec_hiqq(v0)), vec_splat_u32(2));
+			// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
+			vector signed int v1 = vec_sra(vec_add(v0, vec_hiqq(v0)), vec_splat_u32(2));
 
-		vector signed int v2 = vec_add(
-			vec_sra(vec_ld(0x20, srce), SHIFT_MIX_TO_16),
-			vec_sra(vec_ld(0x30, srce), SHIFT_MIX_TO_16)
-		);
+			vector signed int v2 = vec_add(
+				vec_sra(vec_ld(0x20, srce), SHIFT_MIX_TO_16),
+  				vec_sra(vec_ld(0x30, srce), SHIFT_MIX_TO_16)
+			);
 
-		vector signed int v3 = vec_sra(vec_add(v2, vec_hiqq(v2)), vec_splat_u32(2));  /* Upper 64bit is unused */
+			vector signed int v3 = vec_sra(vec_add(v2, vec_hiqq(v2)), vec_splat_u32(2));  //Upper 64bit is unused
 
-		/* pack two stereo samples in one */
-		vector signed int v6, v4 = vec_unpacklo(v1, v3); /* v4 = lo64(v1) | lo64(v3) */
+			// pack two stereo samples in one
+			vector signed int v6, v4 = vec_unpacklo(v1, v3); //   v4 = lo64(v1) | lo64(v3)
 
-		/* Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r) */
-		v0 = vec_add(
-			vec_sra(vec_ld(0x40, srce), SHIFT_MIX_TO_16),	/* 128bit = 2 stereo samples */
-			vec_sra(vec_ld(0x50, srce), SHIFT_MIX_TO_16)
-		);  /* 128bit = 2 stereo samples */
+			// Load 32bit sample. 1st average (s0.l+s2.l, s0.r+s2.r, s1.l+s3.l, s1.r+s3.r)
+			v0 = vec_add(
+				vec_sra(vec_ld(0x40, srce), SHIFT_MIX_TO_16),	//128bit = 2 stereo samples
+				vec_sra(vec_ld(0x50, srce), SHIFT_MIX_TO_16)
+			);  //128bit = 2 stereo samples
 
-		/* 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample) */
-		v1 = vec_sra(vec_add(v0, vec_hiqq(v0)), vec_splat_u32(2));
+			// 2nd average (s0.l+s2.l+s1.l+s3.l / 4, s0.r+s2.r+s1.r+s3.r / 4). Upper 64bit is unused  (1 stereo sample)
+			v1 = vec_sra(vec_add(v0, vec_hiqq(v0)), vec_splat_u32(2));
 
-		v2 = vec_add(
-			vec_sra(vec_ld(0x60, srce), SHIFT_MIX_TO_16),
-			vec_sra(vec_ld(0x70, srce), SHIFT_MIX_TO_16)
-		);
+			v2 = vec_add(
+				vec_sra(vec_ld(0x60, srce), SHIFT_MIX_TO_16),
+				vec_sra(vec_ld(0x70, srce), SHIFT_MIX_TO_16))
+			;
 
-		v3 = vec_sra(vec_add(v2, vec_hiqq(v2)), vec_splat_u32(2));  /* Upper 64bit is unused */
+			v3 = vec_sra(vec_add(v2, vec_hiqq(v2)), vec_splat_u32(2));  //Upper 64bit is unused
 
-		/* pack two stereo samples in one */
-		v6 = vec_unpacklo(v1, v3);
+			// pack two stereo samples in one
+			v6 = vec_unpacklo(v1, v3); //
 
-		vec_st(vec_packs(v4, v6), 0, dste);  /* 4 interpolated stereo sample 32bit to 4 interpolated stereo sample 16bit + saturation */
+			vec_st(vec_packs(v4, v6), 0, dste);  // 4 interpolated stereo sample 32bit to 4 interpolated stereo sample 16bit + saturation
 
-		dste+=8;
-		srce+=32; /* 32 = 4 * 8  */
+			dste+=8;
+			srce+=32; // 32 = 4 * 8
+		}
 	}
 
 	if (remain)
@@ -1039,27 +1053,26 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 				if(vc_mode & DMODE_STEREO) {
 					if((vnf->pan==PAN_SURROUND)&&(vc_mode&DMODE_SURROUND))
 						vnf->current=(SLONGLONG)Mix32StereoSurround
-								(s,ptr,vnf->current,vnf->increment,done);
+						               (s,ptr,vnf->current,vnf->increment,done);
 					else
 						vnf->current=Mix32StereoNormal
-								(s,ptr,vnf->current,vnf->increment,done);
+						               (s,ptr,vnf->current,vnf->increment,done);
 				} else
 					vnf->current=Mix32MonoNormal
-								(s,ptr,vnf->current,vnf->increment,done);
-			}
-			else
+					                   (s,ptr,vnf->current,vnf->increment,done);
+			} else
 #endif
-			{
+			       {
 				if(vc_mode & DMODE_STEREO) {
 					if((vnf->pan==PAN_SURROUND)&&(vc_mode&DMODE_SURROUND))
 						vnf->current=MixStereoSurround
-								(s,ptr,vnf->current,vnf->increment,done);
+						               (s,ptr,vnf->current,vnf->increment,done);
 					else
 						vnf->current=MixStereoNormal
-								(s,ptr,vnf->current,vnf->increment,done);
+						               (s,ptr,vnf->current,vnf->increment,done);
 				} else
 					vnf->current=MixMonoNormal
-								(s,ptr,vnf->current,vnf->increment,done);
+					                   (s,ptr,vnf->current,vnf->increment,done);
 			}
 		} else  {
 			vnf->lastvalL = vnf->lastvalR = 0;
@@ -1068,7 +1081,7 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 		}
 
 		todo -= done;
-		ptr += (vc_mode & DMODE_STEREO)?(done<<1):done;
+		ptr += (SLONG)(vc_mode & DMODE_STEREO)?(done<<1):done;
 	}
 }
 
@@ -1219,6 +1232,7 @@ BOOL VC2_Init(void)
 		MixReverb  = MixReverb_Normal;
 		MixLowPass = MixLowPass_Normal;
 	}
+
 
 	md_mode |= DMODE_INTERP;
 	vc_mode = md_mode;
