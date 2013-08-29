@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #include <stdarg.h>
-#if defined(__OS2__)||defined(__EMX__)||defined(WIN32)
+#if defined(__OS2__) || defined(__EMX__) || defined(_WIN32)
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
 #if defined(_WIN32) && defined(unix)
@@ -92,6 +92,7 @@ extern MikMod_handler_t _mm_errorhandler;
  	pthread_mutex_lock(&_mm_mutex_##name)
 #define MUTEX_UNLOCK(name)	\
 	pthread_mutex_unlock(&_mm_mutex_##name)
+
 #elif defined(__OS2__)||defined(__EMX__)
 #define DECLARE_MUTEX(name)	\
 	extern HMTX _mm_mutex_##name
@@ -101,6 +102,7 @@ extern MikMod_handler_t _mm_errorhandler;
 #define MUTEX_UNLOCK(name)	\
 	if(_mm_mutex_##name)	\
 		DosReleaseMutexSem(_mm_mutex_##name)
+
 #elif defined(WIN32)
 #include <windows.h>
 #define DECLARE_MUTEX(name)	\
@@ -111,6 +113,7 @@ extern MikMod_handler_t _mm_errorhandler;
 #define MUTEX_UNLOCK(name)	\
 	if(_mm_mutex_##name)	\
 		ReleaseMutex(_mm_mutex_##name)
+
 #else
 #define DECLARE_MUTEX(name)	\
 	extern void *_mm_mutex_##name
@@ -707,21 +710,21 @@ extern MikMod_callback_t vc_callback;
 
 #if defined __VEC__ && !(defined(__GNUC__) && (__GNUC__ < 3))
 #define HAVE_ALTIVEC
-#endif // __VEC__
+#endif /* __VEC__ */
 
 #elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
 
 #if defined(__SSE2__)
 #define HAVE_SSE2
-#endif // __SSE2__
+#endif /* __SSE2__ */
 
 #elif defined(_WIN64) /* both _MSC_VER and __MINGW32__ */
 
 #define HAVE_SSE2
 
 #elif (defined(_MSC_VER) && (_MSC_VER >= 1300)) || (defined(__MINGW32__) && defined(__SSE2__))
-// FIXME: emmintrin.h requires VC6 processor pack or VC2003+
-// FIXME: x86 MinGW needs proper -march=xx or -msse2 to define __SSE2__
+/* FIXME: emmintrin.h requires VC6 processor pack or VC2003+ */
+/* FIXME: x86 MinGW needs proper -march=xx or -msse2 to define __SSE2__ */
 #define HAVE_SSE2
 /* Fixes couples warnings */
 #ifdef _MSC_VER
@@ -730,7 +733,7 @@ extern MikMod_callback_t vc_callback;
 #pragma warning(disable:4244)
 #endif
 #endif
-// TODO: Test for GCC Linux
+/* TODO: Test for GCC Linux */
 
 /*========== SIMD mixing helper functions =============*/
 
