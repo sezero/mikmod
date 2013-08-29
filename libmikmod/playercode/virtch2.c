@@ -1078,7 +1078,7 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 		}
 
 		todo -= done;
-		ptr += (SLONG)(vc_mode & DMODE_STEREO)?(done<<1):done;
+		ptr += (vc_mode & DMODE_STEREO)?(done<<1):done;
 	}
 }
 
