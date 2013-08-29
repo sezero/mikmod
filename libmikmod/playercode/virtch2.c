@@ -485,32 +485,29 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG l
 			break;
 	}
 
-
 	if (todo)
 	{
 #if defined HAVE_SSE2 || defined HAVE_ALTIVEC
-		if (md_mode & DMODE_SIMDMIXER)
-		{
-			local_index = MixSIMDStereoNormal(srce, dest, local_index, increment, todo);
+		if (md_mode & DMODE_SIMDMIXER) {
+			return MixSIMDStereoNormal(srce, dest, local_index, increment, todo);
 		}
-		else
 #endif
+		while(todo)
 		{
+			i=local_index>>FRACBITS,
+			f=local_index&FRACMASK;
+			sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+							((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+			local_index += increment;
 
-			while(todo)
-			{
-				i=local_index>>FRACBITS,
-				f=local_index&FRACMASK;
-				sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
-								((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
-				local_index += increment;
-
-				*dest++ +=vnf->lvolsel*sample;
-				*dest++ +=vnf->rvolsel*sample;
-				todo--;
-			}
+			*dest++ +=vnf->lvolsel*sample;
+			*dest++ +=vnf->rvolsel*sample;
+			todo--;
 		}
 	}
+	vnf->lastvalL=vnf->lvolsel*sample;
+	vnf->lastvalR=vnf->rvolsel*sample;
+
 	return local_index;
 }
 
