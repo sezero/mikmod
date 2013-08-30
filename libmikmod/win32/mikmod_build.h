@@ -737,7 +737,7 @@ MIKMODAPI extern struct MDRIVER drv_esd;    /* Enlightened sound daemon (EsounD)
 MIKMODAPI extern struct MDRIVER drv_hp;     /* HP-UX audio device */
 MIKMODAPI extern struct MDRIVER drv_nas;    /* Network Audio System (NAS) */
 MIKMODAPI extern struct MDRIVER drv_oss;    /* OpenSound System (Linux,FreeBSD...) */
-MIKMODAPI extern struct MDRIVER drv_sdl;	/* SDL audio driver */
+MIKMODAPI extern struct MDRIVER drv_sdl;    /* SDL audio driver */
 MIKMODAPI extern struct MDRIVER drv_sgi;    /* SGI audio library */
 MIKMODAPI extern struct MDRIVER drv_sun;    /* Sun/NetBSD/OpenBSD audio device */
 

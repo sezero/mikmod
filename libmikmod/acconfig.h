@@ -29,6 +29,8 @@
 #undef DRV_OSS
 /* Define if the Linux SAM9407 driver is compiled */
 #undef DRV_SAM9407
+/* Define if the SDL audio driver is compiled */
+#undef DRV_SDL
 /* Define if the SGI audio driver is compiled */
 #undef DRV_SGI
 /* Define if the Sun audio driver or compatible (NetBSD, OpenBSD)
