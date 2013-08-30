@@ -103,7 +103,7 @@ static BOOL WAV_IsThere(void)
 	return 1;
 }
 
-static BOOL WAV_Init(void)
+static int WAV_Init(void)
 {
 #if defined unix || (defined __APPLE__ && defined __MACH__)
 	if (!MD_Access(filename?filename:FILENAME)) {

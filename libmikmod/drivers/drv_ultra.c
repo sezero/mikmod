@@ -180,7 +180,7 @@ static int ultra_handle = -1;	/* GUS handle */
 static int ultra_fd = -1;	/* GUS file descriptor */
 
 #ifdef MIKMOD_DYNAMIC
-static BOOL Ultra_Link(void)
+static int Ultra_Link(void)
 {
 	if (libgus)
 		return 0;
@@ -283,7 +283,7 @@ static void Ultra_CommandLine(const CHAR *cmdline)
 /* Checks for the presence of GUS cards */
 static BOOL Ultra_IsThere(void)
 {
-	int retval;
+	BOOL retval;
 
 #ifdef MIKMOD_DYNAMIC
 	if (Ultra_Link())
@@ -416,7 +416,7 @@ static ULONG Ultra_SampleLength(int type, SAMPLE *s)
 }
 
 /* Initializes the driver */
-static BOOL Ultra_Init_internal(void)
+static int Ultra_Init_internal(void)
 {
 	gus_info_t info;
 
@@ -475,7 +475,7 @@ static BOOL Ultra_Init_internal(void)
 	return 0;
 }
 
-static BOOL Ultra_Init(void)
+static int Ultra_Init(void)
 {
 #ifdef MIKMOD_DYNAMIC
 	if (Ultra_Link()) {
@@ -505,13 +505,13 @@ static void Ultra_Exit(void)
 }
 
 /* Poor man's reset function */
-static BOOL Ultra_Reset(void)
+static int Ultra_Reset(void)
 {
 	Ultra_Exit_internal();
 	return Ultra_Init_internal();
 }
 
-static BOOL Ultra_SetNumVoices(void)
+static int Ultra_SetNumVoices(void)
 {
 	return 0;
 }
@@ -616,7 +616,7 @@ static void Ultra_Update(void)
 #endif
 
 /* Start playback */
-static BOOL Ultra_PlayStart(void)
+static int Ultra_PlayStart(void)
 {
 	int t;
 	gus_info_t info;

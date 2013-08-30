@@ -139,7 +139,7 @@ static SWORD sampleLoad(SAMPLOAD *s, int type)
 	SamModSamples modSamples;
 	SWORD handle;
 	SWORD *samples;
-int rc;
+	int rc;
 
 	for(handle=0; handle<SAM_NUM_BANKS; handle++)
 		if(!banks[handle].inUse)
@@ -216,7 +216,7 @@ static ULONG realSampleLength(int type, SAMPLE *s)
 	return s->length<<1;
 }
 
-static BOOL init(void)
+static int init(void)
 {
 	int i;
 	Voice *voiceP;
@@ -255,7 +255,7 @@ static void exitHook(void)
 	}
 }
 
-static BOOL reset(void)
+static int reset(void)
 {
 	if(ioctl(modfd, SAM_IOC_MOD_RESET)<0)
 		return 1;
@@ -263,12 +263,12 @@ static BOOL reset(void)
 	return 0;
 }
 
-static BOOL setNumVoices(void)
+static int setNumVoices(void)
 {
 	return 0;
 }
 
-static BOOL playStart(void)
+static int playStart(void)
 {
 	ioctl(modfd, SAM_IOC_MOD_TIMER_START);
 	return 0;

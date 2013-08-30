@@ -221,7 +221,7 @@ static void IT_Cleanup(void)
    NOTE: You must first seek to the file location of the pattern before calling
          this procedure.
 
-   Returns 1 on error
+   Returns 0 on error
 */
 static BOOL IT_GetNumChannels(UWORD patrows)
 {
@@ -230,7 +230,7 @@ static BOOL IT_GetNumChannels(UWORD patrows)
 	do {
 		if((flag=_mm_read_UBYTE(modreader))==EOF) {
 			_mm_errno=MMERR_LOADING_PATTERN;
-			return 1;
+			return 0;
 		}
 		if(!flag)
 			row++;
@@ -245,7 +245,7 @@ static BOOL IT_GetNumChannels(UWORD patrows)
 		}
 	} while(row<patrows);
 
-	return 0;
+	return 1;
 }
 
 static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
@@ -950,7 +950,7 @@ static BOOL IT_Load(BOOL curious)
 				return 0;
 			}
 			_mm_read_I_ULONG(modreader);
-			if(IT_GetNumChannels(packlen)) return 0;
+			if(!IT_GetNumChannels(packlen)) return 0;
 		}
 	}
 
@@ -970,7 +970,6 @@ static BOOL IT_Load(BOOL curious)
 #ifdef WITH_PACKLEN
 		UWORD packlen;
 #endif
-
 		/* seek to pattern position */
 		if(!paraptr[mh->insnum+mh->smpnum+t]) { /* 0 -> empty 64 row pattern */
 			of.pattrows[t]=64;
@@ -982,12 +981,12 @@ static BOOL IT_Load(BOOL curious)
 				of.tracks[numtrk++]=UniDup();
 			}
 		} else {
-		 	_mm_fseek(modreader,((long)paraptr[mh->insnum+mh->smpnum+t]),SEEK_SET);
+			_mm_fseek(modreader,((long)paraptr[mh->insnum+mh->smpnum+t]),SEEK_SET);
 #ifdef WITH_PACKLEN
 			packlen=_mm_read_I_UWORD(modreader);
 #else
-            _mm_skip_BYTE(modreader);
-            _mm_skip_BYTE(modreader);
+			_mm_skip_BYTE(modreader);
+			_mm_skip_BYTE(modreader);
 #endif
 			of.pattrows[t]=_mm_read_I_UWORD(modreader);
 			_mm_read_I_ULONG(modreader);

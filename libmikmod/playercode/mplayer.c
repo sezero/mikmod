@@ -2965,7 +2965,7 @@ static void Player_Init_internal(MODULE* mod)
 	mod->patbrk=0;
 }
 
-BOOL Player_Init(MODULE* mod)
+int Player_Init(MODULE* mod)
 {
 	mod->extspd=1;
 	mod->panflag=1;

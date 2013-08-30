@@ -81,7 +81,7 @@ static BOOL pipe_IsThere(void)
 	return 1;
 }
 
-static BOOL pipe_Init(void)
+static int pipe_Init(void)
 {
 	if(!target) {
 		_mm_errno=MMERR_OPENING_FILE;

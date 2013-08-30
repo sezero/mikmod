@@ -156,7 +156,7 @@ static void S3M_Cleanup(void)
    NOTE: You must first seek to the file location of the pattern before calling
          this procedure.
 
-   Returns 1 on fail.                                                         */
+   Returns 0 on fail.                                                         */
 static BOOL S3M_GetNumChannels(void)
 {
 	int row=0,flag,ch;
@@ -166,7 +166,7 @@ static BOOL S3M_GetNumChannels(void)
 
 		if(_mm_eof(modreader)) {
 			_mm_errno = MMERR_LOADING_PATTERN;
-			return 1;
+			return 0;
 		}
 
 		if(flag) {
@@ -177,7 +177,7 @@ static BOOL S3M_GetNumChannels(void)
 			if(flag&128){_mm_skip_BYTE(modreader);_mm_skip_BYTE(modreader);}
 		} else row++;
 	}
-	return 0;
+	return 1;
 }
 
 static BOOL S3M_ReadPattern(void)
@@ -406,7 +406,7 @@ static BOOL S3M_Load(BOOL curious)
 	for(t=0;t<of.numpat;t++) {
 		/* seek to pattern position (+2 skip pattern length) */
 		_mm_fseek(modreader,(long)((paraptr[of.numins+t])<<4)+2,SEEK_SET);
-		if(S3M_GetNumChannels()) return 0;
+		if(!S3M_GetNumChannels()) return 0;
 	}
 
 	/* build the remap array  */

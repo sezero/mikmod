@@ -509,7 +509,7 @@ MIKMODAPI void VC_SetCallback(MikMod_callback_t callback)
 	vc_callback = callback;
 }
 
-static BOOL _mm_init(const CHAR *cmdline)
+static int _mm_init(const CHAR *cmdline)
 {
 	UWORD t;
 
@@ -567,9 +567,9 @@ static BOOL _mm_init(const CHAR *cmdline)
 	return 0;
 }
 
-MIKMODAPI BOOL MikMod_Init(const CHAR *cmdline)
+MIKMODAPI int MikMod_Init(const CHAR *cmdline)
 {
-	BOOL result;
+	int result;
 
 	MUTEX_LOCK(vars);
 	MUTEX_LOCK(lists);
@@ -606,7 +606,7 @@ MIKMODAPI void MikMod_Exit(void)
 
 /* Reset the driver using the new global variable settings.
    If the driver has not been initialized, it will be now. */
-static BOOL _mm_reset(CHAR *cmdline)
+static int _mm_reset(const CHAR *cmdline)
 {
 	BOOL wasplaying = 0;
 
@@ -640,9 +640,9 @@ static BOOL _mm_reset(CHAR *cmdline)
 	return 0;
 }
 
-MIKMODAPI BOOL MikMod_Reset(CHAR *cmdline)
+MIKMODAPI int MikMod_Reset(const CHAR *cmdline)
 {
-	BOOL result;
+	int result;
 
 	MUTEX_LOCK(vars);
 	MUTEX_LOCK(lists);
@@ -654,7 +654,7 @@ MIKMODAPI BOOL MikMod_Reset(CHAR *cmdline)
 }
 
 /* If either parameter is -1, the current set value will be retained. */
-BOOL MikMod_SetNumVoices_internal(int music, int sfx)
+int MikMod_SetNumVoices_internal(int music, int sfx)
 {
 	BOOL resume = 0;
 	int t, oldchn = 0;
@@ -702,9 +702,9 @@ BOOL MikMod_SetNumVoices_internal(int music, int sfx)
 	return 0;
 }
 
-MIKMODAPI BOOL MikMod_SetNumVoices(int music, int sfx)
+MIKMODAPI int MikMod_SetNumVoices(int music, int sfx)
 {
-	BOOL result;
+	int result;
 
 	MUTEX_LOCK(vars);
 	result=MikMod_SetNumVoices_internal(music,sfx);
@@ -713,7 +713,7 @@ MIKMODAPI BOOL MikMod_SetNumVoices(int music, int sfx)
 	return result;
 }
 
-BOOL MikMod_EnableOutput_internal(void)
+int MikMod_EnableOutput_internal(void)
 {
 	_mm_critical = 1;
 	if(!isplaying) {
@@ -724,9 +724,9 @@ BOOL MikMod_EnableOutput_internal(void)
 	return 0;
 }
 
-MIKMODAPI BOOL MikMod_EnableOutput(void)
+MIKMODAPI int MikMod_EnableOutput(void)
 {
-	BOOL result;
+	int result;
 
 	MUTEX_LOCK(vars);
 	result=MikMod_EnableOutput_internal();
@@ -848,7 +848,7 @@ INIT_MUTEX(lists);
 MIKMODAPI BOOL MikMod_InitThreads(void)
 {
 	static int firstcall=1;
-	static int result=0;
+	static BOOL result = 0;
 
 	if (firstcall) {
 		firstcall=0;
@@ -944,7 +944,7 @@ BOOL MD_Access(const CHAR * filename)
 }
 
 /* Drop all root privileges we might have */
-BOOL MD_DropPrivileges(void)
+int MD_DropPrivileges(void)
 {
 	if(!geteuid()) {
 		if(getuid()) {

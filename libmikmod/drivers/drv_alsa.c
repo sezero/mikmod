@@ -119,7 +119,7 @@ static int bytes_written = 0, bytes_played = 0;
 static int global_frame_size;
 
 #ifdef MIKMOD_DYNAMIC
-static BOOL ALSA_Link(void)
+static int ALSA_Link(void)
 {
 	if (libasound) return 0;
 
@@ -212,7 +212,7 @@ static BOOL ALSA_IsThere(void)
 	return retval;
 }
 
-static BOOL ALSA_Init_internal(void)
+static int ALSA_Init_internal(void)
 {
 	snd_pcm_format_t pformat;
 	int rate, channels, err;
@@ -274,7 +274,7 @@ END:
 	return 1;
 }
 
-static BOOL ALSA_Init(void)
+static int ALSA_Init(void)
 {
 #ifdef HAVE_SSE2
 /* TODO : Detect SSE2, then set  md_mode |= DMODE_SIMDMIXER;*/
@@ -364,7 +364,7 @@ static void ALSA_PlayStop(void)
 	alsa_pcm_drop(pcm_h);
 }
 
-static BOOL ALSA_Reset(void)
+static int ALSA_Reset(void)
 {
 	ALSA_Exit_internal();
 	return ALSA_Init_internal();

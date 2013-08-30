@@ -1209,7 +1209,7 @@ void VC1_WriteSamples(SBYTE* buf,ULONG todo)
 	}
 }
 
-BOOL VC1_Init(void)
+int VC1_Init(void)
 {
 	VC_SetupPointers();
 
@@ -1233,7 +1233,7 @@ BOOL VC1_Init(void)
 	return 0;
 }
 
-BOOL VC1_PlayStart(void)
+int VC1_PlayStart(void)
 {
 	samplesthatfit=TICKLSIZE;
 	if(vc_mode & DMODE_STEREO) samplesthatfit >>= 1;
@@ -1292,7 +1292,7 @@ void VC1_PlayStop(void)
 	RVbufR1=RVbufR2=RVbufR3=RVbufR4=RVbufR5=RVbufR6=RVbufR7=RVbufR8=NULL;
 }
 
-BOOL VC1_SetNumVoices(void)
+int VC1_SetNumVoices(void)
 {
 	int t;
 

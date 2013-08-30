@@ -72,18 +72,18 @@ extern ULONG VC2_VoiceRealVolume(UBYTE);
 
 #ifndef _IN_VIRTCH_
 
-extern BOOL  VC1_Init(void);
-extern BOOL  VC2_Init(void);
-static BOOL (*VC_Init_ptr)(void)=VC1_Init;
+extern int   VC1_Init(void);
+extern int   VC2_Init(void);
+static int  (*VC_Init_ptr)(void)=VC1_Init;
 static void (*VC_Exit_ptr)(void)=VC1_Exit;
-extern BOOL  VC1_SetNumVoices(void);
-extern BOOL  VC2_SetNumVoices(void);
-static BOOL (*VC_SetNumVoices_ptr)(void);
+extern int   VC1_SetNumVoices(void);
+extern int   VC2_SetNumVoices(void);
+static int  (*VC_SetNumVoices_ptr)(void);
 static ULONG (*VC_SampleSpace_ptr)(int);
 static ULONG (*VC_SampleLength_ptr)(int,SAMPLE*);
 
-extern BOOL  VC2_PlayStart(void);
-static BOOL (*VC_PlayStart_ptr)(void);
+extern int   VC2_PlayStart(void);
+static int  (*VC_PlayStart_ptr)(void);
 extern void  VC2_PlayStop(void);
 static void (*VC_PlayStop_ptr)(void);
 
@@ -124,7 +124,9 @@ MIKMODAPI void VC_##suffix (typ1 a,typ2 b) { VC_##suffix##_ptr(a,b); }
 
 #define VC_FUNC2(suffix,ret,typ1,typ2) \
 MIKMODAPI ret VC_##suffix (typ1 a,typ2 b) { return VC_##suffix##_ptr(a,b); }
+
 #else
+
 #define VC_PROC0(suffix) \
 MIKMODAPI void VC_/**/suffix (void) { VC_/**/suffix/**/_ptr(); }
 
@@ -144,12 +146,12 @@ MIKMODAPI void VC_/**/suffix (typ1 a,typ2 b) { VC_/**/suffix/**/_ptr(a,b); }
 MIKMODAPI ret VC_/**/suffix (typ1 a,typ2 b) { return VC_/**/suffix/**/_ptr(a,b); }
 #endif
 
-VC_FUNC0(Init,BOOL)
+VC_FUNC0(Init,int)
 VC_PROC0(Exit)
-VC_FUNC0(SetNumVoices,BOOL)
+VC_FUNC0(SetNumVoices,int)
 VC_FUNC1(SampleSpace,ULONG,int)
 VC_FUNC2(SampleLength,ULONG,int,SAMPLE*)
-VC_FUNC0(PlayStart,BOOL)
+VC_FUNC0(PlayStart,int)
 VC_PROC0(PlayStop)
 VC_FUNC2(SampleLoad,SWORD,struct SAMPLOAD*,int)
 VC_PROC1(SampleUnload,SWORD)

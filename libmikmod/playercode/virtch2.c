@@ -1184,7 +1184,7 @@ void VC2_WriteSamples(SBYTE* buf,ULONG todo)
 	}
 }
 
-BOOL VC2_Init(void)
+int VC2_Init(void)
 {
 	VC_SetupPointers();
 
@@ -1226,7 +1226,7 @@ BOOL VC2_Init(void)
 	return 0;
 }
 
-BOOL VC2_PlayStart(void)
+int VC2_PlayStart(void)
 {
 	md_mode|=DMODE_INTERP;
 
@@ -1288,7 +1288,7 @@ void VC2_PlayStop(void)
 	RVbufR1=RVbufR2=RVbufR3=RVbufR4=RVbufR5=RVbufR6=RVbufR7=RVbufR8=NULL;
 }
 
-BOOL VC2_SetNumVoices(void)
+int VC2_SetNumVoices(void)
 {
 	int t;
 

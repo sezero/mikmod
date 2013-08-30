@@ -81,7 +81,7 @@ static BOOL AIX_IsThere(void)
 	return 1;
 }
 
-static BOOL AIX_Init(void)
+static int AIX_Init(void)
 {
 	audio_init    a_init;
 	audio_control a_control;

@@ -249,12 +249,12 @@ MIKMODAPI extern void   MikMod_RegisterDriver(struct MDRIVER*);
 MIKMODAPI extern int    MikMod_DriverFromAlias(CHAR*);
 MIKMODAPI extern struct MDRIVER *MikMod_DriverByOrdinal(int);
 
-MIKMODAPI extern BOOL   MikMod_Init(const CHAR*);
+MIKMODAPI extern int    MikMod_Init(const CHAR*);
 MIKMODAPI extern void   MikMod_Exit(void);
-MIKMODAPI extern BOOL   MikMod_Reset(CHAR*);
-MIKMODAPI extern BOOL   MikMod_SetNumVoices(int,int);
+MIKMODAPI extern int    MikMod_Reset(const CHAR*);
+MIKMODAPI extern int    MikMod_SetNumVoices(int,int);
 MIKMODAPI extern BOOL   MikMod_Active(void);
-MIKMODAPI extern BOOL   MikMod_EnableOutput(void);
+MIKMODAPI extern int    MikMod_EnableOutput(void);
 MIKMODAPI extern void   MikMod_DisableOutput(void);
 MIKMODAPI extern void   MikMod_Update(void);
 
@@ -661,7 +661,7 @@ enum {
 
 struct SAMPLOAD;
 typedef struct MDRIVER {
-struct MDRIVER* next;
+    struct MDRIVER* next;
     const CHAR* Name;
     const CHAR* Version;
 
@@ -677,11 +677,11 @@ struct MDRIVER* next;
     void        (*SampleUnload)     (SWORD);
     ULONG       (*FreeSampleSpace)  (int);
     ULONG       (*RealSampleLength) (int,struct SAMPLE*);
-    BOOL        (*Init)             (void);
+    int         (*Init)             (void);
     void        (*Exit)             (void);
-    BOOL        (*Reset)            (void);
-    BOOL        (*SetNumVoices)     (void);
-    BOOL        (*PlayStart)        (void);
+    int         (*Reset)            (void);
+    int         (*SetNumVoices)     (void);
+    int         (*PlayStart)        (void);
     void        (*PlayStop)         (void);
     void        (*Update)           (void);
     void        (*Pause)            (void);
@@ -755,14 +755,14 @@ MIKMODAPI extern struct MDRIVER drv_sb;     /* DOS SB driver */
 
 /*========== Virtual channel mixer interface (for user-supplied drivers only) */
 
-MIKMODAPI extern BOOL  VC_Init(void);
+MIKMODAPI extern int   VC_Init(void);
 MIKMODAPI extern void  VC_Exit(void);
 MIKMODAPI extern void  VC_SetCallback(MikMod_callback_t callback);
-MIKMODAPI extern BOOL  VC_SetNumVoices(void);
+MIKMODAPI extern int   VC_SetNumVoices(void);
 MIKMODAPI extern ULONG VC_SampleSpace(int);
 MIKMODAPI extern ULONG VC_SampleLength(int,SAMPLE*);
 
-MIKMODAPI extern BOOL  VC_PlayStart(void);
+MIKMODAPI extern int   VC_PlayStart(void);
 MIKMODAPI extern void  VC_PlayStop(void);
 
 MIKMODAPI extern SWORD VC_SampleLoad(struct SAMPLOAD*,int);

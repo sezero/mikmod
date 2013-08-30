@@ -226,9 +226,9 @@ extern void      SL_Sample8to16(SAMPLOAD*);
 extern void      SL_Sample16to8(SAMPLOAD*);
 extern void      SL_SampleSigned(SAMPLOAD*);
 extern void      SL_SampleUnsigned(SAMPLOAD*);
-extern BOOL      SL_LoadSamples(void);
+extern int       SL_LoadSamples(void);
 extern SAMPLOAD* SL_RegisterSample(SAMPLE*,int,MREADER*);
-extern BOOL      SL_Load(void*,SAMPLOAD*,ULONG);
+extern int       SL_Load(void*,SAMPLOAD*,ULONG);
 extern BOOL      SL_Init(SAMPLOAD*);
 extern void      SL_Exit(SAMPLOAD*);
 
@@ -619,7 +619,7 @@ extern const CHAR *STM_Signatures[STM_NTRACKERS];
 
 /*========== Player interface */
 
-extern BOOL   Player_Init(MODULE*);
+extern int    Player_Init(MODULE*);
 extern void   Player_Exit(MODULE*);
 extern void   Player_HandleTick(void);
 
@@ -657,13 +657,13 @@ extern CHAR  *MD_GetAtom(const CHAR*, const CHAR*, BOOL);
 
 /* Internal software mixer stuff */
 extern void VC_SetupPointers(void);
-extern BOOL VC1_Init(void);
-extern BOOL VC2_Init(void);
+extern int  VC1_Init(void);
+extern int  VC2_Init(void);
 
 #if defined(unix) || defined(__APPLE__) && defined(__MACH__)
 /* POSIX helper functions */
 extern BOOL MD_Access(const CHAR *);
-extern BOOL MD_DropPrivileges(void);
+extern int  MD_DropPrivileges(void);
 #endif
 
 /* Macro to define a missing driver, yet allowing binaries to dynamically link
@@ -676,9 +676,9 @@ extern void _mm_registerdriver(struct MDRIVER*);
 extern void _mm_registerloader(struct MLOADER*);
 extern BOOL MikMod_Active_internal(void);
 extern void MikMod_DisableOutput_internal(void);
-extern BOOL MikMod_EnableOutput_internal(void);
+extern int  MikMod_EnableOutput_internal(void);
 extern void MikMod_Exit_internal(void);
-extern BOOL MikMod_SetNumVoices_internal(int,int);
+extern int  MikMod_SetNumVoices_internal(int,int);
 extern void Player_Exit_internal(MODULE*);
 extern void Player_Stop_internal(void);
 extern BOOL Player_Paused_internal(void);
@@ -690,12 +690,12 @@ extern void Voice_SetVolume_internal(SBYTE,UWORD);
 extern void Voice_Stop_internal(SBYTE);
 extern BOOL Voice_Stopped_internal(SBYTE);
 
-extern BOOL  VC1_PlayStart(void);
-extern BOOL  VC2_PlayStart(void);
+extern int   VC1_PlayStart(void);
+extern int   VC2_PlayStart(void);
 extern void  VC1_PlayStop(void);
 extern void  VC2_PlayStop(void);
-extern BOOL VC1_SetNumVoices(void);
-extern BOOL VC2_SetNumVoices(void);
+extern int  VC1_SetNumVoices(void);
+extern int  VC2_SetNumVoices(void);
 
 extern MikMod_callback_t vc_callback;
 #ifdef __cplusplus

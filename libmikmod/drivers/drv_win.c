@@ -99,7 +99,7 @@ static void CALLBACK WIN_CallBack(HWAVEOUT hwo,UINT uMsg,DWORD_PTR dwInstance,DW
 	if (uMsg==WOM_DONE) --buffersout;
 }
 
-static BOOL WIN_Init(void)
+static int WIN_Init(void)
 {
 	WAVEFORMATEX	wfe;
 	WORD			samplesize;

@@ -39,11 +39,11 @@
 	- Classic code uses SndPlayDoubleBuffer callbacks
 	- Carbon code uses SndCallBacks with Deferred Tasks
 
-    Updated by Axel Wefers <awe@fruitz-of-dojo.de>:
-    - changed code for compatibility with ProjectBuilder/OSX:
-    - "NewSndCallBackProc()" to "NewSndCallBackUPP()".
-    - "NewDeferredTaskProc()" to "NewDeferredTaskUPP()".
-    - added some conditionals to avoid compiler warnings.
+	Updated by Axel Wefers <awe@fruitz-of-dojo.de>:
+	- changed code for compatibility with ProjectBuilder/OSX:
+	- "NewSndCallBackProc()" to "NewSndCallBackUPP()".
+	- "NewDeferredTaskProc()" to "NewDeferredTaskUPP()".
+	- added some conditionals to avoid compiler warnings.
 
 	Updated again in 2004 by afb, to fix some bugs:
 	- deadlock in Player_Paused, when using HAVE_PTHREAD
@@ -95,29 +95,28 @@
 #endif
 
 #if TARGET_API_MAC_CARBON
-#define USE_DEFERREDTASKS       0
+#define USE_DEFERREDTASKS		0
 #else
-#define USE_DEFERREDTASKS       1
+#define USE_DEFERREDTASKS		1
 #endif
-
 
 #define SOUND_BUFFER_SIZE		4096L
 
 static SndChannelPtr			soundChannel = NULL;	/* pointer to a sound channel */
 
 #if USE_SNDDOUBLEBUFFER
-static SndDoubleBufferHeader	doubleHeader;      	/* pointer to double buffers  */
+static SndDoubleBufferHeader	doubleHeader;			/* pointer to double buffers  */
 #else
 static SndCallBackUPP 			sndCallBack = NULL;
-static ExtSoundHeader			sndHeader;          /* a sound manager bufferCmd header */
+static ExtSoundHeader			sndHeader;		/* a sound manager bufferCmd header */
 
-static Ptr						sndBuffer1 = NULL;
-static Ptr						sndBuffer2 = NULL;
-static Ptr						currentBuffer;
-static long						currentFrames;
+static Ptr				sndBuffer1 = NULL;
+static Ptr				sndBuffer2 = NULL;
+static Ptr				currentBuffer;
+static long				currentFrames;
 
 #if USE_DEFERREDTASKS
-static DeferredTask				dtask;				/* deferred task record */
+static DeferredTask			dtask;			/* deferred task record */
 static volatile Boolean			deferredTaskFired = true;
 static volatile Boolean			deferredTaskDone = true;
 #endif
@@ -167,7 +166,6 @@ static pascal void MyDoubleBackProc(SndChannelPtr channel,SndDoubleBufferPtr dou
 #else
 
 #if USE_DEFERREDTASKS
-
 /* DeferredTask, called at almost-interrupt time (not for 68K - doesn't set A5) */
 static pascal void DeferredTaskCallback(long param)
 {
@@ -179,7 +177,6 @@ static pascal void DeferredTaskCallback(long param)
 
 	deferredTaskDone = true;
 }
-
 #endif /* USE_DEFERREDTASKS */
 
 /* SoundCallback, called at interrupt time (not for 68K - doesn't set A5)  */
@@ -240,7 +237,7 @@ static BOOL MAC_IsThere(void)
 		return 0;
 }
 
-static BOOL MAC_Init(void)
+static int MAC_Init(void)
 {
 	OSErr err,iErr;
 	long rate,maxrate,maxbits;
@@ -251,7 +248,7 @@ static BOOL MAC_Init(void)
 
 #if USE_SNDDOUBLEBUFFER
 	SndDoubleBufferPtr doubleBuffer;
-	int i; // <AWE> avoids compiler warning.
+	int i;
 #endif
 
 	NewSoundManager31=NewSoundManager=false;
@@ -323,9 +320,8 @@ static BOOL MAC_Init(void)
 		md_mixfreq=maxrate>>16;
 
 #if USE_SNDDOUBLEBUFFER
-
 	err=SndNewChannel(&soundChannel,sampledSynth,
-	                  (md_mode&DMODE_STEREO)?initStereo:initMono, NULL );
+			  (md_mode&DMODE_STEREO)?initStereo:initMono, NULL);
 	if(err!=noErr) {
 		_mm_errno=MMERR_OPENING_AUDIO;
 		return 1;
@@ -340,7 +336,7 @@ static BOOL MAC_Init(void)
 
 	for(i=0;i<2;i++) {
 		doubleBuffer=(SndDoubleBufferPtr)NewPtrClear(sizeof(SndDoubleBuffer)+
-		                                             SOUND_BUFFER_SIZE);
+							     SOUND_BUFFER_SIZE);
 		if(!doubleBuffer) {
 			_mm_errno=MMERR_OUT_OF_MEMORY;
 			return 1;
@@ -356,10 +352,10 @@ static BOOL MAC_Init(void)
 
 #else
 	if( sndCallBack == NULL )
-		sndCallBack = NewSndCallBackUPP( SoundCallback ); // <AWE> was "NewSndCallBackProc()".
+		sndCallBack = NewSndCallBackUPP(SoundCallback); /* <AWE> was "NewSndCallBackProc()" */
 
 	err=SndNewChannel(&soundChannel,sampledSynth,
-	                  (md_mode&DMODE_STEREO)?initStereo:initMono, sndCallBack );
+			  (md_mode&DMODE_STEREO)?initStereo:initMono, sndCallBack );
 	if(err!=noErr) {
 		_mm_errno=MMERR_OPENING_AUDIO;
 		return 1;
@@ -373,8 +369,8 @@ static BOOL MAC_Init(void)
 	}
 	currentBuffer = sndBuffer1;
 
-  	/* Setup sound header */
-  	memset( &sndHeader, 0, sizeof(sndHeader) );
+	/* Setup sound header */
+	memset( &sndHeader, 0, sizeof(sndHeader) );
 	sndHeader.numChannels = (md_mode&DMODE_STEREO)? 2: 1;
 	sndHeader.sampleRate = rate;
 	sndHeader.encode = extSH;
@@ -384,11 +380,11 @@ static BOOL MAC_Init(void)
 	sndHeader.samplePtr = currentBuffer;
 
 #if USE_DEFERREDTASKS
-  	/* Setup deferred task record */
-	memset( &dtask, 0, sizeof(dtask) );
+	/* Setup deferred task record */
+	memset(&dtask, 0, sizeof(dtask));
 	dtask.qType = dtQType;
 	dtask.dtFlags = 0;
-	dtask.dtAddr = NewDeferredTaskUPP(DeferredTaskCallback); // <AWE> was "NewDeferredTaskProc()".
+	dtask.dtAddr = NewDeferredTaskUPP(DeferredTaskCallback); /* <AWE> was "NewDeferredTaskProc()" */
 	dtask.dtReserved = 0;
 	deferredTaskFired = true;
 #endif /* USE_DEFERREDTASKS */
@@ -400,20 +396,19 @@ static BOOL MAC_Init(void)
 
 static void MAC_Exit(void)
 {
-#if USE_SNDDOUBLEBUFFER						// <AWE> avoids compiler warning.
+#if USE_SNDDOUBLEBUFFER
 	int i;
 #else
 	Ptr	temp1,temp2;
 #endif
 
-	if ( soundChannel != NULL)
+	if (soundChannel != NULL)
 	{
-		SndDisposeChannel(soundChannel,true); // "true" means to flush and quiet
+		SndDisposeChannel(soundChannel,true); /* "true" means to flush and quiet */
 		soundChannel=NULL;
 	}
 
 #if USE_SNDDOUBLEBUFFER
-
 	DisposeRoutineDescriptor((UniversalProcPtr)doubleHeader.dbhDoubleBack);
 	doubleHeader.dbhDoubleBack=NULL;
 
@@ -435,7 +430,7 @@ static void MAC_Exit(void)
 	sndBuffer2 = NULL;
 
 #if USE_DEFERREDTASKS
-	// <afb> we can't dispose of the buffers until the DT is done with them
+	/* <afb> we can't dispose of the buffers until the DT is done with them */
 	while (!deferredTaskDone)
 		;
 #endif
@@ -447,12 +442,11 @@ static void MAC_Exit(void)
 	VC_Exit();
 }
 
-static BOOL MAC_PlayStart(void)
+static int MAC_PlayStart(void)
 {
 	OSErr err;
 
 #if USE_SNDDOUBLEBUFFER
-
 	MyDoubleBackProc(soundChannel,doubleHeader.dbhBufferPtr[0]);
 	MyDoubleBackProc(soundChannel,doubleHeader.dbhBufferPtr[1]);
 
@@ -463,7 +457,6 @@ static BOOL MAC_PlayStart(void)
 	}
 
 #else
-
 	SndCommand callback = { callBackCmd, 0, 0 };
 
 	err=SndDoCommand( soundChannel, &callback, true );
@@ -471,8 +464,7 @@ static BOOL MAC_PlayStart(void)
 		_mm_errno=MMERR_MAC_START;
 		return 1;
 	}
-
- #endif
+#endif
 
 	return VC_PlayStart();
 }
@@ -482,7 +474,7 @@ static void MAC_PlayStop(void)
 	SndCommand flush = { flushCmd, 0, 0 };
 	SndCommand quiet = { quietCmd, 0, 0 };
 
-	// <afb> IM:Sound says we should issue the flushCmd before the quietCmd.
+	/* <afb> IM:Sound says we should issue the flushCmd before the quietCmd. */
 	SndDoImmediate(soundChannel,&flush);
 	SndDoImmediate(soundChannel,&quiet);
 

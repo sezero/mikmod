@@ -87,7 +87,7 @@ static BOOL HP_IsThere(void)
 	return (errno==EACCES?1:0);
 }
 
-static BOOL HP_Init(void)
+static int HP_Init(void)
 {
 	int flags;
 
@@ -127,7 +127,7 @@ static BOOL HP_Init(void)
 	}
 
 	if (ioctl(fd,AUDIO_SET_OUTPUT,
-	             headphone?AUDIO_OUT_HEADPHONE:AUDIO_OUT_SPEAKER)) {
+		     headphone?AUDIO_OUT_HEADPHONE:AUDIO_OUT_SPEAKER)) {
 		_mm_errno=MMERR_HP_AUDIO_OUTPUT;
 		return 1;
 	}

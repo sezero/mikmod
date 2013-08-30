@@ -1,5 +1,5 @@
 /*	MikMod sound library
-    (c) 2004, Raphael Assenat
+	(c) 2004, Raphael Assenat
 	(c) 1998, 1999, 2000, 2001 Miodrag Vallat and others - see file AUTHORS
 	for complete list.
 

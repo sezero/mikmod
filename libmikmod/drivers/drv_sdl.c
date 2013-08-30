@@ -88,7 +88,7 @@ static BOOL SetupSDLAudio(void)
 
 static void SDLDrv_CommandLine(const CHAR *cmdline)
 {
-/* no options */
+	/* no options */
 }
 
 static BOOL SDLDrv_IsPresent(void)
@@ -96,7 +96,7 @@ static BOOL SDLDrv_IsPresent(void)
     return 1;
 }
 
-static BOOL SDLDrv_Init(void)
+static int SDLDrv_Init(void)
 {
 #if (SDL_MAJOR_VERSION < 2)
     if (md_mode & DMODE_FLOAT) {
@@ -128,7 +128,7 @@ static void SDLDrv_Exit(void)
     VC_Exit();
 }
 
-static BOOL SDLDrv_Reset(void)
+static int SDLDrv_Reset(void)
 {
     SDL_PauseAudio(1);
     SDL_CloseAudio();
@@ -152,7 +152,7 @@ static void SDLDrv_PlayStop(void)
     VC_PlayStop();
 }
 
-static BOOL SDLDrv_PlayStart(void)
+static int SDLDrv_PlayStart(void)
 {
     g_Playing = 1;
     return VC_PlayStart();

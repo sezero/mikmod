@@ -72,7 +72,7 @@ static BOOL WSS_IsThere(void)
 	return wss_detect();
 }
 
-static BOOL WSS_Init(void)
+static int WSS_Init(void)
 {
 	if (!wss_open()) {
 		_mm_errno = MMERR_INVALID_DEVICE;
@@ -131,7 +131,7 @@ static void WSS_Update(void)
 	/* Do nothing: the real update is done during SB interrupts */
 }
 
-static BOOL WSS_PlayStart(void)
+static int WSS_PlayStart(void)
 {
 	if (VC_PlayStart())
 		return 1;
@@ -154,7 +154,7 @@ static BOOL WSS_PlayStart(void)
 	return 0;
 }
 
-static BOOL WSS_Reset(void)
+static int WSS_Reset(void)
 {
 	wss_reset();
 	VC_Exit();

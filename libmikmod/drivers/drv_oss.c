@@ -167,7 +167,7 @@ static BOOL OSS_IsThere(void)
 	return (errno==EACCES?1:0);
 }
 
-static BOOL OSS_Init_internal(void)
+static int OSS_Init_internal(void)
 {
 	int play_stereo,play_rate;
 	int orig_precision,orig_stereo;
@@ -258,7 +258,7 @@ static BOOL OSS_Init_internal(void)
 	return VC_Init();
 }
 
-static BOOL OSS_Init(void)
+static int OSS_Init(void)
 {
 #ifdef SNDCTL_DSP_SETFRAGMENT
 	int fragmentsize;
@@ -347,7 +347,7 @@ static void OSS_Update(void)
 #endif
 }
 
-static BOOL OSS_Reset(void)
+static int OSS_Reset(void)
 {
 	OSS_Exit_internal();
 	ioctl(sndfd,SNDCTL_DSP_RESET,0);

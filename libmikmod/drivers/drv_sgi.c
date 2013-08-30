@@ -90,7 +90,7 @@ static BOOL SGI_IsThere(void)
 	return(ALqueryparams(AL_DEFAULT_DEVICE,0,0))?1:0;
 }
 
-static BOOL SGI_Init(void)
+static int SGI_Init(void)
 {
 	long chpars[] = { AL_OUTPUT_RATE, AL_RATE_22050 };
 

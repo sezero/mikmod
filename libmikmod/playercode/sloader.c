@@ -75,7 +75,7 @@ void SL_Exit(SAMPLOAD *s)
 }
 
 /* unpack a 8bit IT packed sample */
-static BOOL read_itcompr8(ITPACK* status,MREADER *reader,SWORD *out,UWORD count,UWORD* incnt)
+static int read_itcompr8(ITPACK* status,MREADER *reader,SWORD *out,UWORD count,UWORD* incnt)
 {
 	SWORD *dest=out,*end=out+count;
 	UWORD x,y,needbits,havebits,new_count=0;
@@ -149,7 +149,7 @@ static BOOL read_itcompr8(ITPACK* status,MREADER *reader,SWORD *out,UWORD count,
 }
 
 /* unpack a 16bit IT packed sample */
-static BOOL read_itcompr16(ITPACK *status,MREADER *reader,SWORD *out,UWORD count,UWORD* incnt)
+static int read_itcompr16(ITPACK *status,MREADER *reader,SWORD *out,UWORD count,UWORD* incnt)
 {
 	SWORD *dest=out,*end=out+count;
 	SLONG x,y,needbits,havebits,new_count=0;
@@ -222,7 +222,7 @@ static BOOL read_itcompr16(ITPACK *status,MREADER *reader,SWORD *out,UWORD count
 	return (dest-out);
 }
 
-static BOOL SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor,ULONG length,MREADER* reader,BOOL dither)
+static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor,ULONG length,MREADER* reader,BOOL dither)
 {
 	SBYTE *bptr = (SBYTE*)buffer;
 	SWORD *wptr = (SWORD*)buffer;
@@ -339,10 +339,10 @@ static BOOL SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefacto
 	return 0;
 }
 
-BOOL SL_Load(void* buffer,SAMPLOAD *smp,ULONG length)
+int SL_Load(void* buffer,SAMPLOAD *smp,ULONG length)
 {
 	return SL_LoadInternal(buffer,smp->infmt,smp->outfmt,smp->scalefactor,
-	                       length,smp->reader,0);
+				length,smp->reader,0);
 }
 
 /* Registers a sample for loading when SL_LoadSamples() is called. */
@@ -411,7 +411,7 @@ static ULONG RealSpeed(SAMPLOAD *s)
 	return(s->sample->speed/(s->scalefactor?s->scalefactor:1));
 }
 
-static BOOL DitherSamples(SAMPLOAD* samplist,int type)
+static int DitherSamples(SAMPLOAD* samplist,int type)
 {
 	SAMPLOAD *c2smp=NULL;
 	ULONG maxsize, speed;
@@ -473,17 +473,17 @@ static BOOL DitherSamples(SAMPLOAD* samplist,int type)
 	return 0;
 }
 
-BOOL SL_LoadSamples(void)
+int SL_LoadSamples(void)
 {
-	BOOL ok;
+	int rc;
 
 	_mm_critical = 0;
 
 	if((!musiclist)&&(!sndfxlist)) return 0;
-	ok=DitherSamples(musiclist,MD_MUSIC)||DitherSamples(sndfxlist,MD_SNDFX);
+	rc=DitherSamples(musiclist,MD_MUSIC)||DitherSamples(sndfxlist,MD_SNDFX);
 	musiclist=sndfxlist=NULL;
 
-	return ok;
+	return rc;
 }
 
 void SL_Sample16to8(SAMPLOAD* s)
@@ -519,6 +519,5 @@ void SL_HalveSample(SAMPLOAD* s,int factor)
 	s->sample->loopstart = s->loopstart / s->scalefactor;
 	s->sample->loopend   = s->loopend / s->scalefactor;
 }
-
 
 /* ex:set ts=4: */

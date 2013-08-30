@@ -74,7 +74,7 @@ static BOOL RAW_IsThere(void)
 	return 1;
 }
 
-static BOOL RAW_Init(void)
+static int RAW_Init(void)
 {
 #if defined unix || (defined __APPLE__ && defined __MACH__)
 	if(!MD_Access(filename?filename:FILENAME)) {
@@ -122,7 +122,7 @@ static void RAW_Update(void)
 	write(rawout,audiobuffer,VC_WriteBytes(audiobuffer,BUFFERSIZE));
 }
 
-static BOOL RAW_Reset(void)
+static int RAW_Reset(void)
 {
 	close(rawout);
 	if((rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY

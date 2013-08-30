@@ -202,9 +202,9 @@ static OSStatus OSX_AudioIOProcFloat (AudioDeviceID,
 					const AudioTimeStamp *, void *);
 
 static BOOL OSX_IsPresent (void);
-static BOOL OSX_Init (void);
+static int OSX_Init (void);
 static void OSX_Exit (void);
-static BOOL OSX_PlayStart (void);
+static int OSX_PlayStart (void);
 static void OSX_PlayStop (void);
 static void OSX_Update (void);
 
@@ -473,7 +473,7 @@ static BOOL OSX_IsPresent (void)
 }
 
 /* OSX_Init() */
-static BOOL OSX_Init (void)
+static int OSX_Init (void)
 {
 	AudioStreamBasicDescription	mySoundBasicDescription;
 	UInt32				myPropertySize, myBufferByteCount;
@@ -666,7 +666,7 @@ static void OSX_Exit (void)
 }
 
 /* OSX_PlayStart() */
-static BOOL OSX_PlayStart (void)
+static int OSX_PlayStart (void)
 {
 	/* start virtch */
 	if (VC_PlayStart ()) {
@@ -679,7 +679,7 @@ static BOOL OSX_PlayStart (void)
 #if USE_FILL_THREAD
 	/* start the buffer fill thread */
 	gExitBufferFillThread = 0;
-	if (pthread_create (&gBufferFillThread, NULL, OSX_FillBuffer , NULL)) {
+	if (pthread_create(&gBufferFillThread, NULL, OSX_FillBuffer, NULL)) {
 		_mm_errno = MMERR_OSX_PTHREAD;
 		return 1;
 	}
@@ -757,8 +757,6 @@ MIKMODAPI MDRIVER drv_osx={
 	VC_VoiceGetPosition,
 	VC_VoiceRealVolume
 };
-
-/* EOF */
 
 #else
 

@@ -238,7 +238,7 @@ nas_init_server (struct my_info *i)
   return 0;
 }
 
-static BOOL
+static int
 NAS_init (void)
 {
   struct my_info *i;
@@ -284,7 +284,7 @@ NAS_exit (void)
   nas_info = NULL;
 }
 
-static BOOL
+static int
 NAS_reset (void)
 {
   NAS_exit ();
@@ -293,7 +293,7 @@ NAS_reset (void)
 
 /*** Flow Control */
 
-static BOOL
+static int
 NAS_flow_start (void)
 {
   struct my_info *i = nas_info;

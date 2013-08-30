@@ -500,13 +500,11 @@ static BOOL LoadInstruments(void)
 
 				/* read the remainder of the header
 				   (2 bytes for 1.03, 22 for 1.04) */
-				if (headend>=_mm_ftell(modreader))
-                {
-                    for(u=headend-_mm_ftell(modreader);u;u--)
-                    {
-                        _mm_skip_BYTE(modreader);
-                    }
-                }
+				if (headend>=_mm_ftell(modreader)) {
+					for(u=headend-_mm_ftell(modreader);u;u--) {
+						_mm_skip_BYTE(modreader);
+					}
+				}
 
 				/* we can't trust the envelope point count here, as some
 				   modules have incorrect values (K_OSPACE.XM reports 32 volume
@@ -641,10 +639,9 @@ static BOOL LoadInstruments(void)
 					break;
 				}
 				_mm_fseek(modreader,ck,SEEK_SET);
-				for(u=headend-_mm_ftell(modreader);u;u--)
-                {
-                    _mm_skip_BYTE(modreader);
-                }
+				for(u=headend-_mm_ftell(modreader);u;u--) {
+					_mm_skip_BYTE(modreader);
+				}
 
 				/* last instrument is at the end of file in version 0x0104 */
 				if(_mm_eof(modreader) && (mh->version<0x0104 || t<of.numins-1)) {

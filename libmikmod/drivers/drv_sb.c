@@ -76,7 +76,7 @@ static BOOL SB_IsThere(void)
 	return sb_detect();
 }
 
-static BOOL SB_Init(void)
+static int SB_Init(void)
 {
 	if (!sb_open()) {
 		_mm_errno = MMERR_INVALID_DEVICE;
@@ -148,7 +148,7 @@ static void SB_Update(void)
 	/* Do nothing: the real update is done during SB interrupts */
 }
 
-static BOOL SB_PlayStart (void)
+static int SB_PlayStart (void)
 {
 	if (VC_PlayStart())
 		return 1;
@@ -171,7 +171,7 @@ static BOOL SB_PlayStart (void)
 	return 0;
 }
 
-static BOOL SB_Reset(void)
+static int SB_Reset(void)
 {
 	sb_reset();
 	VC_Exit();

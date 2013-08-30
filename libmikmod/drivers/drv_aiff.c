@@ -75,7 +75,7 @@ static void	AIFF_ConvertToIeeeExtended (double theValue, char *theBytes);
 static void	AIFF_PutHeader (void);
 static void	AIFF_CommandLine (const CHAR *theCmdLine);
 static BOOL	AIFF_IsThere (void);
-static BOOL	AIFF_Init (void);
+static int	AIFF_Init (void);
 static void	AIFF_Exit (void);
 static void	AIFF_Update (void);
 
@@ -180,27 +180,27 @@ static BOOL AIFF_IsThere (void)
     return (1);
 }
 
-static BOOL AIFF_Init (void)
+static int AIFF_Init (void)
 {
 #if defined unix || (defined __APPLE__ && defined __MACH__)
     if (!MD_Access (gAiffFileName ? gAiffFileName : AIFF_FILENAME))
     {
         _mm_errno=MMERR_OPENING_FILE;
-        return (1);
+        return 1;
     }
 #endif
 
     if (!(gAiffFile = fopen (gAiffFileName ? gAiffFileName : AIFF_FILENAME, "wb")))
     {
         _mm_errno = MMERR_OPENING_FILE;
-        return (1);
+        return 1;
     }
     if (!(gAiffOut =_mm_new_file_writer (gAiffFile)))
     {
         fclose (gAiffFile);
         unlink(gAiffFileName ? gAiffFileName : AIFF_FILENAME);
         gAiffFile = NULL;
-        return (1);
+        return 1;
     }
 
     if (!(gAiffAudioBuffer = (SBYTE*) MikMod_malloc (AIFF_BUFFERSIZE)))
@@ -228,7 +228,7 @@ static BOOL AIFF_Init (void)
     gAiffDumpSize = 0;
     AIFF_PutHeader ();
 
-    return (0);
+    return 0;
 }
 
 static void AIFF_Exit (void)

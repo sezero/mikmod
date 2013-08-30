@@ -209,7 +209,7 @@ static BOOL Sun_IsThere(void)
 	return 0;
 }
 
-static BOOL Sun_Init(void)
+static int Sun_Init(void)
 {
 	int play_stereo, play_rate;
 #ifdef SUNOS4
@@ -336,9 +336,8 @@ static BOOL Sun_Init(void)
 #ifdef SUNOS4
 			play_encoding = AUDIO_ENCODING_LINEAR;
 #else
-			play_encoding =
-				(play_precision ==
-				 16) ? AUDIO_ENCODING_SLINEAR : AUDIO_ENCODING_ULINEAR;
+			play_encoding = (play_precision == 16) ?
+				 AUDIO_ENCODING_SLINEAR : AUDIO_ENCODING_ULINEAR;
 #endif
 	}
 
@@ -430,7 +429,7 @@ static void Sun_Pause(void)
 	write(sndfd, audiobuffer, done);
 }
 
-static BOOL Sun_PlayStart(void)
+static int Sun_PlayStart(void)
 {
 	struct audio_info audioinfo;
 

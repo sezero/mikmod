@@ -90,7 +90,7 @@ static BOOL AF_IsThere(void)
 		return 0;
 }
 
-static BOOL AF_Init(void)
+static int AF_Init(void)
 {
 	unsigned long mask;
 	AFSetACAttributes attributes;
@@ -147,7 +147,7 @@ static BOOL AF_Init(void)
 	return VC_Init();
 }
 
-static BOOL AF_PlayStart(void)
+static int AF_PlayStart(void)
 {
 	AFtime=AFGetTime(AFac);
 	return VC_PlayStart();

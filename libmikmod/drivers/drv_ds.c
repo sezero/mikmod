@@ -162,7 +162,7 @@ static BOOL DS_IsPresent(void)
 	return 1;
 }
 
-static BOOL DS_Init(void)
+static int DS_Init(void)
 {
 	DSBUFFERDESC soundBufferFormat;
 	WAVEFORMATEX pcmwf;
@@ -315,12 +315,10 @@ static void DS_Update(void)
 	if (do_update && pSoundBuffer) {
 		do_update = 0;
 
-		if (pSoundBuffer->lpVtbl->Lock (pSoundBuffer, 0, fragsize,
-										&block, &bBytes, NULL, NULL, 0)
-				== DSERR_BUFFERLOST) {
+		if (pSoundBuffer->lpVtbl->Lock (pSoundBuffer, 0, fragsize, &block, &bBytes, NULL, NULL, 0)
+											== DSERR_BUFFERLOST) {
 			pSoundBuffer->lpVtbl->Restore (pSoundBuffer);
-			pSoundBuffer->lpVtbl->Lock (pSoundBuffer, 0, fragsize,
-										&block, &bBytes, NULL, NULL, 0);
+			pSoundBuffer->lpVtbl->Lock (pSoundBuffer, 0, fragsize, &block, &bBytes, NULL, NULL, 0);
 		}
 
 		if (Player_Paused_internal()) {
@@ -347,7 +345,7 @@ static void DS_PlayStop(void)
 	VC_PlayStop();
 }
 
-static BOOL DS_PlayStart(void)
+static int DS_PlayStart(void)
 {
 	do_update = 1;
 	return VC_PlayStart();

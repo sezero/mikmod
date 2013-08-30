@@ -51,7 +51,7 @@ static BOOL NS_IsThere(void)
 	return 1;
 }
 
-static BOOL NS_Init(void)
+static int NS_Init(void)
 {
 	zerobuf=(SBYTE*)MikMod_malloc(ZEROLEN);
 	return VC_Init();

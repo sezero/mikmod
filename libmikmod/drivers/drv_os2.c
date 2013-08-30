@@ -152,7 +152,7 @@ static BOOL OS2_IsPresent(void)
 	return 1;
 }
 
-static BOOL OS2_Init(void)
+static int OS2_Init(void)
 {
 	MCI_OPEN_PARMS mciOpenParms;
 	MCI_WAVE_SET_PARMS mciWaveSetParms;
@@ -298,7 +298,7 @@ static void OS2_Exit(void)
 	MikMod_free(AudioBuffer);
 }
 
-static BOOL OS2_PlayStart(void)
+static int OS2_PlayStart(void)
 {
 	MCI_PLAY_PARMS mciPlayParms;
 	int i;

@@ -61,29 +61,26 @@ static BOOL GP32_IsThere(void)
 	return 1;
 }
 
-static BOOL GP32_Init(void)
+static int GP32_Init(void)
 {
-
 	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
-	GpPcmInit ( PCM_S44, PCM_16BIT );
+	GpPcmInit (PCM_S44, PCM_16BIT);
 
 	buffer_size=BUFFER1_SIZE*NUMBUFFERS;
 	buffer=gp_mem_func.MikMod_malloc(buffer_size);
 	gp_str_func.memset(buffer,0,buffer_size);
 
 	if (!buffer) {
-			_mm_errno = MMERR_OUT_OF_MEMORY;
-			return 0;
-
+		_mm_errno = MMERR_OUT_OF_MEMORY;
+		return 0;
 	}
 
 	GpPcmPlay((unsigned short *)buffer,buffer_size,1);
-    GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
+	GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
 
 	writting_buffer=0;
 
 	return VC_Init();
-
 }
 
 void GP32_Stop(void) {
@@ -92,7 +89,7 @@ void GP32_Stop(void) {
 
 void GP32_Restart(void) {
 	GpPcmPlay((unsigned short *)buffer,buffer_size,1);
-    GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
+	GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
 }
 
 static void GP32_Exit(void)
@@ -101,7 +98,6 @@ static void GP32_Exit(void)
 	GpPcmStop();
 	gp_mem_func.MikMod_free(buffer);
 	VC_Exit();
-
 }
 
 int last_data;
@@ -114,38 +110,24 @@ static void GP32_Update(void)
 	char *writeTo;
 	unsigned short *bTO;
 	int samples;
-
 	int top_buffer;
-
 
 	playing_buffer=(*play_pos-(int)buffer)/BUFFER1_SIZE;
 
-
-
-
-
 	while(writting_buffer!=playing_buffer) {
-
 		writeTo=(char *)(((unsigned int)buffer)+writting_buffer*BUFFER1_SIZE);
-
 		bTO=writeTo;
-
 		done=VC_WriteBytes(writeTo,BUFFER1_SIZE);
-
 		for (samples=0;samples<(BUFFER1_SIZE/2);samples++) {
-
 			//next_data=*bTO;
 			*bTO=*bTO+0x8000; // to unsigned... sdk..
 			bTO++;
 			//last_data=next_data;
 		}
 
-
-
 		if(!done) break;
 		writting_buffer=(writting_buffer+1)%NUMBUFFERS;
 	}
-
 }
 
 static void GP32_PlayStop(void)
@@ -153,7 +135,6 @@ static void GP32_PlayStop(void)
 	//GpPcmStop();
 	gp_str_func.memset(buffer,0,buffer_size);
 	VC_PlayStop();
-
 }
 
 MIKMODAPI MDRIVER drv_gp32={

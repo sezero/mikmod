@@ -76,7 +76,8 @@ static void* libesd=NULL;
 #ifdef HAVE_SETENV
 #define SETENV setenv("ESD_NO_SPAWN","1",0)
 #else
-#define SETENV putenv("ESD_NO_SPAWN=1")
+static char ESDENV[] = "ESD_NO_SPAWN=1";
+#define SETENV		putenv(ESDENV)
 #endif
 
 static	int sndfd=-1;
@@ -94,7 +95,7 @@ void *handle;
 int writes;
 #endif
 
-static BOOL ESD_Link(void)
+static int ESD_Link(void)
 {
 	if (libesd) return 0;
 
@@ -219,7 +220,8 @@ static void ESD_CommandLine(const CHAR *cmdline)
 
 static BOOL ESD_IsThere(void)
 {
-	int fd,retval;
+	BOOL retval;
+	int fd;
 
 #ifdef MIKMOD_DYNAMIC
 	if (ESD_Link()) return 0;
@@ -243,7 +245,7 @@ static BOOL ESD_IsThere(void)
 	return retval;
 }
 
-static BOOL ESD_Init_internal(void)
+static int ESD_Init_internal(void)
 {
 	format=(md_mode&DMODE_16BITS?ESD_BITS16:ESD_BITS8)|
 	       (md_mode&DMODE_STEREO?ESD_STEREO:ESD_MONO)|ESD_STREAM|ESD_PLAY;
@@ -269,7 +271,7 @@ static BOOL ESD_Init_internal(void)
 	return VC_Init();
 }
 
-static BOOL ESD_Init(void)
+static int ESD_Init(void)
 {
 #ifdef MIKMOD_DYNAMIC
 	if (ESD_Link()) {
@@ -370,7 +372,7 @@ static void ESD_Pause(void)
 	ESD_Update_internal(VC_SilenceBytes);
 }
 
-static BOOL ESD_PlayStart(void)
+static int ESD_PlayStart(void)
 {
 	if (sndfd<0)
 		if (!(SETENV)) {
@@ -408,7 +410,7 @@ static void ESD_PlayStop(void)
 	VC_PlayStop();
 }
 
-static BOOL ESD_Reset(void)
+static int ESD_Reset(void)
 {
 	ESD_Exit_internal();
 	return ESD_Init_internal();

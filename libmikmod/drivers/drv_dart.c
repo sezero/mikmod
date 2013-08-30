@@ -136,7 +136,7 @@ static BOOL Dart_IsPresent(void)
 	return 1;
 }
 
-static BOOL Dart_Init(void)
+static int Dart_Init(void)
 {
 	MCI_AMP_OPEN_PARMS AmpOpenParms;
 	MCI_GENERIC_PARMS GenericParms;
@@ -229,7 +229,7 @@ static void Dart_Exit(void)
 	}
 }
 
-static BOOL Dart_PlayStart(void)
+static int Dart_PlayStart(void)
 {
 	MCI_GENERIC_PARMS GenericParms;
 	int i;

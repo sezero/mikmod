@@ -47,9 +47,10 @@ static BOOL stdout_IsThere(void)
 	return 1-isatty(1);
 }
 
-static BOOL stdout_Init(void)
+static int stdout_Init(void)
 {
-	if(!(audiobuffer=(SBYTE*)MikMod_malloc(BUFFERSIZE))) return 1;
+	if(!(audiobuffer=(SBYTE*)MikMod_malloc(BUFFERSIZE)))
+		return 1;
 #ifdef __EMX__
 	_fsetmode(stdout,"b");
 #endif
@@ -78,7 +79,7 @@ static void stdout_Update(void)
 	     (1,audiobuffer,VC_WriteBytes((SBYTE*)audiobuffer,BUFFERSIZE));
 }
 
-static BOOL stdout_Reset(void)
+static int stdout_Reset(void)
 {
 	VC_Exit();
 	return VC_Init();
