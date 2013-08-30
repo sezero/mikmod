@@ -198,16 +198,14 @@ static void ALSA_CommandLine(const CHAR *cmdline)
 
 static BOOL ALSA_IsThere(void)
 {
-	int retval;
+	snd_pcm_subformat_mask_t *ptr = NULL;
+	BOOL retval;
 
 #ifdef MIKMOD_DYNAMIC
 	if (ALSA_Link()) return 0;
 #endif
-	snd_pcm_subformat_mask_t * ptr;
-	retval = alsa_pcm_subformat_mask_malloc(&ptr);
-	retval = retval || ptr;
+	retval = (alsa_pcm_subformat_mask_malloc(&ptr) == 0) && (ptr != NULL);
 	free(ptr);
-	ptr = NULL;
 #ifdef MIKMOD_DYNAMIC
 	ALSA_Unlink();
 #endif
