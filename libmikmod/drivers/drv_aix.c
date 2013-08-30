@@ -55,7 +55,7 @@ static	int buffersize=1<<BUFFERSIZE;
 static	int fd=-1;
 static	SBYTE *audiobuffer=NULL;
 
-static void AIX_CommandLine(CHAR *cmdline)
+static void AIX_CommandLine(const CHAR *cmdline)
 {
 	char *buffer=MD_GetAtom("buffer",cmdline,0);
 

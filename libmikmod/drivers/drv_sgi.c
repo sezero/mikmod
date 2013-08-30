@@ -69,7 +69,7 @@ static	int sgi_fragsize=DEFAULT_SGI_FRAGSIZE;
 static	int sgi_bufsize=DEFAULT_SGI_BUFSIZE;
 static	SBYTE *audiobuffer=NULL;
 
-static void SGI_CommandLine(CHAR *cmdline)
+static void SGI_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 

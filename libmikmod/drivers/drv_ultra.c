@@ -261,7 +261,7 @@ static void Ultra_Unlink(void)
 }
 #endif
 
-static void Ultra_CommandLine(CHAR *cmdline)
+static void Ultra_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr = MD_GetAtom("card", cmdline, 0);
 
@@ -859,6 +859,6 @@ MDRIVER drv_ultra = {
 
 MISSING(drv_ultra);
 
-#endif // DRV_ULTRA
+#endif /* DRV_ULTRA */
 
 /* ex:set ts=4: */

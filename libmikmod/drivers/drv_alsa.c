@@ -191,9 +191,9 @@ static void ALSA_Unlink(void)
 #define snd_pcm_hw_params_sizeof	alsa_pcm_hw_params_sizeof
 #endif /* MIKMOD_DYNAMIC */
 
-static void ALSA_CommandLine(CHAR *cmdline)
+static void ALSA_CommandLine(const CHAR *cmdline)
 {
-/* no options */
+		/* no options */
 }
 
 static BOOL ALSA_IsThere(void)

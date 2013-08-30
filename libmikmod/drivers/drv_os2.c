@@ -112,7 +112,7 @@ static	ULONG NextBuffer = 0;	/* next fragment to be filled */
 	ThreadID = 0;
 }
 
-static void OS2_CommandLine(CHAR *cmdline)
+static void OS2_CommandLine(const CHAR *cmdline)
 {
 	char *ptr;
 	int buf;
@@ -347,7 +347,7 @@ MIKMODAPI MDRIVER drv_os2 = {
 	0,255,
 	"os2",
 	"device:r:0,8,0:Waveaudio device index to use (0 - default)\n"
-        "buffer:r:12,16:Audio buffer log2 size\n",
+		"buffer:r:12,16:Audio buffer log2 size\n",
 	OS2_CommandLine,
 	OS2_IsPresent,
 	VC_SampleLoad,

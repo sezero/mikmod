@@ -210,13 +210,13 @@ enum {
 	MMERR_MAC_SPEED,
 	MMERR_MAC_START,
 
-    MMERR_OSX_UNKNOWN_DEVICE,
-    MMERR_OSX_BAD_PROPERTY,
-    MMERR_OSX_UNSUPPORTED_FORMAT,
-    MMERR_OSX_SET_STEREO,
-    MMERR_OSX_BUFFER_ALLOC,
-    MMERR_OSX_ADD_IO_PROC,
-    MMERR_OSX_DEVICE_START,
+	MMERR_OSX_UNKNOWN_DEVICE,
+	MMERR_OSX_BAD_PROPERTY,
+	MMERR_OSX_UNSUPPORTED_FORMAT,
+	MMERR_OSX_SET_STEREO,
+	MMERR_OSX_BUFFER_ALLOC,
+	MMERR_OSX_ADD_IO_PROC,
+	MMERR_OSX_DEVICE_START,
 	MMERR_OSX_PTHREAD,
 
 	MMERR_DOSWSS_STARTDMA,
@@ -251,7 +251,7 @@ MIKMODAPI extern void   MikMod_RegisterDriver(struct MDRIVER*);
 MIKMODAPI extern int    MikMod_DriverFromAlias(CHAR*);
 MIKMODAPI extern struct MDRIVER *MikMod_DriverByOrdinal(int);
 
-MIKMODAPI extern BOOL   MikMod_Init(CHAR*);
+MIKMODAPI extern BOOL   MikMod_Init(const CHAR*);
 MIKMODAPI extern void   MikMod_Exit(void);
 MIKMODAPI extern BOOL   MikMod_Reset(CHAR*);
 MIKMODAPI extern BOOL   MikMod_SetNumVoices(int,int);
@@ -663,7 +663,7 @@ enum {
 
 struct SAMPLOAD;
 typedef struct MDRIVER {
-struct MDRIVER* next;
+	struct MDRIVER* next;
 	const CHAR* Name;
 	const CHAR* Version;
 
@@ -673,7 +673,7 @@ struct MDRIVER* next;
 	const CHAR* Alias;
 	const CHAR* CmdLineHelp;
 
-	void        (*CommandLine)      (CHAR*);
+	void        (*CommandLine)      (const CHAR*);
 	BOOL        (*IsPresent)        (void);
 	SWORD       (*SampleLoad)       (struct SAMPLOAD*,int);
 	void        (*SampleUnload)     (SWORD);
@@ -686,7 +686,7 @@ struct MDRIVER* next;
 	BOOL        (*PlayStart)        (void);
 	void        (*PlayStop)         (void);
 	void        (*Update)           (void);
-	void		(*Pause)			(void);
+	void        (*Pause)            (void);
 	void        (*VoiceSetVolume)   (UBYTE,UWORD);
 	UWORD       (*VoiceGetVolume)   (UBYTE);
 	void        (*VoiceSetFrequency)(UBYTE,ULONG);

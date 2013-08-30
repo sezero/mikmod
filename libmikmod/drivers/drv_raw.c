@@ -59,7 +59,7 @@ static	int rawout=-1;
 static	SBYTE *audiobuffer=NULL;
 static	CHAR *filename=NULL;
 
-static void RAW_CommandLine(CHAR *cmdline)
+static void RAW_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr=MD_GetAtom("file",cmdline,0);
 

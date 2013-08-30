@@ -49,7 +49,7 @@
 
 #include "doswss.h"
 
-static void WSS_CommandLine(CHAR *cmdline)
+static void WSS_CommandLine(const CHAR *cmdline)
 {
 	char *ptr, *end;
 

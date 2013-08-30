@@ -49,7 +49,7 @@
 
 #include "dossb.h"
 
-static void SB_CommandLine(CHAR *cmdline)
+static void SB_CommandLine(const CHAR *cmdline)
 {
 	char *ptr, *end;
 
@@ -225,7 +225,7 @@ MDRIVER drv_sb =
 	VC_VoiceRealVolume
 };
 
-#else // DRV_SB
+#else /* DRV_SB */
 
 MISSING(drv_sb);
 

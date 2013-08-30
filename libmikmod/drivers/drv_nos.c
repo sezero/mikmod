@@ -103,5 +103,4 @@ MIKMODAPI MDRIVER drv_nos={
 	VC_VoiceRealVolume
 };
 
-
 /* ex:set ts=4: */

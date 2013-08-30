@@ -86,7 +86,7 @@ static BOOL SetupSDLAudio(void)
     return 1;
 }
 
-static void SDLDrv_CommandLine(CHAR *cmdline)
+static void SDLDrv_CommandLine(const CHAR *cmdline)
 {
 /* no options */
 }

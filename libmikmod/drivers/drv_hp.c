@@ -56,7 +56,7 @@ static	SBYTE *audiobuffer=NULL;
 static	int buffersize=1<<BUFFERSIZE;
 static	int headphone=0;
 
-static void HP_CommandLine(CHAR *cmdline)
+static void HP_CommandLine(const CHAR *cmdline)
 {
 	char *buffer=MD_GetAtom("buffer",cmdline,0);
 
@@ -168,7 +168,7 @@ MIKMODAPI MDRIVER drv_hp={
 	0,255,
 	"hp",
 	"buffer:r:12,19,15:Audio buffer log2 size\n"
-        "headphone:b:0:Use headphone\n",
+		"headphone:b:0:Use headphone\n",
 	HP_CommandLine,
 	HP_IsThere,
 	VC_SampleLoad,

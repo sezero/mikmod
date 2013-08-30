@@ -134,7 +134,7 @@ static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 	return 0;
 }
 
-static void DS_CommandLine(CHAR *cmdline)
+static void DS_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr=MD_GetAtom("buffer",cmdline,0);
 
@@ -361,7 +361,7 @@ MIKMODAPI MDRIVER drv_ds=
 	0,255,
 	"ds",
 	"buffer:r:12,19,16:Audio buffer log2 size\n"
-        "globalfocus:b:0:Play if window does not have the focus\n",
+		"globalfocus:b:0:Play if window does not have the focus\n",
 	DS_CommandLine,
 	DS_IsPresent,
 	VC_SampleLoad,

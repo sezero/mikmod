@@ -88,7 +88,7 @@ static void putheader(void)
 	_mm_write_I_ULONG(dumpsize,wavout);
 }
 
-static void WAV_CommandLine(CHAR *cmdline)
+static void WAV_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr=MD_GetAtom("file",cmdline,0);
 

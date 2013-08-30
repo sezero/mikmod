@@ -63,7 +63,7 @@ static ULONG BufferSize = (ULONG)-1;	/* autodetect buffer size */
 static ULONG BufferCount = 2;			/* use two buffers */
 static ULONG DeviceID = 0;
 
-static void Dart_CommandLine(CHAR *cmdline)
+static void Dart_CommandLine(const CHAR *cmdline)
 {
 	char *ptr;
 	int buf;

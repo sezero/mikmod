@@ -106,7 +106,7 @@ static	int numfrags=DEFAULT_NUMFRAGS;
 
 #endif
 
-static void OSS_CommandLine(CHAR *cmdline)
+static void OSS_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 

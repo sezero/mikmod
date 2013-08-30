@@ -207,7 +207,7 @@ static ssize_t esd_writebuf(int fd,const void *buffer,size_t count)
 	return res;
 }
 
-static void ESD_CommandLine(CHAR *cmdline)
+static void ESD_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr=MD_GetAtom("machine",cmdline,0);
 

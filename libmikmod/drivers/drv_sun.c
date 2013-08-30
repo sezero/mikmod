@@ -170,7 +170,7 @@ static int play_precision;
 static int fragsize = 1 << DEFAULT_FRAGSIZE;
 static SBYTE *audiobuffer = NULL;
 
-static void Sun_CommandLine(CHAR *cmdline)
+static void Sun_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 

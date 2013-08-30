@@ -509,7 +509,7 @@ MIKMODAPI void VC_SetCallback(MikMod_callback_t callback)
 	vc_callback = callback;
 }
 
-static BOOL _mm_init(CHAR *cmdline)
+static BOOL _mm_init(const CHAR *cmdline)
 {
 	UWORD t;
 
@@ -567,7 +567,7 @@ static BOOL _mm_init(CHAR *cmdline)
 	return 0;
 }
 
-MIKMODAPI BOOL MikMod_Init(CHAR *cmdline)
+MIKMODAPI BOOL MikMod_Init(const CHAR *cmdline)
 {
 	BOOL result;
 
@@ -891,10 +891,10 @@ CHAR *MD_GetAtom(const CHAR *atomname, const CHAR *cmdline, BOOL implicit)
 	CHAR *ret=NULL;
 
 	if(cmdline) {
-		CHAR *buf=strstr(cmdline,atomname);
+		const CHAR *buf=strstr(cmdline,atomname);
 
 		if((buf)&&((buf==cmdline)||(*(buf-1)==','))) {
-			CHAR *ptr=buf+strlen(atomname);
+			const CHAR *ptr=buf+strlen(atomname);
 
 			if(*ptr=='=') {
 				for(buf=++ptr;(*ptr)&&((*ptr)!=',');ptr++);

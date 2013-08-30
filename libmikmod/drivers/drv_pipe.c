@@ -66,7 +66,7 @@ static	SBYTE *audiobuffer=NULL;
 
 static	CHAR *target=NULL;
 
-static void pipe_CommandLine(CHAR *cmdline)
+static void pipe_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr=MD_GetAtom("pipe",cmdline,0);
 

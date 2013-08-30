@@ -1,5 +1,5 @@
 /*	MikMod sound library
-    (c) 2004, Raphael Assenat
+	(c) 2004, Raphael Assenat
 	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
@@ -31,17 +31,12 @@
 
 	Written by Axel "awe" Wefers <awe@fruitz-of-dojo.de>
 
-
 	Raphael Assenat: 19 Feb 2004: Command line options documented in the MDRIVER structure,
 					 and I added #if 0 's around pragmas, since gcc complaines about them.
 					 Hopefully, the IDE which uses them wont care about that?
-*/
 
-/*_______________________________________________________________________________________________iNCLUDES
+	O. Sezer: removed the 'mark' pragmas
 */
-#if 0
-#pragma mark INCLUDES
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -54,55 +49,23 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
 #include <stdio.h>
-#include <math.h>			/* required for IEEE extended conversion */
-#if 0
-#pragma mark -
-#endif
-/*________________________________________________________________________________________________dEFINES
-*/
-#if 0
-#pragma mark DEFINES
-#endif
+#include <math.h>	/* required for IEEE extended conversion */
 
 #define AIFF_BUFFERSIZE			32768
-#if defined(WIN32) || defined(DJGPP)
+#if defined(_WIN32) || defined(__DJGPP__)
 #define AIFF_FILENAME			"music.aif"
 #else
 #define AIFF_FILENAME			"music.aiff"
 #endif /* WIN32 */
-#if 0
-#pragma mark -
-#endif
-/*_________________________________________________________________________________________________mACROS
-*/
-#if 0
-#pragma mark MACROS
-#endif
 
-#define AIFF_FLOAT_TO_UNSIGNED(f)    	((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L + 1))
-#if 0
-#pragma mark -
-#endif
-/*___________________________________________________________________________________________________vARS
-*/
-#if 0
-#pragma mark VARIABLES
-#endif
+#define AIFF_FLOAT_TO_UNSIGNED(f)	((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L + 1))
+
 static	MWRITER	*gAiffOut = NULL;
 static	FILE	*gAiffFile = NULL;
 static	SBYTE	*gAiffAudioBuffer = NULL;
 static	CHAR	*gAiffFileName = NULL;
 static	ULONG	gAiffDumpSize = 0;
-#if 0
-#pragma mark -
-#endif
-/*____________________________________________________________________________________fUNCTION_pROTOTYPES
-*/
-#if 0
-#pragma mark FUNCTION PROTOTYPES
-#endif
 
 #ifdef SUNOS
 extern int fclose(FILE *);
@@ -110,18 +73,14 @@ extern int fclose(FILE *);
 
 static void	AIFF_ConvertToIeeeExtended (double theValue, char *theBytes);
 static void	AIFF_PutHeader (void);
-static void	AIFF_CommandLine (CHAR *theCmdLine);
+static void	AIFF_CommandLine (const CHAR *theCmdLine);
 static BOOL	AIFF_IsThere (void);
 static BOOL	AIFF_Init (void);
 static void	AIFF_Exit (void);
 static void	AIFF_Update (void);
-#if 0
-#pragma mark -
-#endif
-/*___________________________________________________________________________AIFF_ConvertToIeeeExtended()
-*/
 
-void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
+
+static void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
 {
     int			mySign;
     int			myExponent;
@@ -182,10 +141,7 @@ void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
     theBytes[9] = myLoMant;
 }
 
-/*_______________________________________________________________________________________AIFF_PutHeader()
-*/
-
-static void	AIFF_PutHeader(void)
+static void AIFF_PutHeader(void)
 {
     ULONG	myFrames;
     UBYTE	myIEEE[10];
@@ -208,10 +164,7 @@ static void	AIFF_PutHeader(void)
     _mm_write_M_ULONG (0, gAiffOut);					/* data blocksize, always zero */
 }
 
-/*_____________________________________________________________________________________AIFF_CommandLine()
-*/
-
-static void	AIFF_CommandLine (CHAR *theCmdLine)
+static void AIFF_CommandLine (const CHAR *theCmdLine)
 {
     CHAR	*myFileName = MD_GetAtom ("file", theCmdLine,0);
 
@@ -222,18 +175,12 @@ static void	AIFF_CommandLine (CHAR *theCmdLine)
     }
 }
 
-/*_________________________________________________________________________________________AIFF_isThere()
-*/
-
-static BOOL	AIFF_IsThere (void)
+static BOOL AIFF_IsThere (void)
 {
     return (1);
 }
 
-/*____________________________________________________________________________________________AIFF_Init()
-*/
-
-static BOOL	AIFF_Init (void)
+static BOOL AIFF_Init (void)
 {
 #if defined unix || (defined __APPLE__ && defined __MACH__)
     if (!MD_Access (gAiffFileName ? gAiffFileName : AIFF_FILENAME))
@@ -284,10 +231,7 @@ static BOOL	AIFF_Init (void)
     return (0);
 }
 
-/*____________________________________________________________________________________________AIFF_Exit()
-*/
-
-static void	AIFF_Exit (void)
+static void AIFF_Exit (void)
 {
     VC_Exit ();
 
@@ -307,10 +251,7 @@ static void	AIFF_Exit (void)
     }
 }
 
-/*__________________________________________________________________________________________AIFF_Update()
-*/
-
-static void	AIFF_Update (void)
+static void AIFF_Update (void)
 {
     ULONG	myByteCount;
 
@@ -322,18 +263,13 @@ static void	AIFF_Update (void)
     else
     {
         ULONG	i;
-
-        for (i = 0; i < myByteCount; i++)
-        {
-            gAiffAudioBuffer[i] -= 0x80;				/* convert to signed PCM */
+        for (i = 0; i < myByteCount; i++) {
+            gAiffAudioBuffer[i] -= 0x80; /* convert to signed PCM */
         }
         _mm_write_UBYTES (gAiffAudioBuffer, myByteCount, gAiffOut);
     }
     gAiffDumpSize += myByteCount;
 }
-
-/*________________________________________________________________________________________________drv_osx
-*/
 
 MIKMODAPI MDRIVER drv_aiff = {
     NULL,
@@ -374,6 +310,3 @@ MIKMODAPI MDRIVER drv_aiff = {
 MISSING(drv_aiff);
 
 #endif
-
-/*____________________________________________________________________________________________________eOF
-*/

@@ -70,7 +70,7 @@ static	AC AFac;
 static	AFDeviceDescriptor *AFdesc;
 static	CHAR *soundbox=NULL;
 
-static void AF_CommandLine(CHAR *cmdline)
+static void AF_CommandLine(const CHAR *cmdline)
 {
 	CHAR *machine=MD_GetAtom("machine",cmdline,0);
 

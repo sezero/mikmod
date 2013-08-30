@@ -100,7 +100,7 @@ static Voice voices[SAM_NUM_VOICES];
 static int card=0;
 static int modfd=-1;
 
-static void commandLine(CHAR *cmdline)
+static void commandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 

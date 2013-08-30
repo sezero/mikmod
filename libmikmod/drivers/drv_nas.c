@@ -363,7 +363,7 @@ NAS_update (void)
 /*** Miscellaneous API routines */
 
 static void
-NAS_cmd_line (CHAR *s)
+NAS_cmd_line (const CHAR *s)
 {
   CHAR *p;
 

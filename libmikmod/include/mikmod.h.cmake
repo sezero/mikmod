@@ -249,7 +249,7 @@ MIKMODAPI extern void   MikMod_RegisterDriver(struct MDRIVER*);
 MIKMODAPI extern int    MikMod_DriverFromAlias(CHAR*);
 MIKMODAPI extern struct MDRIVER *MikMod_DriverByOrdinal(int);
 
-MIKMODAPI extern BOOL   MikMod_Init(CHAR*);
+MIKMODAPI extern BOOL   MikMod_Init(const CHAR*);
 MIKMODAPI extern void   MikMod_Exit(void);
 MIKMODAPI extern BOOL   MikMod_Reset(CHAR*);
 MIKMODAPI extern BOOL   MikMod_SetNumVoices(int,int);
@@ -671,7 +671,7 @@ struct MDRIVER* next;
     const CHAR* Alias;
     const CHAR* CmdLineHelp;
 
-    void        (*CommandLine)      (CHAR*);
+    void        (*CommandLine)      (const CHAR*);
     BOOL        (*IsPresent)        (void);
     SWORD       (*SampleLoad)       (struct SAMPLOAD*,int);
     void        (*SampleUnload)     (SWORD);
