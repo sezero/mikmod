@@ -309,7 +309,7 @@ static GT_CHUNK *loadChunk(void)
 	printf("?? %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
 
 	MikMod_free(new_chunk);
-	return NULL; // unknown chunk
+	return NULL; /* unknown chunk */
 }
 
 static BOOL GT2_Init(void)
