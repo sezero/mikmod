@@ -112,15 +112,11 @@ static void* libasound = NULL;
 #define alsa_pcm_writei				snd_pcm_writei
 #endif /* MIKMOD_DYNAMIC */
 
-#define DEFAULT_NUMFRAGS 4
-
 static snd_pcm_t *pcm_h = NULL;
-static int numfrags = DEFAULT_NUMFRAGS;
 static SBYTE *audiobuffer = NULL;
 static snd_pcm_sframes_t period_size;
 static int bytes_written = 0, bytes_played = 0;
 static int global_frame_size;
-static int device = -1;
 
 #ifdef MIKMOD_DYNAMIC
 static BOOL ALSA_Link(void)
@@ -197,17 +193,7 @@ static void ALSA_Unlink(void)
 
 static void ALSA_CommandLine(CHAR *cmdline)
 {
-	CHAR *ptr;
-
-	if((ptr=MD_GetAtom("pcm",cmdline,0))) {
-		device=atoi(ptr);
-		MikMod_free(ptr);
-	} else device=-1;
-	if((ptr=MD_GetAtom("buffer",cmdline,0))) {
-		numfrags=atoi(ptr);
-		if ((numfrags<2)||(numfrags>16)) numfrags=DEFAULT_NUMFRAGS;
-		MikMod_free(ptr);
-	} else numfrags=DEFAULT_NUMFRAGS;
+/* no options */
 }
 
 static BOOL ALSA_IsThere(void)
@@ -237,15 +223,6 @@ static BOOL ALSA_Init_internal(void)
 	snd_pcm_uframes_t temp_u_buffer_size,
 			  temp_u_period_size;
 
-	/* adjust user-configurable settings */
-	if ((getenv("MM_NUMFRAGS")) && numfrags==DEFAULT_NUMFRAGS) {
-		numfrags=atoi(getenv("MM_NUMFRAGS"));
-		if (numfrags < 2 || numfrags > 16)
-			numfrags=DEFAULT_NUMFRAGS;
-	}
-	if(getenv("ALSA_PCM"))
-		device=atoi(getenv("ALSA_PCM"));
-
 	/* setup playback format structure */
 	pformat = (md_mode&DMODE_FLOAT)? SND_PCM_FORMAT_FLOAT :
 			(md_mode&DMODE_16BITS)? SND_PCM_FORMAT_S16 : SND_PCM_FORMAT_U8;
@@ -259,7 +236,7 @@ static BOOL ALSA_Init_internal(void)
 
 #define MIKMOD_ALSA_DEVICE "default"
 	if ((err = alsa_pcm_open(&pcm_h, MIKMOD_ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0) {
-		printf("snd_pcm_open() call failed: %s\n", alsa_strerror(err));
+		fprintf(stderr, "snd_pcm_open() call failed: %s\n", alsa_strerror(err));
 		goto END;
 	}
 
@@ -274,19 +251,19 @@ static BOOL ALSA_Init_internal(void)
 	/* choose all parameters */
 	err = alsa_pcm_hw_params_any(pcm_h, hwparams);
 	if (err < 0) {
-		printf("Broken configuration for playback: no configurations available: %s\n", snd_strerror(err));
+		fprintf(stderr, "Broken configuration for playback: no configurations available: %s\n", snd_strerror(err));
 		goto END;
 	}
 
 	err = alsa_pcm_get_params(pcm_h, &temp_u_buffer_size, &temp_u_period_size);
 	if (err < 0) {
-		printf("Unable to get buffer size for playback: %s\n", alsa_strerror(err));
+		fprintf(stderr, "Unable to get buffer size for playback: %s\n", alsa_strerror(err));
 		goto END;
 	}
 	period_size = temp_u_period_size;
 
 	if (!(audiobuffer=(SBYTE*)MikMod_malloc(period_size * global_frame_size))) {
-		printf("Out of memory for ALSA buffer\n");
+		fprintf(stderr, "Out of memory for ALSA buffer\n");
 		goto END;
 	}
 
@@ -342,7 +319,7 @@ static int xrun_recovery(snd_pcm_t *handle, int err)
 	if (err == -EPIPE) {	/* under-run */
 		err = alsa_pcm_prepare(handle);
 		if (err < 0)
-			printf("Can't recover from underrun, prepare failed: %s\n", snd_strerror(err));
+			fprintf(stderr, "Can't recover from underrun, prepare failed: %s\n", snd_strerror(err));
 		return 0;
 	}
 	else if (err == -ESTRPIPE) {
@@ -351,7 +328,7 @@ static int xrun_recovery(snd_pcm_t *handle, int err)
 		if (err < 0) {
 			err = alsa_pcm_prepare(handle);
 			if (err < 0)
-				printf("Can't recover from suspend, prepare failed: %s\n", snd_strerror(err));
+				fprintf(stderr, "Can't recover from suspend, prepare failed: %s\n", snd_strerror(err));
 		}
 		return 0;
 	}
@@ -374,7 +351,7 @@ static void ALSA_Update(void)
 			continue;
 		if (err < 0) {
 			if ((err = xrun_recovery(pcm_h, err)) < 0) {
-				printf("Write error: %s\n", alsa_strerror(err));
+				fprintf(stderr, "Write error: %s\n", alsa_strerror(err));
 				exit(-1);
 			}
 			break;
@@ -401,9 +378,7 @@ MIKMODAPI MDRIVER drv_alsa = {
 	"Advanced Linux Sound Architecture (ALSA) driver v0.4",
 	0,255,
 	"alsa",
-	"card:r:0,31,0:Soundcard number\n"
-		"pcm:r:0,3,0:PCM device number\n"
-		"buffer:r:2,16,4:Number of buffer fragments\n",
+	NULL,
 	ALSA_CommandLine,
 	ALSA_IsThere,
 	VC_SampleLoad,
