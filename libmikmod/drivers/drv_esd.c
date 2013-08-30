@@ -308,7 +308,7 @@ static void ESD_Update_internal(VC_WriteBytesFunc WriteBytes)
 		SBYTE *chunk;
 		int size;
 		ssize_t written;
-		
+
 		/* Fill fifo */
 		chunk = audiobuffer_get_free_chunk(&size);
 		while (size)
