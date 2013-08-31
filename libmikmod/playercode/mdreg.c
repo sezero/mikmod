@@ -81,12 +81,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_WIN
 	_mm_registerdriver(&drv_win);
 #endif
-
 #ifdef DRV_SDL
 	_mm_registerdriver(&drv_sdl);
-  _mm_registerdriver(&drv_sdl);
 #endif
-
 #ifdef DRV_MAC
 	_mm_registerdriver(&drv_mac);
 #endif
@@ -121,6 +118,7 @@ static void _mm_registeralldrivers(void)
 	_mm_registerdriver(&drv_stdout);
 #endif
 
+	/* Register 'nosound' driver */
 	_mm_registerdriver(&drv_nos);
 }
 
