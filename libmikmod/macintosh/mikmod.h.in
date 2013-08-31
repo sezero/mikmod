@@ -248,7 +248,7 @@ MIKMODAPI extern void   MikMod_RegisterAllDrivers(void);
 
 MIKMODAPI extern CHAR*  MikMod_InfoDriver(void);
 MIKMODAPI extern void   MikMod_RegisterDriver(struct MDRIVER*);
-MIKMODAPI extern int    MikMod_DriverFromAlias(CHAR*);
+MIKMODAPI extern int    MikMod_DriverFromAlias(const CHAR*);
 MIKMODAPI extern struct MDRIVER *MikMod_DriverByOrdinal(int);
 
 MIKMODAPI extern int    MikMod_Init(const CHAR*);
@@ -363,12 +363,12 @@ typedef struct SAMPLE {
 
 /* Sample functions */
 
-MIKMODAPI extern SAMPLE *Sample_LoadRaw(CHAR *,ULONG rate, ULONG channel, ULONG flags);
+MIKMODAPI extern SAMPLE *Sample_LoadRaw(const CHAR *,ULONG rate, ULONG channel, ULONG flags);
 MIKMODAPI extern SAMPLE *Sample_LoadRawFP(FILE *fp,ULONG rate,ULONG channel, ULONG flags);
 MIKMODAPI extern SAMPLE *Sample_LoadRawMem(const char *buf, int len, ULONG rate, ULONG channel, ULONG flags);
 MIKMODAPI extern SAMPLE *Sample_LoadRawGeneric(MREADER*reader,ULONG rate, ULONG channel, ULONG flags);
 
-MIKMODAPI extern SAMPLE *Sample_Load(CHAR*);
+MIKMODAPI extern SAMPLE *Sample_Load(const CHAR*);
 MIKMODAPI extern SAMPLE *Sample_LoadFP(FILE*);
 MIKMODAPI extern SAMPLE *Sample_LoadMem(const char *buf, int len);
 MIKMODAPI extern SAMPLE *Sample_LoadGeneric(MREADER*);
@@ -591,11 +591,11 @@ MIKMODAPI extern struct MLOADER load_xm;  /* FastTracker 2 (by Triton) */
  *	========== Module player
  */
 
-MIKMODAPI extern MODULE* Player_Load(CHAR*,int,BOOL);
+MIKMODAPI extern MODULE* Player_Load(const CHAR*,int,BOOL);
 MIKMODAPI extern MODULE* Player_LoadFP(FILE*,int,BOOL);
 MIKMODAPI extern MODULE* Player_LoadMem(const char *buffer,int len,int maxchan,BOOL curious);
 MIKMODAPI extern MODULE* Player_LoadGeneric(MREADER*,int,BOOL);
-MIKMODAPI extern CHAR*   Player_LoadTitle(CHAR*);
+MIKMODAPI extern CHAR*   Player_LoadTitle(const CHAR*);
 MIKMODAPI extern CHAR*   Player_LoadTitleFP(FILE*);
 MIKMODAPI extern CHAR*   Player_LoadTitleMem(const char *buffer,int len);
 MIKMODAPI extern CHAR*   Player_LoadTitleGeneric(MREADER*);

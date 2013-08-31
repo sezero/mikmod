@@ -292,7 +292,7 @@ MIKMODAPI SAMPLE* Sample_LoadRawFP(FILE *fp, ULONG rate, ULONG channel, ULONG fl
 	return result;
 }
 
-MIKMODAPI SAMPLE* Sample_LoadRaw(CHAR* filename, ULONG rate, ULONG channel, ULONG flags)
+MIKMODAPI SAMPLE* Sample_LoadRaw(const CHAR* filename, ULONG rate, ULONG channel, ULONG flags)
 {
 	FILE *fp;
 	SAMPLE *si=NULL;
@@ -344,7 +344,7 @@ MIKMODAPI SAMPLE* Sample_LoadFP(FILE *fp)
 	return result;
 }
 
-MIKMODAPI SAMPLE* Sample_Load(CHAR* filename)
+MIKMODAPI SAMPLE* Sample_Load(const CHAR* filename)
 {
 	FILE *fp;
 	SAMPLE *si=NULL;

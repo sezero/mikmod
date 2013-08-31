@@ -429,7 +429,7 @@ MIKMODAPI CHAR* Player_LoadTitleGeneric(MREADER *reader)
 	return result;
 }
 
-MIKMODAPI CHAR* Player_LoadTitle(CHAR* filename)
+MIKMODAPI CHAR* Player_LoadTitle(const CHAR* filename)
 {
 	CHAR* result=NULL;
 	FILE* fp;
@@ -605,7 +605,7 @@ MIKMODAPI MODULE* Player_LoadFP(FILE* fp,int maxchan,BOOL curious)
 
 /* Open a module via its filename.  The loader will initialize the specified
    song-player 'player'. */
-MIKMODAPI MODULE* Player_Load(CHAR* filename,int maxchan,BOOL curious)
+MIKMODAPI MODULE* Player_Load(const CHAR* filename,int maxchan,BOOL curious)
 {
 	FILE *fp;
 	MODULE *mf=NULL;

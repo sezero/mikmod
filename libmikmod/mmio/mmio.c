@@ -91,7 +91,7 @@ FILE* _mm_fopen(const CHAR* fname, const CHAR* attrib)
 	return fp;
 }
 
-BOOL _mm_FileExists(CHAR* fname)
+BOOL _mm_FileExists(const CHAR* fname)
 {
 	FILE *fp;
 
@@ -387,37 +387,51 @@ void _mm_write_I_SLONG(SLONG data,MWRITER* writer)
 	_mm_write_I_ULONG((ULONG)data,writer);
 }
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
-#define DEFINE_MULTIPLE_WRITE_FUNCTION(type_name,type)						\
-void _mm_write_##type_name##S (type *buffer,int number,MWRITER* writer)		\
-{																			\
-	while(number-->0)														\
-		_mm_write_##type_name(*(buffer++),writer);							\
+void _mm_write_M_SWORDS(SWORD *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_M_SWORD(*(buffer++),writer);
 }
-#else
-#define DEFINE_MULTIPLE_WRITE_FUNCTION(type_name,type)						\
-void _mm_write_/**/type_name/**/S (type *buffer,int number,MWRITER* writer)	\
-{																			\
-	while(number-->0)														\
-		_mm_write_/**/type_name(*(buffer++),writer);						\
+
+void _mm_write_M_UWORDS(UWORD *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_M_UWORD(*(buffer++),writer);
 }
-#endif
 
-DEFINE_MULTIPLE_WRITE_FUNCTION(M_SWORD,SWORD)
-DEFINE_MULTIPLE_WRITE_FUNCTION(M_UWORD,UWORD)
-DEFINE_MULTIPLE_WRITE_FUNCTION(I_SWORD,SWORD)
-DEFINE_MULTIPLE_WRITE_FUNCTION(I_UWORD,UWORD)
+void _mm_write_I_SWORDS(SWORD *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_I_SWORD(*(buffer++),writer);
+}
 
-DEFINE_MULTIPLE_WRITE_FUNCTION(M_SLONG,SLONG)
-DEFINE_MULTIPLE_WRITE_FUNCTION(M_ULONG,ULONG)
-DEFINE_MULTIPLE_WRITE_FUNCTION(I_SLONG,SLONG)
-DEFINE_MULTIPLE_WRITE_FUNCTION(I_ULONG,ULONG)
+void _mm_write_I_UWORDS(UWORD *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_I_UWORD(*(buffer++),writer);
+}
+
+void _mm_write_M_SLONGS(SLONG *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_M_SLONG(*(buffer++),writer);
+}
+
+void _mm_write_M_ULONGS(ULONG *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_M_ULONG(*(buffer++),writer);
+}
+
+void _mm_write_I_SLONGS(SLONG *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_I_SLONG(*(buffer++),writer);
+}
+
+void _mm_write_I_ULONGS(ULONG *buffer,int cnt,MWRITER* writer)
+{
+	while(cnt-- > 0) _mm_write_I_ULONG(*(buffer++),writer);
+}
 
 /*========== Read functions */
 
-int _mm_read_string(CHAR* buffer,int number,MREADER* reader)
+BOOL _mm_read_string(CHAR* buffer,int cnt,MREADER* reader)
 {
-	return reader->Read(reader,buffer,number);
+	return reader->Read(reader,buffer,cnt);
 }
 
 UWORD _mm_read_M_UWORD(MREADER* reader)
@@ -468,32 +482,52 @@ SLONG _mm_read_I_SLONG(MREADER* reader)
 	return((SLONG)_mm_read_I_ULONG(reader));
 }
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
-#define DEFINE_MULTIPLE_READ_FUNCTION(type_name,type)						\
-int _mm_read_##type_name##S (type *buffer,int number,MREADER* reader)		\
-{																			\
-	while(number-->0)														\
-		*(buffer++)=_mm_read_##type_name(reader);							\
-	return !reader->Eof(reader);											\
+BOOL _mm_read_M_SWORDS(SWORD *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_M_SWORD(reader);
+	return !reader->Eof(reader);
 }
-#else
-#define DEFINE_MULTIPLE_READ_FUNCTION(type_name,type)						\
-int _mm_read_/**/type_name/**/S (type *buffer,int number,MREADER* reader)	\
-{																			\
-	while(number-->0)														\
-		*(buffer++)=_mm_read_/**/type_name(reader);							\
-	return !reader->Eof(reader);											\
+
+BOOL _mm_read_M_UWORDS(UWORD *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_M_UWORD(reader);
+	return !reader->Eof(reader);
 }
-#endif
 
-DEFINE_MULTIPLE_READ_FUNCTION(M_SWORD,SWORD)
-DEFINE_MULTIPLE_READ_FUNCTION(M_UWORD,UWORD)
-DEFINE_MULTIPLE_READ_FUNCTION(I_SWORD,SWORD)
-DEFINE_MULTIPLE_READ_FUNCTION(I_UWORD,UWORD)
+BOOL _mm_read_I_SWORDS(SWORD *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_I_SWORD(reader);
+	return !reader->Eof(reader);
+}
 
-DEFINE_MULTIPLE_READ_FUNCTION(M_SLONG,SLONG)
-DEFINE_MULTIPLE_READ_FUNCTION(M_ULONG,ULONG)
-DEFINE_MULTIPLE_READ_FUNCTION(I_SLONG,SLONG)
-DEFINE_MULTIPLE_READ_FUNCTION(I_ULONG,ULONG)
+BOOL _mm_read_I_UWORDS(UWORD *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_I_UWORD(reader);
+	return !reader->Eof(reader);
+}
+
+BOOL _mm_read_M_SLONGS(SLONG *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_M_SLONG(reader);
+	return !reader->Eof(reader);
+}
+
+BOOL _mm_read_M_ULONGS(ULONG *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_M_ULONG(reader);
+	return !reader->Eof(reader);
+}
+
+BOOL _mm_read_I_SLONGS(SLONG *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_I_SLONG(reader);
+	return !reader->Eof(reader);
+}
+
+BOOL _mm_read_I_ULONGS(ULONG *buffer,int cnt,MREADER* reader)
+{
+	while(cnt-- > 0) *(buffer++)=_mm_read_I_ULONG(reader);
+	return !reader->Eof(reader);
+}
 
 /* ex:set ts=4: */

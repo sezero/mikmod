@@ -135,7 +135,7 @@ extern void _mm_delete_file_reader(MREADER*);
 extern MWRITER* _mm_new_file_writer(FILE *fp);
 extern void _mm_delete_file_writer(MWRITER*);
 
-extern BOOL _mm_FileExists(CHAR *fname);
+extern BOOL _mm_FileExists(const CHAR *fname);
 
 #define _mm_write_SBYTE(x,y) y->Put(y,(int)x)
 #define _mm_write_UBYTE(x,y) y->Put(y,(int)x)
@@ -160,7 +160,7 @@ extern void _mm_iobase_revert(MREADER*);
 extern FILE * _mm_fopen(const CHAR *, const CHAR *);
 extern int	_mm_fclose(FILE *);
 extern void _mm_write_string(const CHAR*,MWRITER*);
-extern int  _mm_read_string (CHAR*,int,MREADER*);
+extern BOOL _mm_read_string (CHAR*,int,MREADER*);
 
 extern SWORD _mm_read_M_SWORD(MREADER*);
 extern SWORD _mm_read_I_SWORD(MREADER*);
@@ -172,15 +172,15 @@ extern SLONG _mm_read_I_SLONG(MREADER*);
 extern ULONG _mm_read_M_ULONG(MREADER*);
 extern ULONG _mm_read_I_ULONG(MREADER*);
 
-extern int _mm_read_M_SWORDS(SWORD*,int,MREADER*);
-extern int _mm_read_I_SWORDS(SWORD*,int,MREADER*);
-extern int _mm_read_M_UWORDS(UWORD*,int,MREADER*);
-extern int _mm_read_I_UWORDS(UWORD*,int,MREADER*);
+extern BOOL _mm_read_M_SWORDS(SWORD*,int,MREADER*);
+extern BOOL _mm_read_I_SWORDS(SWORD*,int,MREADER*);
+extern BOOL _mm_read_M_UWORDS(UWORD*,int,MREADER*);
+extern BOOL _mm_read_I_UWORDS(UWORD*,int,MREADER*);
 
-extern int _mm_read_M_SLONGS(SLONG*,int,MREADER*);
-extern int _mm_read_I_SLONGS(SLONG*,int,MREADER*);
-extern int _mm_read_M_ULONGS(ULONG*,int,MREADER*);
-extern int _mm_read_I_ULONGS(ULONG*,int,MREADER*);
+extern BOOL _mm_read_M_SLONGS(SLONG*,int,MREADER*);
+extern BOOL _mm_read_I_SLONGS(SLONG*,int,MREADER*);
+extern BOOL _mm_read_M_ULONGS(ULONG*,int,MREADER*);
+extern BOOL _mm_read_I_ULONGS(ULONG*,int,MREADER*);
 
 extern void _mm_write_M_SWORD(SWORD,MWRITER*);
 extern void _mm_write_I_SWORD(SWORD,MWRITER*);
@@ -556,9 +556,9 @@ typedef struct MP_VOICE {
 /*========== Loaders */
 
 typedef struct MLOADER {
-    struct MLOADER* next;
-	const CHAR*       type;
-	const CHAR*       version;
+	struct MLOADER* next;
+	const CHAR* type;
+	const CHAR* version;
 	BOOL        (*Init)(void);
 	BOOL        (*Test)(void);
 	BOOL        (*Load)(BOOL);

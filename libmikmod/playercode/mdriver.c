@@ -236,7 +236,7 @@ MIKMODAPI void MikMod_RegisterDriver(struct MDRIVER* drv)
 	MUTEX_UNLOCK(lists);
 }
 
-MIKMODAPI int MikMod_DriverFromAlias(CHAR *alias)
+MIKMODAPI int MikMod_DriverFromAlias(const CHAR *alias)
 {
 	int rank=1;
 	MDRIVER *cruise;
