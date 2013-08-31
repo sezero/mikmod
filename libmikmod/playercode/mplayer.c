@@ -327,9 +327,9 @@ static UWORD GetPeriod(UWORD flags, UWORD note, ULONG speed)
 {
 	if (flags & UF_XMPERIODS) {
 		if (flags & UF_LINEAR)
-				return getlinearperiod(note, speed);
+			return getlinearperiod(note, speed);
 		else
-				return getlogperiod(note, speed);
+			return getlogperiod(note, speed);
 	} else
 		return getoldperiod(note, speed);
 }
@@ -363,7 +363,8 @@ static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susen
 
 	/* Imago Orpheus sometimes stores an extra initial point in the envelope */
 	if ((t->pts>=2)&&(t->env[0].pos==t->env[1].pos)) {
-		t->a++;t->b++;
+		t->a++;
+		t->b++;
 	}
 
 	/* Fit in the envelope, still */
@@ -829,8 +830,8 @@ static int DoPTEffectB(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	if (!mod->loop && !mod->patbrk &&
 	    (dat < mod->sngpos ||
 		 (mod->sngpos == (mod->numpos - 1) && !mod->patbrk) ||
-	     (dat == mod->sngpos && (flags & UF_NOWRAP))
-		)) {
+	     (dat == mod->sngpos && (flags & UF_NOWRAP)) ) )
+	{
 		/* if we don't loop, better not to skip the end of the
 		   pattern, after all... so:
 		mod->patbrk=0; */
@@ -1606,7 +1607,7 @@ static void DoITToneSlide(UWORD tick, MP_CONTROL *a, UBYTE dat)
 	/* if we don't come from another note, ignore the slide and play the note
 	   as is */
 	if (!a->oldnote || !a->main.period)
-			return;
+		return;
 
 	if ((!tick)&&(a->newsamp)){
 		a->main.kick=KICK_NOTE;
@@ -1621,7 +1622,7 @@ static void DoITToneSlide(UWORD tick, MP_CONTROL *a, UBYTE dat)
 		   difference between those two values */
 		dist=a->main.period-a->wantedperiod;
 
-	    /* if they are equal or if portamentospeed is too big... */
+		/* if they are equal or if portamentospeed is too big... */
 		if ((!dist)||((a->portspeed<<2)>abs(dist)))
 			/* ... make tmpperiod equal tperiod */
 			a->tmpperiod=a->main.period=a->wantedperiod;
@@ -1655,7 +1656,7 @@ static void DoITVibrato(UWORD tick, MP_CONTROL *a, UBYTE dat)
 		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
 	}
 	if (!a->main.period)
-			return;
+		return;
 
 	q=(a->vibpos>>2)&0x1f;
 
@@ -2158,68 +2159,68 @@ static int DoNothing(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD 
 typedef int (*effect_func) (UWORD, UWORD, MP_CONTROL *, MODULE *, SWORD);
 
 static effect_func effects[UNI_LAST] = {
-		DoNothing,		/* 0 */
-		DoNothing,		/* UNI_NOTE */
-		DoNothing,		/* UNI_INSTRUMENT */
-		DoPTEffect0,	/* UNI_PTEFFECT0 */
-		DoPTEffect1,	/* UNI_PTEFFECT1 */
-		DoPTEffect2,	/* UNI_PTEFFECT2 */
-		DoPTEffect3,	/* UNI_PTEFFECT3 */
-		DoPTEffect4,	/* UNI_PTEFFECT4 */
-		DoPTEffect5,	/* UNI_PTEFFECT5 */
-		DoPTEffect6,	/* UNI_PTEFFECT6 */
-		DoPTEffect7,	/* UNI_PTEFFECT7 */
-		DoPTEffect8,	/* UNI_PTEFFECT8 */
-		DoPTEffect9,	/* UNI_PTEFFECT9 */
-		DoPTEffectA,	/* UNI_PTEFFECTA */
-		DoPTEffectB,	/* UNI_PTEFFECTB */
-		DoPTEffectC,	/* UNI_PTEFFECTC */
-		DoPTEffectD,	/* UNI_PTEFFECTD */
-		DoPTEffectE,	/* UNI_PTEFFECTE */
-		DoPTEffectF,	/* UNI_PTEFFECTF */
-		DoS3MEffectA,	/* UNI_S3MEFFECTA */
-		DoS3MEffectD,	/* UNI_S3MEFFECTD */
-		DoS3MEffectE,	/* UNI_S3MEFFECTE */
-		DoS3MEffectF,	/* UNI_S3MEFFECTF */
-		DoS3MEffectI,	/* UNI_S3MEFFECTI */
-		DoS3MEffectQ,	/* UNI_S3MEFFECTQ */
-		DoS3MEffectR,	/* UNI_S3MEFFECTR */
-		DoS3MEffectT,	/* UNI_S3MEFFECTT */
-		DoS3MEffectU,	/* UNI_S3MEFFECTU */
-		DoKeyOff,		/* UNI_KEYOFF */
-		DoKeyFade,		/* UNI_KEYFADE */
-		DoVolEffects,	/* UNI_VOLEFFECTS */
-		DoPTEffect4,	/* UNI_XMEFFECT4 */
-		DoXMEffect6,	/* UNI_XMEFFECT6 */
-		DoXMEffectA,	/* UNI_XMEFFECTA */
-		DoXMEffectE1,	/* UNI_XMEFFECTE1 */
-		DoXMEffectE2,	/* UNI_XMEFFECTE2 */
-		DoXMEffectEA,	/* UNI_XMEFFECTEA */
-		DoXMEffectEB,	/* UNI_XMEFFECTEB */
-		DoXMEffectG,	/* UNI_XMEFFECTG */
-		DoXMEffectH,	/* UNI_XMEFFECTH */
-		DoXMEffectL,	/* UNI_XMEFFECTL */
-		DoXMEffectP,	/* UNI_XMEFFECTP */
-		DoXMEffectX1,	/* UNI_XMEFFECTX1 */
-		DoXMEffectX2,	/* UNI_XMEFFECTX2 */
-		DoITEffectG,	/* UNI_ITEFFECTG */
-		DoITEffectH,	/* UNI_ITEFFECTH */
-		DoITEffectI,	/* UNI_ITEFFECTI */
-		DoITEffectM,	/* UNI_ITEFFECTM */
-		DoITEffectN,	/* UNI_ITEFFECTN */
-		DoITEffectP,	/* UNI_ITEFFECTP */
-		DoITEffectT,	/* UNI_ITEFFECTT */
-		DoITEffectU,	/* UNI_ITEFFECTU */
-		DoITEffectW,	/* UNI_ITEFFECTW */
-		DoITEffectY,	/* UNI_ITEFFECTY */
-		DoNothing,		/* UNI_ITEFFECTZ */
-		DoITEffectS0,	/* UNI_ITEFFECTS0 */
-		DoULTEffect9,	/* UNI_ULTEFFECT9 */
-		DoMEDSpeed,		/* UNI_MEDSPEED */
-		DoMEDEffectF1,	/* UNI_MEDEFFECTF1 */
-		DoMEDEffectF2,	/* UNI_MEDEFFECTF2 */
-		DoMEDEffectF3,	/* UNI_MEDEFFECTF3 */
-		DoOktArp,		/* UNI_OKTARP */
+	DoNothing,		/* 0 */
+	DoNothing,		/* UNI_NOTE */
+	DoNothing,		/* UNI_INSTRUMENT */
+	DoPTEffect0,	/* UNI_PTEFFECT0 */
+	DoPTEffect1,	/* UNI_PTEFFECT1 */
+	DoPTEffect2,	/* UNI_PTEFFECT2 */
+	DoPTEffect3,	/* UNI_PTEFFECT3 */
+	DoPTEffect4,	/* UNI_PTEFFECT4 */
+	DoPTEffect5,	/* UNI_PTEFFECT5 */
+	DoPTEffect6,	/* UNI_PTEFFECT6 */
+	DoPTEffect7,	/* UNI_PTEFFECT7 */
+	DoPTEffect8,	/* UNI_PTEFFECT8 */
+	DoPTEffect9,	/* UNI_PTEFFECT9 */
+	DoPTEffectA,	/* UNI_PTEFFECTA */
+	DoPTEffectB,	/* UNI_PTEFFECTB */
+	DoPTEffectC,	/* UNI_PTEFFECTC */
+	DoPTEffectD,	/* UNI_PTEFFECTD */
+	DoPTEffectE,	/* UNI_PTEFFECTE */
+	DoPTEffectF,	/* UNI_PTEFFECTF */
+	DoS3MEffectA,	/* UNI_S3MEFFECTA */
+	DoS3MEffectD,	/* UNI_S3MEFFECTD */
+	DoS3MEffectE,	/* UNI_S3MEFFECTE */
+	DoS3MEffectF,	/* UNI_S3MEFFECTF */
+	DoS3MEffectI,	/* UNI_S3MEFFECTI */
+	DoS3MEffectQ,	/* UNI_S3MEFFECTQ */
+	DoS3MEffectR,	/* UNI_S3MEFFECTR */
+	DoS3MEffectT,	/* UNI_S3MEFFECTT */
+	DoS3MEffectU,	/* UNI_S3MEFFECTU */
+	DoKeyOff,	/* UNI_KEYOFF */
+	DoKeyFade,	/* UNI_KEYFADE */
+	DoVolEffects,	/* UNI_VOLEFFECTS */
+	DoPTEffect4,	/* UNI_XMEFFECT4 */
+	DoXMEffect6,	/* UNI_XMEFFECT6 */
+	DoXMEffectA,	/* UNI_XMEFFECTA */
+	DoXMEffectE1,	/* UNI_XMEFFECTE1 */
+	DoXMEffectE2,	/* UNI_XMEFFECTE2 */
+	DoXMEffectEA,	/* UNI_XMEFFECTEA */
+	DoXMEffectEB,	/* UNI_XMEFFECTEB */
+	DoXMEffectG,	/* UNI_XMEFFECTG */
+	DoXMEffectH,	/* UNI_XMEFFECTH */
+	DoXMEffectL,	/* UNI_XMEFFECTL */
+	DoXMEffectP,	/* UNI_XMEFFECTP */
+	DoXMEffectX1,	/* UNI_XMEFFECTX1 */
+	DoXMEffectX2,	/* UNI_XMEFFECTX2 */
+	DoITEffectG,	/* UNI_ITEFFECTG */
+	DoITEffectH,	/* UNI_ITEFFECTH */
+	DoITEffectI,	/* UNI_ITEFFECTI */
+	DoITEffectM,	/* UNI_ITEFFECTM */
+	DoITEffectN,	/* UNI_ITEFFECTN */
+	DoITEffectP,	/* UNI_ITEFFECTP */
+	DoITEffectT,	/* UNI_ITEFFECTT */
+	DoITEffectU,	/* UNI_ITEFFECTU */
+	DoITEffectW,	/* UNI_ITEFFECTW */
+	DoITEffectY,	/* UNI_ITEFFECTY */
+	DoNothing,	/* UNI_ITEFFECTZ */
+	DoITEffectS0,	/* UNI_ITEFFECTS0 */
+	DoULTEffect9,	/* UNI_ULTEFFECT9 */
+	DoMEDSpeed,	/* UNI_MEDSPEED */
+	DoMEDEffectF1,	/* UNI_MEDEFFECTF1 */
+	DoMEDEffectF2,	/* UNI_MEDEFFECTF2 */
+	DoMEDEffectF3,	/* UNI_MEDEFFECTF3 */
+	DoOktArp,	/* UNI_OKTARP */
 };
 
 static int pt_playeffects(MODULE *mod, SWORD channel, MP_CONTROL *a)
@@ -2231,6 +2232,10 @@ static int pt_playeffects(MODULE *mod, SWORD channel, MP_CONTROL *a)
 	effect_func f;
 
 	while((c=UniGetByte())) {
+#if 0 /* this doesn't normally happen unless things go fubar elsewhere */
+		if (c >= UNI_LAST)
+		    fprintf(stderr,"fubar'ed opcode %u\n",c);
+#endif
 		f = effects[c];
 		if (f != DoNothing)
 		    a->sliding = 0;

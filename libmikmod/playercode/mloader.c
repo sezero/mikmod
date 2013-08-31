@@ -45,8 +45,8 @@
 extern int fprintf(FILE *, const char *, ...);
 #endif
 
-		MREADER *modreader;
-		MODULE of;
+MREADER *modreader;
+MODULE of;
 
 static	MLOADER *firstloader=NULL;
 
@@ -63,20 +63,18 @@ MIKMODAPI CHAR* MikMod_InfoLoader(void)
 
 	MUTEX_LOCK(lists);
 	/* compute size of buffer */
-	for(l=firstloader;l;l=l->next) len+=1+(l->next?1:0)+strlen(l->version);
+	for(l = firstloader; l; l = l->next)
+		len += 1 + (l->next ? 1 : 0) + strlen(l->version);
 
 	if(len)
-		if((list=MikMod_malloc(len*sizeof(CHAR)))) {
-			CHAR * list_end = list;
-			list[0]=0;
-			/* list all registered module loders */
-			for(l=firstloader;l;l=l->next)
-			{
-				list_end += sprintf(list_end,
-					"%s%s",l->version, ((l->next) ? "\n" : "")
-				);
-			}
+	  if((list=MikMod_malloc(len*sizeof(CHAR)))) {
+		CHAR *list_end = list;
+		list[0] = 0;
+		/* list all registered module loders */
+		for(l = firstloader; l; l = l->next) {
+		    list_end += sprintf(list_end, "%s%s", l->version, (l->next) ? "\n" : "");
 		}
+	}
 	MUTEX_UNLOCK(lists);
 	return list;
 }
@@ -262,7 +260,7 @@ static BOOL ML_LoadSamples(void)
 }
 
 /* Creates a CSTR out of a character buffer of 'len' bytes, but strips any
-   terminating non-printing characters like 0, spaces etc.                    */
+   terminating non-printing characters like 0, spaces etc. */
 CHAR *DupStr(const CHAR* s, UWORD len, BOOL strict)
 {
 	UWORD t;
@@ -413,7 +411,6 @@ MIKMODAPI CHAR* Player_LoadTitleMem(const char *buffer,int len)
 		_mm_delete_mem_reader(reader);
 	}
 
-
 	return result;
 }
 
@@ -469,14 +466,16 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	if(!l) {
 		_mm_errno = MMERR_NOT_A_MODULE;
 		if(_mm_errorhandler) _mm_errorhandler();
-		_mm_rewind(modreader);_mm_iobase_revert(modreader);
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
 		return NULL;
 	}
 
 	/* init unitrk routines */
 	if(!UniInit()) {
 		if(_mm_errorhandler) _mm_errorhandler();
-		_mm_rewind(modreader);_mm_iobase_revert(modreader);
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
 		return NULL;
 	}
 
@@ -508,20 +507,23 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	if(!ok) {
 		ML_FreeEx(&of);
 		if(_mm_errorhandler) _mm_errorhandler();
-		_mm_rewind(modreader);_mm_iobase_revert(modreader);
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
 		return NULL;
 	}
 
 	if(!ML_LoadSamples()) {
 		ML_FreeEx(&of);
 		if(_mm_errorhandler) _mm_errorhandler();
-		_mm_rewind(modreader);_mm_iobase_revert(modreader);
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
 		return NULL;
 	}
 
 	if(!(mf=ML_AllocUniMod())) {
 		ML_FreeEx(&of);
-		_mm_rewind(modreader);_mm_iobase_revert(modreader);
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
 		if(_mm_errorhandler) _mm_errorhandler();
 		return NULL;
 	}

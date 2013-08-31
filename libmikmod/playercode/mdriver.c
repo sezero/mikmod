@@ -53,36 +53,47 @@
 extern int fprintf(FILE *, const char *, ...);
 #endif
 
-static	MDRIVER *firstdriver=NULL;
-MIKMODAPI	MDRIVER *md_driver=NULL;
 extern	MODULE *pf; /* modfile being played */
 
+/* EXPORTED GLOBALS */
+MIKMODAPI MDRIVER *md_driver	= NULL;
+
 /* Initial global settings */
-MIKMODAPI	UWORD md_device         = 0;	/* autodetect */
-MIKMODAPI	UWORD md_mixfreq        = 44100;
-MIKMODAPI	UWORD md_mode           = DMODE_STEREO | DMODE_16BITS |
-									  DMODE_SURROUND |DMODE_SOFT_MUSIC |
-									  DMODE_SOFT_SNDFX;
-MIKMODAPI	UBYTE md_pansep         = 128;	/* 128 == 100% (full left/right) */
-MIKMODAPI	UBYTE md_reverb         = 0;	/* no reverb */
-MIKMODAPI	UBYTE md_volume         = 128;	/* global sound volume (0-128) */
-MIKMODAPI	UBYTE md_musicvolume    = 128;	/* volume of song */
-MIKMODAPI	UBYTE md_sndfxvolume    = 128;	/* volume of sound effects */
-			UWORD md_bpm            = 125;	/* tempo */
+MIKMODAPI UWORD md_device	= 0;	/* autodetect */
+MIKMODAPI UWORD md_mixfreq	= 44100;
+MIKMODAPI UWORD md_mode		= DMODE_STEREO | DMODE_16BITS |
+						 DMODE_SURROUND |
+						 DMODE_SOFT_MUSIC |
+						 DMODE_SOFT_SNDFX;
+MIKMODAPI UBYTE md_pansep	= 128;	/* 128 == 100% (full left/right) */
+MIKMODAPI UBYTE md_reverb	= 0;	/* no reverb */
+MIKMODAPI UBYTE md_volume	= 128;	/* global sound volume (0-128) */
+MIKMODAPI UBYTE md_musicvolume	= 128;	/* volume of song */
+MIKMODAPI UBYTE md_sndfxvolume	= 128;	/* volume of sound effects */
+
+/* INTERNAL GLOBALS */
+UWORD md_bpm = 125;	/* tempo */
 
 /* Do not modify the numchn variables yourself!  use MD_SetVoices() */
-			UBYTE md_numchn=0,md_sngchn=0,md_sfxchn=0;
-			UBYTE md_hardchn=0,md_softchn=0;
+UBYTE md_numchn  = 0, md_sngchn = 0, md_sfxchn = 0;
+UBYTE md_hardchn = 0, md_softchn= 0;
 
-			void (*md_player)(void) = Player_HandleTick;
-static volatile	BOOL  isplaying=0, initialized = 0;
-static		UBYTE *sfxinfo;
-static		int sfxpool;
+void (*md_player)(void) = Player_HandleTick;
 
-static		SAMPLE **md_sample = NULL;
+MikMod_callback_t vc_callback = NULL;
+
+/* PRIVATE VARS */
+static MDRIVER *firstdriver = NULL;
+
+static volatile BOOL isplaying = 0, initialized = 0;
+
+static UBYTE *sfxinfo;
+static int sfxpool;
+
+static SAMPLE **md_sample = NULL;
 
 /* Previous driver in use */
-static		SWORD olddevice = -1;
+static SWORD olddevice = -1;
 
 /* Limits the number of hardware voices to the specified amount.
    This function should only be used by the low-level drivers. */
@@ -258,18 +269,17 @@ MIKMODAPI int MikMod_DriverFromAlias(const CHAR *alias)
 
 MIKMODAPI MDRIVER *MikMod_DriverByOrdinal(int ordinal)
 {
-        MDRIVER *cruise;
+	MDRIVER *cruise;
 
-        /* Allow only driver ordinals > 0 */
-        if (!ordinal)
-                return 0;
+	/* Allow only driver ordinals > 0 */
+	if (!ordinal) return NULL;
 
-        MUTEX_LOCK(lists);
-        cruise = firstdriver;
-        while (cruise && --ordinal)
-                cruise = cruise->next;
-        MUTEX_UNLOCK(lists);
-        return cruise;
+	MUTEX_LOCK(lists);
+	cruise = firstdriver;
+	while (cruise && --ordinal)
+		cruise = cruise->next;
+	MUTEX_UNLOCK(lists);
+	return cruise;
 }
 
 SWORD MD_SampleLoad(SAMPLOAD* s, int type)
@@ -501,8 +511,6 @@ MIKMODAPI ULONG Voice_RealVolume(SBYTE voice)
 
 	return result;
 }
-
-MikMod_callback_t vc_callback;
 
 MIKMODAPI void VC_SetCallback(MikMod_callback_t callback)
 {
@@ -770,7 +778,7 @@ MIKMODAPI BOOL MikMod_Active(void)
    allocated for use as sound effects (loops through voices, skipping all active
    criticals).
 
-   Returns the voice that the sound is being played on.                       */
+   Returns the voice that the sound is being played on. */
 static SBYTE Sample_Play_internal(SAMPLE *s,ULONG start,UBYTE flags)
 {
 	int orig=sfxpool;/* for cases where all channels are critical */
@@ -831,12 +839,15 @@ MIKMODAPI long MikMod_GetVersion(void)
 #ifdef HAVE_PTHREAD
 #define INIT_MUTEX(name) \
 	pthread_mutex_t _mm_mutex_##name=PTHREAD_MUTEX_INITIALIZER
+
 #elif defined(__OS2__)||defined(__EMX__)
 #define INIT_MUTEX(name) \
 	HMTX _mm_mutex_##name
+
 #elif defined(WIN32)
 #define INIT_MUTEX(name) \
 	HANDLE _mm_mutex_##name
+
 #else
 #define INIT_MUTEX(name) \
 	void *_mm_mutex_##name = NULL

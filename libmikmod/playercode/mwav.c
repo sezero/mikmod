@@ -47,7 +47,7 @@
 extern int fprintf(FILE *, const char *, ...);
 #endif
 
-static void extract_channel(const char *src, char *dst, int num_chan, int num_samples, int samp_size, int channel);;
+static void extract_channel(const char *src, char *dst, int num_chan, int num_samples, int samp_size, int channel);
 
 
 typedef struct WAV {
@@ -127,7 +127,7 @@ static SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
 
 #ifdef MIKMOD_DEBUG
 			fprintf(stderr,"\rwavloader : wFormatTag=%04x blockalign=%04x nFormatSpc=%04x\n",
-			        wh.wFormatTag,wh.nBlockAlign,wh.nFormatSpecific);
+				wh.wFormatTag,wh.nBlockAlign,wh.nFormatSpecific);
 #endif
 
 			if((have_fmt)||(wh.nChannels>1)) {
@@ -242,8 +242,6 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 	SL_RegisterSample(si, MD_SNDFX, reader);
 	SL_LoadSamples();
 
-
-
 	return si;
 }
 
@@ -306,8 +304,6 @@ MIKMODAPI SAMPLE* Sample_LoadRaw(const CHAR* filename, ULONG rate, ULONG channel
 	}
 	return si;
 }
-
-
 
 MIKMODAPI SAMPLE* Sample_LoadGeneric(MREADER* reader)
 {
