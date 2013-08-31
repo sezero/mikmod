@@ -757,6 +757,7 @@ AC_SUBST(LIB_LDADD)
 
 AC_OUTPUT(
 libmikmod-config
+libmikmod.pc
 libmikmod.spec
 Makefile
 docs/Makefile

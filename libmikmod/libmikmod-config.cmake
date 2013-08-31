@@ -1,7 +1,7 @@
 #! /bin/sh
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix="$prefix/bin"
 exec_prefix_set=no
 
 usage="\
@@ -49,7 +49,7 @@ while test $# -gt 0 ; do
 		echo @LIB_LDADD@
 	;;
 	--libs)
-		libdir=-L"$exec_prefix/lib"
+		libdir=-L"$prefix/lib"
 		echo $libdir -lmikmod @LIBRARY_LIB@
 	;;
 	*)

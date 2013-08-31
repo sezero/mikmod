@@ -389,13 +389,13 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CUR
 
 # There may be some trailing space - so remove it.
 SET (dest "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${dest}")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.cmake" "${dest}")
 EXECUTE_PROCESS(
     COMMAND "perl" "-lpi" "-e" "s/[\\t ]+$//" "${dest}"
 )
 
 CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc
     @ONLY
     )
