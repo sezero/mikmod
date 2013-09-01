@@ -151,6 +151,7 @@ static DWORD WINAPI UpdateBufferProc(LPVOID lpParameter) {
 }
 
 static void XAudio2_CommandLine(const CHAR *cmdline) {
+/* no options */
 }
 
 static int XAudio2_IsPresent() {
@@ -256,7 +257,6 @@ static void XAudio2_Exit(void) {
 		UpdateBufferHandle = NULL;
 	}
 	IXAudio2SourceVoice_Stop(pSourceVoice, 0, 0);
-	// pockat az dohraje
 	if (pSourceVoice) {
 		IXAudio2SourceVoice_DestroyVoice(pSourceVoice);
 		pSourceVoice = NULL;
@@ -328,7 +328,6 @@ MIKMODAPI MDRIVER drv_xaudio2 = {
 	"DirectX XAudio2 Driver",
 	0,255,
 	"xaudio2",
-//	"buffer:r:12,19,16:Audio buffer log2 size\n" "globalfocus:b:0:Play if window does not have the focus\n",
 	"",
 	XAudio2_CommandLine,
 	XAudio2_IsPresent,
