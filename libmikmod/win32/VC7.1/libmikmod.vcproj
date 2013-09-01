@@ -138,6 +138,9 @@
 				RelativePath="..\..\drivers\drv_win.c">
 			</File>
 			<File
+				RelativePath="..\..\drivers\drv_xaudio2.c">
+			</File>
+			<File
 				RelativePath="..\..\loaders\load_669.c">
 			</File>
 			<File

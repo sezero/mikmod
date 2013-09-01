@@ -33,6 +33,10 @@ CPPFLAGS+=-DDRV_WIN
 LDLIBS+=-ldsound
 CPPFLAGS+=-DDRV_DS
 
+# support for XAudio2 output (need dxsdk / xaudio2.h)
+#LDLIBS+=-lole32
+#CPPFLAGS+=-DDRV_XAUDIO2
+
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF
 
@@ -61,7 +65,7 @@ DEFNAME=libmikmod-$(DLL_VER).def
 
 LIBS=$(LIBNAME) $(DLLNAME)
 
-DRIVER_OBJ=drv_ds.o drv_win.o
+DRIVER_OBJ=drv_ds.o drv_xaudio2.o drv_win.o
 
 OBJ=$(DRIVER_OBJ) \
     drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
@@ -126,6 +130,9 @@ drv_wav.o:      ../drivers/drv_wav.c \
 drv_win.o:       ../drivers/drv_win.c \
 	                ../win32/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../drivers/drv_win.c -o drv_win.o
+drv_xaudio2.o:  ../drivers/drv_xaudio2.c \
+	                ../win32/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_xaudio2.c -o drv_xaudio2.o
 load_669.o:     ../loaders/load_669.c \
 	                ../win32/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../loaders/load_669.c -o load_669.o

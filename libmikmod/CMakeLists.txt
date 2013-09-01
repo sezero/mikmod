@@ -267,6 +267,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_ultra.c
     drivers/drv_wav.c
     drivers/drv_win.c
+    drivers/drv_xaudio2.c
     loaders/load_669.c
     loaders/load_amf.c
     loaders/load_asy.c

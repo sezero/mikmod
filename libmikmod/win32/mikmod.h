@@ -745,6 +745,7 @@ MIKMODAPI extern struct MDRIVER drv_dart;   /* OS/2 Direct Audio RealTime */
 MIKMODAPI extern struct MDRIVER drv_os2;    /* OS/2 MMPM/2 */
 
 MIKMODAPI extern struct MDRIVER drv_ds;     /* Win32 DirectSound driver */
+MIKMODAPI extern struct MDRIVER drv_xaudio2;/* Win32 XAudio2 driver */
 MIKMODAPI extern struct MDRIVER drv_win;    /* Win32 multimedia API driver */
 
 MIKMODAPI extern struct MDRIVER drv_mac;    /* Macintosh Sound Manager driver */

@@ -8,6 +8,10 @@
 # Compilers that can't be used :
 #   - Borland C++ 4 (doesn't like DirectX header files)
 
+# For XAudio2 support you need DirectX SDK / xaudio2.h, then:
+# add /DDRV_XAUDIO2 among your CFLAGS, and add ole32.lib among
+# your link libraries.
+
 # Your compiler here
 CC=cl
 # Compiler flags
@@ -22,7 +26,7 @@ DLLNAME=mikmod.dll
 
 LIBS=$(DLLNAME)
 
-DRIVER_OBJ=drv_ds.o drv_win.o
+DRIVER_OBJ=drv_ds.o drv_xaudio2.o drv_win.o
 
 OBJ=$(DRIVER_OBJ) \
     drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
@@ -70,6 +74,9 @@ drv_wav.o:      ..\drivers\drv_wav.c \
 drv_win.o:       ..\drivers\drv_win.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\drivers\drv_win.c
+drv_xaudio2.o:   ..\drivers\drv_xaudio2.c \
+	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
+	$(COMPILE) /Fo$@ ..\drivers\drv_xaudio2.c
 load_669.o:     ..\loaders\load_669.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\loaders\load_669.c
