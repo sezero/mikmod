@@ -1,10 +1,11 @@
 EXTRA_DIST = drv_AF.c     \
-             drv_aix.c    \
              drv_aiff.c   \
+             drv_aix.c    \
              drv_alsa.c   \
              drv_dart.c   \
              drv_ds.c     \
              drv_esd.c    \
+             drv_gp32.c   \
              drv_hp.c     \
              drv_mac.c    \
              drv_nas.c    \
@@ -16,11 +17,12 @@ EXTRA_DIST = drv_AF.c     \
              drv_raw.c    \
              drv_sam9407.c\
              drv_sb.c     \
+             drv_sdl.c    \
              drv_sgi.c    \
              drv_stdout.c \
              drv_sun.c    \
              drv_ultra.c  \
              drv_wav.c    \
+             drv_win.c    \
              drv_wss.c    \
-             drv_win.c    
-	
+             drv_xaudio2.c
