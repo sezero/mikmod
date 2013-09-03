@@ -1489,8 +1489,8 @@
 		F5F9982201D1638A01046A14 = {
 			fileEncoding = 12;
 			isa = PBXFileReference;
-			name = drv_mac.c;
-			path = ../drivers/drv_mac.c;
+			name = drv_openal.c;
+			path = ../drivers/drv_openal.c;
 			refType = 2;
 		};
 	};

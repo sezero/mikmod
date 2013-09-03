@@ -39,6 +39,8 @@
 /* #undef DRV_ESD */
 /* Define if the HP-UX audio driver is compiled */
 /* #undef DRV_HP */
+/* Define if the OpenAL driver is compiled */
+/* #undef DRV_OPENAL */
 /* Define if the Open Sound System driver is compiled */
 /* #undef DRV_OSS */
 /* Define if the Linux SAM9407 driver is compiled */
@@ -158,5 +160,5 @@
 #define PACKAGE "libmikmod"
 
 /* Version number of package */
-#define VERSION "3.2.0"
+#define VERSION "3.3.2"
 

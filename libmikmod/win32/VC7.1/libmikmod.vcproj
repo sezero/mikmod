@@ -123,6 +123,9 @@
 				RelativePath="..\..\drivers\drv_ds.c">
 			</File>
 			<File
+				RelativePath="..\..\drivers\drv_openal.c">
+			</File>
+			<File
 				RelativePath="..\..\drivers\drv_nos.c">
 			</File>
 			<File

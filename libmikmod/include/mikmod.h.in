@@ -222,6 +222,21 @@ enum {
 	MMERR_DOSWSS_STARTDMA,
 	MMERR_DOSSB_STARTDMA,
 
+	MMERR_OPENAL_CREATECTX,
+	MMERR_OPENAL_CTXCURRENT,
+	MMERR_OPENAL_GENBUFFERS,
+	MMERR_OPENAL_GENSOURCES,
+	MMERR_OPENAL_DELETEBUFFERS,
+	MMERR_OPENAL_DELETESOURCES,
+	MMERR_OPENAL_QUEUEBUFFERS,
+	MMERR_OPENAL_UNQUEUEBUFFERS,
+	MMERR_OPENAL_BUFFERDATA,
+	MMERR_OPENAL_SOURCE,
+	MMERR_OPENAL_GETSOURCE,
+	MMERR_OPENAL_SOURCEPLAY,
+	MMERR_OPENAL_SOURCEPAUSE,
+	MMERR_OPENAL_SOURCESTOP,
+
 	MMERR_MAX
 };
 
@@ -737,6 +752,7 @@ MIKMODAPI extern struct MDRIVER drv_esd;    /* Enlightened sound daemon (EsounD)
 MIKMODAPI extern struct MDRIVER drv_hp;     /* HP-UX audio device */
 MIKMODAPI extern struct MDRIVER drv_nas;    /* Network Audio System (NAS) */
 MIKMODAPI extern struct MDRIVER drv_oss;    /* OpenSound System (Linux,FreeBSD...) */
+MIKMODAPI extern struct MDRIVER drv_openal; /* OpenAL driver */
 MIKMODAPI extern struct MDRIVER drv_sdl;    /* SDL audio driver */
 MIKMODAPI extern struct MDRIVER drv_sgi;    /* SGI audio library */
 MIKMODAPI extern struct MDRIVER drv_sun;    /* Sun/NetBSD/OpenBSD audio device */

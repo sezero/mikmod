@@ -175,6 +175,23 @@ static const char *_mm_errmsg[MMERR_MAX+1] =
 	"WSS_STARTDMA",
 	"SB_STARTDMA",
 
+/* OpenAL driver errors */
+
+	"Could not create context",
+	"Could not make context current",
+	"Could not create buffers",
+	"Could not create sources",
+	"Could not delete buffers",
+	"Could not delete sources",
+	"Could not queue buffers",
+	"Could not unqueue buffers",
+	"Could not copy buffer data",
+	"Could not change source parameters",
+	"Could not get source",
+	"Could not play source",
+	"Could not pause source",
+	"Could not stop source",
+
 /* Invalid error */
 
 	"Invalid error code"

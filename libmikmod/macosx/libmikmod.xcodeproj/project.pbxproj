@@ -11,7 +11,7 @@
 		A48F9F1605EB7C0F0073A1B4 /* drv_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = A48F9F1505EB7C0F0073A1B4 /* drv_aiff.c */; };
 		A48F9F1705EB7C0F0073A1B4 /* drv_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = A48F9F1505EB7C0F0073A1B4 /* drv_aiff.c */; };
 		A48FA0FF05EB7CBE0073A1B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A48FA0FE05EB7CBE0073A1B4 /* InfoPlist.strings */; };
-		A48FA29305EB7D750073A1B4 /* drv_mac.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F9982201D1638A01046A14 /* drv_mac.c */; };
+		A48FA29305EB7D750073A1B4 /* drv_openal.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F9982201D1638A01046A14 /* drv_openal.c */; };
 		A48FA2DC05EB80940073A1B4 /* mikmod.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE7C017CB3EC0103A810 /* mikmod.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A491831505D9581C00665C37 /* drv_pipe.c in Sources */ = {isa = PBXBuildFile; fileRef = A491831405D9581C00665C37 /* drv_pipe.c */; };
 		A491831605D9581C00665C37 /* drv_pipe.c in Sources */ = {isa = PBXBuildFile; fileRef = A491831405D9581C00665C37 /* drv_pipe.c */; };
@@ -177,7 +177,7 @@
 		F5F5DE7E017CB4010103A810 /* config.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		F5F5DE80017CB4370103A810 /* mikmod_build.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = mikmod_build.h; sourceTree = SOURCE_ROOT; };
 		F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
-		F5F9982201D1638A01046A14 /* drv_mac.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = drv_mac.c; path = ../drivers/drv_mac.c; sourceTree = SOURCE_ROOT; };
+		F5F9982201D1638A01046A14 /* drv_openal.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = drv_openal.c; path = ../drivers/drv_openal.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,7 +254,7 @@
 		F5F5DE21017CB2BC0103A810 /* drivers */ = {
 			isa = PBXGroup;
 			children = (
-				F5F9982201D1638A01046A14 /* drv_mac.c */,
+				F5F9982201D1638A01046A14 /* drv_openal.c */,
 				F5F5DE29017CB3100103A810 /* drv_nos.c */,
 				F5F5DE27017CB2EF0103A810 /* drv_osx.c */,
 				F5F5DE2B017CB32A0103A810 /* drv_raw.c */,
@@ -505,7 +505,7 @@
 				A4E3AF5405D43FCC000F1B47 /* virtch.c in Sources */,
 				A4E3AF5505D43FCC000F1B47 /* virtch_common.c in Sources */,
 				A4E3AF5605D43FCC000F1B47 /* virtch2.c in Sources */,
-				A48FA29305EB7D750073A1B4 /* drv_mac.c in Sources */,
+				A48FA29305EB7D750073A1B4 /* drv_openal.c in Sources */,
 				F4E367FA07EDC8E8000D2C4B /* load_gt2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

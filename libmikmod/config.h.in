@@ -26,6 +26,8 @@
 #undef DRV_HP
 /* Define if the Network Audio System driver is compiled */
 #undef DRV_NAS
+/* Define if the OpenAL driver is compiled */
+#undef DRV_OPENAL
 /* Define if the Open Sound System driver is compiled */
 #undef DRV_OSS
 /* Define if the Linux SAM9407 driver is compiled */
@@ -78,6 +80,15 @@
 
 /* Define to 1 if you have the <alsa/asoundlib.h> header file. */
 #undef HAVE_ALSA_ASOUNDLIB_H
+
+/* Define to 1 if you have the <AL/alc.h> header file. */
+#undef HAVE_AL_ALC_H
+
+/* Define to 1 if you have the <AL/alext.h> header file. */
+#undef HAVE_AL_ALEXT_H
+
+/* Define to 1 if you have the <AL/al.h> header file. */
+#undef HAVE_AL_AL_H
 
 /* Define to 1 if you have the <audio/audiolib.h> header file. */
 #undef HAVE_AUDIO_AUDIOLIB_H

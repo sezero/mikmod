@@ -1,6 +1,9 @@
 # Makefile template for use under win32
 # for the compiler system lcc-win32.
 #
+# For OpenAL support you need OpenAL 1.1 SDK, then add /DDRV_OPENAL
+# among your CFLAGS and add OpenAL32.lib among your link libraries.
+# (See drv_openal.c for notes about OpenAL header location issues.)
 
 # Your compiler utilities here
 CC=lcc.exe
@@ -27,7 +30,7 @@ LIBSTATIC=mikmod_static.lib
 DRIVER_OBJ=drv_ds.o drv_xaudio2.o drv_win.o
 
 OBJ=$(DRIVER_OBJ) \
-    drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
+    drv_openal.o drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
@@ -63,6 +66,9 @@ drv_aiff.o:       ..\drivers\drv_aiff.c \
 drv_nos.o:      ..\drivers\drv_nos.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\drivers\drv_nos.c
+drv_openal.o:   ..\drivers\drv_openal.c \
+	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
+	$(COMPILE) /Fo$@ ..\drivers\drv_openal.c
 drv_raw.o:      ..\drivers\drv_raw.c \
 	                ..\win32\mikmod_build.h ..\include\mikmod_internals.h
 	$(COMPILE) /Fo$@ ..\drivers\drv_raw.c

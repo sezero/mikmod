@@ -25,6 +25,8 @@
 #undef DRV_HP
 /* Define if the Network Audio System driver is compiled */
 #undef DRV_NAS
+/* Define if the OpenAL driver is compiled */
+#undef DRV_OPENAL
 /* Define if the Open Sound System driver is compiled */
 #undef DRV_OSS
 /* Define if the Linux SAM9407 driver is compiled */

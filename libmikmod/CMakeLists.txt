@@ -141,6 +141,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 SET (ENABLE_AF 1 CACHE BOOL "Include the Audio File driver")
 SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
+SET (ENABLE_OPENAL 1 CACHE BOOL "Include the OpenAL driver")
 SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
 SET (ENABLE_DL 1 CACHE BOOL "Load ALSA and Ultra Drivers at Runtime")
 SET (ENABLE_THREADS 1 CACHE BOOL "build a thread-safe version of libmikmod")
@@ -255,6 +256,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_mac.c
     drivers/drv_nas.c
     drivers/drv_nos.c
+    drivers/drv_openal.c
     drivers/drv_oss.c
     drivers/drv_osx.c
     drivers/drv_pipe.c
@@ -384,6 +386,25 @@ IF (SDL_FOUND)
     SET (DRV_SDL 1)
 ENDIF (SDL_FOUND)
 
+include(FindOpenAL)
+
+IF (OPENAL_FOUND)
+    SET (DRV_OPENAL 1)
+    CHECK_MULTI_INCLUDE_FILES("AL/al.h" "AL/alc.h" "AL/alext.h")
+    IF (HAVE_AL_AL_H)
+        IF (NOT HAVE_AL_ALEXT_H)
+            # alext.h depends on al.h and alc.h: cmake does
+            # not handle it properly and fail "finding" it.
+            # search it in the same path where al.h is found:
+            FIND_PATH(ALEXT_INCLUDE_DIR alext.h PATHS ${OPENAL_INCLUDE_DIR})
+            IF (ALEXT_INCLUDE_DIR)
+                MESSAGE(STATUS "Looking for alext.h - found")
+                SET(HAVE_AL_ALEXT_H "1" CACHE INTERNAL "Have include alext.h")
+            ENDIF (ALEXT_INCLUDE_DIR)
+        ENDIF (NOT HAVE_AL_ALEXT_H)
+    ENDIF (HAVE_AL_AL_H)
+ENDIF (OPENAL_FOUND)
+
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
@@ -401,7 +422,7 @@ CONFIGURE_FILE(
     @ONLY
     )
 
-LIST (APPEND EXTRA_LIBS ${ALSA_LIBRARIES} ${SDL_LIBRARY})
+LIST (APPEND EXTRA_LIBS ${ALSA_LIBRARIES} ${OPENAL_LIBRARY} ${SDL_LIBRARY})
 
 IF (UNIX)
     SET(MATH_LIB "m")
@@ -414,7 +435,7 @@ LIST (APPEND EXTRA_LIBS ${MATH_LIB})
 FOREACH (TGT ${FREECELL_SOLVER_LIBS})
     TARGET_LINK_LIBRARIES ("${TGT}"
         ${EXTRA_LIBS})
-    INCLUDE_DIRECTORIES(AFTER ${ALSA_INCLUDE_DIRS} ${SDL_INCLUDE_DIR})
+    INCLUDE_DIRECTORIES(AFTER ${ALSA_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${SDL_INCLUDE_DIR})
 ENDFOREACH (TGT)
 
 INSTALL(

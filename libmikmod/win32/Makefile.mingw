@@ -33,6 +33,11 @@ CPPFLAGS+=-DDRV_WIN
 LDLIBS+=-ldsound
 CPPFLAGS+=-DDRV_DS
 
+# support for output through OpenAL (see drv_openal.c
+# for notes about OpenAL header location issues.)
+#LDLIBS+=-lOpenAL32
+#CPPFLAGS+=-DDRV_OPENAL
+
 # support for XAudio2 output (need dxsdk / xaudio2.h)
 #LDLIBS+=-lole32
 #CPPFLAGS+=-DDRV_XAUDIO2
@@ -68,7 +73,7 @@ LIBS=$(LIBNAME) $(DLLNAME)
 DRIVER_OBJ=drv_ds.o drv_xaudio2.o drv_win.o
 
 OBJ=$(DRIVER_OBJ) \
-    drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
+    drv_openal.o drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
@@ -115,6 +120,9 @@ drv_ds.o:       ../drivers/drv_ds.c \
 drv_nos.o:      ../drivers/drv_nos.c \
 	                ../win32/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../drivers/drv_nos.c -o drv_nos.o
+drv_openal.o:   ../drivers/drv_openal.c \
+	                ../win32/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_openal.c -o drv_openal.o
 drv_raw.o:      ../drivers/drv_raw.c \
 	                ../win32/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../drivers/drv_raw.c -o drv_raw.o

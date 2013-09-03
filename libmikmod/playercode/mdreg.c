@@ -84,6 +84,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_WIN
 	_mm_registerdriver(&drv_win);
 #endif
+#ifdef DRV_OPENAL
+	_mm_registerdriver(&drv_openal);
+#endif
 #ifdef DRV_SDL
 	_mm_registerdriver(&drv_sdl);
 #endif

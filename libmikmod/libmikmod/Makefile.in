@@ -37,7 +37,7 @@ LIB = libmikmod.la
 OBJ = $(LIBOBJS) $(DLOBJS) \
       drv_AF.lo drv_aiff.lo drv_aix.lo drv_alsa.lo drv_esd.lo drv_hp.lo drv_nos.lo \
       drv_oss.lo drv_osx.lo drv_mac.lo drv_nas.lo drv_pipe.lo drv_raw.lo drv_sam9407.lo \
-      drv_sdl.lo drv_sgi.lo drv_stdout.lo drv_sun.lo drv_ultra.lo drv_wav.lo \
+      drv_openal.lo drv_sdl.lo drv_sgi.lo drv_stdout.lo drv_sun.lo drv_ultra.lo drv_wav.lo \
       load_669.lo load_amf.lo load_asy.lo load_dsm.lo load_far.lo \
       load_gdm.lo load_gt2.lo load_it.lo load_imf.lo load_m15.lo load_med.lo \
       load_mod.lo load_mtm.lo load_okt.lo \
@@ -110,6 +110,9 @@ drv_nos.lo:	$(top_srcdir)/drivers/drv_nos.c \
 drv_pipe.lo:	$(top_srcdir)/drivers/drv_pipe.c \
 			$(top_builddir)/include/mikmod.h $(top_srcdir)/include/mikmod_internals.h
 	$(COMPILE) -c $(top_srcdir)/drivers/drv_pipe.c
+drv_openal.lo:	$(top_srcdir)/drivers/drv_openal.c \
+			$(top_builddir)/include/mikmod.h $(top_srcdir)/include/mikmod_internals.h
+	$(COMPILE) -c $(top_srcdir)/drivers/drv_openal.c
 drv_oss.lo:	$(top_srcdir)/drivers/drv_oss.c \
 			$(top_builddir)/include/mikmod.h $(top_srcdir)/include/mikmod_internals.h
 	$(COMPILE) -c $(top_srcdir)/drivers/drv_oss.c

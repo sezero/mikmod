@@ -10,6 +10,7 @@ EXTRA_DIST = drv_AF.c     \
              drv_mac.c    \
              drv_nas.c    \
              drv_nos.c    \
+             drv_openal.c \
              drv_os2.c    \
              drv_oss.c    \
              drv_osx.c    \

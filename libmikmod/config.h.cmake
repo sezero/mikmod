@@ -23,6 +23,8 @@
 #cmakedefine DRV_HP 1
 /* Define if the Network Audio System driver is compiled */
 #cmakedefine DRV_NAS 1
+/* Define if the OpenAL driver is compiled */
+#cmakedefine DRV_OPENAL 1
 /* Define if the Open Sound System driver is compiled */
 #cmakedefine DRV_OSS 1
 /* Define if the Linux SAM9407 driver is compiled */
@@ -72,6 +74,15 @@
 
 /* Define to 1 if you have the <AF/AFlib.h> header file. */
 #cmakedefine HAVE_AF_AFLIB_H 1
+
+/* Define to 1 if you have the <AL/al.h> header file. */
+#cmakedefine HAVE_AL_AL_H 1
+
+/* Define to 1 if you have the <AL/alc.h> header file. */
+#cmakedefine HAVE_AL_ALC_H 1
+
+/* Define to 1 if you have the <AL/alext.h> header file. */
+#cmakedefine HAVE_AL_ALEXT_H 1
 
 /* Define to 1 if you have the <alsa/asoundlib.h> header file. */
 #cmakedefine HAVE_ALSA_ASOUNDLIB_H 1

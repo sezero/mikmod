@@ -37,6 +37,7 @@ libmikmod_driver_aix=no
 libmikmod_driver_alsa=yes
 libmikmod_driver_nas=no
 libmikmod_driver_hp=no
+libmikmod_driver_openal=no
 libmikmod_driver_oss=yes
 libmikmod_driver_sam9407=yes
 libmikmod_driver_sgi=no
@@ -77,13 +78,22 @@ else
   libmikmod_driver_alsa=no
 fi])
 
-AC_ARG_ENABLE(nas,         
+AC_ARG_ENABLE(nas,
 [  --enable-nas            include the Network Audio System driver [default=no]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_nas=yes
 else
   libmikmod_driver_nas=no
+fi])
+
+AC_ARG_ENABLE(openal,
+[  --enable-openal         include OpenAL driver [default=no]],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_openal=yes
+else
+  libmikmod_driver_openal=no
 fi])
 
 AC_ARG_ENABLE(oss,
@@ -324,10 +334,10 @@ then
 	AC_CHECK_HEADERS(audio/audiolib.h)
 	if test $ac_cv_header_audio_audiolib_h = yes
 	then
-		AC_CHECK_LIB(audio,AuCreateFlow,libmikmod_driver_nas=yes)		
+		AC_CHECK_LIB(audio,AuCreateFlow,libmikmod_driver_nas=yes)
 	fi
 	if test $libmikmod_driver_nas = no
-	then		
+	then
 		if test -r /usr/X11R6/include/audio/audiolib.h; then
 			libmikmod_driver_nas=yes
 			CFLAGS="$CFLAGS -I/usr/X11R6/include"
@@ -342,9 +352,31 @@ fi
 #	AC_CHECK_HEADERS(audio/audiolib.h)
 #	if test $ac_cv_header_audio_audiolib_h = yes
 #	then
-#		AC_CHECK_LIB(audio,AuCreateFlow,libmikmod_driver_nas=yes)		
+#		AC_CHECK_LIB(audio,AuCreateFlow,libmikmod_driver_nas=yes)
 #	fi
 #fi
+
+# OpenAL - all supported platforms
+# -----------------
+if test $libmikmod_driver_openal = yes
+then
+		libmikmod_driver_openal=no
+		AC_CHECK_HEADERS(AL/al.h AL/alc.h AL/alext.h,,,
+				 [[#if HAVE_AL_AL_H
+# include <AL/al.h>
+#endif
+#if HAVE_AL_ALC_H
+# include <AL/alc.h>
+#endif]
+				 ])
+		if test $ac_cv_header_AL_al_h = yes && \
+		   test $ac_cv_header_AL_alc_h = yes
+		then
+			AC_CHECK_LIB(openal,alEnable,libmikmod_driver_openal=yes)
+		fi
+else
+		libmikmod_driver_openal=no
+fi
 
 # sgi audio - IRIX only
 # ---------------------
@@ -511,17 +543,17 @@ fi
 if test $libmikmod_driver_alsa = yes
 then
 	libmikmod_driverlist="alsa $libmikmod_driverlist"
- 	AC_DEFINE(DRV_ALSA)
+	AC_DEFINE(DRV_ALSA)
 	if test $libmikmod_dynload = no
 	then
- 		LIBRARY_LIB="-lasound $LIBRARY_LIB"
+		LIBRARY_LIB="-lasound $LIBRARY_LIB"
 	fi
 fi
 
 if test $libmikmod_driver_nas = yes
 then
 	libmikmod_driverlist="nas $libmikmod_driverlist"
-	AC_DEFINE(DRV_NAS)	
+	AC_DEFINE(DRV_NAS)
 	LIBRARY_LIB="-laudio $LIBRARY_LIB"
 fi
 
@@ -529,6 +561,13 @@ if test $libmikmod_driver_hp = yes
 then
 	libmikmod_driverlist="hp $libmikmod_driverlist"
 	AC_DEFINE(DRV_HP)
+fi
+
+if test $libmikmod_driver_openal = yes
+then
+	libmikmod_driverlist="openal $libmikmod_driverlist"
+	AC_DEFINE(DRV_OPENAL)
+	LIBRARY_LIB="-lopenal $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_oss = yes

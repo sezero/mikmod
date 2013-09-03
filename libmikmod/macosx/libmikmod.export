@@ -113,6 +113,7 @@ _drv_raw
 _drv_stdout
 _drv_wav
 _drv_aiff
+_drv_openal
 _drv_osx
 _VC_Init
 _VC_Exit
