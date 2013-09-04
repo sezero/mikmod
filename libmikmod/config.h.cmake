@@ -44,11 +44,11 @@
 #cmakedefine DRV_MAC 1
 
 /* Define if you want a debug version of the library */
-#undef MIKMOD_DEBUG
+#cmakedefine MIKMOD_DEBUG 1
 /* Define if you want runtime dynamic linking of ALSA and EsounD drivers */
-#undef MIKMOD_DYNAMIC
+#cmakedefine MIKMOD_DYNAMIC 1
 /* Define if your system provides POSIX.4 threads */
-#undef HAVE_PTHREAD
+#cmakedefine HAVE_PTHREAD 1
 
 /* ========== Build environment information */
 
