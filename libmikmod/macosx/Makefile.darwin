@@ -82,13 +82,19 @@ OBJ=$(DRIVER_OBJ) \
 #   mdulaw.o
 
 help:
-	@echo "* $(MAKE) dylib : build libmikmod.dylib shared lib"
-	@echo "* $(MAKE) static: build libmikmod.a static library"
-	@echo "*"
-	@echo "* $(MAKE) dylib-sse2 : build libmikmod.dylib with sse2 support (x86)"
-	@echo "* $(MAKE) dylib-altivec : build libmikmod.dylib with altivec support (ppc)"
-	@echo "* $(MAKE) static-sse2 : build libmikmod.a with sse2 support (x86)"
-	@echo "* $(MAKE) static-altivec : build libmikmod.a with altivec support (ppc)"
+	@echo ""
+	@echo "Valid targets:"
+	@echo ""
+	@echo "  $(MAKE) dylib         : build libmikmod.dylib shared lib"
+	@echo "  $(MAKE) static        : build libmikmod.a static library"
+	@echo ""
+	@echo "Same as above, but with SIMD (AltiVec/SSE2) mixer optimizations:"
+	@echo ""
+	@echo "  $(MAKE) dylib-altivec : build libmikmod.dylib with altivec support (ppc)"
+	@echo "  $(MAKE) dylib-sse2    : build libmikmod.dylib with sse2 support (x86/x86_64)"
+	@echo "  $(MAKE) static-altivec: build libmikmod.a with altivec support (ppc)"
+	@echo "  $(MAKE) static-sse2   : build libmikmod.a with sse2 support (x86/x86_64)"
+	@echo ""
 
 clean:
 	rm -f $(LIBSHARED) $(LIBSTATIC) *.o

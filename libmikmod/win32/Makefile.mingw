@@ -83,13 +83,17 @@ OBJ=$(DRIVER_OBJ) \
 #   mdulaw.o
 
 help:
-	@echo "* $(MAKE) dll : build dll and import lib for win32 (x86 or x64)"
-	@echo "* $(MAKE) static : build static lib for win32 (x86 or x64)"
-	@echo "*"
-	@echo "* Same above, but with SIMD-mixer (SSE2) optimizations:"
-	@echo "*"
-	@echo "* $(MAKE) dll-sse2 : dll and import lib for win32 with sse2 support"
-	@echo "* $(MAKE) static-sse2 : static lib for win32 with sse2 support"
+	@echo ""
+	@echo "Valid targets:"
+	@echo ""
+	@echo "  $(MAKE) dll        : build dll and import library"
+	@echo "  $(MAKE) static     : build static library"
+	@echo ""
+	@echo "Same as above, but with SIMD (SSE2) mixer optimizations:"
+	@echo ""
+	@echo "  $(MAKE) dll-sse2   : dll and import lib with sse2 support"
+	@echo "  $(MAKE) static-sse2: static library with sse2 support"
+	@echo ""
 
 clean:
 	$(RM) $(DLLNAME) $(LIBNAME) $(LIBSTATIC) $(DEFNAME) *.o
