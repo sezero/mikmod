@@ -171,6 +171,14 @@ static void OPENAL_CommandLine(const CHAR *cmdline)
 
 static BOOL OPENAL_IsPresent(void)
 {
+	if(!device)
+	{
+		device = alcOpenDevice(NULL);
+		if (!device)
+			return FALSE;
+		alcCloseDevice(device);
+		device = NULL;
+	}
 	return TRUE;
 }
 
