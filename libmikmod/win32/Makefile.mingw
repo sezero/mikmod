@@ -19,7 +19,7 @@ RM=rm -f
 CPPFLAGS=
 LDLIBS=
 
-# SSE2 support (for x86 builds - comment out if you don't want it.)
+# SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)
 SSE2FLAGS=-msse2
 
 # support for output to stdout, raw file and wav file
@@ -83,22 +83,30 @@ OBJ=$(DRIVER_OBJ) \
 #   mdulaw.o
 
 help:
-	@echo "* $(MAKE) w32-dll : build dll and import lib for win32 (x86)"
-	@echo "* $(MAKE) w32-static : build static lib for win32 (x86)"
-	@echo "* $(MAKE) w64-dll : build dll and import lib for win64 (x64)"
-	@echo "* $(MAKE) w64-static : build static lib for win64 (x64)"
+	@echo "* $(MAKE) dll : build dll and import lib for win32 (x86 or x64)"
+	@echo "* $(MAKE) static : build static lib for win32 (x86 or x64)"
+	@echo "*"
+	@echo "* Same above, but with SIMD-mixer (SSE2) optimizations:"
+	@echo "*"
+	@echo "* $(MAKE) dll-sse2 : dll and import lib for win32 with sse2 support"
+	@echo "* $(MAKE) static-sse2 : static lib for win32 with sse2 support"
 
 clean:
 	$(RM) $(DLLNAME) $(LIBNAME) $(LIBSTATIC) $(DEFNAME) *.o
 
-w32-dll: CFLAGS+=$(SSE2FLAGS)
-w32-dll: $(DLLNAME) $(LIBNAME)
+dll-sse2: CFLAGS+=$(SSE2FLAGS)
+dll-sse2: CPPFLAGS+=-DMIKMOD_SIMD
+dll-sse2: dll
 
-w64-dll: $(DLLNAME) $(LIBNAME)
+static-sse2: CFLAGS+=$(SSE2FLAGS)
+static-sse2: CPPFLAGS+=-DMIKMOD_SIMD
+static-sse2: static
 
-w32-static: CFLAGS+=$(SSE2FLAGS)
-w32-static: $(LIBSTATIC)
-w64-static: $(LIBSTATIC)
+dll: $(DLLNAME) $(LIBNAME)
+dll: $(DLLNAME) $(LIBNAME)
+
+static: $(LIBSTATIC)
+static: $(LIBSTATIC)
 
 $(DLLNAME): CPPFLAGS+=$(CPPFLAGS_DLL)
 $(LIBNAME): $(DLLNAME)

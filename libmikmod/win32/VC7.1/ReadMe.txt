@@ -7,3 +7,5 @@ For OpenAL support you need OpenAL 1.1 SDK, then: add DRV_OPENAL
   your link libraries.  (See drv_openal.c for notes about OpenAL
   header location issues, if necessary. )
 
+For SSE2 support: add MIKMOD_SIMD among your preprocessor definitions.
+

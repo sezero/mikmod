@@ -18,7 +18,7 @@ endif
 CPPFLAGS=
 LDLIBS=
 
-# SSE2 support (for x86 builds)
+# SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)
 SSE2FLAGS=-msse2
 
 # altivec support (for ppc builds)
@@ -33,8 +33,7 @@ VECFLAGS=-faltivec
 LDLIBS+=-Wl,-framework,CoreAudio
 CPPFLAGS+=-DDRV_OSX
 
-# support for output through OpenAL:
-# requires 10.4 or newer
+# support for output through OpenAL (requires 10.4 or newer)
 #LDLIBS+=-Wl,-framework,OpenAL
 #CPPFLAGS+=-DDRV_OPENAL
 
@@ -95,15 +94,19 @@ clean:
 	rm -f $(LIBSHARED) $(LIBSTATIC) *.o
 
 dylib-sse2: CFLAGS+=$(SSE2FLAGS)
+dylib-sse2: CPPFLAGS+=-DMIKMOD_SIMD
 dylib-sse2: dylib
 
 dylib-altivec: CFLAGS+=$(VECFLAGS)
+dylib-altivec: CPPFLAGS+=-DMIKMOD_SIMD
 dylib-altivec: dylib
 
 static-sse2: CFLAGS+=$(SSE2FLAGS)
+static-sse2: CPPFLAGS+=-DMIKMOD_SIMD
 static-sse2: static
 
 static-altivec: CFLAGS+=$(VECFLAGS)
+static-altivec: CPPFLAGS+=-DMIKMOD_SIMD
 static-altivec: static
 
 dylib: $(LIBSHARED)

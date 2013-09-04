@@ -1,20 +1,15 @@
 # Makefile template for use under win32
-#
-# libmikmod subdirectory
-
-# Make utilities that can't be used :
-#   - Borland Make (complains that some command lines are too long)
-
-# Compilers that can't be used :
-#   - Borland C++ 4 (doesn't like DirectX header files)
+# for Microsoft Visual C compiler (cl.exe) and nmake
 
 # For OpenAL support you need OpenAL 1.1 SDK, then add /DDRV_OPENAL
 # among your CFLAGS and add OpenAL32.lib among your link libraries.
 # (See drv_openal.c for notes about OpenAL header location issues.)
-
+#
 # For XAudio2 support you need DirectX SDK / xaudio2.h, then:
 # add /DDRV_XAUDIO2 among your CFLAGS, and add ole32.lib among
 # your link libraries.
+#
+# For SSE2 support: add /DMIKMOD_SIMD among your CFLAGS
 
 # Your compiler here
 CC=cl

@@ -50,6 +50,8 @@
 #undef MIKMOD_DEBUG
 /* Define if you want runtime dynamic linking of ALSA and EsounD drivers */
 #undef MIKMOD_DYNAMIC
+/* Define if you want to use SIMD (AltiVec or SSE2) optimizations */
+#undef MIKMOD_SIMD
 /* Define if your system provides POSIX.4 threads */
 #undef HAVE_PTHREAD
 

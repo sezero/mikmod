@@ -705,35 +705,24 @@ extern MikMod_callback_t vc_callback;
 /*========== SIMD mixing routines */
 #undef HAVE_ALTIVEC
 #undef HAVE_SSE2
+#if defined(MIKMOD_SIMD)
 
-#if defined(__APPLE__) && (defined(__ppc__) || defined(__ppc64__))
-
-#if defined __VEC__ && !(defined(__GNUC__) && (__GNUC__ < 3))
+#if (defined(__ppc__) || defined(__ppc64__)) && defined(__VEC__) && !(defined(__GNUC__) && (__GNUC__ < 3))
 #define HAVE_ALTIVEC
-#endif /* __VEC__ */
 
-#elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
-
-#if defined(__SSE2__)
-#define HAVE_SSE2
-#endif /* __SSE2__ */
-
-#elif defined(_WIN64) /* both _MSC_VER and __MINGW32__ */
-
+#elif defined(__GNUC__) && defined(__SSE2__) /* x86 / x86_64 */
 #define HAVE_SSE2
 
-#elif (defined(_MSC_VER) && (_MSC_VER >= 1300)) || (defined(__MINGW32__) && defined(__SSE2__))
+#elif defined(_MSC_VER) && (_MSC_VER >= 1300) && (defined(_M_IX86) || defined(_M_AMD64))
 /* FIXME: emmintrin.h requires VC6 processor pack or VC2003+ */
-/* FIXME: x86 MinGW needs proper -march=xx or -msse2 to define __SSE2__ */
 #define HAVE_SSE2
 /* Fixes couples warnings */
-#ifdef _MSC_VER
 #pragma warning(disable:4761)
 #pragma warning(disable:4391)
 #pragma warning(disable:4244)
-#endif
-#endif
-/* TODO: Test for GCC Linux */
+
+#endif /* AltiVec/SSE2 */
+#endif /* MIKMOD_SIMD */
 
 /*========== SIMD mixing helper functions =============*/
 

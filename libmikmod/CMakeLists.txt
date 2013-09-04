@@ -144,6 +144,7 @@ SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
 SET (ENABLE_OPENAL 1 CACHE BOOL "Include the OpenAL driver")
 SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
 SET (ENABLE_DL 0 CACHE BOOL "Load ALSA and Ultra Drivers at Runtime")
+SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations")
 SET (ENABLE_THREADS 1 CACHE BOOL "build a thread-safe version of libmikmod")
 SET (BUILD_STATIC_LIBRARY "1" CACHE BOOL "Whether to build the static library (which takes more time)" )
 
@@ -180,6 +181,23 @@ SET(COMPILER_FLAGS_TO_CHECK
 IF (CPU_ARCH)
     LIST(APPEND COMPILER_FLAGS_TO_CHECK "-march=${CPU_ARCH}")
 ENDIF(CPU_ARCH)
+
+IF (ENABLE_SIMD)
+    IF(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
+        LIST(APPEND COMPILER_FLAGS_TO_CHECK "-msse2")
+
+    # -faltivec is a useful Apple extension. it is not the same as -maltivec.
+    ELSEIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)" AND (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
+        LIST(APPEND COMPILER_FLAGS_TO_CHECK "-faltivec")
+
+    ELSEIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
+        LIST(APPEND COMPILER_FLAGS_TO_CHECK "-faltivec")
+
+    ELSEIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
+        LIST(APPEND COMPILER_FLAGS_TO_CHECK "-maltivec")
+
+    ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
+ENDIF(ENABLE_SIMD)
 
 SET (IS_DEBUG "")
 IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
@@ -342,6 +360,11 @@ IF (UNIX)
     SET(DRV_PIPE 1)
 ENDIF (UNIX)
 SET(DRV_AIFF 1)
+
+IF (ENABLE_SIMD)
+    SET(MIKMOD_SIMD 1)
+ENDIF (ENABLE_SIMD)
+
 SET(EXTRA_LIBS )
 
 INCLUDE (FindThreads)

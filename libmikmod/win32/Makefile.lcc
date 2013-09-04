@@ -1,6 +1,9 @@
 # Makefile template for use under win32
 # for the compiler system lcc-win32.
 #
+# For XAudio2 support you need DirectX SDK / xaudio2.h, then:
+# add /DDRV_XAUDIO2 among your CFLAGS. (not tested.)
+#
 # For OpenAL support you need OpenAL 1.1 SDK, then add /DDRV_OPENAL
 # among your CFLAGS and add OpenAL32.lib among your link libraries.
 # (See drv_openal.c for notes about OpenAL header location issues.)
