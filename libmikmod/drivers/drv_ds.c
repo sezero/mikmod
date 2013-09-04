@@ -72,7 +72,7 @@ static LPDIRECTSOUND pSoundCard = NULL;
 static LPDIRECTSOUNDBUFFER pPrimarySoundBuffer = NULL, pSoundBuffer = NULL;
 static LPDIRECTSOUNDNOTIFY pSoundBufferNotify = NULL;
 
-static HANDLE notifyUpdateHandle = 0, updateBufferHandle = 0;
+static HANDLE notifyUpdateHandle = NULL, updateBufferHandle = NULL;
 static BOOL threadInUse = FALSE;
 static int fragsize=1<<FRAGSIZE;
 static DWORD controlflags = DSBCAPS_CTRLALL & ~DSBCAPS_GLOBALFOCUS;
@@ -80,10 +80,8 @@ static DWORD controlflags = DSBCAPS_CTRLALL & ~DSBCAPS_GLOBALFOCUS;
 #define SAFE_RELEASE(p) \
 	do { \
 		if (p) { \
-			if ((p)->lpVtbl) { \
-				(p)->lpVtbl->Release(p); \
-				(p) = NULL;	\
-			} \
+			(p)->lpVtbl->Release((p)); \
+			(p) = NULL; \
 		} \
 	} while (0)
 
@@ -275,11 +273,11 @@ static void DS_Exit(void)
 		}
 
 		CloseHandle(updateBufferHandle),
-		updateBufferHandle = 0;
+		updateBufferHandle = NULL;
 	}
 	if (notifyUpdateHandle) {
 		CloseHandle(notifyUpdateHandle),
-		notifyUpdateHandle = 0;
+		notifyUpdateHandle = NULL;
 	}
 
 	SAFE_RELEASE(pSoundBufferNotify);
