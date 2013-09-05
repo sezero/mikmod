@@ -21,7 +21,6 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 #
-#
 # (This copyright notice applies only to this file)
 
 SET (private_mod_path "${CMAKE_SOURCE_DIR}/cmake")
@@ -116,38 +115,39 @@ ELSE(WIN32 AND NOT UNIX)
     # SET(CPACK_SOURCE_STRIP_FILES "")
 ENDIF(WIN32 AND NOT UNIX)
 
-### This is to set the RPATH correctly, so when installed under a prefix
-### the executables will find the libraries.
-###
-### See:
-###
-### http://www.cmake.org/Wiki/CMake_RPATH_handling
-###
-### (Taken from that wiki page)
-
-# use, i.e. don't skip the full RPATH for the build tree
-SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-
-# when building, don't use the install RPATH already
-# (but later on when installing)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-# the RPATH to be used when installing
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 SET (ENABLE_AF 1 CACHE BOOL "Include the Audio File driver")
 SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
-SET (ENABLE_OPENAL 1 CACHE BOOL "Include the OpenAL driver")
+SET (ENABLE_OPENAL 0 CACHE BOOL "Include the OpenAL driver")
 SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
 SET (ENABLE_SDL 1 CACHE BOOL "Include the SDL driver")
 SET (ENABLE_DL 0 CACHE BOOL "Load ALSA and Ultra Drivers at Runtime")
 SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations")
 SET (ENABLE_THREADS 1 CACHE BOOL "build a thread-safe version of libmikmod")
-SET (BUILD_STATIC_LIBRARY "1" CACHE BOOL "Whether to build the static library (which takes more time)" )
+SET (ENABLE_RPATH "1" CACHE BOOL "Whether to use an rpath when linking" )
+SET (ENABLE_STATIC "1" CACHE BOOL "Whether to build the static library (which takes more time)" )
+
+### This is to set the RPATH correctly, so when installed
+### under a prefix the executables will find the libraries.
+### See:  http://www.cmake.org/Wiki/CMake_RPATH_handling
+### (Taken from that wiki page)
+
+IF (ENABLE_RPATH)
+    # use, i.e. don't skip the full RPATH for the build tree
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+    # when building, don't use the install RPATH already
+    # (but later on when installing)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+    # the RPATH to be used when installing
+    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+
+    # add the automatically determined parts of the RPATH
+    # which point to directories outside the build tree to the install RPATH
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+#ELSE(ENABLE_RPATH)
+#   SET (CMAKE_SKIP_RPATH YES)
+ENDIF(ENABLE_RPATH)
 
 INCLUDE(CPack)
 
