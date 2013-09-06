@@ -14,7 +14,7 @@
 /* Define if you want a .aiff file writer driver */
 #undef DRV_AIFF
 
-/* Define if the AudioFile driver is compiled */
+/* Define if the AudioFile audio server driver is compiled */
 #undef DRV_AF
 /* Define if the AIX audio driver is compiled */
 #undef DRV_AIX

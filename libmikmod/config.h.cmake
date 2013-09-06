@@ -11,7 +11,7 @@
 /* Define if you want a .aiff file writer driver */
 #cmakedefine DRV_AIFF 1
 
-/* Define if the AudioFile driver is compiled */
+/* Define if the AudioFile audio server driver is compiled */
 #cmakedefine DRV_AF 1
 /* Define if the AIX audio driver is compiled */
 #cmakedefine DRV_AIX 1

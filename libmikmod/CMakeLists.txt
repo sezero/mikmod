@@ -115,7 +115,7 @@ ELSE(WIN32 AND NOT UNIX)
     # SET(CPACK_SOURCE_STRIP_FILES "")
 ENDIF(WIN32 AND NOT UNIX)
 
-SET (ENABLE_AF 1 CACHE BOOL "Include the Audio File driver")
+SET (ENABLE_AF 0 CACHE BOOL "Include the AF (AudioFile audio server) driver")
 SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
 SET (ENABLE_OPENAL 0 CACHE BOOL "Include the OpenAL driver")
 SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
@@ -441,18 +441,14 @@ IF (ENABLE_OPENAL)
 include(FindOpenAL)
 IF (OPENAL_FOUND)
     SET (DRV_OPENAL 1)
-    CHECK_MULTI_INCLUDE_FILES("AL/al.h" "AL/alc.h" "AL/alext.h")
+    CHECK_MULTI_INCLUDE_FILES("AL/al.h" "AL/alc.h")
     IF (HAVE_AL_AL_H)
-        IF (NOT HAVE_AL_ALEXT_H)
-            # alext.h depends on al.h and alc.h: cmake does
-            # not handle it properly and fail "finding" it.
-            # search it in the same path where al.h is found:
-            FIND_PATH(ALEXT_INCLUDE_DIR alext.h PATHS ${OPENAL_INCLUDE_DIR})
-            IF (ALEXT_INCLUDE_DIR)
-                MESSAGE(STATUS "Looking for alext.h - found")
-                SET(HAVE_AL_ALEXT_H "1" CACHE INTERNAL "Have include alext.h")
-            ENDIF (ALEXT_INCLUDE_DIR)
-        ENDIF (NOT HAVE_AL_ALEXT_H)
+        # alext.h depends on al.h and alc.h: cmake does
+        # not handle it and CHECK_INCLUDE_FILE fails.
+        CHECK_C_SOURCE_COMPILES("#include <AL/al.h>
+                                 #include <AL/alc.h>
+                                 #include <AL/alext.h>
+                                 int main() {return 0;}" HAVE_AL_ALEXT_H)
     ENDIF (HAVE_AL_AL_H)
 ENDIF (OPENAL_FOUND)
 ENDIF(ENABLE_OPENAL)
