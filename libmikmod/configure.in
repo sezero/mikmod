@@ -610,9 +610,9 @@ if test "`uname`" = "Darwin"
 then
 	if test $libmikmod_driver_osx = yes
 	then
-	 	libmikmod_driverlist="osx $libmikmod_driverlist"
-	 	AC_DEFINE(DRV_OSX)
-	 	LIBRARY_LIB="-framework CoreAudio $LIBRARY_LIB"
+		libmikmod_driverlist="osx $libmikmod_driverlist"
+		AC_DEFINE(DRV_OSX)
+		LIBRARY_LIB="-framework CoreAudio $LIBRARY_LIB"
 	fi
 fi
 
@@ -865,10 +865,10 @@ os2/Makefile
 dos/Makefile
 dos/include/Makefile
 dos/src/Makefile
-win32/Makefile,
+win32/Makefile)
 
-chmod +x libmikmod-config,
-cat macintosh/_libmikmodversion.r | tr '\n' '\r' > macintosh/libmikmodversion.r )
+chmod +x libmikmod-config
+cat macintosh/_libmikmodversion.r | tr '\n' '\r' > macintosh/libmikmodversion.r
 
 # ====================
 # Print configuration.
