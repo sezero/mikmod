@@ -19,7 +19,7 @@ DEBUG = 0
 # The tools
 CC = gcc
 CFLAGS = -DHAVE_CONFIG_H $(INCLUDE)
-INCLUDE = -Iinclude -I../include -I../playercode
+INCLUDE = -Iinclude -I../include
 AR = ar
 ARFLAGS = cr
 
