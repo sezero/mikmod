@@ -716,7 +716,7 @@ extern MikMod_callback_t vc_callback;
 #elif defined(_MSC_VER) && (_MSC_VER >= 1300) && (defined(_M_IX86) || defined(_M_AMD64))
 /* FIXME: emmintrin.h requires VC6 processor pack or VC2003+ */
 #define HAVE_SSE2
-/* Fixes couples warnings */
+/* avoid some warnings */
 #pragma warning(disable:4761)
 #pragma warning(disable:4391)
 #pragma warning(disable:4244)
@@ -727,9 +727,13 @@ extern MikMod_callback_t vc_callback;
 /*========== SIMD mixing helper functions =============*/
 
 #if defined(_WIN64)
-#define IS_ALIGNED_16(ptr) (!(((long long)(ptr)) & 15))
+# if defined(_MSC_VER)
+#  define IS_ALIGNED_16(ptr) (!((__int64)(ptr) & 15i64))
+# else /* GCC, LCC, .. */
+#  define IS_ALIGNED_16(ptr) (!((long long)(ptr) & 15LL))
+# endif
 #else /* long cast should be OK for all else */
-#define IS_ALIGNED_16(ptr) (!(((long)(ptr)) & 15))
+#define IS_ALIGNED_16(ptr) (!((long)(ptr) & 15L))
 #endif
 
 /* Altivec helper function */
