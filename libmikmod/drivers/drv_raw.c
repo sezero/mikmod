@@ -41,7 +41,6 @@
 #include <fcntl.h>
 #endif
 
-
 #include "mikmod_internals.h"
 
 #define BUFFERSIZE 32768
@@ -51,7 +50,7 @@
 #define O_BINARY 0
 #endif
 
-#if defined(WIN32) && !defined(__MWERKS__)
+#if defined(_WIN32) && !defined(__MWERKS__)
 #define open _open
 #endif
 
@@ -83,24 +82,27 @@ static int RAW_Init(void)
 	}
 #endif
 
-	if((rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY
 #if !defined(macintosh) && !defined(__MWERKS__)
-	                ,S_IREAD|S_IWRITE
+	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY,S_IREAD|S_IWRITE);
+#else
+	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY);
 #endif
-	               ))<0) {
+	if(rawout<0) {
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;
 	}
 	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
 
 	if (!(audiobuffer=(SBYTE*)MikMod_malloc(BUFFERSIZE))) {
-		close(rawout);unlink(filename?filename:FILENAME);
+		close(rawout);
+		unlink(filename?filename:FILENAME);
 		rawout=-1;
 		return 1;
 	}
 
 	if ((VC_Init())) {
-		close(rawout);unlink(filename?filename:FILENAME);
+		close(rawout);
+		unlink(filename?filename:FILENAME);
 		rawout=-1;
 		return 1;
 	}
@@ -125,11 +127,12 @@ static void RAW_Update(void)
 static int RAW_Reset(void)
 {
 	close(rawout);
-	if((rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY
 #if !defined(macintosh) && !defined(__MWERKS__)
-	                ,S_IREAD|S_IWRITE
+	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY,S_IREAD|S_IWRITE);
+#else
+	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY);
 #endif
-	               ))<0) {
+	if(rawout<0) {
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;
 	}
