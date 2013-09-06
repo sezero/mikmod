@@ -36,6 +36,7 @@
 #include "config.h"
 #endif
 
+#define _WIN32_WINNT 0x0501
 #include "mikmod_internals.h"
 
 #ifdef DRV_XAUDIO2
@@ -154,7 +155,7 @@ static void XAudio2_CommandLine(const CHAR *cmdline) {
 /* no options */
 }
 
-static int XAudio2_IsPresent() {
+static BOOL XAudio2_IsPresent(void) {
 	HRESULT r;
 
 	if (pXAudio2 == NULL) {
@@ -317,7 +318,7 @@ static void XAudio2_PlayStop(void) {
 	VC_PlayStop();
 }
 
-static BOOL XAudio2_PlayStart(void) {
+static int XAudio2_PlayStart(void) {
 	do_update = 1;
 	return VC_PlayStart();
 }

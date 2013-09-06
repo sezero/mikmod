@@ -175,7 +175,6 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T idx
 			SWORD s1 = srce[(idx += increment) >> FRACBITS];
 			SWORD s2 = srce[(idx += increment) >> FRACBITS];
 			SWORD s3 = srce[(idx += increment) >> FRACBITS];
-			idx += increment;
 			__m128i v1 = _mm_set_epi16(0, s1, 0, s1, 0, s0, 0, s0);
 			__m128i v2 = _mm_set_epi16(0, s3, 0, s3, 0, s2, 0, s2);
 			__m128i v3 = _mm_load_si128((__m128i*)(dest+0));
@@ -183,6 +182,7 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T idx
 			_mm_store_si128((__m128i*)(dest+0), _mm_add_epi32(v3, _mm_madd_epi16(v0, v1)));
 			_mm_store_si128((__m128i*)(dest+4), _mm_add_epi32(v4, _mm_madd_epi16(v0, v2)));
 			dest+=8;
+			idx += increment;
 		}
 	}
 
@@ -203,43 +203,49 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T idx
 
 		for(todo>>=2;todo; todo--)
 		{
+			vector short int r1;
+			vector signed short v1, v2;
+			vector signed int v3, v4, v5, v6;
+
 			/* Load constants */
 			s[0] = srce[idx >> FRACBITS];
 			s[1] = srce[(idx += increment) >> FRACBITS];
 			s[2] = srce[(idx += increment) >> FRACBITS];
 			s[3] = srce[(idx += increment) >> FRACBITS];
 			s[4] = 0;
-			idx += increment;
 
-			vector short int r1 = vec_ld(0, s);
-			vector signed short v1 = vec_perm(r1, r1, (vector unsigned char)(0*2, 0*2+1, /* s0 */
-											 4*2, 4*2+1, /* 0  */
-											 0*2, 0*2+1, /* s0 */
-											 4*2, 4*2+1, /* 0  */
-											 1*2, 1*2+1, /* s1 */
-											 4*2, 4*2+1, /* 0  */
-											 1*2, 1*2+1, /* s1 */
-											 4*2, 4*2+1  /* 0  */
-											 ));
+			r1 = vec_ld(0, s);
+			v1 = vec_perm(r1, r1, (vector unsigned char)
+								(0*2, 0*2+1, /* s0 */
+								 4*2, 4*2+1, /* 0  */
+								 0*2, 0*2+1, /* s0 */
+								 4*2, 4*2+1, /* 0  */
+								 1*2, 1*2+1, /* s1 */
+								 4*2, 4*2+1, /* 0  */
+								 1*2, 1*2+1, /* s1 */
+								 4*2, 4*2+1  /* 0  */
+								) );
+			v2 = vec_perm(r1, r1, (vector unsigned char)
+								(2*2, 2*2+1, /* s2 */
+								 4*2, 4*2+1, /* 0  */
+								 2*2, 2*2+1, /* s2 */
+								 4*2, 4*2+1, /* 0  */
+								 3*2, 3*2+1, /* s3 */
+								 4*2, 4*2+1, /* 0  */
+								 3*2, 3*2+1, /* s3 */
+								 4*2, 4*2+1  /* 0  */
+								) );
 
-			vector signed short v2 = vec_perm(r1, r1, (vector unsigned char)(2*2, 2*2+1, /* s2 */
-											 4*2, 4*2+1, /* 0  */
-											 2*2, 2*2+1, /* s2 */
-											 4*2, 4*2+1, /* 0  */
-											 3*2, 3*2+1, /* s3 */
-											 4*2, 4*2+1, /* 0  */
-											 3*2, 3*2+1, /* s3 */
-											 4*2, 4*2+1  /* 0  */
-											 ));
-			vector signed int v3 = vec_ld(0, dest);
-			vector signed int v4 = vec_ld(0, dest + 4);
-			vector signed int v5 = vec_mule(v0, v1);
-			vector signed int v6 = vec_mule(v0, v2);
+			v3 = vec_ld(0, dest);
+			v4 = vec_ld(0, dest + 4);
+			v5 = vec_mule(v0, v1);
+			v6 = vec_mule(v0, v2);
 
 			vec_st(vec_add(v3, v5), 0, dest);
 			vec_st(vec_add(v4, v6), 0x10, dest);
 
 			dest+=8;
+			idx += increment;
 		}
 	}
 #endif /* HAVE_ALTIVEC */
