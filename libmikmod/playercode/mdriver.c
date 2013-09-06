@@ -844,7 +844,7 @@ MIKMODAPI long MikMod_GetVersion(void)
 #define INIT_MUTEX(name) \
 	HMTX _mm_mutex_##name
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #define INIT_MUTEX(name) \
 	HANDLE _mm_mutex_##name
 
@@ -872,7 +872,7 @@ MIKMODAPI BOOL MikMod_InitThreads(void)
 			result=0;
 		} else
 			result=1;
-#elif defined(WIN32)
+#elif defined(_WIN32)
 		if((!(_mm_mutex_lists=CreateMutex(NULL,FALSE,"libmikmod(lists)")))||
 		   (!(_mm_mutex_vars=CreateMutex(NULL,FALSE,"libmikmod(vars)"))))
 			result=0;
