@@ -46,7 +46,7 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if !defined(WIN32) && (defined(_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x64_64) || defined(__powerpc64__))
+#if !defined(_WIN32) && (defined(_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x64_64) || defined(__powerpc64__))
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
 #elif defined(_WIN64) /* win64 is LLP64, not LP64  */
@@ -54,7 +54,7 @@ typedef long		SLONGLONG;
 typedef long long	SLONGLONG;
 #elif defined(__WATCOMC__)
 typedef __int64		SLONGLONG;
-#elif defined(WIN32) && !defined(__MWERKS__)
+#elif defined(_WIN32) && !defined(__MWERKS__)
 typedef LONGLONG	SLONGLONG;
 #elif defined(macintosh) && !TYPE_LONGLONG
 #include <Types.h>
@@ -98,7 +98,7 @@ extern MikMod_handler_t _mm_errorhandler;
 	if(_mm_mutex_##name)	\
 		DosReleaseMutexSem(_mm_mutex_##name)
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #include <windows.h>
 #define DECLARE_MUTEX(name)	\
 	extern HANDLE _mm_mutex_##name
