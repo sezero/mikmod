@@ -43,11 +43,6 @@ extern "C" {
 
 #include <mikmod_build.h>
 
-#if defined(_MSC_VER) && (_MSC_VER < 1300)
-#pragma warning (disable : 4090)
-#pragma warning (disable : 4022)
-#endif
-
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
