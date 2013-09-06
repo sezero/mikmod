@@ -12,21 +12,12 @@
 
 #define LIBMIKMOD_VERSION_MAJOR			@LIBMIKMOD_MAJOR_VERSION@
 #define LIBMIKMOD_VERSION_MINOR			@LIBMIKMOD_MINOR_VERSION@
-#define LIBMIKMOD_REVISION				@LIBMIKMOD_MICRO_VERSION@
-
+#define LIBMIKMOD_REVISION			@LIBMIKMOD_MICRO_VERSION@
 #define LIBMIKMOD_VERSION_STRING 		"@LIBMIKMOD_VERSION@"
-
-#if @IS_BETA@
-	#define LIBMIKMOD_STATE	    			beta		/* development | alpha | beta | release */
-	#define LIBMIKMOD_RELEASE_NO     		@BETA_RELEASE@			/* number after letter, or zero for release */
-#else
-	#define LIBMIKMOD_STATE					release
-	#define LIBMIKMOD_RELEASE_NO			0
-#endif
-	
-#define LIBMIKMOD_COUNTRY				verSweden
-
-#define LIBMIKMOD_NAME					"libmikmod"
+#define LIBMIKMOD_STATE				release
+#define LIBMIKMOD_RELEASE_NO			0
+#define LIBMIKMOD_COUNTRY			verSweden
+#define LIBMIKMOD_NAME				"libmikmod"
 #define LIBMIKMOD_SHORT_DESCRIPTION		"music module player"
 #define LIBMIKMOD_LONG_DESCRIPTION		"A portable sound / music module playing shared library."
 
