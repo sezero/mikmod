@@ -31,7 +31,7 @@ MKINSTALLDIRS=${top_srcdir}/mkinstalldirs
 
 DEFS=@DEFS@
 CFLAGS=@CFLAGS@ -Dunix
-COMPILE=$(LIBTOOL) --silent --mode=compile $(CC) $(DEFS) $(CFLAGS) -I$(top_srcdir)/include -I$(top_builddir) -I$(top_builddir)/include -DMIKMOD_H=$(top_srcdir)/include/mikmod.h
+COMPILE=$(LIBTOOL) --silent --mode=compile $(CC) $(DEFS) $(CFLAGS) -I$(top_srcdir)/include -I$(top_builddir) -I$(top_builddir)/include
 
 LIB = libmikmod.la
 OBJ = $(LIBOBJS) $(DLOBJS) \
