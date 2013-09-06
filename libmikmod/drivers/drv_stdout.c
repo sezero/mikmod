@@ -71,7 +71,7 @@ static void stdout_Exit(void)
 
 static void stdout_Update(void)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	_write
 #else
 	write
