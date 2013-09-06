@@ -52,6 +52,8 @@
 #undef MIKMOD_DYNAMIC
 /* Define if you want to use SIMD (AltiVec or SSE2) optimizations */
 #undef MIKMOD_SIMD
+/* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
+#undef MIKMOD_UNIX
 /* Define if your system provides POSIX.4 threads */
 #undef HAVE_PTHREAD
 

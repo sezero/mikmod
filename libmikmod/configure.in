@@ -39,8 +39,10 @@ libmikmod_dynload_underscores=no
 libmikmod_debug=no
 libmikmod_threads=yes
 libmikmod_simd=no
-libmikmod_altivec=yes
-libmikmod_sse2=yes
+libmikmod_altivec=no
+libmikmod_sse2=no
+
+libmikmod_unix=default
 
 DLOBJS=""
 
@@ -49,7 +51,7 @@ DLOBJS=""
 # =========================
 
 AC_ARG_ENABLE(af,
-[  --enable-af             include AudioFile audio server driver [guessed]],
+[  --enable-af             include AudioFile audio server driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_af=yes
@@ -59,7 +61,7 @@ fi])
 
 AC_ARG_ENABLE(alsa,
 [  --enable-alsa           Linux only: include Advanced Linux Sound Architecture
-                          driver [guessed]],
+                          driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_alsa=yes
@@ -68,7 +70,7 @@ else
 fi])
 
 AC_ARG_ENABLE(nas,
-[  --enable-nas            include the Network Audio System driver [default=no]],
+[  --enable-nas            include the Network Audio System driver [[default=no]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_nas=yes
@@ -77,7 +79,7 @@ else
 fi])
 
 AC_ARG_ENABLE(openal,
-[  --enable-openal         include OpenAL driver [default=no]],
+[  --enable-openal         include OpenAL driver [[default=no]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_openal=yes
@@ -86,7 +88,7 @@ else
 fi])
 
 AC_ARG_ENABLE(oss,
-[  --enable-oss            include OSS driver [guessed]],
+[  --enable-oss            include OSS driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_oss=yes
@@ -95,7 +97,7 @@ else
 fi])
 
 AC_ARG_ENABLE(osx,
-[  --enable-osx            Darwin only: include OSX driver [guessed]],
+[  --enable-osx            Darwin only: include OSX driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_osx=yes
@@ -104,7 +106,7 @@ else
 fi])
 
 AC_ARG_ENABLE(mac,
-[  --enable-mac            Darwin only: include MAC carbon driver [default=no]],
+[  --enable-mac            Darwin only: include MAC carbon driver [[default=no]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_mac=yes
@@ -112,10 +114,8 @@ else
   libmikmod_driver_mac=no
 fi])
 
-
-
 AC_ARG_ENABLE(sam9407,
-[  --enable-sam9407        Linux only: include sam9407 driver [guessed]],
+[  --enable-sam9407        Linux only: include sam9407 driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_sam9407=yes
@@ -124,7 +124,7 @@ else
 fi])
 
 AC_ARG_ENABLE(ultra,
-[  --enable-ultra          Linux only: include Ultra driver [guessed]],
+[  --enable-ultra          Linux only: include Ultra driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_ultra=yes
@@ -134,7 +134,7 @@ fi])
 
 AC_ARG_ENABLE(dl,
 [  --enable-dl             load alsa, esound and ultra drivers at runtime
-                          [default=yes]],
+                          [[default=yes]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_dynload=yes
@@ -143,7 +143,7 @@ else
 fi])
 
 AC_ARG_ENABLE(debug,
-[  --enable-debug          build a debug version of libmikmod [default=no]],
+[  --enable-debug          build a debug version of libmikmod [[default=no]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_debug=yes
@@ -152,7 +152,7 @@ else
 fi])
 
 AC_ARG_ENABLE(threads,
-[  --enable-threads        build a thread-safe version of libmikmod [default=guessed]],
+[  --enable-threads        build a thread-safe version of libmikmod [[guessed]]],
 [if test "$enableval" = "yes"
 then
 	libmikmod_threads=yes
@@ -161,7 +161,8 @@ else
 fi])
 
 AC_ARG_ENABLE(simd,
-[  --enable-simd           include SIMD (AltiVec or SSE2) optimizations [default=no]],
+[  --enable-simd           include SIMD (AltiVec or SSE2) mixer optimizations
+                          [[default=no]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_simd=yes
@@ -169,22 +170,13 @@ else
   libmikmod_simd=no
 fi])
 
-AC_ARG_ENABLE(altivec,
-[  --enable-altivec        PowerPC only: include AltiVec optimizations [default=guessed]],
-[if test "$enableval" = "yes"
-then
-  libmikmod_altivec=yes
-else
-  libmikmod_altivec=no
-fi])
-
-AC_ARG_ENABLE(sse2,
-[  --enable-sse2           x86/x86_64 only: include SSE2 optimizations [default=guessed]],
-[if test "$enableval" = "yes"
-then
-  libmikmod_sse2=yes
-else
-  libmikmod_sse2=no
+AC_ARG_ENABLE(unix,
+[  --enable-unix           override the default value of MIKMOD_UNIX in
+                          mikmod_internals.h (if you *really* need to.)],
+[if test "$enableval" = "yes" ;then
+  libmikmod_unix=1
+elif test "$enableval" = "no" ;then
+  libmikmod_unix=0
 fi])
 
 # ===================
@@ -757,16 +749,10 @@ then
 	fi
 fi
 
-if test x$libmikmod_simd != xyes
-then
-	libmikmod_altivec=no
-	libmikmod_sse2=no
-fi
-
 case `arch` in
 ppc|ppc64|powerpc|powerpc64)
 	AC_MSG_CHECKING(whether to use altivec)
-	if test x$libmikmod_altivec != xno
+	if test x$libmikmod_simd = xyes
 	then
 		case `uname` in
 		Darwin)
@@ -779,19 +765,17 @@ ppc|ppc64|powerpc|powerpc64)
 			CFLAGS="$CFLAGS -maltivec"
 			;;
 		esac
+		libmikmod_altivec=yes
 		libmikmod_simd=altivec
 	fi
 	AC_MSG_RESULT($libmikmod_altivec)
-	;;
-*)
-	libmikmod_altivec=no
 	;;
 esac
 
 case `arch` in
 i*86|x86_64)
 	AC_MSG_CHECKING(whether to use sse2)
-	if test x$libmikmod_sse2 != xno
+	if test x$libmikmod_simd = xyes
 	then
 		dnl x86_64 already enables sse2
 		dnl add -msse2 for x86 to enable it
@@ -800,12 +784,10 @@ i*86|x86_64)
 			CFLAGS="$CFLAGS -msse2"
 			;;
 		esac
+		libmikmod_sse2=yes
 		libmikmod_simd=sse2
 	fi
 	AC_MSG_RESULT($libmikmod_sse2)
-	;;
-*)
-	libmikmod_sse2=no
 	;;
 esac
 
@@ -818,6 +800,12 @@ altivec|sse2)
 	libmikmod_simd=no
 	;;
 esac
+
+# MIKMOD_UNIX override
+if test "$libmikmod_unix" = "0" || test "$libmikmod_unix" = "1"
+then
+   AC_DEFINE_UNQUOTED(MIKMOD_UNIX, $libmikmod_unix)
+fi
 
 # =================
 # Create Makefiles.

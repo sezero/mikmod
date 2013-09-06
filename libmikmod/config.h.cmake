@@ -49,6 +49,8 @@
 #cmakedefine MIKMOD_DYNAMIC 1
 /* Define if you want to use SIMD (AltiVec or SSE2) optimizations */
 #cmakedefine MIKMOD_SIMD 1
+/* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
+#cmakedefine MIKMOD_UNIX 1
 /* Define if your system provides POSIX.4 threads */
 #cmakedefine HAVE_PTHREAD 1
 

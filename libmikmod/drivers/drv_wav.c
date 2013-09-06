@@ -105,7 +105,7 @@ static BOOL WAV_IsThere(void)
 
 static int WAV_Init(void)
 {
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
 	if (!MD_Access(filename?filename:FILENAME)) {
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;

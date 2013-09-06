@@ -45,7 +45,7 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
 #include <errno.h>
 #include <sys/wait.h>
 #endif
@@ -58,7 +58,7 @@ extern int fclose(FILE *);
 
 static	MWRITER *pipeout=NULL;
 static	FILE *pipefile=NULL;
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
 static	int pipefd[2]={-1,-1};
 static	pid_t pid;
 #endif
@@ -87,7 +87,7 @@ static int pipe_Init(void)
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;
 	}
-#if !defined unix && (!defined __APPLE__ || !defined __MACH__)
+#if !(MIKMOD_UNIX)
 #ifdef __EMX__
 	_fsetmode(stdout, "b");
 #endif
@@ -141,7 +141,7 @@ static int pipe_Init(void)
 
 static void pipe_Exit(void)
 {
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
 	int pstat;
 	pid_t pid2;
 #endif
@@ -153,7 +153,7 @@ static void pipe_Exit(void)
 		pipeout=NULL;
 	}
 	if(pipefile) {
-#if !defined unix && (!defined __APPLE__ || !defined __MACH__)
+#if !(MIKMOD_UNIX)
 #ifdef __WATCOMC__
 		_pclose(pipefile);
 #else
@@ -162,7 +162,7 @@ static void pipe_Exit(void)
 #ifdef __EMX__
 		_fsetmode(stdout,"t");
 #endif
-#else
+#else /* unix: */
 		fclose(pipefile);
 		do {
 			pid2=waitpid(pid,&pstat,0);

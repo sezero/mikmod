@@ -34,12 +34,18 @@ extern "C" {
 #endif
 
 #include <stdarg.h>
+
 #if defined(__OS2__) || defined(__EMX__) || defined(_WIN32)
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
-#if defined(_WIN32) && defined(unix)
-#undef unix
+
+#ifndef MIKMOD_UNIX
+#if (defined(unix) || defined(__unix__) || defined(__unix) || \
+	(defined(__APPLE__) && defined(__MACH__))) && \
+   !(defined(__DJGPP__) || defined(_WIN32) || defined(__OS2__) || defined(__EMX__))
+#define MIKMOD_UNIX 1
 #endif
+#endif /* MIKMOD_UNIX */
 
 #include <mikmod_build.h>
 
@@ -655,7 +661,7 @@ extern void VC_SetupPointers(void);
 extern int  VC1_Init(void);
 extern int  VC2_Init(void);
 
-#if defined(unix) || defined(__APPLE__) && defined(__MACH__)
+#if (MIKMOD_UNIX)
 /* POSIX helper functions */
 extern BOOL MD_Access(const CHAR *);
 extern int  MD_DropPrivileges(void);

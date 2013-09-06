@@ -34,20 +34,17 @@
 #include <unistd.h>
 #endif
 
-#if defined(_WIN32) && defined(unix)
-#undef unix
-#endif
-#if defined unix || (defined __APPLE__ && defined __MACH__)
-#include <pwd.h>
-#include <sys/stat.h>
-#endif
-
 #include <string.h>
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
 
 #include "mikmod_internals.h"
+
+#if (MIKMOD_UNIX)
+#include <pwd.h>
+#include <sys/stat.h>
+#endif
 
 #ifdef SUNOS
 extern int fprintf(FILE *, const char *, ...);
@@ -924,7 +921,7 @@ CHAR *MD_GetAtom(const CHAR *atomname, const CHAR *cmdline, BOOL implicit)
 	return ret;
 }
 
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
 
 /*========== Posix helper functions */
 

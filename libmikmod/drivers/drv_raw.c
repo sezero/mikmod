@@ -33,10 +33,12 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
 #ifndef macintosh
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
+
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
@@ -75,7 +77,7 @@ static BOOL RAW_IsThere(void)
 
 static int RAW_Init(void)
 {
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
 	if(!MD_Access(filename?filename:FILENAME)) {
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;

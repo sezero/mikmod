@@ -182,7 +182,7 @@ static BOOL AIFF_IsThere (void)
 
 static int AIFF_Init (void)
 {
-#if defined unix || (defined __APPLE__ && defined __MACH__)
+#if (MIKMOD_UNIX)
     if (!MD_Access (gAiffFileName ? gAiffFileName : AIFF_FILENAME))
     {
         _mm_errno=MMERR_OPENING_FILE;

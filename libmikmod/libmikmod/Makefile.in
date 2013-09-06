@@ -30,7 +30,7 @@ LIBTOOL=@LIBTOOL@
 MKINSTALLDIRS=${top_srcdir}/mkinstalldirs
 
 DEFS=@DEFS@
-CFLAGS=@CFLAGS@ -Dunix
+CFLAGS=@CFLAGS@
 COMPILE=$(LIBTOOL) --silent --mode=compile $(CC) $(DEFS) $(CFLAGS) -I$(top_srcdir)/include -I$(top_builddir) -I$(top_builddir)/include
 
 LIB = libmikmod.la
@@ -49,28 +49,28 @@ OBJ = $(LIBOBJS) $(DLOBJS) \
 
 DIST_FILES = $(top_srcdir)/libmikmod/Makefile.in
 
-all:		$(LIB)
+all: $(LIB)
 
-install:	$(LIB)
+install: $(LIB)
 	$(MKINSTALLDIRS) $(DESTDIR)$(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) -m 644 $(LIB) $(DESTDIR)$(libdir)
 
-uninstall:	$(LIB)
+uninstall: $(LIB)
 	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/$(LIB)
 
-check:		FORCE
+check: FORCE
 	echo "Of course it works ! (-:"
 
-clean:		FORCE
+clean: FORCE
 	rm -fR .libs $(LIB) $(OBJ)
 
 distdir:
-	(for file in $(DIST_FILES);                                               \
-	do                                                                        \
-		cp -f $$file $(distdir) && chmod 644 $$file;                          \
+	(for file in $(DIST_FILES);                          \
+	do                                                   \
+		cp -f $$file $(distdir) && chmod 644 $$file; \
 	done)
 
-distclean:	clean
+distclean: clean
 	rm -f Makefile
 
 $(LIB): $(OBJ)
