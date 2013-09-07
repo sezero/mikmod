@@ -14,13 +14,15 @@
  * disk is dead and I don't have the system tapes...
  */
 
-#include <dl.h>
-#include <malloc.h>
-#include <string.h>
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"	/* const */
 #endif
+
+#ifdef MIKMOD_DLAPI_HP
+
+#include <dl.h>
+#include <malloc.h>
+#include <string.h>
 
 #include "dlfcn.h"
 
@@ -61,4 +63,5 @@ void *dlsym(void *handle, const char *sym)
 	return NULL;
 }
 
+#endif
 /* ex:set ts=4: */

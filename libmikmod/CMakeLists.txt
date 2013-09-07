@@ -27,6 +27,17 @@ SET (private_mod_path "${CMAKE_SOURCE_DIR}/cmake")
 LIST (APPEND CMAKE_MODULE_PATH "${private_mod_path}")
 INCLUDE(Shlomif_Common)
 
+# Taken from http://www.cmake.org/pipermail/cmake/2007-March/013060.html
+MACRO(REPLACE_FUNCTIONS_FROMDIR sources dir)
+  FOREACH(name ${ARGN})
+    STRING(TOUPPER have_${name} SYMBOL_NAME)
+    CHECK_FUNCTION_EXISTS(${name} ${SYMBOL_NAME})
+    IF(NOT ${SYMBOL_NAME})
+      SET(${sources} ${${sources}} ${dir}/${name}.c)
+    ENDIF(NOT ${SYMBOL_NAME})
+  ENDFOREACH(name)
+ENDMACRO(REPLACE_FUNCTIONS_FROMDIR)
+
 SHLOMIF_COMMON_SETUP("${private_mod_path}")
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -167,7 +178,6 @@ ADD_SUBDIRECTORY ("macintosh")
 ADD_SUBDIRECTORY ("mmio")
 ADD_SUBDIRECTORY ("os2")
 ADD_SUBDIRECTORY ("playercode")
-ADD_SUBDIRECTORY ("posix")
 ADD_SUBDIRECTORY ("t")
 ADD_SUBDIRECTORY ("win32")
 
@@ -334,6 +344,10 @@ SET (MIKMOD_LIB_MODULES
     playercode/virtch_common.c
 )
 
+REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
+                          libmikmod
+                          memcmp strcasecmp strdup strstr)
+
 SET (FREECELL_SOLVER_LIBS)
 
 ADD_LIBRARY (mikmod
@@ -365,7 +379,7 @@ IF (ENABLE_STATIC)
 ENDIF (ENABLE_STATIC)
 
 SET_TARGET_PROPERTIES(mikmod
-    PROPERTIES VERSION 3.0.0 SOVERSION 3
+    PROPERTIES VERSION 3.1.0 SOVERSION 3
     )
 IF(WIN32)
     SET_TARGET_PROPERTIES(mikmod

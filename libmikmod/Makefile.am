@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = drivers include libmikmod loaders mmio playercode \
-          docs dlapi macintosh posix os2 dos win32
+          docs dlapi macintosh os2 dos win32
 
 bin_SCRIPTS = libmikmod-config
 
@@ -14,3 +14,4 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libmikmod.pc
 
 ACLOCAL_AMFLAGS = -I m4
+
