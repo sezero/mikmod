@@ -198,9 +198,9 @@ fi])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AM_PROG_LIBTOOL
-AC_PROG_MAKE_SET
+AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
+AC_PROG_MAKE_SET
 AC_PATH_X
 
 # Check if makeinfo support html output. If it doesn't, pretend it's missing

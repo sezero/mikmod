@@ -16,7 +16,7 @@ endif
 #RM=del
 RM=rm -f
 
-CPPFLAGS=
+CPPFLAGS=-DMIKMOD_BUILD
 LDLIBS=
 
 # SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)
@@ -60,7 +60,7 @@ COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I.. -I../win32
 
 DLL_VER=3
 
-CPPFLAGS_DLL=-DMIKMOD_DLL_BUILD=1
+CPPFLAGS_DLL=-DDLL_EXPORT=1
 CPPFLAGS_STATIC=-DMIKMOD_STATIC=1
 
 LIBNAME=libmikmod.dll.a

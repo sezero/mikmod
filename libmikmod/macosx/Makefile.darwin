@@ -15,7 +15,7 @@ RANLIB=$(CROSS)-ranlib
 LIPO=$(CROSS)-lipo
 endif
 
-CPPFLAGS=
+CPPFLAGS=-DMIKMOD_BUILD
 LDLIBS=
 
 # SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)

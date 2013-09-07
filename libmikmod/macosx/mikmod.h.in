@@ -45,12 +45,17 @@ extern "C" {
  * you must define MIKMOD_STATIC in your project.  Otherwise, dllimport
  * will be assumed.
  */
-#if defined(MIKMOD_STATIC)
+#if defined(_WIN32) || defined(__CYGWIN__)
+# if defined(MIKMOD_BUILD) && defined(DLL_EXPORT)	/* building libmikmod as a dll for windows */
+#   define MIKMODAPI __declspec(dllexport)
+# elif defined(MIKMOD_BUILD) || defined(MIKMOD_STATIC)	/* building or using static libmikmod for windows */
+#   define MIKMODAPI
+# else
+#   define MIKMODAPI __declspec(dllimport)			/* using libmikmod dll for windows */
+# endif
+/* FIXME: USE VISIBILITY ATTRIBUTES HERE */
+#elif defined(MIKMOD_BUILD)
 #define MIKMODAPI
-#elif defined(_WIN32) && defined(MIKMOD_DLL_BUILD)		/* private for building libmikmod dll itself only */
-#define MIKMODAPI __declspec(dllexport)
-#elif defined(_WIN32)
-#define MIKMODAPI __declspec(dllimport)
 #else
 #define MIKMODAPI
 #endif

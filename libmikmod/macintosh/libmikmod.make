@@ -93,7 +93,7 @@ Warnings        =   -w 2,6,7,35
                     # avoid Warning 6: value of expression is not used
                     # avoid Warning 35: Parameter '*' is not used within function '*'
 
-Options         =   -d DRV_MAC -d HAVE_FCNTL_H
+Options         =   -d MIKMOD_BUILD -d DRV_MAC -d HAVE_FCNTL_H
 
 SymOptions		=	-sym off		# turn this on to debug with SADE/R2Db
 Debug68KOptions	=	-opt speed		# turn this off to build debug 680x0 code

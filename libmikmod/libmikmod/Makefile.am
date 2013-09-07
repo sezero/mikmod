@@ -1,3 +1,7 @@
+# always define MIKMOD_BUILD when building libmikmod
+# regardless of static build or shared library build..
+AM_CFLAGS = -DMIKMOD_BUILD=1
+
 INCLUDES = -I../include
 
 lib_LTLIBRARIES = libmikmod.la

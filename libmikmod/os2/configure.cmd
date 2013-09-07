@@ -190,6 +190,7 @@ main:
 /* "Checking" for include files */
 
 	cflags=cflags" -DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SYS_IOCTL_H -DHAVE_SYS_TIME_H"
+	cflags=cflags" -DMIKMOD_BUILD"
 
 /*
  *========== 2. Ask the user for his/her choices
