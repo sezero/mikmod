@@ -209,6 +209,7 @@ MDRIVER drv_wss =
 
 #else /* ifdef DRV_WSS */
 
+#include "mikmod_internals.h"
 MISSING(drv_wss);
 
 #endif

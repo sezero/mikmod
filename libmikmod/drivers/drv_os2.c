@@ -33,6 +33,12 @@
 
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef DRV_OS2
+
 #define INCL_DOS
 #define INCL_OS2MM
 #include <os2.h>
@@ -42,10 +48,6 @@
 #undef PPFN
 
 #include <stdlib.h>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "mikmod_internals.h"
 
@@ -375,4 +377,10 @@ MIKMODAPI MDRIVER drv_os2 = {
 	VC_VoiceRealVolume
 };
 
+#else
+
+#include "mikmod_internals.h"
+MISSING(drv_os2);
+
+#endif
 /* ex:set ts=4: */

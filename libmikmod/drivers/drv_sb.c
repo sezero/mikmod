@@ -227,6 +227,7 @@ MDRIVER drv_sb =
 
 #else /* DRV_SB */
 
+#include "mikmod_internals.h"
 MISSING(drv_sb);
 
 #endif
