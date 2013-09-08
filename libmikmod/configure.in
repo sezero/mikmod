@@ -36,8 +36,10 @@ AC_SUBST(MIKMOD_LT_AGE)
 libmikmod_driver_af=no
 libmikmod_driver_aix=no
 libmikmod_driver_alsa=yes
+libmikmod_driver_esd=no
 libmikmod_driver_nas=no
 libmikmod_driver_hp=no
+libmikmod_driver_sdl=yes
 libmikmod_driver_openal=no
 libmikmod_driver_oss=yes
 libmikmod_driver_sam9407=no
@@ -80,6 +82,16 @@ else
   libmikmod_driver_alsa=no
 fi])
 
+AC_ARG_ENABLE(esd,
+[  --enable-esd            include EsounD (Enlightened Sound Daemon) driver
+                          [[default=no]]],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_esd=yes
+else
+  libmikmod_driver_esd=no
+fi])
+
 AC_ARG_ENABLE(nas,
 [  --enable-nas            include the Network Audio System driver [[default=no]]],
 [if test "$enableval" = "yes"
@@ -87,6 +99,25 @@ then
   libmikmod_driver_nas=yes
 else
   libmikmod_driver_nas=no
+fi])
+
+AC_ARG_ENABLE(sdl,
+[  --enable-sdl            include SDL driver [[guessed]]],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_sdl=yes
+else
+  libmikmod_driver_sdl=no
+fi])
+
+try_sdl2=yes
+AC_ARG_ENABLE(sdl2,
+[  --enable-sdl2          try SDL2 first, then try SDL-1.2 [[default=yes]]],
+[if test "$enableval" = "yes"
+then
+  try_sdl2=yes
+else
+  try_sdl2=no
 fi])
 
 AC_ARG_ENABLE(openal,
@@ -335,6 +366,14 @@ else
 	libmikmod_driver_alsa=no
 fi
 
+# esd
+# ---
+if test $libmikmod_driver_esd = yes
+then
+	libmikmod_driver_esd=no
+	AM_PATH_ESD(0.2.18,libmikmod_driver_esd=yes)
+fi
+
 # nas
 # ---
 if test $libmikmod_driver_nas = yes
@@ -387,6 +426,24 @@ then
 else
 		libmikmod_driver_openal=no
 fi
+
+# SDL - all supported platforms
+# -----------------
+if test $libmikmod_driver_sdl = yes
+then
+		if test $try_sdl2 = yes
+		then
+			AM_PATH_SDL2("2.0.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
+		fi
+		if test $libmikmod_driver_sdl != yes
+		then
+			AM_PATH_SDL("1.2.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
+		fi
+else
+		libmikmod_driver_sdl=no
+fi
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_LIBS)
 
 # sgi audio - IRIX only
 # ---------------------
@@ -557,6 +614,22 @@ then
 	fi
 fi
 
+if test $libmikmod_driver_esd = yes
+then
+	libmikmod_driverlist="esd $libmikmod_driverlist"
+	AC_DEFINE(DRV_ESD)
+	CFLAGS="$CFLAGS $ESD_CFLAGS"
+	# Under Solaris and perhaps other systems, we have to forward esd
+	# dependencies to libmikmod's dependency list.
+	# However, no need to keep libraries we won't require (libossaudio on BSD
+	# systems, libaudiofile, libasound on Linux)
+	if test $libmikmod_dynload != no
+	then
+		ESD_LIBS="`echo $ESD_LIBS|sed -e 's/-lesd//'|sed -e 's/-lasound//'|sed -e 's/-laudiofile//'|sed -e 's/-lossaudio//'`"
+	fi
+	LIBRARY_LIB="$ESD_LIBS $LIBRARY_LIB"
+fi
+
 if test $libmikmod_driver_nas = yes
 then
 	libmikmod_driverlist="nas $libmikmod_driverlist"
@@ -575,6 +648,13 @@ then
 	libmikmod_driverlist="openal $libmikmod_driverlist"
 	AC_DEFINE(DRV_OPENAL)
 	LIBRARY_LIB="-lopenal $LIBRARY_LIB"
+fi
+
+if test $libmikmod_driver_sdl = yes
+then
+	libmikmod_driverlist="sdl $libmikmod_driverlist"
+	AC_DEFINE(DRV_SDL)
+	CFLAGS="$SDL_CFLAGS $CFLAGS"
 fi
 
 if test $libmikmod_driver_oss = yes
