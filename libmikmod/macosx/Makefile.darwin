@@ -51,7 +51,7 @@ CFLAGS+=-ffast-math -fno-common
 #CFLAGS+=-g
 LDFLAGS=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
 # do I need these ones?
-LDFLAGS+=-Wl,-compatibility_version,9 -Wl,-current_version,9.1
+LDFLAGS+=-Wl,-compatibility_version,5 -Wl,-current_version,5.0
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6
 #CPPFLAGS+=-DHAVE_POSIX_MEMALIGN
