@@ -44,6 +44,16 @@
 #undef DRV_OSX
 /* Define this if you want the Carbon Mac Audio driver */
 #undef DRV_MAC
+/* Define if the OS/2 direct audio (DART) driver is compiled */
+#undef DRV_DART
+/* Define if the OS/2 MMPM/2 MCI driver is compiled */
+#undef DRV_OS2
+/* Define if the Windows DirectSound driver is compiled */
+#undef DRV_DS
+/* Define if the Windows WINMM driver is compiled */
+#undef DRV_WIN
+/* Define if the Windows XAudio2 driver is compiled */
+#undef DRV_XAUDIO2
 
 /* Define if you want a debug version of the library */
 #undef MIKMOD_DEBUG
