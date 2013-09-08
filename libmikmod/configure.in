@@ -112,7 +112,7 @@ fi])
 
 try_sdl2=yes
 AC_ARG_ENABLE(sdl2,
-[  --enable-sdl2          try SDL2 first, then try SDL-1.2 [[default=yes]]],
+[  --enable-sdl2           try SDL2 first, then try SDL-1.2 [[default=yes]]],
 [if test "$enableval" = "yes"
 then
   try_sdl2=yes
@@ -424,23 +424,23 @@ then
 			AC_CHECK_LIB(openal,alEnable,libmikmod_driver_openal=yes)
 		fi
 else
-		libmikmod_driver_openal=no
+	libmikmod_driver_openal=no
 fi
 
 # SDL - all supported platforms
 # -----------------
 if test $libmikmod_driver_sdl = yes
 then
-		if test $try_sdl2 = yes
-		then
-			AM_PATH_SDL2("2.0.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
-		fi
-		if test $libmikmod_driver_sdl != yes
-		then
-			AM_PATH_SDL("1.2.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
-		fi
+	if test $try_sdl2 = yes
+	then
+		AM_PATH_SDL2("2.0.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
+	fi
+	if test $libmikmod_driver_sdl != yes
+	then
+		AM_PATH_SDL("1.2.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
+	fi
 else
-		libmikmod_driver_sdl=no
+	libmikmod_driver_sdl=no
 fi
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
@@ -655,6 +655,7 @@ then
 	libmikmod_driverlist="sdl $libmikmod_driverlist"
 	AC_DEFINE(DRV_SDL)
 	CFLAGS="$SDL_CFLAGS $CFLAGS"
+	LIBRARY_LIB="$SDL_LIBS $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_oss = yes
