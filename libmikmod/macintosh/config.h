@@ -71,8 +71,6 @@
 /* Define if your system defines random(3) and srandom(3) in math.h instead
    of stdlib.h */
 /* #undef SRANDOM_IN_MATH_H */
-/* Define if EsounD driver depends on ALSA */
-/* #undef MIKMOD_DYNAMIC_ESD_NEEDS_ALSA */
 /* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
 /* #undef  HAVE_RTLD_GLOBAL */
 /* Define if your system needs leading underscore to function names in dlsym() calls */

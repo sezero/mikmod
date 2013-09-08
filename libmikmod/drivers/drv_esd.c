@@ -88,12 +88,6 @@ static	CHAR *espeaker=NULL;
 /* straight from audio.c in esd sources */
 esd_format_t esd_audio_format=ESD_BITS16|ESD_STEREO;
 int esd_audio_rate=ESD_DEFAULT_RATE;
-#ifdef MIKMOD_DYNAMIC_ESD_NEEDS_ALSA
-/* straight from audio_alsa.c in esd 0.2.[678] sources
-   non-static variables that should be static are a *bad* thing... */
-void *handle;
-int writes;
-#endif
 
 static int ESD_Link(void)
 {
