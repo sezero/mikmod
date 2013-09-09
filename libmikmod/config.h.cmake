@@ -1,8 +1,3 @@
-/* Package name (libmikmod) */
-#undef PACKAGE
-/* Package version */
-#undef VERSION
-
 /* ========== Features selected */
 
 /* Define if your system supports binary pipes (i.e. Unix) */

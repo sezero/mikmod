@@ -37,16 +37,23 @@ AC_CANONICAL_HOST
 
 # these for convenience
 libmikmod_mingw=no
+libmikmod_cygwin=no
 libmikmod_linux=no
 libmikmod_darwin=no
 libmikmod_netbsd=no
 libmikmod_openbsd=no
+libmikmod_os2=no
+libmikmod_djgpp=no
+
 case $host_os in
 	mingw*) libmikmod_mingw=yes ;;
+	cygwin*) libmikmod_cygwin=yes ;;
 	linux*) libmikmod_linux=yes ;;
 	darwin*) libmikmod_darwin=yes ;;
 	netbsd*) libmikmod_netbsd=yes ;;
 	openbsd*) libmikmod_openbsd=yes ;;
+	emx*) libmikmod_os2=yes;;
+	*djgpp) libmikmod_djgpp=yes ;;
 esac
 
 # ==============================================================
@@ -171,7 +178,7 @@ else
 fi])
 
 AC_ARG_ENABLE(osx,
-[  --enable-osx            Darwin only: include OSX driver [[guessed]]],
+[  --enable-osx            Darwin only: include OSX CoreAudio driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_osx=yes
@@ -189,7 +196,7 @@ else
 fi])
 
 AC_ARG_ENABLE(win,
-[  --enable-win            Windows only: include WinMM driver [[guessed]]],
+[  --enable-win            Windows only: include Windows MCI driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_win=yes
@@ -216,7 +223,7 @@ else
 fi])
 
 AC_ARG_ENABLE(os2,
-[  --enable-os2            OS/2 only: include MMPM/2 MCI driver [[guessed]]],
+[  --enable-os2            OS/2 only: include the OS/2 MCI driver [[guessed]]],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_os2=yes
@@ -401,7 +408,7 @@ int main(void)
 	)
 	if test $libmikmod_cv_dynload_underscores = yes
 	then
-		AC_DEFINE(DLSYM_NEEDS_UNDERSCORE)
+		AC_DEFINE([DLSYM_NEEDS_UNDERSCORE], 1, [Define if your system needs leading underscore to function names in dlsym() calls])
 	fi
 fi
 
@@ -693,20 +700,21 @@ fi
 AC_CHECK_FUNCS(posix_memalign setenv snprintf srandom)
 AC_REPLACE_FUNCS(memcmp strcasecmp strdup strstr)
 AC_CHECK_LIB([m],[floor],LIBRARY_LIB="-lm $LIBRARY_LIB")
-AC_HEADER_EGREP(srandom,math.h,AC_DEFINE(SRANDOM_IN_MATH_H))
+AC_HEADER_EGREP(srandom,math.h,AC_DEFINE([SRANDOM_IN_MATH_H], 1,
+					 [Define if your system defines random(3) and srandom(3) in math.h instead of stdlib.h]))
 
 # ================
 # Choose settings.
 # ================
 
-AC_DEFINE(DRV_PIPE)
-AC_DEFINE(DRV_AIFF)
+AC_DEFINE([DRV_PIPE], 1, [Define if your system supports binary pipes (i.e. Unix)])
+AC_DEFINE([DRV_AIFF], 1, [Define if you want a .aiff file writer driver])
 
 # If we can guess the drivers needed from the system, no need to ask the user
 # to specify it manually
 case $host_os in
 	aix*)
-		AC_DEFINE(AIX)
+		AC_DEFINE([AIX], 1, [Define if your system is AIX 3.x - might be needed for 4.x too])
 		AC_CHECK_HEADERS(sys/audio.h sys/acpa.h)
 		if test $ac_cv_header_sys_audio_h = yes && \
 		   test $ac_cv_header_sys_acpa_h = yes
@@ -744,7 +752,7 @@ case $host_os in
 			if test "$cross_compiling" != yes
 			then
 			   case `uname -r` in
-				4*) AC_DEFINE(SUNOS) ;;
+				4*) AC_DEFINE([SUNOS], 1, [Define if your system is SunOS 4.x]) ;;
 			   esac
 			fi
 		fi
@@ -754,35 +762,35 @@ esac
 if test $libmikmod_driver_af = yes
 then
 	libmikmod_driverlist="$libmikmod_driverlist audiofile"
-	AC_DEFINE(DRV_AF)
+	AC_DEFINE([DRV_AF], 1, [Define if the AudioFile audio server driver is compiled])
 	LIBRARY_LIB="-lAF $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_win = yes
 then
 	libmikmod_driverlist="win $libmikmod_driverlist"
-	AC_DEFINE(DRV_WIN)
+	AC_DEFINE([DRV_WIN], 1, [Define if the Windows MCI driver is compiled])
 	LIBRARY_LIB="-lwinmm $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_ds = yes
 then
 	libmikmod_driverlist="ds $libmikmod_driverlist"
-	AC_DEFINE(DRV_DS)
+	AC_DEFINE([DRV_DS], 1, [Define if the Windows DirectSound driver is compiled])
 	LIBRARY_LIB="-ldsound $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_xaudio2 = yes
 then
 	libmikmod_driverlist="xaudio2 $libmikmod_driverlist"
-	AC_DEFINE(DRV_XAUDIO2)
+	AC_DEFINE([DRV_XAUDIO2], 1, [Define if the Windows XAudio2 driver is compiled])
 	LIBRARY_LIB="-lole32 $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_os2 = yes
 then
 	libmikmod_driverlist="os2 $libmikmod_driverlist"
-	AC_DEFINE(DRV_OS2)
+	AC_DEFINE([DRV_OS2], 1, [Define if the OS/2 MCI driver is compiled])
 	# drv_os2 and drv_dart both link to mmpm2
 	if test $libmikmod_driver_dart = no ; then
 		LIBRARY_LIB="-lmmpm2 $LIBRARY_LIB"
@@ -792,20 +800,20 @@ fi
 if test $libmikmod_driver_dart = yes
 then
 	libmikmod_driverlist="dart $libmikmod_driverlist"
-	AC_DEFINE(DRV_DART)
+	AC_DEFINE([DRV_DART], 1, [Define if the OS/2 direct audio (DART) driver is compiled])
 	LIBRARY_LIB="-lmmpm2 $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_aix = yes
 then
 	libmikmod_driverlist="aix $libmikmod_driverlist"
-	AC_DEFINE(DRV_AIX)
+	AC_DEFINE([DRV_AIX], 1, [Define if the AIX audio driver is compiled])
 fi
 
 if test $libmikmod_driver_alsa = yes
 then
 	libmikmod_driverlist="alsa $libmikmod_driverlist"
-	AC_DEFINE(DRV_ALSA)
+	AC_DEFINE([DRV_ALSA], 1, [Define if the Linux ALSA driver is compiled])
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lasound $LIBRARY_LIB"
@@ -815,7 +823,7 @@ fi
 if test $libmikmod_driver_esd = yes
 then
 	libmikmod_driverlist="esd $libmikmod_driverlist"
-	AC_DEFINE(DRV_ESD)
+	AC_DEFINE([DRV_ESD], 1, [Define if the Enlightened Sound Daemon driver is compiled])
 	CFLAGS="$CFLAGS $ESD_CFLAGS"
 	# Under Solaris and perhaps other systems, we have to forward esd
 	# dependencies to libmikmod's dependency list.
@@ -831,20 +839,20 @@ fi
 if test $libmikmod_driver_nas = yes
 then
 	libmikmod_driverlist="nas $libmikmod_driverlist"
-	AC_DEFINE(DRV_NAS)
+	AC_DEFINE([DRV_NAS], 1, [Define if the Network Audio System driver is compiled])
 	LIBRARY_LIB="-laudio $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_hp = yes
 then
 	libmikmod_driverlist="hp $libmikmod_driverlist"
-	AC_DEFINE(DRV_HP)
+	AC_DEFINE([DRV_HP], 1, [Define if the HP-UX audio driver is compiled])
 fi
 
 if test $libmikmod_driver_openal = yes
 then
 	libmikmod_driverlist="openal $libmikmod_driverlist"
-	AC_DEFINE(DRV_OPENAL)
+	AC_DEFINE([DRV_OPENAL], 1, [Define if the OpenAL driver is compiled])
 	if test $libmikmod_darwin = yes
 	then
 		LIBRARY_LIB="-framework OpenAL $LIBRARY_LIB"
@@ -856,7 +864,7 @@ fi
 if test $libmikmod_driver_sdl = yes
 then
 	libmikmod_driverlist="sdl $libmikmod_driverlist"
-	AC_DEFINE(DRV_SDL)
+	AC_DEFINE([DRV_SDL], 1, [Define if the SDL audio driver is compiled])
 	CFLAGS="$SDL_CFLAGS $CFLAGS"
 	LIBRARY_LIB="$SDL_LIBS $LIBRARY_LIB"
 fi
@@ -885,7 +893,7 @@ then
 		   test $ac_cv_header_sys_soundcard_h = yes
 		then
 			libmikmod_driverlist="oss $libmikmod_driverlist"
-			AC_DEFINE(DRV_OSS)
+			AC_DEFINE([DRV_OSS], 1, [Define if the Open Sound System driver is compiled])
 		fi
 	fi
 else
@@ -897,7 +905,7 @@ then
 	if test $libmikmod_driver_osx = yes
 	then
 		libmikmod_driverlist="osx $libmikmod_driverlist"
-		AC_DEFINE(DRV_OSX)
+		AC_DEFINE([DRV_OSX], 1, [Define this if you want the MacOS X CoreAudio driver])
 		LIBRARY_LIB="-framework CoreAudio $LIBRARY_LIB"
 	fi
 fi
@@ -907,7 +915,7 @@ then
 	if test $libmikmod_driver_mac = yes
 	then
 		libmikmod_driverlist="mac $libmikmod_driverlist"
-		AC_DEFINE(DRV_MAC)
+		AC_DEFINE([DRV_MAC], 1, [Define this if you want the Carbon Mac Audio driver])
 		LIBRARY_LIB="-framework Carbon $LIBRARY_LIB"
 	fi
 fi
@@ -915,25 +923,25 @@ fi
 if test $libmikmod_driver_sam9407 = yes
 then
 	libmikmod_driverlist="sam9407 $libmikmod_driverlist"
-	AC_DEFINE(DRV_SAM9407)
+	AC_DEFINE([DRV_SAM9407], 1, [Define if the Linux SAM9407 driver is compiled])
 fi
 
 if test $libmikmod_driver_sgi = yes
 then
 	libmikmod_driverlist="sgi $libmikmod_driverlist"
-	AC_DEFINE(DRV_SGI)
+	AC_DEFINE([DRV_SGI], 1, [Define if the SGI audio driver is compiled])
 	LIBRARY_LIB="-laudio $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_sun = yes
 then
-	AC_DEFINE(DRV_SUN)
+	AC_DEFINE([DRV_SUN], 1, [Define if the Sun audio driver or compatible (NetBSD, OpenBSD) is compiled])
 fi
 
 if test $libmikmod_driver_ultra = yes
 then
 	libmikmod_driverlist="ultra $libmikmod_driverlist"
-	AC_DEFINE(DRV_ULTRA)
+	AC_DEFINE([DRV_ULTRA], 1, [Define if the Linux Ultra driver is compiled])
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lgus $LIBRARY_LIB"
@@ -942,13 +950,13 @@ fi
 
 if test $libmikmod_debug = yes
 then
-	AC_DEFINE(MIKMOD_DEBUG)
+	AC_DEFINE([MIKMOD_DEBUG], 1, [Define if you want a debug version of the library])
 	CC="$CC -g"
 fi
 
 if test $libmikmod_dynload != no
 then
-	AC_DEFINE(MIKMOD_DYNAMIC)
+	AC_DEFINE([MIKMOD_DYNAMIC], 1, [Define if you want runtime dynamic linking of ALSA and EsounD drivers])
 
 	LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
 	if test $libmikmod_dynload = sun
@@ -960,7 +968,7 @@ then
 			libmikmod_cv_decl_rtld_global=no))
 		if test $libmikmod_cv_decl_rtld_global = yes
 		then
-			AC_DEFINE(HAVE_RTLD_GLOBAL)
+			AC_DEFINE([HAVE_RTLD_GLOBAL], 1, [Define if your system has RTLD_GLOBAL defined in <dlfcn.h>])
 		fi
 	fi
 fi
@@ -1022,7 +1030,7 @@ fi
 
 if test x$libmikmod_threads != xno
 then
-	AC_DEFINE(HAVE_PTHREAD)
+	AC_DEFINE([HAVE_PTHREAD], 1, [Define if your system provides POSIX.4 threads])
 	CFLAGS="$CFLAGS -D_REENTRANT"
 	LIBRARY_LIB="$libmikmod_threads $LIBRARY_LIB"
 	REENTRANT="-D_REENTRANT"
@@ -1081,7 +1089,7 @@ esac
 # see if we set libmikmod_simd properly
 case $libmikmod_simd in
 altivec|sse2)
-	AC_DEFINE(MIKMOD_SIMD)
+	AC_DEFINE([MIKMOD_SIMD], 1, [Define if you want to use SIMD (AltiVec or SSE2) optimizations])
 	;;
 *)
 	libmikmod_simd=no
@@ -1091,7 +1099,7 @@ esac
 # MIKMOD_UNIX override
 if test "$libmikmod_unix" = "0" || test "$libmikmod_unix" = "1"
 then
-   AC_DEFINE_UNQUOTED(MIKMOD_UNIX, $libmikmod_unix)
+   AC_DEFINE_UNQUOTED([MIKMOD_UNIX], $libmikmod_unix, [Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h.])
 fi
 
 # =================
