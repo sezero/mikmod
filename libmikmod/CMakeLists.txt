@@ -172,12 +172,13 @@ ADD_SUBDIRECTORY ("docs")
 ADD_SUBDIRECTORY ("dos")
 ADD_SUBDIRECTORY ("drivers")
 ADD_SUBDIRECTORY ("include")
-ADD_SUBDIRECTORY ("libmikmod")
 ADD_SUBDIRECTORY ("loaders")
 ADD_SUBDIRECTORY ("macintosh")
+ADD_SUBDIRECTORY ("macosx")
 ADD_SUBDIRECTORY ("mmio")
 ADD_SUBDIRECTORY ("os2")
 ADD_SUBDIRECTORY ("playercode")
+ADD_SUBDIRECTORY ("posix")
 ADD_SUBDIRECTORY ("t")
 ADD_SUBDIRECTORY ("win32")
 
@@ -347,7 +348,7 @@ SET (MIKMOD_LIB_MODULES
 )
 
 REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
-                          libmikmod
+                          posix
                           memcmp strcasecmp strdup strstr)
 
 SET (FREECELL_SOLVER_LIBS)

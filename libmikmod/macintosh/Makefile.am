@@ -1,4 +1,7 @@
 EXTRA_DIST = README INSTALL \
-             config.h mikmod.h.in mikmod.h mikmod_build.h cwmikmodheaders.h \
-	     libmikmod.mcp libmikmodversion.r \
-	     BuildLibmikmod libmikmod.make libmikmod.exp
+	     config.h mikmod.h.in mikmod.h mikmod_build.h mikmod_build.h.in \
+	     cwcarbonheaders.h cwclassicheaders.h cwmikmodheaders.h \
+	     mpwmikmodheaders.h libmikmodversion.r \
+	     libmikmod.mcp libmikmod-cw5.xml libmikmod-cw6.xml \
+	     BuildLibmikmod libmikmod.make libmikmod.exp \
+	     FixTypeAndCreators.applescript FixTypeAndCreators.hqx

@@ -1,9 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl $Id$
 
 AC_PREREQ([2.63])
-AC_INIT(include/mikmod.h.in)
 
+AC_INIT([libmikmod],[3.3.2])
 LIBMIKMOD_MAJOR_VERSION=3
 LIBMIKMOD_MINOR_VERSION=3
 LIBMIKMOD_MICRO_VERSION=2
@@ -11,10 +10,12 @@ LIBMIKMOD_VERSION=$LIBMIKMOD_MAJOR_VERSION.$LIBMIKMOD_MINOR_VERSION.$LIBMIKMOD_M
 # stuff for autogenerating the spec file.
 SPEC_RELEASE=1
 
-AM_INIT_AUTOMAKE(libmikmod,$LIBMIKMOD_VERSION)
+AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
+AC_CONFIG_SRCDIR([include/mikmod.h.in])
 AC_CONFIG_HEADERS(config.h)
-AM_MAINTAINER_MODE
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_LIBOBJ_DIR([posix])
+AM_MAINTAINER_MODE
 
 # Library versioning for libtool: CURRENT, REVISION, AGE
 # - library source changed -> increment REVISION
@@ -1131,21 +1132,27 @@ drivers/Makefile
 include/Makefile
 include/mikmod.h
 include/mikmod_build.h:include/mikmod.h.in
-libmikmod/Makefile
 loaders/Makefile
 mmio/Makefile
 playercode/Makefile
+posix/Makefile
 macintosh/Makefile
-macintosh/mikmod.h
+macintosh/mikmod.h:include/mikmod.h.in
+macintosh/mikmod_build.h:include/mikmod.h.in
 macintosh/_libmikmodversion.r
-macosx/mikmod.h
+macosx/Makefile
+macosx/mikmod.h:include/mikmod.h.in
+macosx/mikmod_build.h:include/mikmod.h.in
 macosx/Info.plist
 macosx/InfoPlist.strings
 os2/Makefile
 dos/Makefile
 dos/include/Makefile
 dos/src/Makefile
-win32/Makefile)
+win32/Makefile
+win32/mikmod.h:include/mikmod.h.in
+win32/mikmod_build.h:include/mikmod.h.in
+examples/Makefile)
 
 chmod +x libmikmod-config
 cat macintosh/_libmikmodversion.r | tr '\n' '\r' > macintosh/libmikmodversion.r
