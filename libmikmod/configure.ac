@@ -506,7 +506,7 @@ fi
 if test $libmikmod_driver_openal = yes
 then
 	libmikmod_driver_openal=no
-	if test $libmikmod_darwin=yes
+	if test $libmikmod_darwin = yes
 	then
 		# header-only test is good enough. need 10.4.
 		AC_CHECK_HEADERS(OpenAL/al.h OpenAL/alc.h)

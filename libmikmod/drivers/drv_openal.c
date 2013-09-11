@@ -214,6 +214,8 @@ static int OPENAL_Init(void)
 		return 1;
 	}
 
+	alGetError();	/* clear last error */
+
 	/* create buffers */
 	alGenBuffers(buffer_queue, buffers);
 	if (OPENAL_check_error(MMERR_OPENAL_GENBUFFERS)) return 1;
@@ -243,24 +245,17 @@ static void OPENAL_Exit(void)
 
 	/* get queued buffers count */
 	alGetSourcei(source, AL_BUFFERS_QUEUED, &queued);
-	OPENAL_check_error(MMERR_OPENAL_GETSOURCE);
 
 	/* stop playing source */
 	alSourceStop(source);
-	OPENAL_check_error(MMERR_OPENAL_SOURCESTOP);
 
 	while (queued--)
-	{
 		/* removing buffer from queue */
 		alSourceUnqueueBuffers(source, 1, &buffer);
-		OPENAL_check_error(MMERR_OPENAL_UNQUEUEBUFFERS);
-	}
 
 	alDeleteSources(1, &source);
-	OPENAL_check_error(MMERR_OPENAL_DELETESOURCES);
 
 	alDeleteBuffers(buffer_queue, buffers);
-	OPENAL_check_error(MMERR_OPENAL_DELETEBUFFERS);
 
 cleanup:
 	VC_Exit();
@@ -345,7 +340,6 @@ static void OPENAL_Pause(void)
 {
 	/* pause the source */
 	alSourcePause(source);
-	OPENAL_check_error(MMERR_OPENAL_SOURCEPAUSE);
 }
 
 static int OPENAL_Reset(void)

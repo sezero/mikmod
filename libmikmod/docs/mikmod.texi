@@ -1476,6 +1476,9 @@ is the requested setting.
 This error occurs when the sound device only supports uLaw output (which
 implies mono, 8 bit, and 8000 Hz sampling rate), which isn't the requested
 setting.
+@item MMERR_NO_FLOAT32
+This error occurs when the sound device doesn't support 32 bit float
+sound output, which is the requested setting.
 @end table
 @ifnottex
 @subsubsection AudioFile Driver Specific Error
@@ -1706,6 +1709,36 @@ Dos ``SoundBlaster'' Driver Specific Errors
 @table @samp
 @item MMERR_DOSSB_STARTDMA
 This error occurs if the driver failed to start the cyclic DMA transfer.
+@end table
+@ifnottex
+@subsection OpenAL Driver Specific Errors
+@end ifnottex
+@iftex
+OpenAL Driver Specific Errors
+@end iftex
+@table @samp
+@item MMERR_OPENAL_CREATECTX
+This error occurs if OpenAL fails to create a context during initialization.
+@item MMERR_OPENAL_CTXCURRENT
+This error occurs if OpenAL fails to set current context during initialization.
+@item MMERR_OPENAL_GENBUFFERS
+This error occurs if OpenAL fails to generate buffers during initialization.
+@item MMERR_OPENAL_GENSOURCES
+This error occurs if OpenAL fails to generate a source during initialization.
+@item MMERR_OPENAL_SOURCE
+This error occurs if OpenAL fails to set source parameters during initialization.
+@item MMERR_OPENAL_QUEUEBUFFERS
+This error occurs if OpenAL fails to queue buffers on a source.
+@item MMERR_OPENAL_UNQUEUEBUFFERS
+This error occurs if OpenAL fails to remove buffers from the queue.
+@item MMERR_OPENAL_BUFFERDATA
+This error occurs if OpenAL fails to fill a buffer with audio data.
+@item MMERR_OPENAL_GETSOURCE
+This error occurs if OpenAL fails to get source parameters.
+@item MMERR_OPENAL_SOURCEPLAY
+This error occurs if OpenAL fails to play the source.
+@item MMERR_OPENAL_SOURCESTOP
+This error occurs if OpenAL fails to stop the source.
 @end table
 
 
