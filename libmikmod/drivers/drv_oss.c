@@ -88,6 +88,15 @@
 #endif
 #endif
 
+/* Compatibility with OSS 4.x: AFMT_FLOAT is documented
+   as "not recommended" on the OSS website.  This post
+   on the OSS mailing lists says: "In general AFMT_FLOAT
+   is not supported by OSS except in some special cases."
+   (http://sf.net/p/opensound/mailman/message/28840674/) */
+#ifndef AFMT_FLOAT
+#define AFMT_FLOAT 0x00004000
+#endif
+
 static	int sndfd=-1;
 static	SBYTE *audiobuffer=NULL;
 static	int buffersize;
@@ -186,10 +195,15 @@ static int OSS_Init_internal(void)
 	formats=AFMT_S16_NE|AFMT_U8;
 #endif
 
-	orig_precision=play_precision=(md_mode&DMODE_16BITS)?AFMT_S16_NE:AFMT_U8;
+	orig_precision=play_precision=(md_mode&DMODE_FLOAT)? AFMT_FLOAT :
+					(md_mode&DMODE_16BITS)? AFMT_S16_NE : AFMT_U8;
 
     /* Device does not support the format we would prefer... */
     if(!(formats & play_precision)) {
+        if(play_precision==AFMT_FLOAT) {
+            _mm_errno=MMERR_NO_FLOAT32;
+            return 1;
+        }
         /* We could try 8 bit sound if available */
         if(play_precision==AFMT_S16_NE &&(formats&AFMT_U8)) {
             _mm_errno=MMERR_8BIT_ONLY;
