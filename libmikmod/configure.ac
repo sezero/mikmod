@@ -97,8 +97,7 @@ libmikmod_unix=default
 # Configure script options.
 # =========================
 
-AC_ARG_ENABLE(af,
-[  --enable-af             include AudioFile audio server driver [[default=no]]],
+AC_ARG_ENABLE([af], [AS_HELP_STRING([--enable-af],[include AudioFile audio server driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_af=yes
@@ -106,8 +105,7 @@ else
   libmikmod_driver_af=no
 fi])
 
-AC_ARG_ENABLE(alsa,
-[  --enable-alsa           Linux only: include ALSA driver [[guessed]]],
+AC_ARG_ENABLE([alsa], [AS_HELP_STRING([--enable-alsa],[Linux only: include ALSA driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_alsa=yes
@@ -115,9 +113,7 @@ else
   libmikmod_driver_alsa=no
 fi])
 
-AC_ARG_ENABLE(esd,
-[  --enable-esd            include EsounD (Enlightened Sound Daemon) driver
-                          [[default=no]]],
+AC_ARG_ENABLE([esd], [AS_HELP_STRING([--enable-esd],[include EsounD (Enlightened Sound Daemon) driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_esd=yes
@@ -125,8 +121,7 @@ else
   libmikmod_driver_esd=no
 fi])
 
-AC_ARG_ENABLE(nas,
-[  --enable-nas            include the Network Audio System driver [[default=no]]],
+AC_ARG_ENABLE([nas], [AS_HELP_STRING([--enable-nas],[include the Network Audio System driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_nas=yes
@@ -141,8 +136,7 @@ case $host_os in
      libmikmod_driver_sdl=no ;;
   *) ;;
 esac
-AC_ARG_ENABLE(sdl,
-[  --enable-sdl            include SDL driver [[guessed]]],
+AC_ARG_ENABLE([sdl], [AS_HELP_STRING([--enable-sdl],[include SDL driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_sdl=yes
@@ -151,8 +145,7 @@ else
 fi])
 
 try_sdl2=yes
-AC_ARG_ENABLE(sdl2,
-[  --enable-sdl2           try SDL2 first, then try SDL-1.2 [[default=yes]]],
+AC_ARG_ENABLE([sdl2], [AS_HELP_STRING([--enable-sdl2],[try SDL2 first, then try SDL-1.2 [default=yes]])],
 [if test "$enableval" = "yes"
 then
   try_sdl2=yes
@@ -160,8 +153,7 @@ else
   try_sdl2=no
 fi])
 
-AC_ARG_ENABLE(openal,
-[  --enable-openal         include OpenAL driver [[default=no]]],
+AC_ARG_ENABLE([openal], [AS_HELP_STRING([--enable-openal],[include OpenAL driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_openal=yes
@@ -169,8 +161,7 @@ else
   libmikmod_driver_openal=no
 fi])
 
-AC_ARG_ENABLE(oss,
-[  --enable-oss            include OSS driver [[guessed]]],
+AC_ARG_ENABLE([oss], [AS_HELP_STRING([--enable-oss],[include OSS driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_oss=yes
@@ -178,8 +169,7 @@ else
   libmikmod_driver_oss=no
 fi])
 
-AC_ARG_ENABLE(osx,
-[  --enable-osx            Darwin only: include OSX CoreAudio driver [[guessed]]],
+AC_ARG_ENABLE([osx], [AS_HELP_STRING([--enable-osx],[Darwin only: include OSX CoreAudio driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_osx=yes
@@ -187,8 +177,7 @@ else
   libmikmod_driver_osx=no
 fi])
 
-AC_ARG_ENABLE(mac,
-[  --enable-mac            Darwin only: include MAC carbon driver [[default=no]]],
+AC_ARG_ENABLE([mac], [AS_HELP_STRING([--enable-mac],[Darwin only: include MAC carbon driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_mac=yes
@@ -196,8 +185,7 @@ else
   libmikmod_driver_mac=no
 fi])
 
-AC_ARG_ENABLE(win,
-[  --enable-win            Windows only: include Windows MCI driver [[guessed]]],
+AC_ARG_ENABLE([win], [AS_HELP_STRING([--enable-win],[Windows only: include Windows MCI driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_win=yes
@@ -205,8 +193,7 @@ else
   libmikmod_driver_win=no
 fi])
 
-AC_ARG_ENABLE(ds,
-[  --enable-ds             Windows only: include Direct Sound driver [[guessed]]],
+AC_ARG_ENABLE([ds], [AS_HELP_STRING([--enable-ds],[Windows only: include Direct Sound driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_ds=yes
@@ -214,8 +201,7 @@ else
   libmikmod_driver_ds=no
 fi])
 
-AC_ARG_ENABLE(xaudio2,
-[  --enable-xaudio2        Windows only: include XAudio2 driver [[default=no]]],
+AC_ARG_ENABLE([xaudio2], [AS_HELP_STRING([--enable-xaudio2],[Windows only: include XAudio2 driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_xaudio2=yes
@@ -223,8 +209,7 @@ else
   libmikmod_driver_xaudio2=no
 fi])
 
-AC_ARG_ENABLE(os2,
-[  --enable-os2            OS/2 only: include the OS/2 MCI driver [[guessed]]],
+AC_ARG_ENABLE([os2], [AS_HELP_STRING([--enable-os2],[OS/2 only: include the OS/2 MCI driver [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_os2=yes
@@ -232,9 +217,7 @@ else
   libmikmod_driver_os2=no
 fi])
 
-AC_ARG_ENABLE(dart,
-[  --enable-dart           OS/2 (Warp 4) only: include OS/2 direct audio (DART)
-                          [[default=no]]],
+AC_ARG_ENABLE([dart], [AS_HELP_STRING([--enable-dart],[OS/2 (Warp 4) only: include OS/2 direct audio (DART) [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_dart=yes
@@ -242,8 +225,7 @@ else
   libmikmod_driver_dart=no
 fi])
 
-AC_ARG_ENABLE(sam9407,
-[  --enable-sam9407        Linux only: include sam9407 driver [[default=no]]],
+AC_ARG_ENABLE([sam9407], [AS_HELP_STRING([--enable-sam9407],[Linux only: include sam9407 driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_sam9407=yes
@@ -251,8 +233,7 @@ else
   libmikmod_driver_sam9407=no
 fi])
 
-AC_ARG_ENABLE(ultra,
-[  --enable-ultra          Linux only: include Ultra driver [[default=no]]],
+AC_ARG_ENABLE([ultra], [AS_HELP_STRING([--enable-ultra],[Linux only: include Ultra driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_ultra=yes
@@ -260,9 +241,7 @@ else
   libmikmod_driver_ultra=no
 fi])
 
-AC_ARG_ENABLE(dl,
-[  --enable-dl             load alsa, esound and ultra drivers at runtime
-                          [[default=yes]]],
+AC_ARG_ENABLE([dl], [AS_HELP_STRING([--enable-dl],[load alsa, esound and ultra drivers at runtime [default=yes]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_dynload=yes
@@ -270,8 +249,7 @@ else
   libmikmod_dynload=no
 fi])
 
-AC_ARG_ENABLE(debug,
-[  --enable-debug          build a debug version of libmikmod [[default=no]]],
+AC_ARG_ENABLE([debug], [AS_HELP_STRING([--enable-debug],[build a debug version of libmikmod [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_debug=yes
@@ -279,8 +257,7 @@ else
   libmikmod_debug=no
 fi])
 
-AC_ARG_ENABLE(threads,
-[  --enable-threads        build a thread-safe version of libmikmod [[guessed]]],
+AC_ARG_ENABLE([threads], [AS_HELP_STRING([--enable-threads],[build a thread-safe version of libmikmod [guessed]])],
 [if test "$enableval" = "yes"
 then
 	libmikmod_threads=yes
@@ -288,9 +265,7 @@ else
 	libmikmod_threads=no
 fi])
 
-AC_ARG_ENABLE(simd,
-[  --enable-simd           include SIMD (AltiVec or SSE2) mixer optimizations
-                          [[default=no]]],
+AC_ARG_ENABLE([simd], [AS_HELP_STRING([--enable-simd],[include SIMD (AltiVec or SSE2) mixer optimizations [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_simd=yes
@@ -298,9 +273,7 @@ else
   libmikmod_simd=no
 fi])
 
-AC_ARG_ENABLE(unix,
-[  --enable-unix           override the default value of MIKMOD_UNIX in
-                          mikmod_internals.h (if you *really* need to.)],
+AC_ARG_ENABLE([unix], [AS_HELP_STRING([--enable-unix],[override the default value of MIKMOD_UNIX in mikmod_internals.h (if you *really* need to.)])],
 [if test "$enableval" = "yes" ;then
   libmikmod_unix=1
 elif test "$enableval" = "no" ;then
