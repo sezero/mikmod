@@ -171,7 +171,7 @@ static int OSS_Init_internal(void)
 {
 	int play_stereo,play_rate;
 	int orig_precision,orig_stereo;
-	long formats;
+	int formats;
 #if SOUND_VERSION >= 301
 	audio_buf_info buffinf;
 #endif
