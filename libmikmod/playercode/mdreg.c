@@ -110,11 +110,11 @@ static void _mm_registeralldrivers(void)
 #endif
 
 	/* Register disk writers */
-	_mm_registerdriver(&drv_raw);
 	_mm_registerdriver(&drv_wav);
 #ifdef DRV_AIFF
 	_mm_registerdriver(&drv_aiff);
 #endif
+	_mm_registerdriver(&drv_raw);
 
 	/* Register other drivers */
 #ifdef DRV_PIPE
