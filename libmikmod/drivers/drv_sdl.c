@@ -79,7 +79,6 @@ static BOOL SetupSDLAudio(void)
 
     if (SDL_OpenAudio(&g_AudioSpec, NULL) < 0) {
         _mm_errno=MMERR_OPENING_AUDIO;
-        fprintf(stderr, "SDL_OpenAudio: %s\n", SDL_GetError());
         return 0;
     }
 
@@ -100,14 +99,12 @@ static int SDLDrv_Init(void)
 {
 #if (SDL_MAJOR_VERSION < 2)
     if (md_mode & DMODE_FLOAT) {
-        _mm_errno=MMERR_16BIT_ONLY;/* FIXME: need a new error for this! */
-        fprintf(stderr, "FLOAT output format not supported in SDL-1.x\n");
+        _mm_errno=MMERR_NO_FLOAT32;
         return 1;
     }
 #endif
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         _mm_errno=MMERR_OPENING_AUDIO;
-        fprintf(stderr, "SDL_INIT_AUDIO: %s\n", SDL_GetError());
         return 1;
     }
     if (!SetupSDLAudio()) {

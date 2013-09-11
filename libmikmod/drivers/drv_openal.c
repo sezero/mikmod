@@ -120,7 +120,7 @@ static BOOL set_format(void)
 	if (md_mode & DMODE_FLOAT)
 	{
 		if (!alIsExtensionPresent("AL_EXT_FLOAT32")) {
-			_mm_errno = MMERR_16BIT_ONLY; /* FIXME !! */
+			_mm_errno = MMERR_NO_FLOAT32;
 			return FALSE;
 		}
 		if (md_mode & DMODE_STEREO) format = AL_FORMAT_STEREO_FLOAT32;

@@ -175,6 +175,10 @@ static const char *_mm_errmsg[MMERR_MAX+1] =
 	"WSS_STARTDMA",
 	"SB_STARTDMA",
 
+/* float32 output */
+
+	"This driver doesn't support 32 bit float output",
+
 /* OpenAL driver errors */
 
 	"Could not create context",
