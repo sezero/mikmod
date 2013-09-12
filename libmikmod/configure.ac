@@ -12,7 +12,7 @@ SPEC_RELEASE=1
 
 AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
 AC_CONFIG_SRCDIR([include/mikmod.h.in])
-AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([posix])
 AM_MAINTAINER_MODE

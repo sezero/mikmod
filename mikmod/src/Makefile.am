@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES = @LIBMIKMOD_CFLAGS@
+AM_CFLAGS = @LIBMIKMOD_CFLAGS@
 
 bin_PROGRAMS = mikmod
 

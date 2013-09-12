@@ -1,10 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl
-dnl $Id: configure.in,v 1.2 2004/01/29 14:26:35 raph Exp $
 
-AC_INIT(src/mikmod.c)
-AM_INIT_AUTOMAKE(mikmod, 3.2.2)
-AM_CONFIG_HEADER(config.h)
+AC_PREREQ([2.59])
+
+AC_INIT([mikmod],[3.2.2])
+AM_INIT_AUTOMAKE([1.7 foreign])
+AC_CONFIG_SRCDIR([src/mikmod.c])
+AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 
 AC_CANONICAL_HOST
@@ -55,7 +56,7 @@ AC_CHECK_LIB(ncurses, initscr, libcurses=ncurses, libcurses=curses)
 dnl resizeterm is an optional part of ncurses
 AC_CHECK_LIB($libcurses, resizeterm, AC_DEFINE(HAVE_NCURSES_RESIZETERM, 1,
 		[Define if your libncurses defines resizeterm (not found in <4.2).]))
-AM_HEADER_TIOCGWINSZ_NEEDS_SYS_IOCTL
+AC_HEADER_TIOCGWINSZ
 
 dnl POSIX.4 threads
 dnl ---------------
