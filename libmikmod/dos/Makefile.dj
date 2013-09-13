@@ -71,7 +71,7 @@ $(OUT):
 libmikmod.a: $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
 
-version.mak: ../configure.in
+version.mak: ../configure.ac
 	grep "LIBMIKMOD_.*_VERSION=" $< >$@
 
 include/mikmod.h include/mikmod_build.h: ../include/mikmod.h.in
