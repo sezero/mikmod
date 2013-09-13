@@ -1,6 +1,7 @@
-For XAudio2 support you need DirectX SDK / xaudio2.h, then:
-  add DRV_XAUDIO2 among your preprocessor definitions, and
-  add ole32.lib among your link libraries.
+For XAudio2 support you need xaudio2.h (DirectX SDK June 2010 has
+  xaudio2_7), then add DRV_XAUDIO2 among your preprocessor defs.
+  If you want xaudio2_8 for Windows 8 then also add DRV_XAUDIO28
+  among those defs and make sure that xaudio2.h is from win8 sdk.
 
 For OpenAL support you need OpenAL 1.1 SDK, then: add DRV_OPENAL
   among your preprocessor definitions and add OpenAL32.lib among

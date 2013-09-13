@@ -5,9 +5,10 @@
 # among your CFLAGS and add OpenAL32.lib among your link libraries.
 # (See drv_openal.c for notes about OpenAL header location issues.)
 #
-# For XAudio2 support you need DirectX SDK / xaudio2.h, then:
-# add /DDRV_XAUDIO2 among your CFLAGS, and add ole32.lib among
-# your link libraries.
+# For XAudio2 support you need xaudio2.h (DirectX SDK June 2010 has
+# xaudio2_7), then add /DDRV_XAUDIO2 among your CFLAGS. If you want
+# xaudio2_8 for Windows 8 then also add /DDRV_XAUDIO28 among CFLAGS
+# and make sure that xaudio2.h is from win8 sdk.
 #
 # For SSE2 support: add /DMIKMOD_SIMD among your CFLAGS
 

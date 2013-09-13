@@ -77,6 +77,9 @@
 /* Define if the Windows XAudio2 driver is compiled */
 #undef DRV_XAUDIO2
 
+/* Define if using XAudio 2.8 for Windows8 with XAudio2 driver */
+#undef DRV_XAUDIO28
+
 /* Define to 1 if you have the <AF/AFlib.h> header file. */
 #undef HAVE_AF_AFLIB_H
 

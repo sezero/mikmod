@@ -209,6 +209,15 @@ else
   libmikmod_driver_xaudio2=no
 fi])
 
+use_xaudio28=no
+AC_ARG_ENABLE([xaudio28], [AS_HELP_STRING([--enable-xaudio28],[Windows only: use XAudio2.8 for Windows8 instead of XAudio2.7 [default=no]])],
+[if test "$enableval" = "yes"
+then
+  use_xaudio28=yes
+else
+  use_xaudio28=no
+fi])
+
 AC_ARG_ENABLE([os2], [AS_HELP_STRING([--enable-os2],[OS/2 only: include the OS/2 MCI driver [guessed]])],
 [if test "$enableval" = "yes"
 then
@@ -759,6 +768,11 @@ then
 	libmikmod_driverlist="xaudio2 $libmikmod_driverlist"
 	AC_DEFINE([DRV_XAUDIO2], 1, [Define if the Windows XAudio2 driver is compiled])
 	LIBRARY_LIB="-lole32 $LIBRARY_LIB"
+	if test $use_xaudio28 = yes
+	then
+		AC_DEFINE([DRV_XAUDIO28],1,[Define if using XAudio 2.8 for Windows8 with XAudio2 driver])
+		LIBRARY_LIB="-lxaudio2_8 $LIBRARY_LIB"
+	fi
 fi
 
 if test $libmikmod_driver_os2 = yes

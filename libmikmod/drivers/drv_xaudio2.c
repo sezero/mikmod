@@ -36,13 +36,27 @@
 #include "config.h"
 #endif
 
-#define _WIN32_WINNT 0x0501
-#include "mikmod_internals.h"
-
 #ifdef DRV_XAUDIO2
+
+#ifndef _WIN32_WINNT
+/* 0x0501 for WinXP, 0x0602 for Win8 */
+#define _WIN32_WINNT 0x0501
+#endif
+#if defined(DRV_XAUDIO28) && (_WIN32_WINNT < 0x0602)
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0602
+#endif
+#include "mikmod_internals.h"
 
 #define INITGUID
 #include <xaudio2.h>
+
+#if defined(_MSC_VER)
+#ifdef DRV_XAUDIO28
+#pragma comment(lib,"xaudio2.lib")
+#endif
+#pragma comment(lib,"ole32.lib")
+#endif
 
 /* PF_XMMI64_INSTRUCTIONS_AVAILABLE not in all SDKs */
 #ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
@@ -130,7 +144,11 @@ static DWORD WINAPI UpdateBufferProc(LPVOID lpParameter) {
 			XAUDIO2_VOICE_STATE state;
 			XAUDIO2_BUFFER audio_buf;
 
+			#if !defined(DRV_XAUDIO28)
 			IXAudio2SourceVoice_GetState(pSourceVoice, &state);
+			#else
+			IXAudio2SourceVoice_GetState(pSourceVoice, &state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+			#endif
 			if (state.BuffersQueued >= XAUDIO2_NUM_BUFFERS - 1)
 				break;
 			MUTEX_LOCK(vars);
@@ -196,7 +214,7 @@ static int XAudio2_Init(void) {
 
 	current_buf = 0;
 	flags = 0;
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(DRV_XAUDIO28)
 /*	flags |= XAUDIO2_DEBUG_ENGINE;*/
 #endif
 #ifndef _XBOX
@@ -205,9 +223,16 @@ static int XAudio2_Init(void) {
 	if (FAILED(XAudio2Create(&pXAudio2, flags, XAUDIO2_DEFAULT_PROCESSOR))) {
 		goto fail;
 	}
+#if defined(DRV_XAUDIO28)
+	if (FAILED(IXAudio2_CreateMasteringVoice(pXAudio2, &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE,
+						 0, NULL, NULL, 0 /*AudioCategory_Other*/))) {
+		goto fail;
+	}
+#else
 	if (FAILED(IXAudio2_CreateMasteringVoice(pXAudio2, &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE, 0, 0, NULL))) {
 		goto fail;
 	}
+#endif
 	if (FAILED(IXAudio2_CreateSourceVoice(pXAudio2, &pSourceVoice, &wfmt, 0, 1.0f, &cbVoice, NULL, NULL))) {
 		goto fail;
 	}
@@ -290,7 +315,11 @@ static void XAudio2_Update(void) {
 			XAUDIO2_VOICE_STATE state;
 			XAUDIO2_BUFFER audio_buf;
 
+			#if !defined(DRV_XAUDIO28)
 			IXAudio2SourceVoice_GetState(pSourceVoice, &state);
+			#else
+			IXAudio2SourceVoice_GetState(pSourceVoice, &state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+			#endif
 			if (state.BuffersQueued > 0)
 				break;
 			current_buf %= XAUDIO2_NUM_BUFFERS;
@@ -359,6 +388,7 @@ MIKMODAPI MDRIVER drv_xaudio2 = {
 
 #else
 
+#include "mikmod_internals.h"
 MISSING(drv_xaudio2);
 
 #endif

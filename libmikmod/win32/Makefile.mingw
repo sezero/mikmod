@@ -38,9 +38,12 @@ CPPFLAGS+=-DDRV_DS
 #LDLIBS+=-lOpenAL32
 #CPPFLAGS+=-DDRV_OPENAL
 
-# support for XAudio2 output (need dxsdk / xaudio2.h)
+# support for XAudio2 output: need dxsdk / xaudio2.h (xaudio2_7)
 #LDLIBS+=-lole32
 #CPPFLAGS+=-DDRV_XAUDIO2
+# the following is *additionally* needed with xaudio2_8 for Windows8:
+#LDLIBS+=-lxaudio2_8
+#CPPFLAGS+=-DDRV_XAUDIO28
 
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF
