@@ -553,9 +553,11 @@ then
 		AM_PATH_SDL("1.2.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
 	fi
 	# we don't need linking to SDLmain, because we are a library.
-	# we also don't need -lmingw32 for MinGW, because gcc adds it automatically
+	# we also don't need -lmingw32 for MinGW, because gcc adds it automatically.
+	# -mwindows doesn't make sense for us, either, i.e. no need for extra gdi32
+	# and comdlg32 linkage, nor the extra "--subsystem windows" flag.
 	SDL_CFLAGS="`echo $SDL_CFLAGS|sed -e 's/-Dmain=SDL_main//'`"
-	SDL_LIBS="`echo $SDL_LIBS|sed -e 's/-lSDLmain//'|sed -e 's/-lmingw32//'`"
+	SDL_LIBS="`echo $SDL_LIBS|sed -e 's/-lSDLmain//'|sed -e 's/-lmingw32//'|sed -e 's/-mwindows//'`"
 else
 	libmikmod_driver_sdl=no
 fi
