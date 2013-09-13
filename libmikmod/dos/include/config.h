@@ -4,7 +4,9 @@
 #define STDC_HEADERS
 
 /* Define if your system supports binary pipes (i.e. Unix) */
-#define DRV_PIPE
+/*#define DRV_PIPE*/
+/* Define if you want support for output to stdout */
+/*#define DRV_STDOUT*/
 
 /* Define if the Gravis UltraSound driver is compiled */
 #define DRV_ULTRA

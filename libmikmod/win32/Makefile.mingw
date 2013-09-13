@@ -22,7 +22,7 @@ LDLIBS=
 # SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)
 SSE2FLAGS=-msse2
 
-# support for output to stdout, raw file and wav file
+# support for raw and wav file writers
 # are not configurable by default
 
 # support for WinMM sound output:
@@ -41,12 +41,15 @@ CPPFLAGS+=-DDRV_DS
 # support for XAudio2 output: need dxsdk / xaudio2.h (xaudio2_7)
 #LDLIBS+=-lole32
 #CPPFLAGS+=-DDRV_XAUDIO2
-# the following is *additionally* needed with xaudio2_8 for Windows8:
+# the following are *additionally* needed with xaudio2_8 for Windows8:
 #LDLIBS+=-lxaudio2_8
 #CPPFLAGS+=-DDRV_XAUDIO28
 
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF
+
+# support for output to stdout:
+#CPPFLAGS+=-DDRV_STDOUT
 
 # Compiler flags
 CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_MALLOC_H -DHAVE_LIMITS_H

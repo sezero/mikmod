@@ -26,7 +26,7 @@ SSE2FLAGS=-msse2
 # use -faltivec or -mpim-altivec instead. (see Apple gcc man page.)
 VECFLAGS=-faltivec
 
-# support for output to stdout, raw file and wav file
+# support for raw and wav file writers
 # are not configurable by default
 
 # support for CoreAudio sound output:
@@ -39,6 +39,8 @@ CPPFLAGS+=-DDRV_OSX
 
 # support for output via a pipe to another command:
 CPPFLAGS+=-DDRV_PIPE
+# support for output to stdout:
+CPPFLAGS+=-DDRV_STDOUT
 
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF

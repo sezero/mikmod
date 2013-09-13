@@ -23,6 +23,9 @@
 /* Define if you have the ANSI C header files.  */
 #define STDC_HEADERS 1
 
+/* Define if you want support for output to stdout */
+#define DRV_STDOUT 1
+
 /* Define if your system supports binary pipes (i.e. Unix) */
 /* #undef DRV_PIPE */
 
@@ -159,4 +162,3 @@
 
 /* Version number of package */
 #define VERSION "3.3.2"
-

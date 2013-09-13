@@ -64,6 +64,9 @@
 /* Define if the SGI audio driver is compiled */
 #undef DRV_SGI
 
+/* Define if you want support for output to stdout */
+#undef DRV_STDOUT
+
 /* Define if the Sun audio driver or compatible (NetBSD, OpenBSD) is compiled
    */
 #undef DRV_SUN

@@ -34,7 +34,8 @@ SRCPATH = ../loaders ../mmio ../playercode
 OUT = out
 
 # MikMod drivers
-DRIVERS = drv_ultra drv_sb drv_wss drv_wav drv_raw drv_stdout drv_pipe drv_nos
+# stdout and pipe drivers are disabled: edit include/config.h to enable them.
+DRIVERS = drv_ultra drv_sb drv_wss drv_wav drv_aiff drv_raw drv_stdout drv_pipe drv_nos
 
 # SED script to update configuration files
 SED_CONFIG = \
@@ -120,6 +121,7 @@ out/drv_sb.o: include/config.h ../include/mikmod_internals.h include/dossb.h \
 out/drv_wss.o: include/config.h ../include/mikmod_internals.h \
   include/doswss.h include/dosdma.h include/dosirq.h
 out/drv_wav.o: include/config.h ../include/mikmod_internals.h
+out/drv_aiff.o: include/config.h ../include/mikmod_internals.h
 out/drv_raw.o: include/config.h ../include/mikmod_internals.h
 out/drv_stdout.o: include/config.h ../include/mikmod_internals.h
 out/drv_pipe.o: include/config.h ../include/mikmod_internals.h

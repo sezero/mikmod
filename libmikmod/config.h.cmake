@@ -2,6 +2,8 @@
 
 /* Define if your system supports binary pipes (i.e. Unix) */
 #cmakedefine DRV_PIPE 1
+/* Define if you want support for output to stdout */
+#cmakedefine DRV_STDOUT 1
 
 /* Define if you want a .aiff file writer driver */
 #cmakedefine DRV_AIFF 1
