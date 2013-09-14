@@ -7,12 +7,58 @@ THANKS
 
 - Paul Spark <sparkynz74@gmail.com> for allowing libmikmod to build
   on Microsoft Visual C++ 6.0 compiler with the new SDL driver.
+- Ozkan Sezer: many changes.
 
 NEW FEATURES
 
 - CMake build system.
 - Windows SDL driver
 - ALSA driver now supports only the new ALSA (to remove unnecessary #ifdefs.)
+- ALSA fixes from Fedora. additional ALSA fixes.
+- SDL driver now works properly, both with SDL-1.2.x and with SDL2.
+  support for floating point output if compiled against SDL2.
+- ESD updates from Fedora. Add esd back to configury which was removed
+  in 3.2.0b3 (now require >= 0.2.18.)
+- Floating point output mode support for ALSA, OSS, Direct Sound,
+  WinMM drivers and for WAV file writer.
+- Minor OSS fixes.
+- The pipe and stdout drivers are now configurable
+- Raw file-writer now has the lowest priority among the file-writers.
+- The NAS driver now actually compiles.
+- Add windows xaudio2 driver, originally suggested by 'honza.c', with
+  updates, xaudio2.8 support and with floating point output support.
+- Add openal driver, originally suggested by 'kervala', with fixes and
+  updates and with floating point output support.
+- 64 bit detection fixes.
+- Fix BOOL type use all over the source.
+- Several const correctness fixes.
+- Merged fixes for CVE-2007-6720 and CVE-2009-0179.
+- mmio: memreader fixes and updates.
+- Fixes for access violations introduced in 3.2.0b3.
+- Fixes for broken memory allocation wrappers introduced in 3.2.0b3.
+- Fix MikMod_strerror() might read beyond end of a static array.
+- Fix looping volume in Player_SetVolume(), based on an old patch by
+  Yi-Huang Han.
+- XM loader now reads songlength amount of orders from the file and
+  then seeks to mh->headersize+60 (sf.net bug #10.)
+- Fixed the "unclick" code to consider loop lengths shorter than 16:
+  fixes crashes seen with several xm files (sf.net bug #12, and mpd
+  bug #3425.)
+- Mac OS X: standalone makefile with cross-compilation support.
+- djgpp build fixes.
+- Windows: multiple fixes and updates. win64 fully supported. MinGW,
+  MinGW-w64, LCC-win32 and MSVC fully supported. new standalone makefile
+  for MinGW[-w64] with cross-compilation support.
+- Windows: MIKMODAPI (dllexport/dllimport) works properly for MinGW and
+  windows compilers as well. The static builds using MSVC, LCC, etc are
+  now named mikmod_static.lib. When compiling against static libmikmod,
+  MIKMOD_STATIC should be defined so that dllimport wouldn't be assumed.
+- Updated configury, support for cross-compilation, support for building
+  in a separate directory, support latest autotools.
+- SIMD (AltiVec and SSE2) option is now disabled by default. Can be
+  enabled by --enable-simd configury option, similarly with cmake. (the
+  standalone makefiles or project files are added instructions on how to
+  enable the feature.)
 
 libmikmod 3.2.0 was released on 01-June-2012.
 
