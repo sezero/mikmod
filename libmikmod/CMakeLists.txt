@@ -86,7 +86,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/t/t/.*\\\\.exe$"
     "/t/Presets"
     "/CMakeCache\\\\.txt$"
-    "/Makefile$"
     "/CTestTestfile\\\\.cmake$"
     "/cmake_install\\\\.cmake$"
     "/CPackConfig\\\\.cmake$"
