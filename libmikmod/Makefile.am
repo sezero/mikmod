@@ -7,6 +7,7 @@ bin_SCRIPTS = libmikmod-config
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.pc.cmake libmikmod-config.cmake \
 	     config.h.cmake CMakeLists.txt cmake \
+	     t run-tests.pl \
 	     COPYING.LESSER
 
 m4datadir = $(datadir)/aclocal
