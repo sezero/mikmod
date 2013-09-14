@@ -5,7 +5,9 @@ SUBDIRS = drivers include loaders mmio playercode posix \
 bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
-             COPYING.LESSER CMakeLists.txt cmake
+	     libmikmod.pc.cmake libmikmod-config.cmake \
+	     config.h.cmake CMakeLists.txt cmake \
+	     COPYING.LESSER
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
