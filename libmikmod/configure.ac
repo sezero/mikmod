@@ -544,13 +544,14 @@ fi
 # -----------------
 if test $libmikmod_driver_sdl = yes
 then
+	libmikmod_driver_sdl=no
 	if test $try_sdl2 = yes
 	then
-		AM_PATH_SDL2("2.0.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
+		AM_PATH_SDL2("2.0.0",[libmikmod_driver_sdl=yes])
 	fi
 	if test $libmikmod_driver_sdl != yes
 	then
-		AM_PATH_SDL("1.2.0",[libmikmod_driver_sdl=yes],[libmikmod_driver_sdl=no])
+		AM_PATH_SDL("1.2.0",[libmikmod_driver_sdl=yes])
 	fi
 	# we don't need linking to SDLmain, because we are a library.
 	# we also don't need -lmingw32 for MinGW, because gcc adds it automatically.
@@ -586,7 +587,12 @@ case $host_os in
 	if test $libmikmod_driver_xaudio2 = yes
 	then
 		libmikmod_driver_xaudio2=no
+		ac_save_CPPFLAGS=$CPPFLAGS
+		if test $use_xaudio28 = yes; then
+			CPPFLAGS="$CPPLAGS -D_WIN32_WINNT=0x0602"
+		fi
 		AC_CHECK_HEADERS(xaudio2.h)
+		CPPFLAGS=$ac_save_CPPFLAGS
 		if test $ac_cv_header_xaudio2_h = yes ; then
 			libmikmod_driver_xaudio2=yes
 		fi
