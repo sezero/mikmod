@@ -1,4 +1,4 @@
-Summary of changes between libmikmod 3.1.11 and libmikmod 3.2.0 (Xorigad):
+Summary of changes between libmikmod 3.2.0 and libmikmod 3.4.0 ():
 ==========================================================================
 
 libmikmod 3.4.0 was released on TBD
@@ -12,7 +12,7 @@ THANKS
 NEW FEATURES
 
 - CMake build system.
-- Windows SDL driver
+- Add new SDL driver.
 - ALSA driver now supports only the new ALSA (to remove unnecessary #ifdefs.)
 - ALSA fixes from Fedora. additional ALSA fixes.
 - SDL driver now works properly, both with SDL-1.2.x and with SDL2.
@@ -59,6 +59,9 @@ NEW FEATURES
   enabled by --enable-simd configury option, similarly with cmake. (the
   standalone makefiles or project files are added instructions on how to
   enable the feature.)
+
+Summary of changes between libmikmod 3.1.11 and libmikmod 3.2.0 (Xorigad):
+==========================================================================
 
 libmikmod 3.2.0 was released on 01-June-2012.
 
