@@ -102,7 +102,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "ids-whitelist\\\\.txt"
     "/_Inline/"
     "/(build|BUILD)/"
-    "/m4/"
     "/autom4te.cache/"
 )
 
