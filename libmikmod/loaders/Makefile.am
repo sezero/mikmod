@@ -1,4 +1,5 @@
-EXTRA_DIST = load_669.c \
+EXTRA_DIST = CMakeLists.txt \
+             load_669.c \
              load_amf.c \
              load_asy.c \
              load_dsm.c \

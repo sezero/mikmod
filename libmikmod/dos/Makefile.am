@@ -1,2 +1,2 @@
 SUBDIRS = include src
-EXTRA_DIST = Makefile.dj README
+EXTRA_DIST = Makefile.dj README CMakeLists.txt 
