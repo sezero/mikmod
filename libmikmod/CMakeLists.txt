@@ -95,13 +95,13 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/libmikmod-config$"
     "/libfreecell-solver\\\\.pc$"
     "/([0-9]+)\\\\.board$"
-    "/config\\\\.h$"
+    "^config\\\\.h$"
     "/install_manifest\\\\.txt$"
     "/t/card-test-(parse|render)\\\\.c$"
     "/Testing/"
     "ids-whitelist\\\\.txt"
     "/_Inline/"
-    "/(build|BUILD)/"
+    "/(B|build|BUILD)/"
     "/autom4te.cache/"
 )
 
