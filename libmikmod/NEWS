@@ -24,6 +24,8 @@ NEW FEATURES
 - Minor OSS fixes.
 - The pipe and stdout drivers are now configurable
 - Raw file-writer now has the lowest priority among the file-writers.
+- The multi-platform SDL and OpenAL drivers, if they are compiled, have
+  priority over OS-specific hw drivers for MikMod_RegisterAllDrivers().
 - The NAS driver now actually compiles.
 - Add windows xaudio2 driver, originally suggested by 'honza.c', with
   updates, xaudio2.8 support and with floating point output support.

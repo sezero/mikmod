@@ -67,7 +67,7 @@ libmikmod_driver_alsa=yes
 libmikmod_driver_esd=no
 libmikmod_driver_nas=no
 libmikmod_driver_hp=no
-libmikmod_driver_sdl=yes
+libmikmod_driver_sdl=no
 libmikmod_driver_openal=no
 libmikmod_driver_oss=yes
 libmikmod_driver_sam9407=no
@@ -160,7 +160,7 @@ else
   libmikmod_driver_pipe=no
 fi])
 
-AC_ARG_ENABLE([sdl], [AS_HELP_STRING([--enable-sdl],[include SDL driver [guessed]])],
+AC_ARG_ENABLE([sdl], [AS_HELP_STRING([--enable-sdl],[include SDL driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_sdl=yes
@@ -169,7 +169,7 @@ else
 fi])
 
 try_sdl2=yes
-AC_ARG_ENABLE([sdl2], [AS_HELP_STRING([--enable-sdl2],[try SDL2 first, then try SDL-1.2 [default=yes]])],
+AC_ARG_ENABLE([sdl2], [AS_HELP_STRING([--enable-sdl2],[try SDL2 first, then SDL-1.2 as libsdl [default=yes]])],
 [if test "$enableval" = "yes"
 then
   try_sdl2=yes

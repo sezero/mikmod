@@ -50,7 +50,15 @@ static void _mm_registeralldrivers(void)
 	_mm_registerdriver(&drv_ultra);
 #endif
 
-	/* Register hardware drivers - software mixing */
+	/* Register multi-platform drivers -- software mixing */
+#ifdef DRV_SDL
+	_mm_registerdriver(&drv_sdl);
+#endif
+#ifdef DRV_OPENAL
+	_mm_registerdriver(&drv_openal);
+#endif
+
+	/* Register OS-specific hardware drivers - software mixing */
 #ifdef DRV_AIX
 	_mm_registerdriver(&drv_aix);
 #endif
@@ -83,12 +91,6 @@ static void _mm_registeralldrivers(void)
 #endif
 #ifdef DRV_WIN
 	_mm_registerdriver(&drv_win);
-#endif
-#ifdef DRV_OPENAL
-	_mm_registerdriver(&drv_openal);
-#endif
-#ifdef DRV_SDL
-	_mm_registerdriver(&drv_sdl);
 #endif
 #ifdef DRV_MAC
 	_mm_registerdriver(&drv_mac);
