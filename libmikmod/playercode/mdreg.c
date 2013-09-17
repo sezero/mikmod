@@ -120,7 +120,7 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_PIPE
 	_mm_registerdriver(&drv_pipe);
 #endif
-#ifndef macintosh
+#if defined(DRV_STDOUT) && !defined(macintosh)
 	_mm_registerdriver(&drv_stdout);
 #endif
 
