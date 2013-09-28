@@ -23,24 +23,10 @@
 #
 # (This copyright notice applies only to this file)
 
-SET (private_mod_path "${CMAKE_SOURCE_DIR}/cmake")
-LIST (APPEND CMAKE_MODULE_PATH "${private_mod_path}")
-INCLUDE(Shlomif_Common)
-
-# Taken from http://www.cmake.org/pipermail/cmake/2007-March/013060.html
-MACRO(REPLACE_FUNCTIONS_FROMDIR sources dir)
-  FOREACH(name ${ARGN})
-    STRING(TOUPPER have_${name} SYMBOL_NAME)
-    CHECK_FUNCTION_EXISTS(${name} ${SYMBOL_NAME})
-    IF(NOT ${SYMBOL_NAME})
-      SET(${sources} ${${sources}} ${dir}/${name}.c)
-    ENDIF(NOT ${SYMBOL_NAME})
-  ENDFOREACH(name)
-ENDMACRO(REPLACE_FUNCTIONS_FROMDIR)
-
-SHLOMIF_COMMON_SETUP("${private_mod_path}")
-
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+PROJECT(libmikmod C)
+SET(VERSION "3.3.2")
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+LIST(APPEND CMAKE_MODULE_PATH "${libmikmod_SOURCE_DIR}/cmake")
 
 # This is the equivalent to perform a "make dist"/"make distdir" etc.
 SET(CPACK_PACKAGE_NAME "libmikmod")
@@ -48,12 +34,6 @@ SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libmikmod - a module file playing and sou
 SET(CPACK_PACKAGE_VENDOR "Shlomi Fish")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.LESSER")
-
-# Process and extract the version number.
-# FILE( READ "ver.txt" VERSION)
-
-# CHOMP (VERSION)
-SET (VERSION "3.3.2")
 
 STRING (REGEX MATCHALL "([0-9]+)" VERSION_DIGITS "${VERSION}")
 
@@ -160,8 +140,8 @@ IF (ENABLE_RPATH)
 #   SET (CMAKE_SKIP_RPATH YES)
 ENDIF(ENABLE_RPATH)
 
+include(${libmikmod_SOURCE_DIR}/cmake/macros.cmake)
 INCLUDE(CPack)
-
 include(CheckFunctionExists)
 include(CheckSymbolExists)
 INCLUDE(CheckCCompilerFlag)
@@ -182,8 +162,6 @@ ADD_SUBDIRECTORY ("playercode")
 ADD_SUBDIRECTORY ("posix")
 ADD_SUBDIRECTORY ("t")
 ADD_SUBDIRECTORY ("win32")
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(COMPILER_FLAGS_TO_CHECK
     "-Wall" "-Werror=implicit-function-declaration"
@@ -352,27 +330,27 @@ REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
                           posix
                           memcmp strcasecmp strdup strstr)
 
-SET (FREECELL_SOLVER_LIBS)
+SET (LIBMIKMOD_LIBS)
 
 ADD_LIBRARY (mikmod
     SHARED
     ${MIKMOD_LIB_MODULES}
     )
 
-LIST (APPEND FREECELL_SOLVER_LIBS "mikmod")
+LIST (APPEND LIBMIKMOD_LIBS "mikmod")
 IF (ENABLE_STATIC)
     ADD_LIBRARY (mikmod-static
         STATIC
         ${MIKMOD_LIB_MODULES}
     )
-    LIST (APPEND FREECELL_SOLVER_LIBS "mikmod-static")
+    LIST (APPEND LIBMIKMOD_LIBS "mikmod-static")
 
     SET_TARGET_PROPERTIES(
         mikmod-static
         PROPERTIES OUTPUT_NAME "mikmod"
     )
     SET_TARGET_PROPERTIES(
-        ${FREECELL_SOLVER_LIBS}
+        ${LIBMIKMOD_LIBS}
         PROPERTIES CLEAN_DIRECT_OUTPUT 1
     )
 ENDIF (ENABLE_STATIC)
@@ -513,14 +491,14 @@ ENDIF(UNIX)
 
 LIST (APPEND EXTRA_LIBS ${MATH_LIB})
 
-FOREACH (TGT ${FREECELL_SOLVER_LIBS})
+FOREACH (TGT ${LIBMIKMOD_LIBS})
     TARGET_LINK_LIBRARIES ("${TGT}"
         ${EXTRA_LIBS})
     INCLUDE_DIRECTORIES(AFTER ${ALSA_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${SDL_INCLUDE_DIR})
 ENDFOREACH (TGT)
 
 INSTALL(
-    TARGETS ${FREECELL_SOLVER_LIBS}
+    TARGETS ${LIBMIKMOD_LIBS}
     LIBRARY DESTINATION "lib${LIB_SUFFIX}"
     ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
 )

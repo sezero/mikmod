@@ -1,22 +1,11 @@
 INSTALL file for libmikmod
 ==========================
-Shlomi Fish <shlomif@cpan.org>
-:Date: 2012-12-15
-:Revision: $Id$
 
-Quick and Dirty Compilation
----------------------------
+Starting from version 3.3.2, libmikmod supports CMake.  You'll need to
+install CMake version 2.8.x or later from your distribution's repository
+or from its source. CMake homepage is at http://www.cmake.org/ .
 
-libmikmod was converted to use CMake ( http://www.cmake.org/ )
-starting from version 3.4.0. You'll need to install CMake version 2.8.x
-or later from your distribution's repository or from its source
-distribution.
-
-You'll also need to install and set up the shlomif-cmake-modules:
-
-    https://bitbucket.org/shlomif/shlomif-cmake-modules
-
-Next, run:
+Run:
 
     mkdir build
     cd build
