@@ -16,8 +16,9 @@ libmikmod main authors
   Revived the project after many years of inactivity, in 2004. Former
   maintainer.
 * Shlomi Fish <shlomif@shlomifish.org> ( http://www.shlomifish.org/ ).
-  Took over maintenance after many years of inactivity, in 2012. Current
-  maintainer.
+  Took over maintenance after many years of inactivity, in 2012.
+* Ozkan Sezer <sezero@users.sourceforge.net>
+  Took over maintenance in 2013. (current maintainer.)
 
 Previous Unix maintainers
 -------------------------
@@ -34,7 +35,9 @@ General contributors
 * Arne de Bruijn <arne@knoware.nl>
   wrote the compressed IT sample support.
 * Shlomi Fish <shlomif@shlomifish.org>
-  wrote the Java port, bug fixes.
+  wrote the Java port, bug fixes, CMake build system.
+* Ozkan Sezer <sezero@users.sourceforge.net>
+  overall bug fixes, configury updates.
 * Juan Linietsky <coding@reduz.com.ar>
   overall bug fixes.
 * Claudio Matsuoka <claudio@helllabs.org>

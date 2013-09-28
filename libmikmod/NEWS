@@ -12,11 +12,10 @@ THANKS
 NEW FEATURES
 
 - CMake build system.
-- Add new SDL driver.
 - ALSA driver now supports only the new ALSA (to remove unnecessary #ifdefs.)
 - ALSA fixes from Fedora. additional ALSA fixes.
-- SDL driver now works properly, both with SDL-1.2.x and with SDL2.
-  support for floating point output if compiled against SDL2.
+- Add new SDL driver - works both with SDL-1.2.x and with SDL2, supports
+  floating point output if compiled against SDL2.
 - ESD updates from Fedora. Add esd back to configury which was removed
   in 3.2.0b3 (now require >= 0.2.18.)
 - Floating point output mode support for ALSA, OSS, Direct Sound,

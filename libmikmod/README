@@ -1,7 +1,7 @@
   Hello folks!
 
 
-This is libmikmod, version 3.2.0, a portable sound library for Unix
+This is libmikmod, version 3.3.2, a portable sound library for Unix
 and other systems. Check out the file 'NEWS' for more history information.
 
 
@@ -12,7 +12,7 @@ This is a *beta* version of libmikmod. Although it should work fine on
 almost all systems, there are likely a few last-minute errors or typos
 in the source, and some parts have not received enough hours of testing yet.
 
-Also, please note that all features planned for the final 3.2.0 release are not
+Also, please note that all features planned for the final 3.4.0 release are not
 available yet. Some structures or functions may change. This release is mainly
 intended to the libmikmod developers to share a common base for adding new
 features...
@@ -131,16 +131,6 @@ different parameters, for example: somevalue=1,someothervalue=2
   buffer=   logarithmic size of the buffer, in the range 12-19. Default
             is 15.
 
-- ALSA ("alsa") [Linux only]
-  card=     card number. Default is first pcm-capable card. Replaces the
-            ALSA_CARD environment variable, which is now deprecated.
-  pcm=      pcm interface number. Default is first adequate interface.
-            Replaces the ALSA_PCM environment variable, which is now
-            deprecated.
-  buffer=   logarithmic fragment size, in the range 2-16. Default is 4.
-            Replaces the MM_NUMFRAGS environment variable, which is now
-            deprecated.
-
 - DART ("dart") [OS/2 only]
   buffer=   logarithmic fragment size, in the range 12-16. Default is
             computed to a bit more than 1/4" of playback.
@@ -194,7 +184,7 @@ different parameters, for example: somevalue=1,someothervalue=2
             Replaces the MM_SGI_BUFSIZE environment variable, which is
             now deprecated.
 
-- Disk writers in raw and wav formats ("raw" and "wav")
+- Disk writers in raw and wav formats ("raw", "wav" and "aiff")
   file=     Output file name. Default is music.raw for the raw driver
             and music.wav for the wav driver.
 
@@ -206,12 +196,13 @@ different parameters, for example: somevalue=1,someothervalue=2
   headphone on SunOS/Solaris only, redirects the output to the headphone
             port.
   speaker   on SunOS/Solaris only, redirects the output to the speaker.
-  
+
 - Linux sam9407-based soundcards ("sam9407") [Linux only]
   card=     card number. Default is first card.
 
 - NoSound ("nosound"), Standard output ("stdout"), Ultrasound ("ultra"),
-  Windows Multimedia ("winmm")
+  Windows Multimedia ("winmm"), Windows XAudio2 ("xaudio2"),
+  Linux ALSA ("alsa")
   These driver have no options.
 
 
@@ -219,30 +210,12 @@ different parameters, for example: somevalue=1,someothervalue=2
 -----------------------------------
 
 The Advanced Linux Sound Architecture (ALSA) project aims to provide
-better sound facilities than the current OSS drivers. Although it is
-still in beta, it appears to be very stable and very easy to program
-compared to the OSS.
-Besides, it works much better than OSS for Gravis-type soundcards.
-
-You can find more information on ALSA, including an HOWTO, on the web:
+better sound facilities than the current OSS drivers. You can find
+more information on ALSA, including a HOWTO, on the web:
   http://www.alsa-project.org
 
-The Advanced Linux Sound Architecture (ALSA) is still in beta, but its
-API is stable, so this libmikmod version should work with future
-versions of ALSA.
-
-This version of the libmikmod ALSA driver works with either ALSA
-versions 0.3.x (for Linux kernels 2.0.x) and 0.4.x (for Linux kernels
-2.2.x and later).
-The latest versions, 0.5.x and 0.9.x, are currently not supported natively,
-although you can use the OSS emulation without problems.
-
-If the sound comes out jerky, you can pass the "buffer=xx" option to the
-driver, to tweak the ALSA settings. The default value (if this option is
-not used) is 4; the slower your machine is, the greater this value has
-to be, but the allowed range is 2 to 16. However, the ALSA generally
-finds good settings for your configuration, so I doubt you'll have to
-use this option.
+This version of libmikmod ALSA driver works with ALSA versions 1.0.x.
+ALSA versions 0.9.x and earlier are not supported any more.
 
 
 >> ENLIGHTENED SOUND DAEMON SPECIFIC INFORMATION (Unix specific)
