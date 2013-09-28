@@ -29,9 +29,8 @@
 ==============================================================================*/
 
 ver_maj=3
-ver_min=1
-ver_micro=10
-ver_beta=''
+ver_min=3
+ver_micro=2
 
 ECHO OFF
 CALL main
@@ -84,9 +83,6 @@ sed:
 						WHEN keyword='CFLAGS' THEN keyword=cflags
 						WHEN keyword='DEFNAME' THEN keyword=defname
 						WHEN keyword='DLLNAME' THEN keyword=dllname
-						WHEN keyword='DRIVER_OBJ' THEN keyword=driver_obj
-						WHEN keyword='DRV_DART' THEN keyword=drv_dart
-						WHEN keyword='DRV_OS2' THEN keyword=drv_os2
 						WHEN keyword='IMPLIB' THEN keyword=implib
 						WHEN keyword='LIB' THEN keyword=lib
 						WHEN keyword='LIBMIKMOD_MAJOR_VERSION' THEN keyword=ver_maj
@@ -128,15 +124,15 @@ main:
  *========== 1. Check the system and the compiler
  */
 
-	libname="mikmod2.lib"
-	dllname="mikmod2.dll"
-	defname="mikmod2.def"
+	libname="mikmod.lib"
+	dllname="mikmod.dll"
+	defname="mikmod.def"
 
 	build_dll=0
 	lib=libname
 	libs=""
 
-	SAY "libmikmod/2 version "ver_maj"."ver_min"."ver_micro""ver_beta" configuration"
+	SAY "libmikmod version "ver_maj"."ver_min"."ver_micro" configuration"
 	SAY
 
 /* OS/2
@@ -221,7 +217,8 @@ main:
 	SAY
 	SAY "Drivers..."
 
-	driver_obj=""
+/* AIFF disk writer driver */
+	cflags=cflags" -DDRV_AIFF"
 
 /* MMPM/2 driver */
 	SAY "The MMPM/2 drivers will work with any OS/2 version starting from 2.1."
@@ -231,13 +228,7 @@ main:
 	IF RESULT='Y' THEN
 	DO
 		cflags=cflags" -DDRV_OS2"
-		driver_obj=driver_obj" drv_os2.o"
-		drv_os2="drv_os2 @106"
 		libs="-lmmpm2"
-	END
-	ELSE
-	DO
-		drv_os2=""
 	END
 
 /* Dart driver */
@@ -249,13 +240,17 @@ main:
 	IF RESULT='Y' THEN
 	DO
 		cflags=cflags" -DDRV_DART"
-		driver_obj=driver_obj" drv_dart.o"
-		drv_dart="drv_dart @105"
 		IF libs="" THEN libs="-lmmpm2"
 	END
-	ELSE
+
+/* stdout driver */
+	SAY "The STDOUT driver adds support for output to stdout (console)"
+	SAY "which is not needed by everyone."
+	message="Do you want the STDOUT driver ?"
+	CALL yesno
+	IF RESULT='Y' THEN
 	DO
-		drv_dart=""
+		cflags=cflags" -DDRV_STDOUT"
 	END
 
 /*
@@ -265,7 +260,7 @@ main:
 	SAY
 
 	filein ="Makefile.tmpl"
-	fileout="..\libmikmod\Makefile"
+	fileout="Makefile"
 	convert="yes"
 	CALL sed
 
@@ -280,12 +275,12 @@ main:
 	CALL sed
 
 	filein =defname".in"
-	fileout="..\libmikmod\"defname
+	fileout=defname
 	convert="no"
 	CALL sed
 
-	filein ="Makefile.os2"
-	fileout="Make.cmd"
+	filein ="Build.cmd.in"
+	fileout="Build.cmd"
 	convert="yes"
 	CALL sed
 
@@ -295,7 +290,7 @@ main:
 
 	SAY
 	SAY "Configuration is complete. libmikmod is ready to compile."
-	SAY "Just enter 'make' at the command prompt..."
+	SAY "Just enter 'build' at the command prompt..."
 	SAY
 
 	RETURN

@@ -1,8 +1,7 @@
 # Makefile template for use under OS/2
 #
-# libmikmod subdirectory
 
-DRIVER_OBJ=@DRIVER_OBJ@
+DRIVER_OBJ=drv_os2.o drv_dart.o
 
 AR=@AR@
 ARFLAGS=@ARFLAGS@
@@ -19,10 +18,10 @@ LIBNAME=@LIBNAME@
 DLLNAME=@DLLNAME@
 DEFNAME=@DEFNAME@
 OBJ=$(DRIVER_OBJ) \
-    drv_nos.o drv_raw.o drv_stdout.o drv_wav.o \
-    load_669.o load_amf.o load_dsm.o load_far.o load_gdm.o load_it.o  \
-    load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_s3m.o \
-    load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
+    drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
+    load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
+    load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
+    load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
@@ -57,6 +56,9 @@ drv_raw.o:	../drivers/drv_raw.c \
 drv_stdout.o:	../drivers/drv_stdout.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../drivers/drv_stdout.c
+drv_aiff.o:	../drivers/drv_aiff.c \
+			../include/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) @ORULE@ ../drivers/drv_aiff.c
 drv_wav.o:	../drivers/drv_wav.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../drivers/drv_wav.c
@@ -66,6 +68,9 @@ load_669.o:	../loaders/load_669.c \
 load_amf.o:	../loaders/load_amf.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_amf.c
+load_asy.o:	../loaders/load_asy.c \
+			../include/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) @ORULE@ ../loaders/load_asy.c
 load_dsm.o:	../loaders/load_dsm.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_dsm.c
@@ -75,6 +80,9 @@ load_far.o:	../loaders/load_far.c \
 load_gdm.o:	../loaders/load_gdm.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_gdm.c
+load_gt2.o:	../loaders/load_gt2.c \
+			../include/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) @ORULE@ ../loaders/load_gt2.c
 load_it.o:	../loaders/load_it.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_it.c
@@ -93,6 +101,9 @@ load_mod.o:	../loaders/load_mod.c \
 load_mtm.o:	../loaders/load_mtm.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_mtm.c
+load_okt.o:	../loaders/load_okt.c \
+			../include/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) @ORULE@ ../loaders/load_okt.c
 load_s3m.o:	../loaders/load_s3m.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_s3m.c

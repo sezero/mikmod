@@ -1,2 +1,2 @@
-EXTRA_DIST = README mikmod2.def.in Makefile.os2 Makefile.tmpl configure.cmd \
+EXTRA_DIST = README mikmod.def.in Build.cmd.in Makefile.tmpl configure.cmd \
 	     CMakeLists.txt

@@ -1,13 +1,18 @@
-LIBRARY mikmod2
-DESCRIPTION "libmikmod/2 @LIBMIKMOD_MAJOR_VERSION@.@LIBMIKMOD_MINOR_VERSION@.@LIBMIKMOD_MICRO_VERSION@"
+LIBRARY mikmod
+DESCRIPTION "libmikmod @LIBMIKMOD_MAJOR_VERSION@.@LIBMIKMOD_MINOR_VERSION@.@LIBMIKMOD_MICRO_VERSION@"
 EXPORTS
 	MikMod_GetVersion				@1
-	
+
+	MikMod_malloc					@3
+	MikMod_calloc					@4
+	MikMod_realloc					@5
+	MikMod_free					@6
+
 	MikMod_errno					@11
 	MikMod_critical					@12
 	MikMod_strerror					@17
 	MikMod_RegisterErrorHandler			@18
-	
+
 	MikMod_Init					@21
 	MikMod_Exit					@22
 	MikMod_Reset					@23
@@ -30,8 +35,9 @@ EXPORTS
 	MikMod_InitThreads				@36
 	MikMod_Lock					@37
 	MikMod_Unlock					@38
-	
+
 	MikMod_DriverFromAlias				@39
+	MikMod_DriverByOrdinal				@40
 
 	Player_Load					@41
 	Player_LoadFP					@42
@@ -57,13 +63,16 @@ EXPORTS
 	Player_GetChannelVoice				@62
 	Player_GetChannelPeriod				@63
 	Player_LoadTitleFP				@64
+	Player_GetOrder					@65
+	Player_GetRow					@66
+	Player_QueryVoices				@67
 
 	Sample_Load					@71
 	Sample_LoadFP					@72
 	Sample_LoadGeneric				@73
 	Sample_Free					@74
 	Sample_Play					@75
-	
+
 	Voice_GetVolume					@78
 	Voice_GetFrequency				@79
 	Voice_GetPanning				@80
@@ -75,7 +84,7 @@ EXPORTS
 	Voice_Stopped					@86
 	Voice_GetPosition				@87
 	Voice_RealVolume				@88
-	
+
 	md_volume					@91
 	md_musicvolume					@92
 	md_sndfxvolume					@93
@@ -85,15 +94,16 @@ EXPORTS
 	md_device					@96
 	md_mixfreq					@97
 	md_mode						@98
-
 	md_driver					@99
 
 	drv_nos						@101
-	drv_raw						@102
-	drv_stdout					@103
-	drv_wav						@104
-	@DRV_DART@
-	@DRV_OS2@
+	drv_stdout					@102
+	drv_raw						@103
+	drv_aiff					@104
+	drv_wav						@105
+
+	drv_dart					@106
+	drv_os2						@107
 
 	load_669					@111
 	load_amf					@112
@@ -113,6 +123,14 @@ EXPORTS
 	load_xm						@126
 	load_gdm					@127
 	load_okt					@128
+	load_asy					@129
+	load_gt2					@130
+
+	Sample_LoadMem					@135
+	Sample_LoadRaw					@136
+	Sample_LoadRawFP				@137
+	Sample_LoadRawMem				@138
+	Sample_LoadRawGeneric				@139
 
 	VC_Init						@141
 	VC_Exit						@142
