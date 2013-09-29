@@ -1,7 +1,7 @@
   Hello folks !
 
 
-This is libmikmod, version 3.2.0-beta1, a portable sound library for DOS.
+This is libmikmod, version 3.3.2, a portable sound library for DOS.
 DOS support is new in this version, your comments and critics are welcome.
 
 
@@ -12,7 +12,7 @@ This is a *beta* version of libmikmod. Although it should work fine on
 almost all systems, there are likely a few last-minute errors or typos
 in the source, and some parts have not received enough hours of testing yet.
 
-Also, please note that all features planned for the final 3.2.0 release are not
+Also, please note that all features planned for the final 3.4.0 release are not
 available yet. Some structures or functions may change. This release is mainly
 intended to the libmikmod developers to share a common base for adding new
 features...
@@ -38,7 +38,7 @@ things manually ...
 
 If you have all proper tools installed, just type
 
-	make -fMakefile.dj
+	make -f Makefile.dj
 
 There is a catch if you have some PC-like GREP (i.e. Borland GREP) somewhere on
 your path before actual GNU grep... you can check this by just typing "grep".

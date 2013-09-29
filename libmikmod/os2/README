@@ -51,15 +51,15 @@ sure your libmikmod library will work on every 32 bit version of OS/2.
 After the configuration has finished and the Makefiles are created, just
 run
 
-	make
+	build
 
 and you'll get your libmikmod library in the libmikmod directory.
 If the build fails, I'd like to hear from you to correct the problem.
 
-To make you library ready to use, copy the file '..\include\mikmod.h' to
-your compiler include directory, and '..\libmikmod\mikmod.lib` to your
-compiler library directory. If you built a DLL, put the DLL
-(..\libmikmod\mikmod.dll) in a directory which appears in your LIBPATH.
+To make you library ready to use, copy the file '..\include\mikmod.h'
+to your compiler include directory, and 'mikmod.lib' to your compiler
+library directory. If you built a DLL, put the DLL (mikmod.dll) in a
+directory which appears in your LIBPATH.
 
 HTML documentation of the library, for programmers, is located in the
 doc directory.
@@ -93,7 +93,7 @@ package written by Lance Norskog and Jef Poskanzer. The following
 copyright notice applies to these parts:
 
   Copyright (C) 1989 by Jef Poskanzer.
-   
+
   Permission to use, copy, modify, and distribute this software and its
   documentation for any purpose and without fee is hereby granted, provided
   that the above copyright notice appear in all copies and that both that
@@ -114,14 +114,14 @@ libmikmod library.
 
 * web:
   libmikmod home page is located at:
-    http://www.mikmod.org
+    http://mikmod.raphnet.net/
 
 * ftp:
   Latest releases of libmikmod can be found:
   - on the web site
-    htp://www.mikmod.org/files
+    htp://mikmod.raphnet.net/
   - on ibiblio (formerly known as metalab, formerly sunsite) and its mirrors
-    ftp://metalab.unc.edu/pub/Linux/apps/sound/libs
+    ftp://metalab.unc.edu/pub/Linux/apps/sound/libs/
 
 
 >> LAST NOTES

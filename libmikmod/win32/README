@@ -44,7 +44,7 @@ If the build fails, I'd like to hear from you to correct the problem.
 Be warned that both Makefiles put their object files in the same
 directory. If you want to switch between the two makefiles, don't forget
 to do a make clean first:
-  
+
 	nmake -f Makefile.dynamic clean
 	
 (or the same command with Makefile.static).
@@ -93,7 +93,7 @@ package written by Lance Norskog and Jef Poskanzer. The following
 copyright notice applies to these parts:
 
   Copyright (C) 1989 by Jef Poskanzer.
-   
+
   Permission to use, copy, modify, and distribute this software and its
   documentation for any purpose and without fee is hereby granted, provided
   that the above copyright notice appear in all copies and that both that
@@ -114,14 +114,14 @@ libmikmod library.
 
 * web:
   libmikmod home page is located at:
-    http://www.mikmod.org
+    http://mikmod.raphnet.net/
 
 * ftp:
   Latest releases of libmikmod can be found:
   - on the web site
     htp://www.mikmod.org/files
   - on ibiblio (formerly known as metalab, formerly sunsite) and its mirrors
-    ftp://metalab.unc.edu/pub/Linux/apps/sound/libs
+    ftp://metalab.unc.edu/pub/Linux/apps/sound/libs/
 
 
 >> LAST NOTES

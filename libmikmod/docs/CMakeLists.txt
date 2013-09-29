@@ -11,7 +11,7 @@ add_custom_command(OUTPUT ${info_out}
   VERBATIM)
 
 add_custom_command(OUTPUT ${info_out_html}
-  COMMAND ${MAKEINFO_EXECUTABLE} --html -o ${info_out_html} ${info_in}
+  COMMAND ${MAKEINFO_EXECUTABLE} --no-split --html -o ${info_out_html} ${info_in}
   DEPENDS ${info_in}
   COMMENT "Creating HTML file ${info_out_html}"
   VERBATIM)
