@@ -70,17 +70,11 @@
 #ifdef DRV_OSX
 
 /* INCLUDES */
-#pragma mark INCLUDES
-
 #include <mach-o/arch.h>
 #include <sys/sysctl.h>
 #include <CoreAudio/AudioHardware.h>
 
-#pragma mark -
-
 /* DEFINES */
-#pragma mark DEFINES
-
 #define SOUND_BUFFER_SCALE_8BIT		(1.0f / 128.0f)		/* CoreAudio requires float input. */
 #define SOUND_BUFFER_SCALE_16BIT	(1.0f / 32768.0f)	/* CoreAudio requires float input. */
 
@@ -95,11 +89,7 @@
 #define NUMBER_BACK_BUFFERS		8		/* Number of back buffers for the thread */
 #define DEBUG_TRACE_THREADS		0
 
-#pragma mark -
-
 /* MACROS */
-#pragma mark MACROS
-
 #define CHECK_ERROR(ERRNO, RESULT)								\
 			if (RESULT != kAudioHardwareNoError) {					\
 				_mm_errno = ERRNO;						\
@@ -143,11 +133,7 @@
 				MUTEX_UNLOCK (vars);						\
 			}
 
-#pragma mark -
-
 /* GLOBALS */
-#pragma mark GLOBALS
-
 #if USE_FILL_THREAD
 
 static pthread_t		gBufferFillThread;
@@ -177,11 +163,7 @@ static OSStatus	(*gAudioIOProc) (AudioDeviceID,
 				 const AudioTimeStamp *, AudioBufferList *,
 				 const AudioTimeStamp *, void *);
 
-#pragma mark -
-
 /* FUNCTION PROTOTYPES */
-#pragma mark FUNCTION PROTOTYPES
-
 #if USE_FILL_THREAD
 
 static void * OSX_FillBuffer (void *);
@@ -208,10 +190,7 @@ static int OSX_PlayStart (void);
 static void OSX_PlayStop (void);
 static void OSX_Update (void);
 
-#pragma mark -
 
-
-/* OSX_FillBuffer() */
 #if USE_FILL_THREAD
 static void *OSX_FillBuffer (void *theID)
 {
@@ -256,7 +235,6 @@ static void *OSX_FillBuffer (void *theID)
 }
 #endif /* USE_FILL_THREAD */
 
-/* OSX_AudioIOProc8Bit() */
 static OSStatus OSX_AudioIOProc8Bit (AudioDeviceID inDevice,
 				     const AudioTimeStamp *inNow, const AudioBufferList *inInputData,
 				     const AudioTimeStamp *inInputTime, AudioBufferList *outOutputData,
@@ -297,7 +275,6 @@ static OSStatus OSX_AudioIOProc8Bit (AudioDeviceID inDevice,
 	return 0;
 }
 
-/* OSX_AudioIOProc16Bit() */
 #ifdef HAVE_SSE2
 /* FIXME: SSE2-specific code here? */
 #endif /* HAVE_SSE2 */
@@ -408,7 +385,6 @@ static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
 	return 0;
 }
 
-/* OSX_AudioIOProcFloat() */
 static OSStatus OSX_AudioIOProcFloat (AudioDeviceID inDevice,
 				      const AudioTimeStamp *inNow, const AudioBufferList *inInputData,
 				      const AudioTimeStamp *inInputTime, AudioBufferList *outOutputData,
@@ -451,7 +427,6 @@ static OSStatus OSX_AudioIOProcFloat (AudioDeviceID inDevice,
 	return 0;
 }
 
-/* OSX_HasAltivec() */
 #ifdef HAVE_ALTIVEC
 static BOOL OSX_HasAltivec (void)
 {
@@ -463,16 +438,12 @@ static BOOL OSX_HasAltivec (void)
 }
 #endif
 
-/* OSX_IsPresent() */
 static BOOL OSX_IsPresent (void)
 {
-	/* bad boy... have to find a better way! */
-	if (!AudioHardwareGetProperty)
-		return 0;
+/* weak_import and check syms? meh.. */
 	return 1;
 }
 
-/* OSX_Init() */
 static int OSX_Init (void)
 {
 	AudioStreamBasicDescription	mySoundBasicDescription;
@@ -607,7 +578,6 @@ static int OSX_Init (void)
 	return VC_Init ();
 }
 
-/* OSX_Exit() */
 static void OSX_Exit (void)
 {
 #if USE_FILL_THREAD
@@ -695,7 +665,6 @@ static int OSX_PlayStart (void)
 	return 0;
 }
 
-/* OSX_PlayStop() */
 static void OSX_PlayStop (void)
 {
 	if (gDeviceHasStarted) {
@@ -717,13 +686,11 @@ static void OSX_PlayStop (void)
 	VC_PlayStop ();
 }
 
-/* OSX_Update() */
 static void OSX_Update (void)
 {
 	/* do nothing */
 }
 
-/*	drv_osx		*/
 MIKMODAPI MDRIVER drv_osx={
 	NULL,
 	"CoreAudio Driver",

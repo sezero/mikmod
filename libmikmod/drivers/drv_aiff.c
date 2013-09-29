@@ -30,12 +30,7 @@
 /*
 
 	Written by Axel "awe" Wefers <awe@fruitz-of-dojo.de>
-
 	Raphael Assenat: 19 Feb 2004: Command line options documented in the MDRIVER structure,
-					 and I added #if 0 's around pragmas, since gcc complaines about them.
-					 Hopefully, the IDE which uses them wont care about that?
-
-	O. Sezer: removed the 'mark' pragmas
 */
 
 #ifdef HAVE_CONFIG_H
