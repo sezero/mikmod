@@ -84,6 +84,7 @@ static int (*alsa_ctl_pcm_info)(snd_ctl_t*, int, snd_pcm_info_t*);
 static int (*alsa_pcm_close)(snd_pcm_t*);
 static int (*alsa_pcm_drain)(snd_pcm_t*);
 static int (*alsa_pcm_drop)(snd_pcm_t*);
+static int (*alsa_pcm_start)(snd_pcm_t *);
 static snd_pcm_sframes_t (*alsa_pcm_avail_update)(snd_pcm_t*);
 static snd_pcm_sframes_t (*alsa_pcm_writei)(snd_pcm_t*,const void*,snd_pcm_uframes_t);
 
@@ -107,6 +108,7 @@ static void* libasound = NULL;
 #define alsa_pcm_close				snd_pcm_close
 #define alsa_pcm_drain				snd_pcm_drain
 #define alsa_pcm_drop				snd_pcm_drop
+#define alsa_pcm_start				snd_pcm_start
 #define alsa_pcm_open				snd_pcm_open
 #define alsa_pcm_avail_update			snd_pcm_avail_update
 #define alsa_pcm_writei				snd_pcm_writei
@@ -146,6 +148,7 @@ static int ALSA_Link(void)
 	if (!(alsa_pcm_close = dlsym(libasound,"snd_pcm_close"))) return 1;
 	if (!(alsa_pcm_drain = dlsym(libasound,"snd_pcm_drain"))) return 1;
 	if (!(alsa_pcm_drop = dlsym(libasound,"snd_pcm_drop"))) return 1;
+	if (!(alsa_pcm_start = dlsym(libasound,"snd_pcm_start"))) return 1;
 	if (!(alsa_pcm_open = dlsym(libasound,"snd_pcm_open"))) return 1;
 	if (!(alsa_pcm_avail_update = dlsym(libasound,"snd_pcm_avail_update"))) return 1;
 	if (!(alsa_pcm_writei = dlsym(libasound,"snd_pcm_writei"))) return 1;
@@ -172,6 +175,7 @@ static void ALSA_Unlink(void)
 	alsa_pcm_close = NULL;
 	alsa_pcm_drain = NULL;
 	alsa_pcm_drop = NULL;
+	alsa_pcm_start = NULL;
 	alsa_pcm_open = NULL;
 	alsa_pcm_avail_update = NULL;
 	alsa_pcm_writei = NULL;
@@ -358,6 +362,19 @@ static void ALSA_Update(void)
 	}
 }
 
+static int ALSA_PlayStart(void)
+{
+	int err = alsa_pcm_prepare(pcm_h);
+	if (err == 0)
+	    err = alsa_pcm_start(pcm_h);
+	if (err < 0) {
+		fprintf(stderr, "PCM start error: %s\n", alsa_strerror(err));
+		return 1;
+	}
+
+	return VC_PlayStart();
+}
+
 static void ALSA_PlayStop(void)
 {
 	VC_PlayStop();
@@ -387,7 +404,7 @@ MIKMODAPI MDRIVER drv_alsa = {
 	ALSA_Exit,
 	ALSA_Reset,
 	VC_SetNumVoices,
-	VC_PlayStart,
+	ALSA_PlayStart,
 	ALSA_PlayStop,
 	ALSA_Update,
 	NULL,
