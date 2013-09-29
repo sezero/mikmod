@@ -53,11 +53,12 @@ extern "C" {
 # else
 #   define MIKMODAPI __declspec(dllimport)			/* using libmikmod dll for windows */
 # endif
-/* FIXME: USE VISIBILITY ATTRIBUTES HERE */
-#elif defined(MIKMOD_BUILD)
-#define MIKMODAPI
+/* SYM_VISIBILITY should be defined if both the compiler
+ * and the target support the visibility attributes.  */
+#elif defined(MIKMOD_BUILD) && defined(SYM_VISIBILITY)
+#   define MIKMODAPI __attribute__((visibility("default")))
 #else
-#define MIKMODAPI
+#   define MIKMODAPI
 #endif
 
 /*

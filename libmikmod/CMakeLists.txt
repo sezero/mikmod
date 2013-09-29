@@ -165,9 +165,7 @@ ADD_SUBDIRECTORY ("win32")
 
 SET(COMPILER_FLAGS_TO_CHECK
     "-Wall" "-Werror=implicit-function-declaration"
-    # Cancelling because libmikmod does not like it.
-    # Should be restored in the future.
-    # "-fvisibility=hidden"
+    # -fvisibility=hidden check is down below
 )
 
 IF (CPU_ARCH)
@@ -235,6 +233,22 @@ FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
         LIST(APPEND MY_LINK_FLAGS "${CFLAG_TO_CHECK}")
     ENDIF (${FLAG_EXISTS_VAR})
 ENDFOREACH(CFLAG_TO_CHECK)
+
+# check for symbol visibility attributes
+IF(NOT WIN32 AND NOT CYGWIN)
+    SET(OLD_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
+    SET(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS} -Werror")
+    CHECK_C_SOURCE_COMPILES("int foo(void) __attribute__((visibility(\"default\")));
+                             int main(void) {return 0;}" HAVE_VISIBILITY_DEFAULT)
+    IF(HAVE_VISIBILITY_DEFAULT)
+        CHECK_C_COMPILER_FLAG(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN)
+        IF(HAVE_VISIBILITY_HIDDEN)
+            ADD_DEFINITIONS(-fvisibility=hidden)
+            ADD_DEFINITIONS("-DSYM_VISIBILITY")
+        ENDIF()
+    ENDIF()
+    SET(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS}")
+ENDIF()
 
 # So it can find the includes when building libavl.avl.h.
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})

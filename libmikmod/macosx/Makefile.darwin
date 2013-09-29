@@ -50,9 +50,9 @@ CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SNPRINTF -DHAVE_
 # compiler flags
 CFLAGS=-O2 -Wall
 CFLAGS+=-ffast-math -fno-common
+CFLAGS+=-fvisibility=hidden -DSYM_VISIBILITY
 #CFLAGS+=-g
 LDFLAGS=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
-# do I need these ones?
 LDFLAGS+=-Wl,-compatibility_version,5 -Wl,-current_version,5.0
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6

@@ -1018,13 +1018,14 @@ then
 ],
 	libmikmod_cv_gcc_inline_safe=yes,
 	libmikmod_cv_gcc_inline_safe=no))
-	if test $libmikmod_cv_gcc_inline_safe = yes
+	if test $libmikmod_cv_gcc_inline_safe = no
 	then
-		CFLAGS="$CFLAGS -finline-functions"
-	else
 		CFLAGS="$CFLAGS -fno-strength-reduce"
 	fi
-	CFLAGS="$CFLAGS -funroll-loops -ffast-math"
+	CFLAGS="$CFLAGS -ffast-math"
+	if test $libmikmod_darwin = yes; then
+		CFLAGS="$CFLAGS -fno-common"
+	fi
 	if test $libmikmod_debug = yes
 	then
 		CFLAGS="$CFLAGS -Wall -Werror"
@@ -1128,6 +1129,33 @@ esac
 if test "$libmikmod_unix" = "0" || test "$libmikmod_unix" = "1"
 then
    AC_DEFINE_UNQUOTED([MIKMOD_UNIX], $libmikmod_unix, [Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h.])
+fi
+
+# symbol visibility
+ac_save_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS -fvisibility=hidden -Werror"
+AC_CACHE_CHECK([if compiler supports visibility attributes],
+	libmikmod_cv_gcc_visibility,
+	AC_LANG_SAVE
+	AC_LANG_C
+	AC_TRY_COMPILE([void foo(void);
+__attribute__((visibility("default"))) void foo(void) {}],
+		[],
+		libmikmod_cv_gcc_visibility=yes,libmikmod_cv_gcc_visibility=no)
+	AC_LANG_RESTORE)
+# we want symbol -fvisibility for elf targets, however it works
+# with darwin/macho too.  other than that, windows, dos and os2
+# do not need it:  for any such targets, the -Werror switch is
+# supposed to fail the above check. (I'm adding the manual test
+# below nonetheless, just in case.)
+case $host_os in
+   mingw*|cygwin*|emx*|*djgpp)
+	libmikmod_cv_gcc_visibility=no
+	;;
+esac
+CFLAGS="$ac_save_CFLAGS"
+if test $libmikmod_cv_gcc_visibility = yes ;then
+   CFLAGS="$CFLAGS -DSYM_VISIBILITY -fvisibility=hidden"
 fi
 
 # =================
