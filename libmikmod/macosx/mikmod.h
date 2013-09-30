@@ -54,7 +54,10 @@ extern "C" {
 #   define MIKMODAPI __declspec(dllimport)			/* using libmikmod dll for windows */
 # endif
 /* SYM_VISIBILITY should be defined if both the compiler
- * and the target support the visibility attributes.  */
+ * and the target support the visibility attributes. the
+ * configury does that automatically. for the standalone
+ * makefiles, etc, the developer should add the required
+ * flags, i.e.:   -DSYM_VISIBILITY -fvisibility=hidden  */
 #elif defined(MIKMOD_BUILD) && defined(SYM_VISIBILITY)
 #   define MIKMODAPI __attribute__((visibility("default")))
 #else

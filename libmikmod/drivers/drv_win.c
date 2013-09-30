@@ -61,12 +61,12 @@ typedef DWORD DWORD_PTR;
 #define NUMBUFFERS	6				/* number of buffers */
 #define BUFFERSIZE	120				/* buffer size in milliseconds */
 
-HWAVEOUT	hwaveout;
-WAVEHDR		header[NUMBUFFERS];
-HPSTR		buffer[NUMBUFFERS];		/* pointers to buffers */
-WORD		buffersout;				/* number of buffers playing/about to be played */
-WORD		nextbuffer;				/* next buffer to be mixed */
-ULONG		buffersize;				/* buffer size in bytes */
+static HWAVEOUT	hwaveout;
+static WAVEHDR	header[NUMBUFFERS];
+static HPSTR	buffer[NUMBUFFERS];		/* pointers to buffers */
+static WORD	buffersout;				/* number of buffers playing/about to be played */
+static WORD	nextbuffer;				/* next buffer to be mixed */
+static ULONG	buffersize;				/* buffer size in bytes */
 
 /* converts Windows error to libmikmod error */
 static int WIN_GetError(MMRESULT mmr)

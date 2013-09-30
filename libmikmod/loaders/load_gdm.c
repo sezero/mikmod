@@ -114,7 +114,7 @@ typedef struct GDMSAMPLE {
 static GDMHEADER *mh=NULL;	/* pointer to GDM header */
 static GDMNOTE *gdmbuf=NULL;	/* pointer to a complete GDM pattern */
 
-CHAR GDM_Version[]="General DigiMusic 1.xx";
+static CHAR GDM_Version[]="General DigiMusic 1.xx";
 
 static BOOL GDM_Test(void)
 {

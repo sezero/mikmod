@@ -227,12 +227,12 @@ static	SBYTE PanbrelloTable[256]={
 };
 
 /* returns a random value between 0 and ceil-1, ceil must be a power of two */
-static int getrandom(int ceil)
+static int getrandom(int ceilval)
 {
 #ifdef HAVE_SRANDOM
-	return random()&(ceil-1);
+	return random()&(ceilval-1);
 #else
-	return (rand()*ceil)/(RAND_MAX+1.0);
+	return (rand()*ceilval)/(RAND_MAX+1.0);
 #endif
 }
 

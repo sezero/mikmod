@@ -96,16 +96,16 @@ static UNISMP05 *wh=NULL,*s=NULL;
 
 static char * readstring(void)
 {
-	char *my_string=NULL;
+	char *str=NULL;
 	UWORD len;
 
 	len=_mm_read_I_UWORD(modreader);
 	if(len) {
-		my_string=MikMod_malloc(len+1);
-		_mm_read_UBYTES(my_string,len,modreader);
-		my_string[len]=0;
+		str=MikMod_malloc(len+1);
+		_mm_read_UBYTES(str,len,modreader);
+		str[len]=0;
 	}
-	return my_string;
+	return str;
 }
 
 static BOOL UNI_Test(void)
@@ -221,65 +221,65 @@ static UBYTE* readtrack(void)
 static BOOL loadsmp6(void)
 {
 	int t;
-	SAMPLE *my_sample_ptr;
+	SAMPLE *sptr;
 
-	my_sample_ptr=of.samples;
-	for(t=0;t<of.numsmp;t++,my_sample_ptr++) {
+	sptr=of.samples;
+	for(t=0;t<of.numsmp;t++,sptr++) {
 		int flags;
 
 		flags         = _mm_read_M_UWORD(modreader);
-		my_sample_ptr->flags=0;
-		if(flags&0x0004) my_sample_ptr->flags|=SF_STEREO;
-		if(flags&0x0002) my_sample_ptr->flags|=SF_SIGNED;
-		if(flags&0x0001) my_sample_ptr->flags|=SF_16BITS;
+		sptr->flags=0;
+		if(flags&0x0004) sptr->flags|=SF_STEREO;
+		if(flags&0x0002) sptr->flags|=SF_SIGNED;
+		if(flags&0x0001) sptr->flags|=SF_16BITS;
 		/* convert flags */
 		if(universion>=0x104) {
-			if(flags&0x2000) my_sample_ptr->flags|=SF_UST_LOOP;
-			if(flags&0x1000) my_sample_ptr->flags|=SF_OWNPAN;
-			if(flags&0x0800) my_sample_ptr->flags|=SF_SUSTAIN;
-			if(flags&0x0400) my_sample_ptr->flags|=SF_REVERSE;
-			if(flags&0x0200) my_sample_ptr->flags|=SF_BIDI;
-			if(flags&0x0100) my_sample_ptr->flags|=SF_LOOP;
-			if(flags&0x0020) my_sample_ptr->flags|=SF_ITPACKED;
-			if(flags&0x0010) my_sample_ptr->flags|=SF_DELTA;
-			if(flags&0x0008) my_sample_ptr->flags|=SF_BIG_ENDIAN;
+			if(flags&0x2000) sptr->flags|=SF_UST_LOOP;
+			if(flags&0x1000) sptr->flags|=SF_OWNPAN;
+			if(flags&0x0800) sptr->flags|=SF_SUSTAIN;
+			if(flags&0x0400) sptr->flags|=SF_REVERSE;
+			if(flags&0x0200) sptr->flags|=SF_BIDI;
+			if(flags&0x0100) sptr->flags|=SF_LOOP;
+			if(flags&0x0020) sptr->flags|=SF_ITPACKED;
+			if(flags&0x0010) sptr->flags|=SF_DELTA;
+			if(flags&0x0008) sptr->flags|=SF_BIG_ENDIAN;
 		} else if(universion>=0x102) {
-			if(flags&0x0800) my_sample_ptr->flags|=SF_UST_LOOP;
-			if(flags&0x0400) my_sample_ptr->flags|=SF_OWNPAN;
-			if(flags&0x0200) my_sample_ptr->flags|=SF_SUSTAIN;
-			if(flags&0x0100) my_sample_ptr->flags|=SF_REVERSE;
-			if(flags&0x0080) my_sample_ptr->flags|=SF_BIDI;
-			if(flags&0x0040) my_sample_ptr->flags|=SF_LOOP;
-			if(flags&0x0020) my_sample_ptr->flags|=SF_ITPACKED;
-			if(flags&0x0010) my_sample_ptr->flags|=SF_DELTA;
-			if(flags&0x0008) my_sample_ptr->flags|=SF_BIG_ENDIAN;
+			if(flags&0x0800) sptr->flags|=SF_UST_LOOP;
+			if(flags&0x0400) sptr->flags|=SF_OWNPAN;
+			if(flags&0x0200) sptr->flags|=SF_SUSTAIN;
+			if(flags&0x0100) sptr->flags|=SF_REVERSE;
+			if(flags&0x0080) sptr->flags|=SF_BIDI;
+			if(flags&0x0040) sptr->flags|=SF_LOOP;
+			if(flags&0x0020) sptr->flags|=SF_ITPACKED;
+			if(flags&0x0010) sptr->flags|=SF_DELTA;
+			if(flags&0x0008) sptr->flags|=SF_BIG_ENDIAN;
 		} else {
-			if(flags&0x400) my_sample_ptr->flags|=SF_UST_LOOP;
-			if(flags&0x200) my_sample_ptr->flags|=SF_OWNPAN;
-			if(flags&0x100) my_sample_ptr->flags|=SF_REVERSE;
-			if(flags&0x080) my_sample_ptr->flags|=SF_SUSTAIN;
-			if(flags&0x040) my_sample_ptr->flags|=SF_BIDI;
-			if(flags&0x020) my_sample_ptr->flags|=SF_LOOP;
-			if(flags&0x010) my_sample_ptr->flags|=SF_BIG_ENDIAN;
-			if(flags&0x008) my_sample_ptr->flags|=SF_DELTA;
+			if(flags&0x400) sptr->flags|=SF_UST_LOOP;
+			if(flags&0x200) sptr->flags|=SF_OWNPAN;
+			if(flags&0x100) sptr->flags|=SF_REVERSE;
+			if(flags&0x080) sptr->flags|=SF_SUSTAIN;
+			if(flags&0x040) sptr->flags|=SF_BIDI;
+			if(flags&0x020) sptr->flags|=SF_LOOP;
+			if(flags&0x010) sptr->flags|=SF_BIG_ENDIAN;
+			if(flags&0x008) sptr->flags|=SF_DELTA;
 		}
 
-		my_sample_ptr->speed      = _mm_read_M_ULONG(modreader);
-		my_sample_ptr->volume     = _mm_read_UBYTE(modreader);
-		my_sample_ptr->panning    = _mm_read_M_UWORD(modreader);
-		my_sample_ptr->length     = _mm_read_M_ULONG(modreader);
-		my_sample_ptr->loopstart  = _mm_read_M_ULONG(modreader);
-		my_sample_ptr->loopend    = _mm_read_M_ULONG(modreader);
-		my_sample_ptr->susbegin   = _mm_read_M_ULONG(modreader);
-		my_sample_ptr->susend     = _mm_read_M_ULONG(modreader);
-		my_sample_ptr->globvol    = _mm_read_UBYTE(modreader);
-		my_sample_ptr->vibflags   = _mm_read_UBYTE(modreader);
-		my_sample_ptr->vibtype    = _mm_read_UBYTE(modreader);
-		my_sample_ptr->vibsweep   = _mm_read_UBYTE(modreader);
-		my_sample_ptr->vibdepth   = _mm_read_UBYTE(modreader);
-		my_sample_ptr->vibrate    = _mm_read_UBYTE(modreader);
+		sptr->speed      = _mm_read_M_ULONG(modreader);
+		sptr->volume     = _mm_read_UBYTE(modreader);
+		sptr->panning    = _mm_read_M_UWORD(modreader);
+		sptr->length     = _mm_read_M_ULONG(modreader);
+		sptr->loopstart  = _mm_read_M_ULONG(modreader);
+		sptr->loopend    = _mm_read_M_ULONG(modreader);
+		sptr->susbegin   = _mm_read_M_ULONG(modreader);
+		sptr->susend     = _mm_read_M_ULONG(modreader);
+		sptr->globvol    = _mm_read_UBYTE(modreader);
+		sptr->vibflags   = _mm_read_UBYTE(modreader);
+		sptr->vibtype    = _mm_read_UBYTE(modreader);
+		sptr->vibsweep   = _mm_read_UBYTE(modreader);
+		sptr->vibdepth   = _mm_read_UBYTE(modreader);
+		sptr->vibrate    = _mm_read_UBYTE(modreader);
 
-		my_sample_ptr->samplename=readstring();
+		sptr->samplename=readstring();
 
 		if(_mm_eof(modreader)) {
 			_mm_errno = MMERR_LOADING_SAMPLEINFO;

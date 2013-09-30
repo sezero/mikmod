@@ -129,7 +129,7 @@ typedef struct XMNOTE {
 static	XMNOTE *xmpat=NULL;
 static	XMHEADER *mh=NULL;
 
-/* increment unit for sample array MikMod_reallocation */
+/* increment unit for sample array reallocation */
 #define XM_SMPINCR 64
 static	ULONG *nextwav=NULL;
 static	XMWAVHEADER *wh=NULL,*s=NULL;
@@ -815,12 +815,12 @@ static BOOL XM_Load(BOOL curious)
 
 static CHAR *XM_LoadTitle(void)
 {
-	CHAR my_str[21];
+	CHAR str[21];
 
 	_mm_fseek(modreader,17,SEEK_SET);
-	if(!_mm_read_UBYTES(my_str, 21, modreader)) return NULL;
+	if(!_mm_read_UBYTES(str, 21, modreader)) return NULL;
 
-	return(DupStr(my_str,21,1));
+	return(DupStr(str,21,1));
 }
 
 /*========== Loader information */
