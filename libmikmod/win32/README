@@ -1,7 +1,7 @@
   Hello folks !
 
 
-This is libmikmod, version 3.2.0-beta1, a portable sound library for Unix.
+This is libmikmod, version 3.3.2, a portable sound library for Unix.
 Check out the file 'NEWS' for more history information.
 
 
@@ -114,12 +114,12 @@ libmikmod library.
 
 * web:
   libmikmod home page is located at:
-    http://mikmod.raphnet.net/
+    http://mikmod.raphnet.net
 
 * ftp:
   Latest releases of libmikmod can be found:
   - on the web site
-    htp://www.mikmod.org/files
+    http://mikmod.raphnet.net
   - on ibiblio (formerly known as metalab, formerly sunsite) and its mirrors
     ftp://metalab.unc.edu/pub/Linux/apps/sound/libs/
 

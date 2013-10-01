@@ -238,18 +238,13 @@ static BOOL FAR_Load(BOOL curious)
 
 	for(t=0;t<of.numpat;t++) {
 		UBYTE rows=0;
-#ifdef WITH_TEMPO
 		UBYTE tempo;
-#endif
 
 		memset(pat,0,256*16*4*sizeof(FARNOTE));
 		if(mh2->patsiz[t]) {
 			rows  = _mm_read_UBYTE(modreader);
-#ifdef WITH_TEMPO
 			tempo = _mm_read_UBYTE(modreader);
-#else
-			_mm_skip_BYTE(modreader);
-#endif
+			(void)tempo; /* unused */
 
 			crow = pat;
 			/* file often allocates 64 rows even if there are less in pattern */

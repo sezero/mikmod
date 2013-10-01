@@ -175,7 +175,7 @@ different parameters, for example: somevalue=1,someothervalue=2
 
 - Piped output ("pipe") [Unix only]
   pipe=     Pipe command (mandatory).
- 
+
 - SGI audio library ("sgi") [IRIX only]
   fragsize= buffer size for libmikmod internal use.
             Replaces the MM_SGI_FRAGSIZE environment variable, which is
@@ -418,5 +418,4 @@ copyright notice applies to these parts:
 * web:
   libmikmod home page is located at:
     http://mikmod.raphnet.net
-
 

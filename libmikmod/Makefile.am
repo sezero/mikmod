@@ -27,6 +27,7 @@ AM_CPPFLAGS = -I@top_builddir@/include -I@top_srcdir@/include
 lib_LTLIBRARIES = libmikmod.la
 
 libmikmod_la_SOURCES = \
+		dlapi/dl_hpux.c   \
 		drivers/drv_AF.c \
 		drivers/drv_aiff.c \
 		drivers/drv_aix.c \

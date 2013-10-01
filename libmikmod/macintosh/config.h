@@ -63,9 +63,9 @@
 /* Define if you want a debug version of the library */
 /* #undef MIKMOD_DEBUG */
 /* Define if you want runtime dynamic linking of ALSA and EsounD drivers */
-#define MIKMOD_DYNAMIC 1
+/* #undef MIKMOD_DYNAMIC */
 /* Define if your system provides POSIX.4 threads */
-/*#undef HAVE_PTHREAD */
+/* #undef HAVE_PTHREAD */
 
 /* Define if your system is SunOS 4.* */
 /* #undef SUNOS */

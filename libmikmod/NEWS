@@ -42,18 +42,18 @@ NEW FEATURES
   Yi-Huang Han.
 - XM loader now reads songlength amount of orders from the file and
   then seeks to mh->headersize+60 (sf.net bug #10.)
-- Fixed the "unclick" code to consider loop lengths shorter than 16:
-  fixes crashes seen with several xm files (sf.net bug #12, and mpd
-  bug #3425.)
-- Mac OS X: standalone makefile with cross-compilation support.
-- djgpp build fixes.
-- Windows: multiple fixes and updates. win64 fully supported. MinGW,
-  MinGW-w64, LCC-win32 and MSVC fully supported. new standalone makefile
-  for MinGW[-w64] with cross-compilation support.
-- Windows: MIKMODAPI (dllexport/dllimport) works properly for MinGW and
-  windows compilers as well. The static builds using MSVC, LCC, etc are
+- Fix "unclick" code to consider loop lengths shorter than 16: fixes
+  crashes seen with several xm files (sf.net bug #12, mpd bug #3425.)
+- Mac OS X: new standalone makefile with cross-compilation support.
+- DJGPP build fixes.
+- Windows: fixes/updates, win64 fully supported. MinGW[-w64] fully
+  supported along with MSVC and LCC. new standalone MinGW makefile with
+  cross-compilation support.
+- Windows: dllexport/dllimport attributes work properly for MinGW[-w64],
+  as well as windows compilers. Static builds using MSVC, LCC, etc are
   now named mikmod_static.lib. When compiling against static libmikmod,
   MIKMOD_STATIC should be defined so that dllimport wouldn't be assumed.
+- GCC elf and macho symbol visibility attributes now supported.
 - Updated configury, support for cross-compilation, support for building
   in a separate directory, support latest autotools.
 - SIMD (AltiVec and SSE2) option is now disabled by default. Can be

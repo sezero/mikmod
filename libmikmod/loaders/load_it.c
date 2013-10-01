@@ -446,9 +446,7 @@ static BOOL IT_Load(BOOL curious)
 	int t,u,lp;
 	INSTRUMENT *d;
 	SAMPLE *q;
-#ifdef WITH_COMPRESSED
-	BOOL compressed=0;
-#endif
+	/*BOOL compressed=0;*/
 
 	numtrk=0;
 	filters=0;
@@ -674,9 +672,7 @@ static BOOL IT_Load(BOOL curious)
 		if(s.flag&2) q->flags|=SF_16BITS;
 		if((s.flag&8)&&(mh->cwt>=0x214)) {
 			q->flags|=SF_ITPACKED;
-#ifdef WITH_COMPRESSED
-			compressed=1;
-#endif
+			/*compressed=1;*/
 		}
 		if(s.flag&16) q->flags|=SF_LOOP;
 		if(s.flag&64) q->flags|=SF_BIDI;
@@ -967,9 +963,8 @@ static BOOL IT_Load(BOOL curious)
 	if(!AllocTracks()) return 0;
 
 	for(t=0;t<of.numpat;t++) {
-#ifdef WITH_PACKLEN
 		UWORD packlen;
-#endif
+
 		/* seek to pattern position */
 		if(!paraptr[mh->insnum+mh->smpnum+t]) { /* 0 -> empty 64 row pattern */
 			of.pattrows[t]=64;
@@ -982,12 +977,8 @@ static BOOL IT_Load(BOOL curious)
 			}
 		} else {
 			_mm_fseek(modreader,((long)paraptr[mh->insnum+mh->smpnum+t]),SEEK_SET);
-#ifdef WITH_PACKLEN
 			packlen=_mm_read_I_UWORD(modreader);
-#else
-			_mm_skip_BYTE(modreader);
-			_mm_skip_BYTE(modreader);
-#endif
+			(void)packlen; /* unused */
 			of.pattrows[t]=_mm_read_I_UWORD(modreader);
 			_mm_read_I_ULONG(modreader);
 			if(!IT_ReadPattern(of.pattrows[t])) return 0;

@@ -51,7 +51,7 @@ sure your libmikmod library will work on every 32 bit version of OS/2.
 After the configuration has finished and the Makefiles are created, just
 run
 
-	build
+  build
 
 and you'll get your libmikmod library in the libmikmod directory.
 If the build fails, I'd like to hear from you to correct the problem.
@@ -114,12 +114,12 @@ libmikmod library.
 
 * web:
   libmikmod home page is located at:
-    http://mikmod.raphnet.net/
+    http://mikmod.raphnet.net
 
 * ftp:
   Latest releases of libmikmod can be found:
   - on the web site
-    htp://mikmod.raphnet.net/
+    http://mikmod.raphnet.net
   - on ibiblio (formerly known as metalab, formerly sunsite) and its mirrors
     ftp://metalab.unc.edu/pub/Linux/apps/sound/libs/
 
