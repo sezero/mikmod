@@ -1,39 +1,55 @@
-Summary of changes between libmikmod 3.2.0 and libmikmod 3.4.0 ():
+Summary of changes between libmikmod 3.2.0 and libmikmod 3.3.2 ():
 ==========================================================================
 
-libmikmod 3.4.0 was released on TBD
+libmikmod 3.3.2 was released on TBD
+
+This is a serious bug fix release after the previous 3.2.0 series, with
+some additional new features. All who are using libmikmod-3.2.0 (or the
+interim 3.3.1-beta) must upgrade to the new libmikmod-3.3.2 version.
 
 THANKS
 
-- Paul Spark <sparkynz74@gmail.com> for allowing libmikmod to build
-  on Microsoft Visual C++ 6.0 compiler with the new SDL driver.
+- Paul Spark <sparkynz74@gmail.com> for Microsoft Visual C 6.0 fixes.
 - Ozkan Sezer: many changes.
 
 NEW FEATURES
 
-- CMake build system.
-- ALSA driver now supports only the new ALSA (to remove unnecessary #ifdefs.)
-- ALSA fixes from Fedora. additional ALSA fixes.
-- Add new SDL driver - works both with SDL-1.2.x and with SDL2, supports
+- New CMake build system.
+- Updated configury, support for cross-compilation, support for building
+  in a separate directory, support latest autotools.
+- New SDL driver - works both with SDL-1.2.x and with SDL2, supports
   floating point output if compiled against SDL2.
-- ESD updates from Fedora. Add esd back to configury which was removed
-  in 3.2.0b3 (now require >= 0.2.18.)
-- Floating point output mode support for ALSA, OSS, Direct Sound,
-  WinMM drivers and for WAV file writer.
-- Minor OSS fixes.
-- The pipe and stdout drivers are now configurable
-- Raw file-writer now has the lowest priority among the file-writers.
+- New OpenAL driver, originally suggested by 'kervala', with fixes and
+  updates and with floating point output support.
 - The multi-platform SDL and OpenAL drivers, if they are compiled, have
   priority over OS-specific hw drivers for MikMod_RegisterAllDrivers().
-- The NAS driver now actually compiles.
-- Add windows xaudio2 driver, originally suggested by 'honza.c', with
+- New windows xaudio2 driver, originally suggested by 'honza.c', with
   updates, xaudio2.8 support and with floating point output support.
-- Add openal driver, originally suggested by 'kervala', with fixes and
-  updates and with floating point output support.
+- ALSA driver now supports only the contemporary ALSA 1.0.x versions.
+  All of the ancient ALSA 0.3.x-0.4.x code were removed.
+- Floating point output mode support for ALSA, OSS, Direct Sound, WinMM
+  drivers and for WAV file writer.
+- The pipe and stdout drivers are now configurable
+- Raw file-writer now has the lowest priority among the file-writers.
+- GCC elf and macho symbol visibility attributes now supported.
+- Windows: dllexport/dllimport attributes work properly for MinGW[-w64],
+  as well as windows compilers. Static builds using MSVC, LCC, etc are
+  now named mikmod_static.lib. When compiling against static libmikmod,
+  MIKMOD_STATIC should be defined so that dllimport wouldn't be assumed.
+
+BUGFIXES
+
+- ALSA fixes from Fedora.
+- ALSA fixes for "Write error: File descriptor in bad state" crashes,
+  e.g. RedHat bug #915121. Now works stable.
+- ESD (esound) updates from Fedora. Add esd back to configury which was
+  removed in 3.2.0b3, now requiring >= 0.2.18.
+- Minor OSS fixes.
+- The NAS driver now actually compiles.
 - 64 bit detection fixes.
 - Fix BOOL type use all over the source.
 - Several const correctness fixes.
-- Merged fixes for CVE-2007-6720 and CVE-2009-0179.
+- Fixes for CVE-2007-6720 and CVE-2009-0179.
 - mmio: memreader fixes and updates.
 - Fixes for access violations introduced in 3.2.0b3.
 - Fixes for broken memory allocation wrappers introduced in 3.2.0b3.
@@ -49,17 +65,12 @@ NEW FEATURES
 - Windows: fixes/updates, win64 fully supported. MinGW[-w64] fully
   supported along with MSVC and LCC. new standalone MinGW makefile with
   cross-compilation support.
-- Windows: dllexport/dllimport attributes work properly for MinGW[-w64],
-  as well as windows compilers. Static builds using MSVC, LCC, etc are
-  now named mikmod_static.lib. When compiling against static libmikmod,
-  MIKMOD_STATIC should be defined so that dllimport wouldn't be assumed.
-- GCC elf and macho symbol visibility attributes now supported.
-- Updated configury, support for cross-compilation, support for building
-  in a separate directory, support latest autotools.
 - SIMD (AltiVec and SSE2) option is now disabled by default. Can be
   enabled by --enable-simd configury option, similarly with cmake. (the
   standalone makefiles or project files are added instructions on how to
-  enable the feature.)
+  enable the feature if required.)
+- Many compiler warning fixes, other small cleanups.
+
 
 Summary of changes between libmikmod 3.1.11 and libmikmod 3.2.0 (Xorigad):
 ==========================================================================
