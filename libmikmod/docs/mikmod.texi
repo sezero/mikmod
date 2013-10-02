@@ -1090,9 +1090,9 @@ The @code{MDRIVER} structure is not meant to be used by anything else than the
 core of the library, but its first four fields contain useful information for
 your programs:
 @table @code
-@item CHAR* Name
+@item const CHAR* Name
 Name of the driver, usually never more than 20 characters.
-@item CHAR* Description
+@item const CHAR* Description
 Description of the driver, usually never more than 50 characters.
 @item UBYTE HardVoiceLimit
 Maximum number of hardware voices for this driver, 0 if the driver has no
@@ -1100,7 +1100,7 @@ hardware mixing support.
 @item UBYTE SoftVoiceLimit
 Maximum number of software voices for this driver, 0 if the driver has no
 software mixing support.
-@item CHAR* Alias
+@item const CHAR* Alias
 A short name for the driver, without spaces, usually never more than 10
 characters.
 @end table
@@ -1366,8 +1366,8 @@ meaning the start of the object being written.
 @item long (*Tell)(struct MWRITER*);
 This function should have the same behaviour as @code{ftell}, with offset 0
 meaning the start of the object being written.
-@item BOOL (*Write)(struct MWRITER*, void *dest, size_t length);
-This function should copy @code{length} bytes of data from @code{dest}, and
+@item BOOL (*Write)(struct MWRITER*, const void *src, size_t length);
+This function should copy @code{length} bytes of data from @code{src}, and
 return zero if an error occured, and any nonzero value otherwise.
 @item BOOL (*Put)(struct MWRITER*, int data);
 This function should have the same behaviour as @code{fputc}.
@@ -1791,7 +1791,7 @@ Calls to @code{MikMod_Update} will be ignored when sound output is disabled.
 @subsubsection MikMod_EnableOutput
 @end ifnottex
 @findex MikMod_EnableOutput
-@code{BOOL MikMod_EnableOutput(void)}
+@code{int MikMod_EnableOutput(void)}
 @table @i
 @item Description
 This function starts the sound mixing.
@@ -1873,7 +1873,7 @@ no longer necessary.
 @subsubsection MikMod_Init
 @end ifnottex
 @findex MikMod_Init
-@code{BOOL MikMod_Init(CHAR *parameters)}
+@code{int MikMod_Init(const CHAR *parameters)}
 @table @i
 @item Description
 This function performs the library initialization, including the sound driver
@@ -2080,7 +2080,7 @@ anymore@enddots{}
 @subsubsection MikMod_Reset
 @end ifnottex
 @findex MikMod_Reset
-@code{BOOL MikMod_Reset(CHAR *parameters)}
+@code{int MikMod_Reset(const CHAR *parameters)}
 @table @i
 @item Description
 This function resets MikMod and reinitialize the sound hardware.
@@ -2106,7 +2106,7 @@ the driver is ready.
 @subsubsection MikMod_SetNumVoices
 @end ifnottex
 @findex MikMod_SetNumVoices
-@code{BOOL MikMod_SetNumVoices(int musicvoices, int samplevoices)}
+@code{int MikMod_SetNumVoices(int musicvoices, int samplevoices)}
 @table @i
 @item Description
 This function sets the number of mixed voices which can be used for music
@@ -2180,12 +2180,12 @@ you should do this before calling @code{MikMod_Update}.
 @subsubsection MikMod_strerror
 @end ifnottex
 @findex MikMod_strerror
-@code{char* MikMod_strerror(int errno)}
+@code{const char* MikMod_strerror(int errnum)}
 @table @i
 @item Description
 This function associates a descriptive message to an error code.
 @item Parameters
-@itemx errno
+@itemx errnum
 The MikMod error code.
 @item Result
 A pointer to a string describing the error.
@@ -2270,7 +2270,7 @@ playing.
 @subsubsection Player_Load
 @end ifnottex
 @findex Player_Load
-@code{MODULE* Player_Load(CHAR* filename, int maxchan, BOOL curious)}
+@code{MODULE* Player_Load(const CHAR* filename, int maxchan, BOOL curious)}
 @table @i
 @item Description
 This function loads a music module.
@@ -2337,7 +2337,7 @@ after the last ``official'' pattern.
 @subsubsection Player_LoadTitle
 @end ifnottex
 @findex Player_LoadTitle
-@code{MODULE* Player_LoadTitle(CHAR* filename)}
+@code{MODULE* Player_LoadTitle(const CHAR* filename)}
 @table @i
 @item Description
 This function retrieves the title of a module file.
@@ -2657,7 +2657,7 @@ The sample to free.
 @subsubsection Sample_Load
 @end ifnottex
 @findex Sample_Load
-@code{SAMPLE* Sample_Load(CHAR* filename)}
+@code{SAMPLE* Sample_Load(const CHAR* filename)}
 @table @i
 @item Description
 This function loads a sample.
