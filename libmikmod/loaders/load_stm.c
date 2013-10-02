@@ -330,13 +330,7 @@ static BOOL STM_Load(BOOL curious)
 		q->speed      = (mh->sample[t].c2spd * 8363) / 8448;
 		q->volume     = mh->sample[t].volume;
 		q->length     = mh->sample[t].length;
-#if 0
-		if (/*(!mh->sample[t].volume)||*/(q->length==1)) q->length=0;
-#else
-		if (q->length==1) {
-			q->length=0;
-		}
-#endif
+		if (/*!mh->sample[t].volume || */q->length==1) q->length=0;
 		q->loopstart  = mh->sample[t].loopbeg;
 		q->loopend    = mh->sample[t].loopend;
 		q->seekpos    = MikMod_ISA;
@@ -375,6 +369,5 @@ MIKMODAPI MLOADER load_stm={
 	STM_Cleanup,
 	STM_LoadTitle
 };
-
 
 /* ex:set ts=4: */
