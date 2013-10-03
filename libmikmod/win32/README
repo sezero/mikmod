@@ -108,20 +108,14 @@ libmikmod library.
 >> CONTACT AND DOWNLOAD INFO
 ----------------------------
 
-* email:
-  Please send all your libmikmod related e-mail to me, at:
-  miod@mikmod.org
+libmikmod home page is located at SourceForge:
 
-* web:
-  libmikmod home page is located at:
-    http://mikmod.raphnet.net
+    http://mikmod.sourceforge.net/
+    http://sourceforge.net/projects/mikmod/
 
-* ftp:
-  Latest releases of libmikmod can be found:
-  - on the web site
-    http://mikmod.raphnet.net
-  - on ibiblio (formerly known as metalab, formerly sunsite) and its mirrors
-    ftp://metalab.unc.edu/pub/Linux/apps/sound/libs/
+There's a mailing list (mikmod-public) for discussing the development
+of MikMod (new features, bugs, ideas...) Look for more information on
+the web site.
 
 
 >> LAST NOTES

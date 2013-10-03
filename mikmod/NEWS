@@ -1,3 +1,18 @@
+Summary of changes between MikMod 3.2.2 and MikMod 3.2.2 ():
+==================================================================
+
+MikMod 3.2.3 was released on 02/Oct/2013
+This is a maintenance release to fix minor bugs since mikmod-3.2.2
+
+BUGFIXES
+
+- Made MikMod compilable against older versions of libmikmod
+  without MikMod_Free().
+- Fixed a minor buffer overrun (sf.net bug #2).
+- Fixed a minor string format issue.
+- Updated configury to support latest autotools.
+
+
 Summary of changes between MikMod 3.1.6 and MikMod 3.2.2 (Vitray):
 ==================================================================
 

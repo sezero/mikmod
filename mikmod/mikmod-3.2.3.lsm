@@ -7,8 +7,8 @@ Description: sound library.
 Keywords: mikmod player digital music sound audio oss /dev/dsp
 Keywords: mod s3m xm mtm stm it ult dsm med 669 far med amf gdm alsa esd
 Author: (Many - see file AUTHORS for complete list)
-Maintained-by: Raphael Assenat <raph@raphnet.net>
-Primary-site: http://mikmod.raphnet.net
+Maintained-by: O.Sezer <sezero@users.sf.net>
+Primary-site: http://mikmod.sourceforge.net/
 Alternate-site: none
 Platforms: AIX, DOS, FreeBSD, HP-UX, IRIX, Linux, OSF/1, OS/2, NetBSD,
 Platforms: OpenBSD, Solaris... more on request !

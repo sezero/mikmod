@@ -15,9 +15,10 @@ MikMod main authors
 Unix maintainers
 ---------------
 
+* Ozkan Sezer <sezero@users.sf.net>
+  Took over the baton from Shlomi in 2013. (current maintainer.)
 * Shlomi Fish, http://www.shlomifish.org/
-  Revived the project after many years of inactivity, in 2012. Is
-  the current maintainer.
+  Revived the project after many years of inactivity, in 2012.
 * Steve McIntyre <steven@chiark.greenend.org.uk>
   maintained MikMod'Unix version 2, and wrote the curses interface and the
   archive support.
@@ -55,5 +56,4 @@ Contributors on other platforms
   ported MikMod 2 to BeOS.
 
 --
-If your name is missing, don't hesitate to remind me at
-http://www.shlomifish.org/me/contact-me/ .
+If your name is missing, don't hesitate to remind the current maintainer.

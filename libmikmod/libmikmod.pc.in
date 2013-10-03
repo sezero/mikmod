@@ -6,7 +6,7 @@ includedir=${prefix}/include
 Name:  libmikmod
 Description: Library for playing Module Files and for Sound Effects
 Version: @VERSION@
-URL: http://mikmod.raphnet.net/
+URL: http://mikmod.sourceforge.net/
 Libs: -L${libdir} -lmikmod
 Libs.private: -lm
 Cflags: -I${includedir}
