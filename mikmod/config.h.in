@@ -1,4 +1,4 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if your system is AIX 3.* - might be needed for 4.* too. */
 #undef AIX
@@ -33,6 +33,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
+#undef HAVE_MIKMOD_FREE
 
 /* Define to 1 if you have the `mkstemp' function. */
 #undef HAVE_MKSTEMP

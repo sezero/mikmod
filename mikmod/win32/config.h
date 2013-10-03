@@ -1,5 +1,8 @@
 /* config.h.  Generated manually for Windows/LCC. */
 
+/* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
+#undef HAVE_MIKMOD_FREE
+
 /* Define if your system is AIX 3.* - might be needed for 4.* too. */
 #undef AIX
 
@@ -138,7 +141,7 @@
 #undef TIME_WITH_SYS_TIME
 
 /* Version number of package */
-#define VERSION "3.2.2-beta0"
+#define VERSION "3.2.3"
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

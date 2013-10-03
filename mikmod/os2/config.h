@@ -1,5 +1,8 @@
 /* config.h.in.  Generated manually for GCC/EMX.  */
 
+/* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
+#undef HAVE_MIKMOD_FREE
+
 /* Define if you don't have vprintf but do have _doprnt.  */
 #define HAVE_DOPRNT 1
 

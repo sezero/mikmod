@@ -50,6 +50,15 @@ AM_PATH_LIBMIKMOD(3.1.5, , AC_MSG_ERROR([
 --- ERROR: No suitable libmikmod library found.
            You need at least libmikmod 3.1.5 for this program to work.
 ]))
+# MikMod_free() is in libmikmod-3.2.0b3 and later. The only fool-proof
+# way of detecting MikMod_free() is a configury check at compile time
+# or a dlsym() check at runtime, and the bad thing is 3.2.0beta1/2 were
+# (still are?) in distros..
+ac_save_LDFLAGS=$LDFLAGS
+LDFLAGS="$LDFLAGS $LIBMIKMOD_LIBS"
+AC_CHECK_LIB(mikmod, MikMod_free, AC_DEFINE(HAVE_MIKMOD_FREE, 1,
+		[Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).]))
+LDFLAGS="$ac_save_LDFLAGS"
 
 dnl ncurses
 AC_CHECK_LIB(ncurses, initscr, libcurses=ncurses, libcurses=curses)
