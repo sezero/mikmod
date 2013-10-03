@@ -1,23 +1,9 @@
   Hello folks !
 
 
-This is MikMod, version 3.2.2-beta1, a module player for Unix.
+This is MikMod, version 3.2.3, a module player for Unix.
 As usual with each new version, there's a lot of bugfixes and improvements.
 Check out the file 'NEWS' for more information.
-
-
->> BETA WARNING
----------------
-
-This is a *beta* version of MikMod. Although it should work fine on
-almost all systems, there are likely a few last-minute errors or typos
-in the source, and some parts have not received enough hours of testing yet.
-
-Also, please note that all features planned for the final 3.2.2 release are not
-available yet, and the documentation has not been updated yet.
-
-If I've not scared you, then you can proceed and enjoy fewer bugs than in the
-previous version, as well as nice eye-candies (-;
 
 
 >> BUILDING MIKMOD

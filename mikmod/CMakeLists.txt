@@ -6,7 +6,7 @@ INCLUDE(Shlomif_Common)
 
 SHLOMIF_COMMON_SETUP("${private_mod_path}")
 
-SET (VERSION "3.1.5")
+SET (VERSION "3.2.3")
 
 STRING (REGEX MATCHALL "([0-9]+)" VERSION_DIGITS "${VERSION}")
 
@@ -173,7 +173,7 @@ install(
 #
 #pkgdata_DATA = mikmodrc
 #
-#EXTRA_DIST = mikmod-3.2.2.lsm \
+#EXTRA_DIST = mikmod-3.2.3.lsm \
 #             convert_playlist mikmod.cfg $(pkgdata_DATA)
 
 add_subdirectory(src)
