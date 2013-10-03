@@ -927,7 +927,7 @@ static BOOL cb_list_scan_dir (char *path, int added, int removed, void *data)
 		else
 			sprintf (str,"\rScanning %s... (%d added)",path,added);
 		pos = str+strlen(str);
-		for (i=strlen(str); i<70; i++)
+		for (i=strlen(str); i<(70-1); i++)
 			*pos++ = ' ';
 		*pos = '\0';
 		printf ("%s", str);
