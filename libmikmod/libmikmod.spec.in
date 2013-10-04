@@ -1,5 +1,5 @@
-%define version     @LIBMIKMOD_MAJOR_VERSION@.@LIBMIKMOD_MINOR_VERSION@.@LIBMIKMOD_MICRO_VERSION@
-%define release     @SPEC_RELEASE@
+%define version @LIBMIKMOD_MAJOR_VERSION@.@LIBMIKMOD_MINOR_VERSION@.@LIBMIKMOD_MICRO_VERSION@
+%define release @SPEC_RELEASE@
 
 Summary:    sound library
 Name:       libmikmod
@@ -8,7 +8,8 @@ Release:    %{release}
 License:    LGPL
 Group:      System Environment/Libraries
 URL:        http://mikmod.sourceforge.net/
-Source:     http://mikmod.sourceforge.net/files/%{name}-%{version}.tar.gz
+#Source:     http://mikmod.sourceforge.net/files/%{name}-%{version}.tar.gz
+Source:     http://download.sourceforge.net/mikmod/%{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -28,7 +29,7 @@ that will use the libmikmod library.
 %setup -q -n %{name}-%{version}
 
 %build
-%configure --disable-esd --disable-alsa
+%configure
 make
 
 %install
@@ -60,7 +61,6 @@ if [ "$1" = "0" ]; then # last uninstall
   fi
 fi
 
-
 %ifos darwin
 %define __defattr %defattr(-,root,wheel)
 %define __soext   dylib
@@ -71,7 +71,7 @@ fi
 
 %files
 %{__defattr}
-%doc AUTHORS COPYING.LESSER COPYING.LIB INSTALL NEWS README TODO
+%doc AUTHORS COPYING.LESSER COPYING.LIB INSTALL INSTALL.autotools NEWS README TODO
 %ifnos darwin
 %{_libdir}/libmikmod.%{__soext}.*
 %else
