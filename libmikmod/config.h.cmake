@@ -25,7 +25,7 @@
 /* Define if the Open Sound System driver is compiled */
 #cmakedefine DRV_OSS 1
 /* Define if the Linux SAM9407 driver is compiled */
-#undef DRV_SAM9407
+#cmakedefine DRV_SAM9407 1
 /* Define if the SDL audio driver is compiled */
 #cmakedefine DRV_SDL 1
 /* Define if the SGI audio driver is compiled */
@@ -54,22 +54,19 @@
 /* ========== Build environment information */
 
 /* Define if your system is SunOS 4.* */
-#undef SUNOS
+#cmakedefine SUNOS 1
 /* Define if your system is AIX 3.* - might be needed for 4.* too */
-#undef AIX
+#cmakedefine AIX 1
 /* Define if your system defines random(3) and srandom(3) in math.h instead
    of stdlib.h */
 #cmakedefine SRANDOM_IN_MATH_H 1
 /* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
 #cmakedefine HAVE_RTLD_GLOBAL 1
 /* Define if your system needs leading underscore to function names in dlsym() calls */
-#undef DLSYM_NEEDS_UNDERSCORE
+#cmakedefine DLSYM_NEEDS_UNDERSCORE 1
 
 /* define this if you are running a bigendian system (motorola, sparc, etc) */
-#undef WORDS_BIGENDIAN
-
-/* Define if building universal (internal helper macro) */
-#undef AC_APPLE_UNIVERSAL_BUILD
+#cmakedefine WORDS_BIGENDIAN 1
 
 /* Define to 1 if you have the <AF/AFlib.h> header file. */
 #cmakedefine HAVE_AF_AFLIB_H 1
@@ -215,23 +212,11 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
-#  undef WORDS_BIGENDIAN
-# endif
-#endif
-
 /* Define to empty if `const' does not conform to ANSI C. */
-#undef const
+#cmakedefine const
 
 /* Define to `int' if <sys/types.h> does not define. */
-#undef pid_t
+#cmakedefine pid_t
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
-#undef size_t
+#cmakedefine size_t

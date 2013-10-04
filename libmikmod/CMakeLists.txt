@@ -147,6 +147,7 @@ include(CheckSymbolExists)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(FindThreads)
 include(FindPkgConfig)
+include(TestBigEndian)
 
 ADD_SUBDIRECTORY ("dlapi")
 ADD_SUBDIRECTORY ("docs")
@@ -249,6 +250,8 @@ IF(NOT WIN32 AND NOT CYGWIN)
     ENDIF()
     SET(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS}")
 ENDIF()
+
+TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 # So it can find the includes when building libavl.avl.h.
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -464,19 +467,8 @@ ENDIF(ENABLE_OPENAL)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
-
-# There may be some trailing space - so remove it.
-SET (dest "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.cmake" "${dest}")
-EXECUTE_PROCESS(
-    COMMAND "perl" "-lpi" "-e" "s/[\\t ]+$//" "${dest}"
-)
-
-CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc
-    @ONLY
-    )
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc" @ONLY)
 
 IF (ENABLE_OPENAL)
     LIST (APPEND EXTRA_LIBS ${OPENAL_LIBRARY})
