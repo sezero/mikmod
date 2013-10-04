@@ -367,7 +367,7 @@ static BOOL ASY_Load(BOOL curious)
 		q++;
 	}
 
-	of.modtype = StrDup(descr);
+	of.modtype = MikMod_strdup(descr);
 
 	if (!ML_LoadPatterns())
 		return 0;

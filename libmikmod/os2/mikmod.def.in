@@ -6,7 +6,8 @@ EXPORTS
 	MikMod_malloc					@3
 	MikMod_calloc					@4
 	MikMod_realloc					@5
-	MikMod_free					@6
+	MikMod_strdup					@6
+	MikMod_free					@7
 
 	MikMod_errno					@11
 	MikMod_critical					@12

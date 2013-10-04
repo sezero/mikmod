@@ -36,7 +36,7 @@ void *dlopen(const char *name, int flags)
 
 	/* By convention, libmikmod will look for "foo.so" while on HP-UX the
 	   name would be "foo.sl". Change the last letter here. */
-	library = StrDup(name);
+	library = MikMod_strdup(name);
 	library[strlen(library) - 1] = 'l';
 
 	handle = shl_load(library,

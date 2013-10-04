@@ -2,6 +2,8 @@
 #include "config.h"
 #endif
 
+#if 0 /* we're using MikMod_strdup() now. */
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,3 +20,5 @@ char* strdup(const char *__s)
 
 	return charptr;
 }
+
+#endif

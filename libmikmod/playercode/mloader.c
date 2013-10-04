@@ -287,21 +287,6 @@ CHAR *DupStr(const CHAR* s, UWORD len, BOOL strict)
 	return d;
 }
 
-/* like strdup(), but the result must be freed using MikMod_free(). */
-CHAR *StrDup(const CHAR *s)
-{
-	size_t l;
-	CHAR *d;
-
-	if (!s) return NULL;
-
-	l = strlen(s) + 1;
-	d = MikMod_malloc(l);
-	if (d) strcpy(d,s);
-
-	return d;
-}
-
 static void ML_XFreeSample(SAMPLE *s)
 {
 	if(s->handle>=0)

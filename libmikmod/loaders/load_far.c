@@ -195,7 +195,7 @@ static BOOL FAR_Load(BOOL curious)
 	mh1->stlen     = _mm_read_I_UWORD (modreader);
 
 	/* init modfile data */
-	of.modtype   = StrDup(FAR_Version);
+	of.modtype   = MikMod_strdup(FAR_Version);
 	of.songname  = DupStr(mh1->songname,40,1);
 	of.numchn    = 16;
 	of.initspeed = mh1->speed;
@@ -329,7 +329,7 @@ static CHAR *FAR_LoadTitle(void)
 	_mm_fseek(modreader,4,SEEK_SET);
 	if(!_mm_read_UBYTES(s,40,modreader)) return NULL;
 
-	return(DupStr(s,40,1));
+	return (DupStr(s,40,1));
 }
 
 /*========== Loader information */

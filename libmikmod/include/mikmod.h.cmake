@@ -286,8 +286,9 @@ MIKMODAPI extern void   MikMod_Lock(void);
 MIKMODAPI extern void   MikMod_Unlock(void);
 
 MIKMODAPI extern void*  MikMod_malloc(size_t);
-MIKMODAPI extern void*  MikMod_realloc(void *, size_t);
 MIKMODAPI extern void*  MikMod_calloc(size_t,size_t);
+MIKMODAPI extern void*  MikMod_realloc(void*,size_t);
+MIKMODAPI extern CHAR*  MikMod_strdup(const CHAR*);
 MIKMODAPI extern void   MikMod_free(void*);
 
 /*

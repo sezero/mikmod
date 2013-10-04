@@ -596,7 +596,6 @@ extern BOOL   AllocTracks(void);
 extern BOOL   AllocInstruments(void);
 extern BOOL   AllocSamples(void);
 extern CHAR*  DupStr(const CHAR*, UWORD, BOOL);
-extern CHAR*  StrDup(const CHAR *s);		/* like strdup(), but the result must be freed using MikMod_free(). */
 
 /* loader utility functions */
 extern int*   AllocLinear(void);
@@ -829,9 +828,9 @@ static __inline __m128i mm_hiqq(const __m128i a) {
 
 /* MikMod_malloc_aligned16() returns a 16 byte aligned zero-filled
    memory in SIMD-enabled builds.
- - the returned memory MIGHT NOT be realloc()'ed safely.
- - the returned can be reclaimed using MikMod_free_aligned16() who
-   does check for a NULL pointer. */
+ - the returned memory can be reclaimed using MikMod_free_aligned16()
+   who does check for a NULL pointer.
+ - the returned memory CAN NOT be realloc()'ed safely.  */
 void* MikMod_malloc_aligned16(size_t);
 void MikMod_free_aligned16(void *);
 

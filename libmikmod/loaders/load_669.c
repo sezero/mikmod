@@ -280,7 +280,7 @@ static BOOL S69_Load(BOOL curious)
 	of.initspeed=4;
 	of.inittempo=78;
 	of.songname=DupStr(mh->message,36,1);
-	of.modtype=StrDup(S69_Version[memcmp(mh->marker,"JN",2)==0]);
+	of.modtype=MikMod_strdup(S69_Version[memcmp(mh->marker,"JN",2)==0]);
 	of.numchn=8;
 	of.numpat=mh->nop;
 	of.numins=of.numsmp=mh->nos;

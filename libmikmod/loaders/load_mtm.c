@@ -168,7 +168,7 @@ static BOOL MTM_Load(BOOL curious)
 	/* set module variables */
 	of.initspeed = 6;
 	of.inittempo = 125;
-	of.modtype   = StrDup(MTM_Version);
+	of.modtype   = MikMod_strdup(MTM_Version);
 	of.numchn    = mh->numchannels;
 	of.numtrk    = mh->numtracks+1;           /* get number of channels */
 	of.songname  = DupStr(mh->songname,20,1); /* make a cstr of songname */

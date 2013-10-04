@@ -333,9 +333,9 @@ static BOOL OKT_Load(BOOL curious)
 
 	/* skip OKTALYZER header */
 	_mm_fseek(modreader, 8, SEEK_SET);
-	of.songname = StrDup("");
+	of.songname = MikMod_strdup("");
 
-	of.modtype = StrDup("Amiga Oktalyzer");
+	of.modtype = MikMod_strdup("Amiga Oktalyzer");
 	of.numpos = of.reppos = 0;
 
 	/* default values */
@@ -441,7 +441,7 @@ static BOOL OKT_Load(BOOL curious)
 
 static CHAR *OKT_LoadTitle(void)
 {
-	return StrDup("");
+	return MikMod_strdup("");
 }
 
 /*========== Loader information */

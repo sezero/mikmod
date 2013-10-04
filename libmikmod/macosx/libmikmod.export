@@ -20,8 +20,9 @@ _MikMod_InitThreads
 _MikMod_Lock
 _MikMod_Unlock
 _MikMod_malloc
-_MikMod_realloc
 _MikMod_calloc
+_MikMod_realloc
+_MikMod_strdup
 _MikMod_free
 _Sample_LoadRaw
 _Sample_LoadRawFP

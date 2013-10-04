@@ -571,7 +571,7 @@ static BOOL MED_Load(BOOL curious)
 		of.flags |= UF_HIGHBPM;
 	}
 	MED_Version[12] = mh->id;
-	of.modtype = StrDup(MED_Version);
+	of.modtype = MikMod_strdup(MED_Version);
 	of.numchn = 0;				/* will be counted later */
 	of.numpat = ms->numblocks;
 	of.numpos = ms->songlen;

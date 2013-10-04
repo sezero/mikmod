@@ -408,9 +408,9 @@ static BOOL M15_Load(BOOL curious)
 	}
 
 	if(ust_loader)
-		of.modtype = StrDup("Ultimate Soundtracker");
+		of.modtype = MikMod_strdup("Ultimate Soundtracker");
 	else
-		of.modtype = StrDup("Soundtracker");
+		of.modtype = MikMod_strdup("Soundtracker");
 
 	/* set module variables */
 	of.initspeed = 6;
@@ -466,7 +466,7 @@ static BOOL M15_Load(BOOL curious)
 		q->length    = s->length<<1;
 
 		q->flags = SF_SIGNED;
-	   	if(ust_loader) q->flags |= SF_UST_LOOP;
+		if(ust_loader) q->flags |= SF_UST_LOOP;
 		if(s->replen>2) q->flags |= SF_LOOP;
 
 		s++;

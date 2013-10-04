@@ -265,7 +265,7 @@ static BOOL DSM_Load(BOOL curious)
 	/* set module variables */
 	of.initspeed=mh->speed;
 	of.inittempo=mh->bpm;
-	of.modtype=StrDup(DSM_Version);
+	of.modtype=MikMod_strdup(DSM_Version);
 	of.numchn=mh->numtrk;
 	of.numpat=mh->numpat;
 	of.numtrk=of.numchn*of.numpat;

@@ -119,7 +119,7 @@ void* MikMod_malloc(size_t size)
 }
 
 /* Same as calloc, but sets error variable _mm_error when fails */
-void* MikMod_calloc(size_t nitems,size_t size)
+void* MikMod_calloc(size_t nitems, size_t size)
 {
 	void *d = calloc(nitems, size);
 	if (d) return d;
@@ -132,6 +132,20 @@ void* MikMod_calloc(size_t nitems,size_t size)
 void MikMod_free(void *data)
 {
 	if (data) free(data);
+}
+
+/* like strdup(), but the result must be freed using MikMod_free() */
+CHAR *MikMod_strdup(const CHAR *s)
+{
+	size_t l;
+	CHAR *d;
+
+	if (!s) return NULL;
+
+	l = strlen(s) + 1;
+	d = MikMod_calloc(1, l);
+	if (d) strcpy(d, s);
+	return d;
 }
 
 /* ex:set ts=4: */

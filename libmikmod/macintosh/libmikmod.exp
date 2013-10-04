@@ -25,6 +25,7 @@ MikMod_Unlock
 MikMod_malloc
 MikMod_calloc
 MikMod_realloc
+MikMod_strdup
 MikMod_free
 Sample_LoadRaw
 Sample_LoadRawFP
