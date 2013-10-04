@@ -596,7 +596,7 @@ extern BOOL   AllocTracks(void);
 extern BOOL   AllocInstruments(void);
 extern BOOL   AllocSamples(void);
 extern CHAR*  DupStr(const CHAR*, UWORD, BOOL);
-extern CHAR*  StrDup(const CHAR *s);
+extern CHAR*  StrDup(const CHAR *s);		/* like strdup(), but the result must be freed using MikMod_free(). */
 
 /* loader utility functions */
 extern int*   AllocLinear(void);

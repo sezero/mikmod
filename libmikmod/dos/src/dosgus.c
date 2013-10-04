@@ -1253,7 +1253,7 @@ static gus_instrument_t *__gus_instrument_copy(gus_instrument_t * instrument)
 	*instr = *instrument;
 
 	if (instrument->name)
-		instr->name = strdup(instrument->name);
+		instr->name = StrDup(instrument->name);
 
 	/* Make a copy of all layers at once */
 	for (layers = 0, cur_layer = instrument->info.layer; cur_layer; layers++)
