@@ -1,14 +1,14 @@
 %define version @LIBMIKMOD_MAJOR_VERSION@.@LIBMIKMOD_MINOR_VERSION@.@LIBMIKMOD_MICRO_VERSION@
-%define release @SPEC_RELEASE@
+%define release 1
 
-Summary:    sound library
+Summary:    sound library for module files
 Name:       libmikmod
 Version:    %{version}
 Release:    %{release}
 License:    LGPL
 Group:      System Environment/Libraries
 URL:        http://mikmod.sourceforge.net/
-#Source:     http://mikmod.sourceforge.net/files/%{name}-%{version}.tar.gz
+#Source:    http://mikmod.sourceforge.net/files/%{name}-%{version}.tar.gz
 Source:     http://download.sourceforge.net/mikmod/%{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
@@ -71,7 +71,7 @@ fi
 
 %files
 %{__defattr}
-%doc AUTHORS COPYING.LESSER COPYING.LIB INSTALL INSTALL.autotools NEWS README TODO
+%doc AUTHORS COPYING.LESSER COPYING.LIB INSTALL NEWS README TODO
 %ifnos darwin
 %{_libdir}/libmikmod.%{__soext}.*
 %else
