@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <errno.h>
 
 #ifdef HAVE_FCNTL_H
@@ -303,7 +304,7 @@ char *get_cfg_name(char *name)
 
 #ifndef HAVE_SNPRINTF
 /* Not a viable snprintf implementation, but makes code more clear */
-int snprintf(char *buffer, size_t n, char *format, ...)
+int snprintf(char *buffer, size_t n, const char *format, ...)
 {
 	va_list args;
 	int len;

@@ -104,6 +104,7 @@ extern char storage[STORAGELEN+2];
 #endif
 
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#undef S_ISLNK /* djgpp-v2.04 does define S_ISLNK (and has lstat, too..) */
 #define lstat             stat
 #define S_ISSOCK(st_mode) 0
 #define S_ISLNK(st_mode)  0
@@ -169,7 +170,7 @@ unsigned long Time1000(void);
 #endif
 
 #ifndef HAVE_SNPRINTF
-int snprintf(char *buffer, size_t n, char *format, ...);
+int snprintf(char *buffer, size_t n, const char *format, ...);
 #endif
 
 /* Return newly malloced version and cmdline for the driver

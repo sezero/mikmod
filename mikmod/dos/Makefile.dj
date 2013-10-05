@@ -8,10 +8,10 @@
 DEBUG = 0
 
 # The tools
-CC = gcc -c
+CC = gcc
 CFLAGS = $(COPT) -DHAVE_CONFIG_H $(INCLUDE)
 INCLUDE = -I. -I../src
-LD = gcc
+LD = $(CC)
 LDFLAGS = $(LDOPT) -L. -lmikmod
 
 ifeq ($(DEBUG),1)
@@ -24,7 +24,7 @@ endif
 
 # Build rules
 %.o: ../src/%.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 SRC = $(filter-out %mfnmatch.c %musleep.c,$(wildcard ../src/*.c))
 OBJ = $(notdir $(SRC:.c=.o))
@@ -36,6 +36,9 @@ depend:
 
 mikmod.exe: $(OBJ)
 	$(LD) -o $@ $^ $(LDFLAGS)
+
+clean:
+	rm -rf $(OBJ) mikmod.exe
 
 # DO NOT DELETE this line - makedep uses it as a separator line
 

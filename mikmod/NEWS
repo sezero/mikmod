@@ -11,6 +11,7 @@ BUGFIXES
 - Fixed a minor buffer overrun (sf.net bug #2).
 - Fixed a minor string format issue.
 - Updated configury to support latest autotools.
+- Fixed djgpp builds.
 
 
 Summary of changes between MikMod 3.1.6 and MikMod 3.2.2 (Vitray):
