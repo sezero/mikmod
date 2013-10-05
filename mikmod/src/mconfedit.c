@@ -292,7 +292,7 @@ static void get_drivers(MENTRY *entry)
 			start = pos;
 		}
 	}
-#if (LIBMIKMOD_VERSION >= 0x030200) || defined(HAVE_MIKMOD_FREE)
+#if (LIBMIKMOD_VERSION >= 0x030200) && defined(HAVE_MIKMOD_FREE)
 /* MikMod_free() is in libmikmod-3.2.0 beta3 and newer versions. */
 	MikMod_free(driver);
 #else

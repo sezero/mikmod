@@ -1,7 +1,7 @@
 /* config.h.  Generated manually for Windows/LCC. */
 
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
-#undef HAVE_MIKMOD_FREE
+#define HAVE_MIKMOD_FREE 1
 
 /* Define if your system is AIX 3.* - might be needed for 4.* too. */
 #undef AIX

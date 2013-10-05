@@ -1,7 +1,7 @@
 /* config.h.in.  Generated manually for DOS/DJGPP.  */
 
-/* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
-#undef HAVE_MIKMOD_FREE
+/* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).  */
+#define HAVE_MIKMOD_FREE 1
 
 /* djgpp-v2.04 does provides [v]snprintf functions! */
 /* Define to 1 if you have the `snprintf' function. */
@@ -57,5 +57,5 @@
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H		1
 
-/* Define if TIOCGWINSZ requires sys/ioctl.h */
+/* Define if TIOCGWINSZ requires sys/ioctl.h  */
 #define GWINSZ_IN_SYS_IOCTL
