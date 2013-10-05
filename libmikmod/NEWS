@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.2.0 and libmikmod 3.3.2 ():
 ==========================================================================
 
-libmikmod 3.3.2 was released on TBD
+libmikmod 3.3.2 was released on 05-Oct-2013.
 
 This is a serious bug fix release after the previous 3.2.0 series, with
 some additional new features. All who are using libmikmod-3.2.0 (or the
