@@ -306,7 +306,7 @@ void win_exit(void)
 	conOut = GetConOut();
 	if (conOut != INVALID_HANDLE_VALUE)
 		SetConsoleTextAttribute (conOut, (WORD) A_REVERSE);
-	cputs (storage);
+	_cputs (storage);
 	if (conOut != INVALID_HANDLE_VALUE) {
 		SetConsoleTextAttribute (conOut, (WORD) A_NORMAL);
 		CloseHandle (conOut);

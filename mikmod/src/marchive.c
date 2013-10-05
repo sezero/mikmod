@@ -241,12 +241,12 @@ static BOOL filename2short (char *l, char *s, int len_s)
 
 	if (r.x.flags & 1) {		/* is carry flag set (-> error) ?  */
 		strncpy (s, l, len_s);
-		s[len_s] = '\0';
+		s[len_s - 1] = '\0';
 		return 0;
 	} else {
 		dosmemget (_go32_info_block.linear_address_of_transfer_buffer+512,
 				   len_s, s);
-		s[len_s] = '\0';
+		s[len_s - 1] = '\0';
 		return 1;
 	}
 }
@@ -258,7 +258,7 @@ static BOOL filename2short (char *l, char *s, int len_s)
 	int copied = GetShortPathName (l, s, len_s);
 	if (copied == 0 || copied >= len_s) {
 		strncpy (s, l, len_s);
-		s[len_s] = '\0';
+		s[len_s - 1] = '\0';
 		return 0;
 	} else
 		return 1;
@@ -269,7 +269,7 @@ static BOOL filename2short (char *l, char *s, int len_s)
 static BOOL filename2short (char *l, char *s, int len_s)
 {
 	strncpy (s, l, len_s);
-	s[len_s] = '\0';
+	s[len_s - 1] = '\0';
 	return 1;
 }
 

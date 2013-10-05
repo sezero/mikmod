@@ -12,6 +12,7 @@ BUGFIXES
 - Fixed a minor string format issue.
 - Updated configury to support latest autotools.
 - Fixed djgpp builds.
+- Fixed windows mingw builds, proper win64 support.
 
 
 Summary of changes between MikMod 3.1.6 and MikMod 3.2.2 (Vitray):

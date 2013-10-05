@@ -41,7 +41,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if !defined(__OS2__) && !defined(__EMX__) && !defined(WIN32)
+#if !defined(__OS2__) && !defined(__EMX__) && !(defined(WIN32)&&!defined(__MINGW32__))
 #include <dirent.h>
 #endif
 
@@ -916,7 +916,7 @@ void freq_open (char *title, char *path, int actline,
 
 static BOOL cb_list_scan_dir (char *path, int added, int removed, void *data)
 {
-	BOOL quiet = (BOOL)(long)data;
+	BOOL quiet = (BOOL)(SINTPTR_T)data;
 	char str[70], *pos;
 	int i;
 
@@ -963,7 +963,7 @@ int list_scan_dir (char *path, BOOL quiet)
 
 	if (!stat(path_conv_sys(dir), &statbuf) && S_ISDIR(statbuf.st_mode))
 		scan_dir (dir, 1, 0, NULL, FREQ_ADD,
-				  cb_list_scan_dir, (void *)(long)quiet, &added, NULL);
+				  cb_list_scan_dir, (void *)(SINTPTR_T)quiet, &added, NULL);
 	return added;
 }
 
@@ -977,7 +977,7 @@ static void entry_remove (int entry)
 static BOOL cb_delete_entry(WIDGET *w, int button, void *input, void *entry)
 {
 	if (button<=0) {
-		PLAYENTRY *cur = PL_GetEntry(&playlist, (long)entry);
+		PLAYENTRY *cur = PL_GetEntry(&playlist, (SINTPTR_T)entry);
 		if (cur->archive) {
 			if (unlink(path_conv_sys(cur->archive)) == -1)
 				dlg_error_show("Error deleting archive \"%s\"!",cur->archive);
@@ -985,7 +985,7 @@ static BOOL cb_delete_entry(WIDGET *w, int button, void *input, void *entry)
 			if (unlink(path_conv_sys(cur->file)) == -1)
 				dlg_error_show("Error deleting file \"%s\"!",cur->file);
 		}
-		entry_remove((long)entry);
+		entry_remove((SINTPTR_T)entry);
 	}
 	return 1;
 }
@@ -1092,7 +1092,7 @@ static BOOL cb_save_as(WIDGET *w, int button, void *input, void *data)
 {
 	path_conv(input);
 	if (button == 0) {								/* Browse */
-		freq_open ("Select directory/file",input,(long)data,
+		freq_open ("Select directory/file",input,(SINTPTR_T)data,
 				   cb_browse,w);
 		return 0;
 	} else if (button == 1 || button == -1) {		/* Ok / Str-Widget */
@@ -1155,7 +1155,7 @@ static void cb_handle_menu(MMENU * menu)
 								   "Really delete whole archive\n"
 								   "  \"%s\"?", name, cur->archive);
 				dlg_message_open(msg, "&Yes|&No", 1, 1, cb_delete_entry,
-								 (void *)(long)actLine);
+								 (void *)(SINTPTR_T)actLine);
 			} else {
 				if (strlen(cur->file) > 50)
 					msg = str_sprintf("Delete file \"...%s\"?",
@@ -1163,7 +1163,7 @@ static void cb_handle_menu(MMENU * menu)
 				else
 					msg = str_sprintf("Delete file \"%s\"?", cur->file);
 				dlg_message_open(msg, "&Yes|&No", 1, 1,
-								 cb_delete_entry, (void *)(long)actLine);
+								 cb_delete_entry, (void *)(SINTPTR_T)actLine);
 			}
 			free(msg);
 			break;
@@ -1193,7 +1193,7 @@ static void cb_handle_menu(MMENU * menu)
 		  case 3:				/* save as */
 			dlg_input_str("Save playlist as:", "&Browse|<&Ok>|&Cancel",
 						  config.pl_name, PATH_MAX, cb_save_as,
-						  (void*)(long)actLine);
+						  (void*)(SINTPTR_T)actLine);
 			break;
 		  default:
 			return;
@@ -1201,7 +1201,7 @@ static void cb_handle_menu(MMENU * menu)
 		/* sort menu */
 	} else {
 		/* reverse flag */
-		sort_rev = (long)menu->entries[5].data;
+		sort_rev = (SINTPTR_T)menu->entries[5].data;
 		switch (menu->cur) {
 		  case 0:				/* by name */
 			sort_mode = SORT_NAME;

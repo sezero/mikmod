@@ -73,6 +73,16 @@ char *path_conv_sys2(char *file);
 
 #endif
 
+/*========== Types */
+
+/* pointer-sized signed int (ssize_t/intptr_t) : */
+#if defined(_WIN64) /* win64 is LLP64, not LP64  */
+typedef long long       SINTPTR_T;
+#else
+/* long should be pointer-sized for all others : */
+typedef long            SINTPTR_T;
+#endif
+
 /*========== Variables */
 
 /* storage buffer length - used everywhere */
@@ -100,6 +110,7 @@ extern char storage[STORAGELEN+2];
 #endif
 
 #if defined(__EMX__)||defined(WIN32)
+#undef S_ISBLK /* MinGW sys/stat.h does define S_ISBLK */
 #define S_ISBLK(st_mode)  0
 #endif
 
@@ -110,7 +121,7 @@ extern char storage[STORAGELEN+2];
 #define S_ISLNK(st_mode)  0
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||(defined(WIN32)&&!defined(__MINGW32__))
 
 /* FIXME , untested under OS2 */
 

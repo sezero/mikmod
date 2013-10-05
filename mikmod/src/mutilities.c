@@ -168,7 +168,7 @@ static int m_mkstemp (char *tmpl)
 	/* Get some more or less random data.  */
 #ifdef WIN32
 	value = Time1000();
-	value = (value % 1000) ^ (value / 1000) + counter++;
+	value = ((value % 1000) ^ (value / 1000)) + counter++;
 #else
 	{
 		struct timeval tv;
@@ -360,7 +360,7 @@ unsigned long Time1000(void)
 #endif
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||(defined(WIN32)&&!defined(__MINGW32__))
 /* FIXME , untested under OS2 */
 DIR* opendir (const char* dirName)
 {

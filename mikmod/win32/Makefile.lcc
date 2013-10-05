@@ -4,9 +4,11 @@
 CC=lcc.exe
 LINKER=lcclnk.exe
 
+# if building against a static libmikmod, add -DMIKMOD_STATIC to CFLAGS
 CFLAGS=-O -g4 -A -ansic -DHAVE_CONFIG_H -DWIN32 -DLCC
 COMPILE=$(CC) -errout=err.out $(CFLAGS) -I. -Fo$@ ..\src\$*.c
 
+# if building against static libmikmod, change mikmod.lib to mikmod_static.lib
 LIBS= mikmod.lib dsound.lib winmm.lib
 
 OBJS= display.o marchive.o mconfedit.o mconfig.o mdialog.o \
@@ -96,4 +98,3 @@ mwindow.o: ..\src\mwindow.c ..\src\display.h ..\src\player.h ..\src\mwindow.h \
 
 rcfile.o: ..\src\rcfile.c ..\src\rcfile.h ..\src\mutilities.h
 	$(COMPILE)
-

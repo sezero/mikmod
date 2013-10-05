@@ -127,7 +127,7 @@ static char *get_text(MENTRY *entry, int width)
 		if (pos) {
 			if (*pos == 'c')
 				sprintf(storage, text,
-						(long)(entry->data) ? 'x' : ' ');
+						(SINTPTR_T)(entry->data) ? 'x' : ' ');
 			else if ((*pos == 'o') && (start = strchr(pos, '|'))) {
 				char *s_pos = NULL;
 				int max = 0;
@@ -137,7 +137,7 @@ static char *get_text(MENTRY *entry, int width)
 				help[pos - text] = 's';
 
 				start++;
-				i = (long)(entry->data);
+				i = (SINTPTR_T)(entry->data);
 				pos = start;
 				while (start) {
 					if (!i)
@@ -174,7 +174,7 @@ static char *get_text(MENTRY *entry, int width)
 				strncat(help, pos, start - pos);
 				help[i + start - pos] = '\0';
 				if (*pos == 'd')
-					sprintf(storage, help, (int)(long)(entry->data));
+					sprintf(storage, help, (int)(SINTPTR_T)(entry->data));
 				else {
 					char ch;
 					sscanf(right, "%d", &i);
@@ -287,7 +287,7 @@ static void handle_opt_menu(MMENU * menu)
 	int i;
 	MMENU *m = menu->data;
 
-	m->entries[m->cur].data = (void *)(long)menu->cur;
+	m->entries[m->cur].data = (void *)(SINTPTR_T)menu->cur;
 	menu_close(menu);
 	for (i = 0; i < menu->count; i++)
 		free(menu->entries[i].text);
@@ -314,7 +314,7 @@ static BOOL handle_input_int(WIDGET *w, int button, void *input, void *data)
 {
 	if (button<=0) {
 		MMENU* m = data;
-		m->entries[m->cur].data = (void *)(long)atoi(input);
+		m->entries[m->cur].data = (void *)(SINTPTR_T)atoi(input);
 
 		if (m->handle_select)
 			m->handle_select(m);
@@ -328,7 +328,7 @@ static BOOL menu_do_select(MWINDOW * win)
 	MENTRY *entry = &m->entries[m->cur];
 
 	if (menu_is_toggle(entry)) {
-		entry->data = (void *)(long)(!((long)(entry->data)));
+		entry->data = (void *)(SINTPTR_T)(!((SINTPTR_T)(entry->data)));
 		menu_do_repaint(win, 0);
 	} else if (menu_is_option(entry)) {
 		char *pos, *start;
@@ -342,7 +342,7 @@ static BOOL menu_do_select(MWINDOW * win)
 			pos++;
 			cnt++;
 		}
-		new->cur = (long)(entry->data);
+		new->cur = (SINTPTR_T)(entry->data);
 		new->first = 0;
 		new->count = cnt;
 		new->key_left = 1;
@@ -392,7 +392,7 @@ static BOOL menu_do_select(MWINDOW * win)
 		msg[pos - start] = '\0';
 		sscanf(pos + 1, "%d|%d", &min, &max);
 
-		dlg_input_int(msg, "<&Ok>|&Cancel", (long)(entry->data), min, max,
+		dlg_input_int(msg, "<&Ok>|&Cancel", (SINTPTR_T)(entry->data), min, max,
 					  handle_input_int, m);
 		free(msg);
 		return 1;
