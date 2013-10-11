@@ -1299,14 +1299,8 @@ static void set_window_title(char *content)
 
 	/* Win32 console application set title */
 #if defined(WIN32)
-
-#ifdef HAVE_SNPRINTF
 	snprintf(storage,STORAGELEN,"%s (%s)", mikversion, content);
-#else
-	sprintf(storage,"%s: (%s)", mikversion, content);
-#endif
 	SetConsoleTitle(storage);
-
 #endif
 
 	/* Unix/Xterm (and compatible/similar)
@@ -1334,11 +1328,7 @@ static void set_window_title(char *content)
 
 	if (content!=NULL)
 	{
-#ifdef HAVE_SNPRINTF
 		snprintf(storage,STORAGELEN,"%s (%s)", mikversion, content);
-#else
-		sprintf(storage,"%s: (%s)", mikversion, content);
-#endif
 	}
 	else
 	{
