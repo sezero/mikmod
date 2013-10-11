@@ -291,7 +291,9 @@ static void ML_XFreeSample(SAMPLE *s)
 {
 	if(s->handle>=0)
 		MD_SampleUnload(s->handle);
-	if(s->samplename) MikMod_free(s->samplename);
+
+/* moved samplename freeing to our caller ML_FreeEx(),
+ * because we are called conditionally. */
 }
 
 static void ML_XFreeInstrument(INSTRUMENT *i)
@@ -322,8 +324,10 @@ static void ML_FreeEx(MODULE *mf)
 		MikMod_free(mf->instruments);
 	}
 	if(mf->samples) {
-		for(t=0;t<mf->numsmp;t++)
+		for(t=0;t<mf->numsmp;t++) {
+			if(mf->samples[t].samplename) MikMod_free(mf->samples[t].samplename);
 			if(mf->samples[t].length) ML_XFreeSample(&mf->samples[t]);
+		}
 		MikMod_free(mf->samples);
 	}
 	memset(mf,0,sizeof(MODULE));

@@ -1,3 +1,13 @@
+Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
+==========================================================================
+
+libmikmod 3.3.3 was released on XX-Xxx-XXXX.
+
+BUGFIXES
+
+- Fixed a small memory leak in samples freeing (thanks to S. Michel.)
+
+
 Summary of changes between libmikmod 3.2.0 and libmikmod 3.3.2 ():
 ==========================================================================
 

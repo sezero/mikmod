@@ -279,7 +279,7 @@ static BOOL ASY_Load(BOOL curious)
 	ULONG seekpos;
 
 	/* no title in asylum amf files :( */
-	strcpy(mh->songname, "");
+	mh->songname[0] = '\0';
 
 	_mm_fseek(modreader, 0x23, SEEK_SET);
 	mh->num_patterns = _mm_read_UBYTE(modreader);
@@ -321,7 +321,6 @@ static BOOL ASY_Load(BOOL curious)
 	of.reppos = 0;
 	of.numpat = mh->num_patterns;
 	of.numtrk = of.numpat * of.numchn;
-
 
 	/* Copy positions (orders) */
 	if (!AllocPositions(of.numpos))
@@ -377,7 +376,7 @@ static BOOL ASY_Load(BOOL curious)
 
 static CHAR *ASY_LoadTitle(void)
 {
-	return (DupStr("", 21, 1));
+	return MikMod_strdup("");
 }
 
 /*========== Loader information */

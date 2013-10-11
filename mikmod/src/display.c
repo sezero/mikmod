@@ -1149,7 +1149,7 @@ int display_header(void)
 		display_driver();
 		display_file();
 		display_name();
-		display_status();		
+		display_status();
 		display_title();
 	}
 	return display_information();
@@ -1265,20 +1265,24 @@ static void display_title(void)
 	if (!mf->songname || strlen(mf->songname)==0) {
 		PLAYENTRY *entry=NULL;
 		entry = PL_GetCurrent(&playlist);
-			
+
 		if (entry != NULL) {
 			file = entry->file;
-			
+
 			if (!config.fullpaths) {
 					file = strrchr(entry->file, PATH_SEP);
-					if (file) { file++; } else { file = entry->file; }
+					if (file) {
+						file++;
+					} else {
+						file = entry->file;
+					}
 			}
 			set_window_title(file);
 		}
-		
+
 		return;
 	}
-	
+
 	set_window_title(mf->songname);
 }
 
@@ -1295,26 +1299,26 @@ static void set_window_title(char *content)
 
 	/* Win32 console application set title */
 #if defined(WIN32)
-			
+
 #ifdef HAVE_SNPRINTF
-		snprintf(storage,STORAGELEN,"%s (%s)", mikversion, content);
+	snprintf(storage,STORAGELEN,"%s (%s)", mikversion, content);
 #else
-		sprintf(storage,"%s: (%s)", mikversion, content);
+	sprintf(storage,"%s: (%s)", mikversion, content);
 #endif
 	SetConsoleTitle(storage);
-		
+
 #endif
-		
+
 	/* Unix/Xterm (and compatible/similar)
-	 * 
- 	 * Written using the 'Xterm-Title mini-howto' 
+	 *
+	 * Written using the 'Xterm-Title mini-howto' 
 	 */
 #if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
 	char *env_term;
 	static int last_config=0;
 
-	if (!config.window_title && !last_config) { 
-		return; 
+	if (!config.window_title && !last_config) {
+		return;
 	}
 	if (last_config && !config.window_title) {
 		/* xterm title setting has just been disabled */
@@ -1322,9 +1326,11 @@ static void set_window_title(char *content)
 	}
 
 	last_config = config.window_title;
-	
+
 	env_term = getenv("TERM");
-	if (env_term==NULL) { return; }
+	if (env_term==NULL) {
+		return;
+	}
 
 	if (content!=NULL)
 	{
@@ -1336,11 +1342,7 @@ static void set_window_title(char *content)
 	}
 	else
 	{
-#ifdef HAVE_SNPRINTF
-		snprintf(storage,STORAGELEN,"");
-#else
-		sprintf(storage,"");
-#endif
+		storage[0] = '\0';
 	}
 
 	if ( strcmp(env_term, "xterm")==0 ||
@@ -1348,23 +1350,22 @@ static void set_window_title(char *content)
 		strcmp(env_term, "rxvt")==0 ||
 		strcmp(env_term, "aixterm")==0 ||
 		strcmp(env_term, "dtterm")==0 ||
-		strcmp(env_term, "Eterm")==0 ) 
-	{	
+		strcmp(env_term, "Eterm")==0 )
+	{
 		printf("%c]0;%s%c", '\033', storage, '\007');
 		printf("%c]1;%s%c", '\033', mikversion, '\007');
-	} 
-	else if (strcmp(env_term, "iris-ansi")==0) 
+	}
+	else if (strcmp(env_term, "iris-ansi")==0)
 	{
-		printf("%cP1.y%s%c\\", '\033', storage, '\033');	
-		printf("%cP3.y%s%c\\", '\033', mikversion, '\033');	
-	} 
+		printf("%cP1.y%s%c\\", '\033', storage, '\033');
+		printf("%cP3.y%s%c\\", '\033', mikversion, '\033');
+	}
 	else if (strcmp(env_term, "hpterm")==0) 
 	{
-		printf("\033&f0k%dD%s", strlen(storage), storage);
-		printf("\033&f-1k%dD%s", strlen(mikversion), mikversion);
-	} 
+		printf("\033&f0k%dD%s", (int) strlen(storage), storage);
+		printf("\033&f-1k%dD%s", (int) strlen(mikversion), mikversion);
+	}
 #endif
 }
-
 
 /* ex:set ts=4: */

@@ -316,7 +316,7 @@ static BOOL FAR_Load(BOOL curious)
 			q->seekpos    = _mm_ftell(modreader);
 			_mm_fseek(modreader,q->length,SEEK_CUR);
 		} else
-			q->samplename = DupStr(NULL,0,0);
+			q->samplename = MikMod_strdup("");
 		q++;
 	}
 	return 1;
