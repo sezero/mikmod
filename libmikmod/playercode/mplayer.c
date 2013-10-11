@@ -2899,6 +2899,9 @@ void Player_HandleTick(void)
 				pf->control[channel].pat_reppos=-1;
 
 			pf->patbrk=pf->posjmp=0;
+
+			if (pf->sngpos<0) pf->sngpos=(SWORD)(pf->numpos-1);
+
 			/* handle the "---" (end of song) pattern since it can occur
 			   *inside* the module in some formats */
 			if ((pf->sngpos>=pf->numpos)||
@@ -2913,7 +2916,6 @@ void Player_HandleTick(void)
 					pf->bpm=pf->inittempo<32?32:pf->inittempo;
 				}
 			}
-			if (pf->sngpos<0) pf->sngpos=pf->numpos-1;
 		}
 
 		if (!pf->patdly2)
