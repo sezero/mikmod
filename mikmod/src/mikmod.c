@@ -170,7 +170,7 @@ static void help(CONFIG * c)
 
 	puts(mikcopyr);
 
-	snprintf(output, 4, "%s%c", c->mode_16bit ? "16" : "8",
+	SNPRINTF(output, 4, "%s%c", c->mode_16bit ? "16" : "8",
 			 c->stereo ? 's' : 'm');
 	printf("\n" "Usage: %s [option|-y dir]... [module|playlist]...\n" "\n"
 		   "Output options:\n"
@@ -470,7 +470,7 @@ static void handle_ListError(BOOL tolerant, CHAR *filename, CHAR *archive,
 
 	if (!tolerant) {
 		if (mm_error)
-			snprintf(buf, PATH_MAX + 40, "(reason: %s)\n",
+			SNPRINTF(buf, PATH_MAX + 40, "(reason: %s)\n",
 					 MikMod_strerror(MikMod_errno));
 		if (!filename)
 			exit_player(1, "Corrupted playlist, filename is NULL.\n%s", buf);
@@ -482,10 +482,10 @@ static void handle_ListError(BOOL tolerant, CHAR *filename, CHAR *archive,
 			exit_player(1, "MikMod error: can't load %s\n%s", filename, buf);
 	} else {
 		if (filename)
-			snprintf(buf, PATH_MAX + 40, "Error loading list entry \"%s\" !",
+			SNPRINTF(buf, PATH_MAX + 40, "Error loading list entry \"%s\" !",
 					 filename);
 		else
-			snprintf(buf, PATH_MAX + 40, "Error loading list entry !");
+			SNPRINTF(buf, PATH_MAX + 40, "Error loading list entry !");
 		display_message(buf);
 		PL_DelEntry(&playlist, PL_GetCurrentPos(&playlist));
 	}

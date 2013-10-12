@@ -28,31 +28,11 @@ that should not be a problem nowadays.
 
 -- Instructions for Microsoft Compiler
 
-You might want to edit one of the files 'Makefile.dynamic' and
-'Makefile.static' located in the 'win32' directory to suit your
-particular compiler setup. Then, in the 'win32' directory, run
-
-	nmake -f Makefile.static
-
-to build a static library, or
-
-	nmake -f Makefile.dynamic
-
-to build a DLL with its import library. 
-If the build fails, I'd like to hear from you to correct the problem.
-
-Be warned that both Makefiles put their object files in the same
-directory. If you want to switch between the two makefiles, don't forget
-to do a make clean first:
-
-	nmake -f Makefile.dynamic clean
-	
-(or the same command with Makefile.static).
-
-To make your library ready to use, copy the file '..\include\mikmod.h'
-to your compiler include directory, and 'mikmod.lib` to your compiler
-library directory. If you built a DLL, you'll also have to put
-'mikmod.dll' somewhere in your PATH.
+Use one of the project files to build a dll and an import library: MSVC6
+for the old Visual C 6, or VS2005 for Visual Studio 2005 and newer.
+To make your library ready to use, copy the file 'mikmod.h' to your
+compiler include directory, and 'mikmod.lib` to your compiler libraries
+directory. You also have to put 'libmikmod.dll' somewhere in your PATH.
 
 HTML documentation of the library, for programmers, is located in the
 doc directory.

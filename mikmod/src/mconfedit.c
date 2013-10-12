@@ -574,7 +574,7 @@ static char *theme_uniq_name (char *src_name)
 	name = malloc (sizeof(char)*len);
 	n = 2;
 	do {
-		snprintf (name,len,buf,n);
+		SNPRINTF (name,len,buf,n);
 		for (i=0; i<cnt_themes; i++)
 			if (!strcmp(themes[i].name,name)) break;
 		if (i>=cnt_themes)

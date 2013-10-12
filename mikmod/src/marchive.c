@@ -310,7 +310,7 @@ static char* get_command (char *pattern, char *arc, char *file, char *dest)
 		}
 	}
 	command = malloc (len*sizeof(char));
-	snprintf (command,len,pat,arg[0],arg[1],arg[2]);
+	SNPRINTF (command,len,pat,arg[0],arg[1],arg[2]);
 	free (pat);
 	return command;
 }

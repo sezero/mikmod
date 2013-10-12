@@ -304,7 +304,7 @@ char *get_cfg_name(char *name)
 
 #ifndef HAVE_SNPRINTF
 /* Not a viable snprintf implementation, but makes code more clear */
-int snprintf(char *buffer, size_t n, const char *format, ...)
+int mik_snprintf(char *buffer, size_t n, const char *format, ...)
 {
 	va_list args;
 	int len;
@@ -312,6 +312,8 @@ int snprintf(char *buffer, size_t n, const char *format, ...)
 	va_start(args, format);
 	len = VSNPRINTF(buffer, n, format, args);
 	va_end(args);
+	if (len < 0) len = (int)n;
+	if ((size_t)len >= n) buffer[n-1] = '\0';
 	return len;
 }
 #endif

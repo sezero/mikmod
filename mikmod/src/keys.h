@@ -41,7 +41,7 @@
 
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
 
-#define KEY_ESC			('\e')
+#define KEY_ESC			27 /* '\e' isn't recognized by some compilers */
 #define KEY_UP			(0x100|72)
 #define KEY_DOWN		(0x100|80)
 #define KEY_LEFT		(0x100|75)

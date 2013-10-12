@@ -149,8 +149,8 @@ static void setup_printf(void)
 	halfwidth = maxx >> 1;
 	if (halfwidth < MINWIDTH)
 		halfwidth = MINWIDTH;
-	snprintf(fmt_fullwidth, 20, "%%-%d.%ds", maxx, maxx);
-	snprintf(fmt_halfwidth, 20, "%%3i  %%-%d.%ds", halfwidth - 5,
+	SNPRINTF(fmt_fullwidth, 20, "%%-%d.%ds", maxx, maxx);
+	SNPRINTF(fmt_halfwidth, 20, "%%3i  %%-%d.%ds", halfwidth - 5,
 			 halfwidth - 5);
 }
 
@@ -285,7 +285,7 @@ static int display_banner(MWINDOW *win, char *banner, int origin, int skip,
 			buf++;
 		if (n) {
 			str[n] = '\0';
-			snprintf(storage, STORAGELEN, fmt_fullwidth, str);
+			SNPRINTF(storage, STORAGELEN, fmt_fullwidth, str);
 			win_print(win, 0, i - skip + origin, storage);
 		} else
 			win_clrtoeol(win, 0, i - skip + origin);
@@ -339,11 +339,11 @@ static void display_driver(void)
 		return;
 
 	if (md_reverb)
-		snprintf(reverb, 12, "reverb: %2d", md_reverb);
+		SNPRINTF(reverb, 12, "reverb: %2d", md_reverb);
 	else
 		strcpy(reverb, "no reverb");
 
-	snprintf(storage, STORAGELEN, "%s: %d bit %s %s, %u Hz, %s",
+	SNPRINTF(storage, STORAGELEN, "%s: %d bit %s %s, %u Hz, %s",
 			 md_driver->Name, (md_mode & DMODE_16BITS) ? 16 : 8,
 			 (md_mode & DMODE_INTERP) ?
 			 (md_mode & DMODE_SURROUND ? "interp. surround" : "interpolated")
@@ -384,13 +384,13 @@ static void display_file(void)
 		if ((archive) && (strlen(file) < MAXWIDTH - 13)) {
 			if (strlen(archive) + strlen(file) > MAXWIDTH - 10) {
 				archive += strlen(archive) - (MAXWIDTH - 13 - strlen(file));
-				snprintf(storage, STORAGELEN, "File: %s (...%s)", file,
+				SNPRINTF(storage, STORAGELEN, "File: %s (...%s)", file,
 						 archive);
 			} else
-				snprintf(storage, STORAGELEN, "File: %s (%s)", file,
+				SNPRINTF(storage, STORAGELEN, "File: %s (%s)", file,
 						 archive);
 		} else
-			snprintf(storage, STORAGELEN, "File: %.70s", file);
+			SNPRINTF(storage, STORAGELEN, "File: %.70s", file);
 	}
 	enlarge(0,storage);
 	win_print(root, 0, 2, storage);
@@ -402,11 +402,11 @@ static void display_name(void)
 	if (quiet || !mf)
 		return;
 
-	snprintf(storage, STORAGELEN, "Name: %.70s", mf->songname);
+	SNPRINTF(storage, STORAGELEN, "Name: %.70s", mf->songname);
 	enlarge(0,storage);
 	win_print(root, 0, 3, storage);
 
-	snprintf(storage, STORAGELEN,
+	SNPRINTF(storage, STORAGELEN,
 			 "Type: %s, Periods: %s, %s",
 			 mf->modtype,
 			 (mf->flags & UF_XMPERIODS) ? "XM type" : "mod type",
@@ -438,18 +438,18 @@ void display_status(void)
 		char channels[17] = "";
 
 		if (cur && cur->time > 0)
-			snprintf(time, 7, "/%2d:%02d",
+			SNPRINTF(time, 7, "/%2d:%02d",
 					 (int)((cur->time / 60) % 60), (int)(cur->time % 60));
 #if LIBMIKMOD_VERSION >= 0x030107
 		if (mf->flags & UF_NNA) {
-			snprintf(channels, 17, "%2d/%d+%d->%d",
+			SNPRINTF(channels, 17, "%2d/%d+%d->%d",
 					 mf->realchn, mf->numchn, mf->totalchn - mf->realchn,
 					 mf->totalchn);
 		} else
 #endif
-			snprintf(channels, 17, "%2d/%d      ", mf->realchn, mf->numchn);
+			SNPRINTF(channels, 17, "%2d/%d      ", mf->realchn, mf->numchn);
 
-		snprintf(storage, STORAGELEN,
+		SNPRINTF(storage, STORAGELEN,
 				 "pat:%03d/%03d pos:%2.2X spd:%2d/%3d "
 				 "vol:%3d%%/%3d%% time:%2d:%02d%s chn:%s",
 				 mf->sngpos, mf->numpos - 1, mf->patpos, mf->sngspd, mf->bpm,
@@ -547,7 +547,7 @@ static BOOL display_information(void)
 #endif
 			)
 			continue;
-		snprintf(paneltitle + strlen(paneltitle), STORAGELEN, "%c%s%c",
+		SNPRINTF(paneltitle + strlen(paneltitle), STORAGELEN, "%c%s%c",
 				 i == cur_display ? '[' : ' ',
 				 panel_name[i - 1], i == cur_display ? ']' : ' ');
 	}
@@ -696,7 +696,7 @@ static void display_sample(MWINDOW *win, int diff)
 		int x = ((t - first_sample) < semicount) ? 0 : halfwidth;
 
 		if (x < winx) {
-			snprintf(storage, STORAGELEN, fmt_halfwidth, t,
+			SNPRINTF(storage, STORAGELEN, fmt_halfwidth, t,
 					 mf->samples[t].samplename ? mf->samples[t].
 					 samplename : "");
 			convert_string(storage);
@@ -706,7 +706,7 @@ static void display_sample(MWINDOW *win, int diff)
 	if (mf->numsmp == 1)
 		win_status("1 Sample");
 	else {
-		snprintf(storage, STORAGELEN, "%d Samples", mf->numsmp);
+		SNPRINTF(storage, STORAGELEN, "%d Samples", mf->numsmp);
 		win_status(storage);
 	}
 }
@@ -767,7 +767,7 @@ static void display_inst(MWINDOW *win, int diff)
 		int x = ((t - first_inst) < semicount) ? 0 : halfwidth;
 
 		if (x < winx) {
-			snprintf(storage, STORAGELEN, fmt_halfwidth, t,
+			SNPRINTF(storage, STORAGELEN, fmt_halfwidth, t,
 					 mf->instruments[t].insname ? mf->instruments[t].
 					 insname : "");
 			convert_string(storage);
@@ -777,7 +777,7 @@ static void display_inst(MWINDOW *win, int diff)
 	if (mf->numins == 1)
 		win_status("1 Instrument");
 	else {
-		snprintf(storage, STORAGELEN, "%d Instruments", mf->numins);
+		SNPRINTF(storage, STORAGELEN, "%d Instruments", mf->numins);
 		win_status(storage);
 	}
 }
@@ -886,13 +886,13 @@ static void dynamic_display_volbars(MWINDOW *win)
 		if (playdata.vinfo[t].i && !config.forcesamples) {
 			for (i=0; i < mf->numins && playdata.vinfo[t].i != &mf->instruments[i];
 				i++);
-			snprintf(storage, STORAGELEN, "%3i %s", i,
+			SNPRINTF(storage, STORAGELEN, "%3i %s", i,
 					 playdata.vinfo[t].i->insname ?
 					 playdata.vinfo[t].i->insname : "");
 		} else if (playdata.vinfo[t].s) {
 			for (i=0; i < mf->numsmp && playdata.vinfo[t].s != &mf->samples[i];
 				i++);
-			snprintf(storage, STORAGELEN, "%3i %s", i,
+			SNPRINTF(storage, STORAGELEN, "%3i %s", i,
 					 playdata.vinfo[t].s->samplename ?
 					 playdata.vinfo[t].s->samplename : "");
 		}
@@ -910,7 +910,7 @@ static void dynamic_display_volbars(MWINDOW *win)
 	if (mf->numchn == 1)
 		strcpy(storage, "1 Channel");
 	else
-		snprintf(storage, STORAGELEN, "%d Channels", mf->numchn);
+		SNPRINTF(storage, STORAGELEN, "%d Channels", mf->numchn);
 	if (!config.forcesamples && (mf->flags & UF_INST))
 		strcat(storage, ", displaying instrument names");
 	else
@@ -930,9 +930,9 @@ static void display_volbars(MWINDOW *win, int diff)
 	win_clear(win);		/* Sets attrs */
 	for (t = first_volbar; t < (first_volbar + count) && t < mf->numchn; t++) {
 		if (mf->numchn > 100)
-			snprintf(storage, STORAGELEN, "[%3d]", t);
+			SNPRINTF(storage, STORAGELEN, "[%3d]", t);
 		else
-			snprintf(storage, STORAGELEN, "[%2d]", t);
+			SNPRINTF(storage, STORAGELEN, "[%2d]", t);
 		win_print(win, 0, t - first_volbar, storage);
 	}
 
@@ -949,7 +949,7 @@ static void display_playentry(MWINDOW *win, PLAYENTRY *pos, PLAYENTRY *cur,
 	int timelen = 0;
 
 	if (pos->time > 0) {
-		snprintf(time, 7, " %2d:%02d",
+		SNPRINTF(time, 7, " %2d:%02d",
 				 (int)((pos->time / 60) % 60), (int)(pos->time % 60));
 		timelen = strlen(time);
 	}
@@ -971,33 +971,33 @@ static void display_playentry(MWINDOW *win, PLAYENTRY *pos, PLAYENTRY *cur,
 			name = name + strlen(name) - (width - 16 - timelen);
 			if (timelen) {
 				sprintf(tmpfmt, "%%4i %%c...%%-%ds%%s(pack)", width - 22);
-				snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
+				SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
 			} else {
 				sprintf(tmpfmt, "%%4i %%c...%%-%ds(pack)", width - 16);
-				snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name);
+				SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name);
 			}
 		} else if (timelen) {
 			sprintf(tmpfmt, "%%4i %%c%%-%ds%%s(pack)", width - 19);
-			snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
+			SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
 		} else {
 			sprintf(tmpfmt, "%%4i %%c%%-%ds(pack)", width - 13);
-			snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name);
+			SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name);
 		}
 	} else if (strlen(name) > width - 7 - timelen) {
 		name = name + strlen(name) - (width - 10 - timelen);
 		if (timelen) {
 			sprintf(tmpfmt, "%%4i %%c...%%-%ds%%s", width - 16);
-			snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
+			SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
 		} else {
 			sprintf(tmpfmt, "%%4i %%c...%%-%ds", width - 10);
-			snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name);
+			SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name);
 		}
 	} else if (timelen) {
 		sprintf(tmpfmt, "%%4i %%c%%-%ds%%s", width - 13);
-		snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
+		SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name, time);
 	} else {
 		sprintf(tmpfmt, "%%4i %%c%%-%ds", width - 7);
-		snprintf(storage, STORAGELEN, tmpfmt, nr, sort, name);
+		SNPRINTF(storage, STORAGELEN, tmpfmt, nr, sort, name);
 	}
 
 	win_attrset(reverse ? ATTR_PLAYENTRY_ACTIVE : ATTR_PLAYENTRY_INACTIVE);
@@ -1073,7 +1073,7 @@ static void display_list(MWINDOW *win, int diff, COMMAND com)
 			win_status("1 Module");
 			break;
 		default:
-			snprintf(storage, STORAGELEN, "%d Modules", playcount);
+			SNPRINTF(storage, STORAGELEN, "%d Modules", playcount);
 			win_status(storage);
 			break;
 	}
@@ -1299,7 +1299,7 @@ static void set_window_title(char *content)
 
 	/* Win32 console application set title */
 #if defined(WIN32)
-	snprintf(storage,STORAGELEN,"%s (%s)", mikversion, content);
+	SNPRINTF(storage,STORAGELEN,"%s (%s)", mikversion, content);
 	SetConsoleTitle(storage);
 #endif
 
@@ -1328,7 +1328,7 @@ static void set_window_title(char *content)
 
 	if (content!=NULL)
 	{
-		snprintf(storage,STORAGELEN,"%s (%s)", mikversion, content);
+		SNPRINTF(storage,STORAGELEN,"%s (%s)", mikversion, content);
 	}
 	else
 	{

@@ -175,13 +175,24 @@ unsigned long Time1000(void);
 #endif
 
 #ifdef HAVE_VSNPRINTF
-#define VSNPRINTF vsnprintf
+# ifdef _WIN32
+#  define VSNPRINTF _vsnprintf
+# else
+#  define VSNPRINTF vsnprintf
+# endif
 #else
 #define VSNPRINTF(str,size,format,ap) vsprintf(str,format,ap)
 #endif
 
 #ifndef HAVE_SNPRINTF
-int snprintf(char *buffer, size_t n, const char *format, ...);
+#define SNPRINTF mik_snprintf
+int mik_snprintf(char *buffer, size_t n, const char *format, ...);
+#else
+# ifdef _WIN32
+#  define SNPRINTF _snprintf
+# else
+#  define SNPRINTF snprintf
+# endif
 #endif
 
 /* Return newly malloced version and cmdline for the driver
