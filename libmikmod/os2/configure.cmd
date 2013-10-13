@@ -30,7 +30,7 @@
 
 ver_maj=3
 ver_min=3
-ver_micro=2
+ver_micro=3
 
 ECHO OFF
 CALL main
