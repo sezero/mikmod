@@ -54,7 +54,7 @@
 #define AIFF_FILENAME			"music.aiff"
 #endif /* WIN32 */
 
-#define AIFF_FLOAT_TO_UNSIGNED(f)	((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L + 1))
+#define AIFF_FLOAT_TO_UNSIGNED(f)	((ULONG)(((SLONG)(f - 2147483648.0)) + 2147483647L + 1))
 
 static	MWRITER	*gAiffOut = NULL;
 static	FILE	*gAiffFile = NULL;
@@ -77,10 +77,9 @@ static void	AIFF_Update (void);
 
 static void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
 {
-    int			mySign;
-    int			myExponent;
-    double		myFMant, myFsMant;
-    unsigned long	myHiMant, myLoMant;
+    int mySign, myExponent;
+    double myFMant, myFsMant;
+    ULONG myHiMant, myLoMant;
 
     if (theValue < 0)
     {
@@ -161,7 +160,7 @@ static void AIFF_PutHeader(void)
 
 static void AIFF_CommandLine (const CHAR *theCmdLine)
 {
-    CHAR	*myFileName = MD_GetAtom ("file", theCmdLine,0);
+    CHAR *myFileName = MD_GetAtom ("file", theCmdLine,0);
 
     if (myFileName != NULL)
     {
@@ -172,7 +171,7 @@ static void AIFF_CommandLine (const CHAR *theCmdLine)
 
 static BOOL AIFF_IsThere (void)
 {
-    return (1);
+    return 1;
 }
 
 static int AIFF_Init (void)
@@ -209,6 +208,7 @@ static int AIFF_Init (void)
     }
 
     md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
+    md_mode&=~DMODE_FLOAT;
 
     if (VC_Init ())
     {
@@ -272,7 +272,7 @@ MIKMODAPI MDRIVER drv_aiff = {
     "AIFF disk writer (music.aiff) v1.1",
     0,255,
     "aif",
-	"file:t:music.aiff:Output file name\n",
+    "file:t:music.aiff:Output file name\n",
     AIFF_CommandLine,
     AIFF_IsThere,
     VC_SampleLoad,
