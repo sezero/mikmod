@@ -269,7 +269,7 @@ static void AIFF_Update (void)
 MIKMODAPI MDRIVER drv_aiff = {
     NULL,
     "Disk writer (aiff)",
-    "AIFF disk writer (music.aiff) v1.1",
+    "AIFF disk writer (music.aiff) v1.2",
     0,255,
     "aif",
     "file:t:music.aiff:Output file name\n",

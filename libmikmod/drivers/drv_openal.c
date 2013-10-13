@@ -374,7 +374,7 @@ MIKMODAPI MDRIVER drv_openal =
 {
 	NULL,
 	"OpenAL",
-	"OpenAL driver v0.3",
+	"OpenAL driver v0.4",
 	0,255,
 	"openal",
 	"buffersize:r:32768,16777216,32768:Buffer size\n"

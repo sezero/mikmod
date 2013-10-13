@@ -414,7 +414,7 @@ MIKMODAPI MDRIVER drv_esd={
 	NULL,
 	"Enlightened sound daemon",
 	/* use the same version number as the EsounD release it works best with */
-	"Enlightened sound daemon (EsounD) driver v0.2.23",
+	"Enlightened sound daemon (EsounD) driver v0.2.38",
 	0,255,
 	"esd",
 	"machine:t::Audio server machine (hostname:port)\n",

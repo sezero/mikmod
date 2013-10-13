@@ -10,6 +10,8 @@ This is a minor bug fix/maintenance release.
   in an invalid read. (noticed while running mikmod under valgrind.)
 - Provided new Visual Studio 6 and Visual Studio 2005 project files.
   The latter imports into newer Visual Studio versions, e.g. VS2012.
+- Fixed some driver version signatures which I missed changing in the
+  previous release. (cosmetic change.)
 
 
 Summary of changes between libmikmod 3.2.0 and libmikmod 3.3.2 ():

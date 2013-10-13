@@ -390,7 +390,7 @@ static int ALSA_Reset(void)
 MIKMODAPI MDRIVER drv_alsa = {
 	NULL,
 	"ALSA",
-	"Advanced Linux Sound Architecture (ALSA) driver v0.4",
+	"Advanced Linux Sound Architecture (ALSA) driver v1.0",
 	0,255,
 	"alsa",
 	NULL,

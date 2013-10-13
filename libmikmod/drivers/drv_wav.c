@@ -183,7 +183,7 @@ static void WAV_Update(void)
 MIKMODAPI MDRIVER drv_wav={
 	NULL,
 	"Disk writer (wav)",
-	"Wav disk writer (music.wav) v1.2",
+	"Wav disk writer (music.wav) v1.3",
 	0,255,
 	"wav",
 	"file:t:music.wav:Output file name\n",

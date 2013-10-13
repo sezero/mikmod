@@ -355,7 +355,7 @@ static int XAudio2_PlayStart(void) {
 MIKMODAPI MDRIVER drv_xaudio2 = {
 	NULL,
 	"XAudio2",
-	"DirectX XAudio2 Driver",
+	"DirectX XAudio2 Driver v0.2",
 	0,255,
 	"xaudio2",
 	"",

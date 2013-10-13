@@ -191,7 +191,7 @@ static void WIN_PlayStop(void)
 MIKMODAPI MDRIVER drv_win={
 	NULL,
 	"Windows waveform-audio",
-	"Windows waveform-audio driver v0.1",
+	"Windows waveform-audio driver v0.2",
 	0,255,
 	"winmm",
 	NULL,

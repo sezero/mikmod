@@ -353,7 +353,7 @@ MIKMODAPI MDRIVER drv_ds=
 {
 	NULL,
 	"DirectSound",
-	"DirectSound Driver (DX6+) v0.4",
+	"DirectSound Driver (DX6+) v0.5",
 	0,255,
 	"ds",
 	"buffer:r:12,19,16:Audio buffer log2 size\n"

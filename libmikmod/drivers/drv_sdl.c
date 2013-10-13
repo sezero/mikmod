@@ -162,7 +162,7 @@ MIKMODAPI struct MDRIVER drv_sdl =
 {
     NULL,
     "SDL",
-    "SDL Driver v1.0",
+    "SDL Driver v1.2",
     0,
     255,
     "sdl",
