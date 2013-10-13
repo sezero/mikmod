@@ -24,7 +24,7 @@
 # (This copyright notice applies only to this file)
 
 PROJECT(libmikmod C)
-SET(VERSION "3.3.2")
+SET(VERSION "3.3.3")
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 LIST(APPEND CMAKE_MODULE_PATH "${libmikmod_SOURCE_DIR}/cmake")
 

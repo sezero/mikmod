@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
 
-AC_INIT([mikmod],[3.2.3])
+AC_INIT([mikmod],[3.2.4])
 AM_INIT_AUTOMAKE([1.7 foreign])
 AC_CONFIG_SRCDIR([src/mikmod.c])
 AM_CONFIG_HEADER([config.h])

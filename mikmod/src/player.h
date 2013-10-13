@@ -32,7 +32,7 @@
 
 /*========== Messages */
 
-#define playerversion "3.2.3"
+#define playerversion "3.2.4"
 
 #if defined(__OS2__)||defined(__EMX__)
 #define mikversion "-= MikMod/2 " playerversion " =-"
