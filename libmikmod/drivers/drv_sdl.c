@@ -40,8 +40,11 @@
 #ifdef DRV_SDL
 
 #include <string.h>
+#if defined(SDL_FRAMEWORK) || defined(NO_SDL_CONFIG)
+#include <SDL/SDL.h>
+#else
 #include "SDL.h"
-
+#endif
 
 static SDL_AudioSpec g_AudioSpec;
 static BOOL g_Playing = 0;

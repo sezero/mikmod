@@ -37,6 +37,11 @@ CPPFLAGS+=-DDRV_OSX
 #LDLIBS+=-Wl,-framework,OpenAL
 #CPPFLAGS+=-DDRV_OPENAL
 
+# support for output through SDL:
+# SDL_FRAMEWORK define is for including SDL.h as <SDL/SDL.h> from SDL.framework.
+#LDLIBS+=-Wl,-framework,SDL
+#CPPFLAGS+=-DDRV_SDL -DSDL_FRAMEWORK
+
 # support for output via a pipe to another command:
 CPPFLAGS+=-DDRV_PIPE
 # support for output to stdout:
@@ -74,7 +79,7 @@ LIBS=$(LIBSHARED)
 DRIVER_OBJ=drv_osx.o drv_pipe.o
 
 OBJ=$(DRIVER_OBJ) \
-    drv_openal.o drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
+    drv_openal.o drv_sdl.o drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
@@ -133,6 +138,9 @@ drv_osx.o:       ../drivers/drv_osx.c \
 drv_openal.o:    ../drivers/drv_openal.c \
 	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../drivers/drv_openal.c -o drv_openal.o
+drv_sdl.o:    ../drivers/drv_sdl.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../drivers/drv_sdl.c -o drv_sdl.o
 drv_nos.o:      ../drivers/drv_nos.c \
 	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../drivers/drv_nos.c -o drv_nos.o
