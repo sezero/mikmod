@@ -20,9 +20,9 @@
 
 /*==============================================================================
 
-  $Id$
-
   Graoumf tracker format (.GT2)
+
+  (to be completed)
 
 ==============================================================================*/
 
@@ -196,17 +196,14 @@ static GT_CHUNK *loadChunk(void)
 {
 	GT_CHUNK *new_chunk = MikMod_malloc(sizeof(GT_CHUNK));
 
+	if (!new_chunk) return NULL;
+
 	/* the file chunk id only use 3 bytes, others 4 */
 	_mm_read_UBYTES(new_chunk->id, 3, modreader);
-	if (!	(new_chunk->id[0]=='G' &&
-			new_chunk->id[1]=='T' &&
-			new_chunk->id[2]=='2')
-		)
-	{
+	if (memcmp(new_chunk, "GT2", 3) != 0) {
 		_mm_read_UBYTES(&new_chunk->id[3], 1, modreader);
 	}
-	else
-	{
+	else {
 		new_chunk->id[3] = ' ';
 	}
 
@@ -274,11 +271,11 @@ static GT_CHUNK *loadChunk(void)
 		new_chunk->patd.num_lines = _mm_read_M_UWORD(modreader);
 		new_chunk->patd.num_tracks = _mm_read_M_UWORD(modreader);
 		new_chunk->patd.notes = MikMod_malloc(5 *
-										new_chunk->patd.num_lines *
-										new_chunk->patd.num_tracks);
+								new_chunk->patd.num_lines *
+								new_chunk->patd.num_tracks);
 		_mm_read_UBYTES(new_chunk->patd.notes,
-						new_chunk->patd.num_lines * new_chunk->patd.num_tracks * 5,
-						modreader);
+				new_chunk->patd.num_lines * new_chunk->patd.num_tracks * 5,
+				modreader);
 		return new_chunk;
 	}
 
@@ -312,21 +309,25 @@ static GT_CHUNK *loadChunk(void)
 	return NULL; /* unknown chunk */
 }
 
+static BOOL GT2_Test(void)
+{
+	UBYTE magic[3];
+
+	_mm_fseek(modreader, 0, SEEK_SET);
+	if (!_mm_read_UBYTES(magic, 3, modreader)) return 0;
+	if (magic[0] == 'G' && magic[1] == 'T' && magic[2] == '2') {
+		return 1;
+	}
+	return 0;
+}
+
 static BOOL GT2_Init(void)
 {
 	return 1;
 }
 
-static BOOL GT2_Test(void)
+static void GT2_Cleanup(void)
 {
-	UBYTE magic[3];
-	_mm_fseek(modreader, 0, SEEK_SET);
-
-	_mm_read_UBYTES(magic, 3, modreader);
-
-	if (magic[0] == 'G' && magic[1] == 'T' && magic[2] == '2') { return 1; }
-
-	return 0;
 }
 
 static BOOL GT2_Load(BOOL curious)
@@ -334,35 +335,33 @@ static BOOL GT2_Load(BOOL curious)
 	GT_CHUNK *tmp;
 
 	_mm_fseek(modreader, 0, SEEK_SET);
-	while (	(tmp = loadChunk() ))
-	{
+	while ((tmp = loadChunk()) != NULL) {
+		/* FIXME: to be completed */
 		printf("%c%c%c%c\n", tmp->id[0], tmp->id[1], tmp->id[2], tmp->id[3]);
-
+		MikMod_free(tmp);
 	}
 
 	return 0;
 }
 
-static void GT2_Cleanup(void)
-{
-}
-
 static CHAR *GT2_LoadTitle(void)
 {
 	CHAR title[33];
-	_mm_fseek(modreader, 8, SEEK_SET);
 
-	_mm_read_UBYTES(title, 32, modreader);
-	title[32]=0;
+	_mm_fseek(modreader, 8, SEEK_SET);
+	if (!_mm_read_UBYTES(title, 32, modreader))
+		return NULL;
+	title[32] = 0;
 
 	return (DupStr(title, 32, 1));
 }
 
+/*========== Loader information */
 
 MIKMODAPI MLOADER load_gt2 = {
 	NULL,
-	"Graoumf Tracker 2 module",
-	"Graoumf Tracker 2",
+	"GT2",
+	"GT2 (Graoumf Tracker 2)",
 	GT2_Init,
 	GT2_Test,
 	GT2_Load,
@@ -370,5 +369,4 @@ MIKMODAPI MLOADER load_gt2 = {
 	GT2_LoadTitle
 };
 
-
-
+/* ex:set ts=8: */
