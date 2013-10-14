@@ -296,7 +296,7 @@ else
 	libmikmod_threads=no
 fi])
 
-AC_ARG_ENABLE([simd], [AS_HELP_STRING([--enable-simd],[include SIMD (AltiVec or SSE2) mixer optimizations [default=no]])],
+AC_ARG_ENABLE([simd], [AS_HELP_STRING([--enable-simd],[include SIMD (AltiVec or SSE2) mixer optimizations (Unstable!) [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_simd=yes
@@ -1116,7 +1116,7 @@ esac
 # see if we set libmikmod_simd properly
 case $libmikmod_simd in
 altivec|sse2)
-	AC_DEFINE([MIKMOD_SIMD], 1, [Define if you want to use SIMD (AltiVec or SSE2) optimizations])
+	AC_DEFINE([MIKMOD_SIMD], 1, [Define if you want to use SIMD (AltiVec or SSE2) optimizations (Unstable!)])
 	;;
 *)
 	libmikmod_simd=no

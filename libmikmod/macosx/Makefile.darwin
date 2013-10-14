@@ -19,11 +19,13 @@ CPPFLAGS=-DMIKMOD_BUILD
 LDLIBS=
 
 # SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)
+# SIMD code is unstable at present: *not* recommended...
 SSE2FLAGS=-msse2
 
 # altivec support (for ppc builds)
 #VECFLAGS=-maltivec
 # use -faltivec or -mpim-altivec instead. (see Apple gcc man page.)
+# SIMD code is unstable at present: *not* recommended...
 VECFLAGS=-faltivec
 
 # support for raw and wav file writers
@@ -96,6 +98,7 @@ help:
 	@echo "  $(MAKE) static        : build libmikmod.a static library"
 	@echo ""
 	@echo "Same as above, but with SIMD (AltiVec/SSE2) mixer optimizations:"
+	@echo "(SIMD code is unstable at present: *not* recommended...)"
 	@echo ""
 	@echo "  $(MAKE) dylib-altivec : build libmikmod.dylib with altivec support (ppc)"
 	@echo "  $(MAKE) dylib-sse2    : build libmikmod.dylib with sse2 support (x86/x86_64)"

@@ -9,4 +9,5 @@ For OpenAL support you need OpenAL 1.1 SDK, then: add DRV_OPENAL
   header location issues, if necessary. )
 
 For SSE2 support: add MIKMOD_SIMD among your preprocessor definitions.
+(SIMD code is unstable at present: *not* recommended.)
 

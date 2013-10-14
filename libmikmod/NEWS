@@ -16,6 +16,8 @@ This is a minor bug fix/maintenance release.
 - Fix return types for MREADER->Seek and MWRITER->Put to be int, and
   not BOOL. (identical functionality but non-misleading.)
 - Documentation fixes with relation to free()/MikMod_free().
+- Marked the SIMD (SSE2/AltiVec) option as unstable in the makefiles
+  and configury/cmake: not recommended until it is fixed properly.
 - Provided new Visual Studio 6 and Visual Studio 2005 project files.
   The latter imports into newer Visual Studio versions, e.g. VS2012.
 - Fixed some driver version signatures which I missed changing in the

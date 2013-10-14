@@ -44,7 +44,7 @@
 #cmakedefine MIKMOD_DEBUG 1
 /* Define if you want runtime dynamic linking of ALSA and EsounD drivers */
 #cmakedefine MIKMOD_DYNAMIC 1
-/* Define if you want to use SIMD (AltiVec or SSE2) optimizations */
+/* Define if you want to use SIMD (AltiVec or SSE2) optimizations (Unstable!)  */
 #cmakedefine MIKMOD_SIMD 1
 /* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
 #cmakedefine MIKMOD_UNIX 1

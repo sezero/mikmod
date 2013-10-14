@@ -20,6 +20,7 @@ CPPFLAGS=-DMIKMOD_BUILD
 LDLIBS=
 
 # SSE2 support (for x86 builds. for x86_64 it doesn't hurt.)
+# SIMD code is unstable at present: *not* recommended...
 SSE2FLAGS=-msse2
 
 # support for raw and wav file writers
@@ -101,6 +102,7 @@ help:
 	@echo "  $(MAKE) static     : build static library"
 	@echo ""
 	@echo "Same as above, but with SIMD (SSE2) mixer optimizations:"
+	@echo "(SIMD code is unstable at present: *not* recommended...)"
 	@echo ""
 	@echo "  $(MAKE) dll-sse2   : dll and import lib with sse2 support"
 	@echo "  $(MAKE) static-sse2: static library with sse2 support"
