@@ -261,6 +261,7 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 	const unsigned char *s;
 	MMEMREADER* mr;
 	long siz;
+	BOOL ret;
 
 	if (!reader || !size || (size > (size_t) LONG_MAX))
 		return 0;
@@ -269,8 +270,11 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 	siz = (long) size;
 	if (mr->pos >= mr->len) return 0;	/* @ eof */
 	if (mr->pos + siz > mr->len) {
-		mr->pos = mr->len;
-		return 0; /* not enough remaining bytes */
+		siz = mr->len - mr->pos;
+		ret = 0; /* not enough remaining bytes */
+	}
+	else {
+		ret = 1;
 	}
 
 	s = mr->buffer;
@@ -283,7 +287,7 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 		siz--;
 	}
 
-	return 1;
+	return ret;
 }
 
 static int _mm_MemReader_Get(MREADER* reader)
@@ -311,14 +315,14 @@ static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 		mr->pos += offset;
 		break;
 	case SEEK_SET:
-		mr->pos = offset;
+		mr->pos = reader->iobase + offset;
 		break;
 	case SEEK_END:
 		mr->pos = mr->len + offset;
 		break;
 	}
-	if (mr->pos < 0) {
-		mr->pos = 0;
+	if (mr->pos < reader->iobase) {
+		mr->pos = mr->core.iobase;
 		return -1;
 	}
 	if (mr->pos > mr->len) {
@@ -330,7 +334,7 @@ static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 static long _mm_MemReader_Tell(MREADER* reader)
 {
 	if (reader) {
-		return ((MMEMREADER*)reader)->pos;
+		return ((MMEMREADER*)reader)->pos - reader->iobase;
 	}
 	return 0;
 }

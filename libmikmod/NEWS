@@ -8,6 +8,11 @@ This is a minor bug fix/maintenance release.
 - Fixed a small memory leak in samples freeing (thanks to S. Michel.)
 - Fixed calling the previous position while at position 0 resulting
   in an invalid read. (noticed while running mikmod under valgrind.)
+- Memory reader now fills the available bytes to destination buffer
+  when a short read is happening, while still returning false.
+- Memory reader now respects the iobase value of the reader struct.
+  (doesn't change normal behavior, but may help with new features.)
+- Updated simpleplayMEM example application.
 - Documentation fixes with relation to free()/MikMod_free().
 - Provided new Visual Studio 6 and Visual Studio 2005 project files.
   The latter imports into newer Visual Studio versions, e.g. VS2012.
