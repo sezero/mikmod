@@ -11,7 +11,7 @@
  */
 
 #include <mikmod.h>
-#if !defined _WIN32 && !defined _WIN64
+#if !defined(_WIN32)
 #include <unistd.h>  /* for usleep() */
 #define MikMod_Sleep(ns) usleep(ns)
 #else

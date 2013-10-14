@@ -1,16 +1,15 @@
 /* mmloader.c
- * Example on how to implement a MLOADER that reads from
+ * Example on how to implement a MREADER that reads from
  * memory for libmikmod.
  * (C) 2004, Raphael Assenat (raph@raphnet.net)
  *
  * This example is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRENTY; without event the implied warrenty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
 
+#include <limits.h>
 #include <mikmod.h>
 #include "mmloader.h"
 

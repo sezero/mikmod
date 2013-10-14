@@ -1,6 +1,6 @@
-/* splay.c
+/* splayMEM.c
  * An example on how to use libmikmod to play
- * a module, but to load it with a custom MLOADER.
+ * a module, but to load it with a custom MREADER.
  *
  * (C) 2004, Raphael Assenat (raph@raphnet.net)
  *
@@ -9,9 +9,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  */
-#include <mikmod.h>
 
-#if !defined _WIN32 && !defined _WIN64
+#include <mikmod.h>
+#if !defined(_WIN32)
 #include <unistd.h>  /* for usleep() */
 #define MikMod_Sleep(ns) usleep(ns)
 #else
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	MREADER *mem_reader;
 
 	if (argc<2) {
-		fprintf(stderr, "Usage: ./splay1 file\n");
+		fprintf(stderr, "Usage: ./splayMEM file\n");
 		return 1;
 	}
 
@@ -43,7 +43,9 @@ int main(int argc, char **argv)
 	MikMod_RegisterAllLoaders();
 
 	/* init the library */
-	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION | DMODE_HQMIXER | DMODE_SIMDMIXER;
+	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION;
+	md_mode |= DMODE_HQMIXER;
+	/*md_mode |= DMODE_SIMDMIXER;*/
 
 	if (MikMod_Init("")) {
 		fprintf(stderr, "Could not initialize sound, reason: %s\n",
