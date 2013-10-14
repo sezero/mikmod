@@ -7,6 +7,8 @@ This is a minor bug fix/maintenance release.
 - Addressed some snprintf issues and MSVC6 compilation issues.
 - New MSVC6 and VS2005 project files. The latter imports into newer
   Visual Studio versions, e.g. VS2012.
+- Use MikMod_free() on the string returned by Player_LoadTitle() if
+  it is available.
 - Fixed some compiler warnings, minor cleanups.
 
 

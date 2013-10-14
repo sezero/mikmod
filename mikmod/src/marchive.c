@@ -611,7 +611,11 @@ BOOL MA_TestName (char *filename, BOOL playlist, BOOL deep)
 	if (deep) {
 		char *title;
 		if ((title=Player_LoadTitle(path_conv_sys(filename)))) {
+#if (LIBMIKMOD_VERSION >= 0x030200) && defined(HAVE_MIKMOD_FREE)
+			MikMod_free (title);
+#else
 			free (title);
+#endif
 			return 1;
 		} else if (MikMod_errno != MMERR_NOT_A_MODULE)
 			return 1;
