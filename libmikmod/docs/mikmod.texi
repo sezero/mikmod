@@ -1335,7 +1335,7 @@ Loop ending position, relative to the start of the sample, in samples.
 The @code{MREADER} contains the following function pointers:
 
 @table @code
-@item BOOL (*Seek)(struct MREADER*, long offset, int whence)
+@item int (*Seek)(struct MREADER*, long offset, int whence)
 This function should have the same behaviour as @code{fseek}, with offset 0
 meaning the start of the object (module, sample) being loaded.
 @item long (*Tell)(struct MREADER*)
@@ -1357,10 +1357,10 @@ For an example of how to build an @code{MREADER} object, please refer to the
 @subsection MWRITER
 @tindex MWRITER
 
-The @code{MREADER} contains the following function pointers:
+The @code{MWRITER} contains the following function pointers:
 
 @table @code
-@item BOOL (*Seek)(struct MWRITER*, long offset, int whence);
+@item int (*Seek)(struct MWRITER*, long offset, int whence);
 This function should have the same behaviour as @code{fseek}, with offset 0
 meaning the start of the object being written.
 @item long (*Tell)(struct MWRITER*);
@@ -1369,7 +1369,7 @@ meaning the start of the object being written.
 @item BOOL (*Write)(struct MWRITER*, const void *src, size_t length);
 This function should copy @code{length} bytes of data from @code{src}, and
 return zero if an error occured, and any nonzero value otherwise.
-@item BOOL (*Put)(struct MWRITER*, int data);
+@item int (*Put)(struct MWRITER*, int data);
 This function should have the same behaviour as @code{fputc}.
 @end table
 

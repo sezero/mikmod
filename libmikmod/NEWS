@@ -13,6 +13,8 @@ This is a minor bug fix/maintenance release.
 - Memory reader now respects the iobase value of the reader struct.
   (doesn't change normal behavior, but may help with new features.)
 - Updated simpleplayMEM example application.
+- Fix return types for MREADER->Seek and MWRITER->Put to be int, and
+  not BOOL. (identical functionality but non-misleading.)
 - Documentation fixes with relation to free()/MikMod_free().
 - Provided new Visual Studio 6 and Visual Studio 2005 project files.
   The latter imports into newer Visual Studio versions, e.g. VS2012.

@@ -75,7 +75,7 @@ extern size_t fwrite(const void *, size_t, size_t, FILE *);
 static BOOL _mm_MemReader_Eof(MREADER* reader);
 static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size);
 static int _mm_MemReader_Get(MREADER* reader);
-static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
+static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
 static long _mm_MemReader_Tell(MREADER* reader);
 
 /*static long _mm_iobase = 0, temp_iobase = 0;*/
@@ -141,7 +141,7 @@ static int _mm_FileReader_Get(MREADER* reader)
 	return fgetc(((MFILEREADER*)reader)->file);
 }
 
-static BOOL _mm_FileReader_Seek(MREADER* reader,long offset,int whence)
+static int _mm_FileReader_Seek(MREADER* reader,long offset,int whence)
 {
 	return fseek(((MFILEREADER*)reader)->file,
 				 (whence==SEEK_SET)?offset+reader->iobase:offset,whence);
@@ -178,7 +178,7 @@ typedef struct MFILEWRITER {
 	FILE*   file;
 } MFILEWRITER;
 
-static BOOL _mm_FileWriter_Seek(MWRITER* writer,long offset,int whence)
+static int _mm_FileWriter_Seek(MWRITER* writer,long offset,int whence)
 {
 	return fseek(((MFILEWRITER*)writer)->file,offset,whence);
 }
@@ -193,7 +193,7 @@ static BOOL _mm_FileWriter_Write(MWRITER* writer, const void* ptr, size_t size)
 	return (fwrite(ptr,size,1,((MFILEWRITER*)writer)->file)==size);
 }
 
-static BOOL _mm_FileWriter_Put(MWRITER* writer,int value)
+static int _mm_FileWriter_Put(MWRITER* writer,int value)
 {
 	return fputc(value,((MFILEWRITER*)writer)->file);
 }
@@ -303,7 +303,7 @@ static int _mm_MemReader_Get(MREADER* reader)
 	return c;
 }
 
-static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
+static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 {
 	MMEMREADER* mr;
 

@@ -17,7 +17,7 @@
 static BOOL _mm_MemReader_Eof(MREADER* reader);
 static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size);
 static int _mm_MemReader_Get(MREADER* reader);
-static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
+static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
 static long _mm_MemReader_Tell(MREADER* reader);
 
 void my_delete_mem_reader(MREADER* reader)
@@ -98,7 +98,7 @@ static int _mm_MemReader_Get(MREADER* reader)
 	return c;
 }
 
-static BOOL _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
+static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 {
 	MY_MEMREADER* mr;
 
@@ -133,3 +133,4 @@ static long _mm_MemReader_Tell(MREADER* reader)
 	}
 	return 0;
 }
+

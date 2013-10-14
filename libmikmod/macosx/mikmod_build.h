@@ -296,7 +296,7 @@ MIKMODAPI extern void   MikMod_free(void*);
  */
 
 typedef struct MREADER {
-    BOOL (*Seek)(struct MREADER*,long,int);
+    int  (*Seek)(struct MREADER*,long,int);
     long (*Tell)(struct MREADER*);
     BOOL (*Read)(struct MREADER*,void*,size_t);
     int  (*Get)(struct MREADER*);
@@ -306,10 +306,10 @@ typedef struct MREADER {
 } MREADER;
 
 typedef struct MWRITER {
-    BOOL (*Seek)(struct MWRITER*, long, int);
+    int  (*Seek)(struct MWRITER*, long, int);
     long (*Tell)(struct MWRITER*);
     BOOL (*Write)(struct MWRITER*, const void*, size_t);
-    BOOL (*Put)(struct MWRITER*, int);
+    int  (*Put)(struct MWRITER*, int);
 } MWRITER;
 
 /*
