@@ -1,7 +1,7 @@
 Summary of changes between MikMod 3.2.3 and MikMod 3.2.4 ():
 ==================================================================
 
-MikMod 3.2.4 was released on 12/Oct/2013.
+MikMod 3.2.4 was released on 14/Oct/2013.
 This is a minor bug fix/maintenance release.
 
 - Addressed some snprintf issues and MSVC6 compilation issues.

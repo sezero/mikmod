@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================
 
-libmikmod 3.3.3 was released on 12-Oct-2013.
+libmikmod 3.3.3 was released on 14-Oct-2013.
 This is a minor bug fix/maintenance release.
 
 - AIFF file writer now silently ignores and clears float output mode.
