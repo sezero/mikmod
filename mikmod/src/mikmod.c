@@ -775,7 +775,7 @@ static BOOL player_timeout (MWINDOW *win, void *data)
 
 		if (!status.listend) {
 			int playfd;
-			FILE *playfile;
+			FILE *playfile = NULL;
 			char *playname;
 
 			if (!filename) {
