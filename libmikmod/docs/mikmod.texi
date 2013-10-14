@@ -841,15 +841,15 @@ format is not fully reliable, so other modules might be mistaken as 15
 instrument MOD files. 
 
 You can get some printable information regarding the registered loaders with
-@code{MikMod_InfoLoader}; don't forget to call @code{free} on the returned
+@code{MikMod_InfoLoader}; don't forget to call @code{MikMod_free} on the returned
 string when you don't need it anymore.
 
 Note that, contrary to the sound drivers, you can register module loaders at
 any time, it doesn't matter.
 
 For playlists, you might be interested in knowing the module title first, and
-@code{Player_LoadTitle} will give you this information. Don't forget to
-@code{free} the returned text when you don't need it anymore.
+@code{Player_LoadTitle} will give you this information. Don't forget to call
+@code{MikMod_free} on the returned text when you don't need it anymore.
 
 You can load a module either with @code{Player_Load} and the name of the
 module, or with @code{Player_LoadFP} and an open @code{FILE*} pointer. These
@@ -1845,8 +1845,8 @@ This function returns a formatted list of the registered drivers in a buffer.
 @item Result
 A pointer to a text buffer, or @code{NULL} if no drivers are registered.
 @item Notes
-The buffer is created with @code{MikMod_malloc}; the caller must free it when it is
-no longer necessary.
+The buffer is created with @code{MikMod_malloc}; the caller must free it
+with @code{MikMod_free} when it is no longer necessary.
 @item See also
 @code{MikMod_RegisterDriver}, @code{MikMod_RegisterAllDrivers}.
 @end table
@@ -1863,8 +1863,8 @@ buffer.
 @item Result
 A pointer to a text buffer, or @code{NULL} if no loaders are registered.
 @item Notes
-The buffer is created with @code{MikMod_malloc}; the caller must free it when it is
-no longer necessary.
+The buffer is created with @code{MikMod_malloc}; the caller must free it
+with @code{MikMod_free} when it is no longer necessary.
 @item See also
 @code{MikMod_RegisterLoader}, @code{MikMod_RegisterAllLoaders}.
 @end table
@@ -2348,8 +2348,8 @@ The name of the module file.
 A pointer to the song title, or @code{NULL} if either the module has no title
 or an error has occurred.
 @item Notes
-The title buffer is created with @code{MikMod_malloc}; the caller must free it when it
-is no longer necessary.
+The title buffer is created with @code{MikMod_malloc}; the caller must free it
+with @code{MikMod_free} when it is no longer necessary.
 @item See also
 @code{Player_Load}, @code{Player_LoadFP}, @code{Player_LoadTitleFP}.
 @end table
@@ -2369,8 +2369,8 @@ An open file, at the position where the module starts.
 A pointer to the song title, or @code{NULL} if either the module has no title
 or an error has occurred.
 @item Notes
-The title buffer is created with @code{MikMod_malloc}; the caller must free it when it
-is no longer necessary.
+The title buffer is created with @code{MikMod_malloc}; the caller must free it
+with @code{MikMod_free} when it is no longer necessary.
 @item See also
 @code{Player_Load}, @code{Player_LoadFP}, @code{Player_LoadTitle}.
 @end table
