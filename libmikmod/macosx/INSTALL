@@ -10,39 +10,17 @@ Go to the top level and follow the INSTALL there...
 In that case your files will end up under /usr/local.
 The IDE stuff will end up under a "build" directory.
 
+You can also play with the standalone Makefile.darwin
+file here in this directory, in order to build from
+the command line. (Hint: "gmake -f Makefile.darwin" )
 
 
-Mac OS X Public Beta or 10.0
-----------------------------
-
-These are buggy pre-releases and should not be used.
-Suggest you look below for the real system versions?
-
-
-Mac OS X 10.1 "Puma"
+XCode on Mac OS X 10.3 and newer:
 -------------
 
-1) Go to the Apple store. http://store.apple.com
+1) You should be using Xcode 2.x, or up.
 
-2) Purchase a new version of Mac OS X. (for $129)
-   It comes with a newer version Developer Tools.
-
-
-Mac OS X 10.2 "Jaguar"
--------------
-
-1) You should be using the December 2002 Dev Tools.
-
-2) Open "libmikmod.pbproj" with Project Builder.
-
-
-Mac OS X 10.3 "Panther"
--------------
-
-1) You should be using Xcode 1.1 Dev Tools, or up.
-
-2) Open "libmikmod.xcode" with the Xcode app.
-
+2) Open "libmikmod.xcodeproj" with the Xcode app.
 
 
 Build products
@@ -56,15 +34,6 @@ And they will also build a dynamic framework bundle:
 
 These build products are normally found in the "build"
 folder, unless you have changed your IDE settings...
-
-Unless you are building an application to be used from
-Mac OS 9 too (which these tools won't do anyway), the
-CoreAudio driver is recommended - since it's better...
-(the library/framework does not build the Carbon driver)
-
-If you *want* to build the Carbon driver, then #define
-DRV_MAC in the config.h and add Carbon framework below.
-
 
 
 Using the library

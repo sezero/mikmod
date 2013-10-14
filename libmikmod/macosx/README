@@ -15,7 +15,9 @@ Check out the file 'NEWS' for more history information.
   top-level "macintosh" directory instead which has the old CFM stuff ?
 
 libmikmod can be built using Apple's "Developer Tools" environments.
-(or you can use the commandline UNIX stuff, just go up one directory)
+Or you can use the commandline UNIX stuff, just go up one directory.
+You can also play with the stand-alone Makefile.darwin file in this
+directory.
 
 Read the file INSTALL in this directory for compilation instructions.
 The projects will generate code for Mac OS X versions 10.1 - 10.3

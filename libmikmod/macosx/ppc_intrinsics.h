@@ -109,7 +109,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  *   abs, labs, fabsf, fnabsf
  *
  * NOTES:
- * - Some of the intrinsics need to be macros because certain
+ * - Some of the intrinsics need to be macros because certain 
  *   parameters MUST be integer constants and not values in registers.
  * - The declarations use __asm__ instead of asm and __inline__ instead
  *   of inline to prevent errors when -ansi is specified.
@@ -135,11 +135,11 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  *******************************************************************/
 
 #define __SPR_MQR       0               /* PPC 601 only */
-#define __SPR_XER       1
+#define __SPR_XER       1               
 #define __SPR_RTCU      4               /* Real time clock upper. PPC 601 only.*/
 #define __SPR_RTCL      5               /* Real time clock lower. PPC 601 only.*/
-#define __SPR_LR        8
-#define __SPR_CTR       9
+#define __SPR_LR        8               
+#define __SPR_CTR       9               
 #define __SPR_VRSAVE    256             /* AltiVec */
 #define __SPR_TBL       268             /* Time-base Lower. Not on PPC 601 */
 #define __SPR_TBU       269             /* Time-base Upper. Not on PPC 601 */
@@ -276,9 +276,9 @@ __cntlzw (int value)
  *
  *   int __rlwimi(int, long, int, int, int);
  *
- * We don't mention "%1" below: operand[1] needs to be skipped as
- * it's just a placeholder to let the compiler know that rA is read
- * from as well as written to.
+ * We don't mention "%1" below: operand[1] needs to be skipped as 
+ * it's just a placeholder to let the compiler know that rA is read 
+ * from as well as written to. 
  */
 #define __rlwimi(rA, rS, cnt, mb, me)                               \
   ({ __asm__ ("rlwimi %0,%2,%3,%4,%5" : "=r" (rA)                   \
@@ -312,37 +312,37 @@ __cntlzw (int value)
  *                     Data Cache Manipulation                     *
  *******************************************************************/
 
-/*
+/* 
  * --- Data Cache Block instructions ---
  *
- * Please see Motorola's "The Programming Environments for 32-Bit
+ * Please see Motorola's "The Programming Environments for 32-Bit 
  * Microprocessors" for a description of what these do.
  *
  *   Parameter descriptions:
  *
- *     base             starting address for figuring out where the
+ *     base             starting address for figuring out where the 
  *                      cacheline is
  *
- *     index            byte count to be added to the base address for
- *                      purposes of calculating the effective address
- *                      of the cacheline to be operated on.
- *
- *   Effective Address of cacheline to be manipulated =
+ *     index            byte count to be added to the base address for 
+ *                      purposes of calculating the effective address 
+ *                      of the cacheline to be operated on.  
+ *                                      
+ *   Effective Address of cacheline to be manipulated = 
  *     (char*) base + index
- *
- *   WARNING: The size and alignment of cachelines are subject to
- *     change on future processors!  Cachelines are 32 bytes in
- *     size and are aligned to 32 bytes on PowerPC 601, 603, 604,
+ *      
+ *   WARNING: The size and alignment of cachelines are subject to 
+ *     change on future processors!  Cachelines are 32 bytes in 
+ *     size and are aligned to 32 bytes on PowerPC 601, 603, 604, 
  *     750, 7400, 7410, 7450, and 7455.
  *
  */
-
+ 
 /*
  * __dcba - Data Cache Block Allocate
  *
  *   void __dcba(void *, int)
  *
- * WARNING: dcba is a valid instruction only on PowerPC 7400, 7410,
+ * WARNING: dcba is a valid instruction only on PowerPC 7400, 7410, 
  *          7450 and 7455.
  */
 #define __dcba(base, index)     \
@@ -412,15 +412,15 @@ __cntlzw (int value)
  *   ??? CW: float __setflm(float);
  */
 static inline double __setflm (double newflm) __attribute__((always_inline));
-static inline double
+static inline double 
 __setflm(double newflm)
 {
   double original;
 
-  __asm__ ("mffs %0"
+  __asm__ ("mffs %0" 
            /* outputs:  */ : "=f" (original));
-  __asm__ ("mtfsf 255,%0"
-           /* outputs:  */ : /* none */
+  __asm__ ("mtfsf 255,%0" 
+           /* outputs:  */ : /* none */ 
            /* inputs:   */ : "f" (newflm));
   return original;
 }
@@ -434,12 +434,12 @@ __setflm(double newflm)
  * __fabs - Floating-Point Absolute Value
  */
 static inline double __fabs (double value) __attribute__((always_inline));
-static inline double
+static inline double 
 __fabs (double value)
 {
   double result;
-  __asm__ ("fabs %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fabs %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (value));
   return result;
 }
@@ -448,12 +448,12 @@ __fabs (double value)
  * __fnabs - Floating Negative Absolute Value
  */
 static inline double __fnabs (double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fnabs (double b)
 {
   double result;
-  __asm__ ("fnabs %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fnabs %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -461,18 +461,18 @@ __fnabs (double b)
 /*
  * fctiw - Floating Convert to Integer Word
  *
- * Convert the input value to a signed long and place in the low 32
- * bits of the FP register.  Clip to LONG_MIN or LONG_MAX if the FP
+ * Convert the input value to a signed long and place in the low 32 
+ * bits of the FP register.  Clip to LONG_MIN or LONG_MAX if the FP 
  * value exceeds the range representable by a long.  Use the rounding
  * mode indicated in the FPSCR.
  */
 static inline double __fctiw (double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fctiw (double b)
 {
   double result;
-  __asm__ ("fctiw %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fctiw %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -480,17 +480,17 @@ __fctiw (double b)
 /*
  * fctiwz - Floating Convert to Integer Word with Round toward Zero
  *
- * Convert the input value to a signed long and place in the low 32
- * bits of the FP register.  Clip to LONG_MIN or LONG_MAX if the FP
+ * Convert the input value to a signed long and place in the low 32 
+ * bits of the FP register.  Clip to LONG_MIN or LONG_MAX if the FP 
  * value exceeds the range representable by a long.
  */
 static inline double __fctiwz (double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fctiwz (double b)
 {
   double result;
-  __asm__ ("fctiwz %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fctiwz %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -499,18 +499,18 @@ __fctiwz (double b)
  * fctidz - Floating Convert to Integer Double Word with Round toward Zero
  *
  * Convert the input value to a signed 64-bit int and place in the FP
- * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1)
+ * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1) 
  * if the FP value exceeds the range representable by a int64_t.
- *
- * WARNING: fctidz is a valid instruction only on 64-bit PowerPC
+ * 
+ * WARNING: fctidz is a valid instruction only on 64-bit PowerPC 
  */
 static inline double __fctidz (double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fctidz (double b)
 {
   double result;
-  __asm__ ("fctidz %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fctidz %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -519,19 +519,19 @@ __fctidz (double b)
  * fctid - Floating Convert to Integer Double Word
  *
  * Convert the input value to a signed 64-bit int and place in the FP
- * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1)
- * if the FP value exceeds the range representable by a int64_t. Use the
+ * destination register.  Clip to LLONG_MIN (-2**63) or LLONG_MAX (2**63-1) 
+ * if the FP value exceeds the range representable by a int64_t. Use the 
  * rounding mode indicated in the FPSCR.
- *
- * WARNING: fctid is a valid instruction only on 64-bit PowerPC
+ * 
+ * WARNING: fctid is a valid instruction only on 64-bit PowerPC 
  */
 static inline double __fctid (double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fctid (double b)
 {
   double result;
-  __asm__ ("fctid %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fctid %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -539,19 +539,19 @@ __fctid (double b)
 /*
  * fcfid - Floating Convert From Integer Double Word
  *
- * Convert the 64-bit signed integer input value to a 64-bit FP value.
+ * Convert the 64-bit signed integer input value to a 64-bit FP value.  
  * Use the rounding mode indicated in the FPSCR if the integer is out of
  * double precision range.
- *
- * WARNING: fcfid is a valid instruction only on 64-bit PowerPC
+ * 
+ * WARNING: fcfid is a valid instruction only on 64-bit PowerPC 
  */
 static inline double __fcfid (double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fcfid (double b)
 {
   double result;
-  __asm__ ("fcfid %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fcfid %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (b));
   return result;
 }
@@ -562,12 +562,12 @@ __fcfid (double b)
  *   (a * c + b) double precision
  */
 static inline double __fmadd (double a, double c, double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fmadd (double  a, double c, double b)
 {
   double result;
-  __asm__ ("fmadd %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fmadd %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -581,12 +581,12 @@ __fmadd (double  a, double c, double b)
  * issuing frsp instructions upstream.
  */
 static inline float __fmadds (double a, double c, double b) __attribute__((always_inline));
-static inline float
+static inline float 
 __fmadds (double  a, double c, double b)
 {
   float result;
-  __asm__ ("fmadds %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fmadds %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -597,12 +597,12 @@ __fmadds (double  a, double c, double b)
  *   (a * c - b) double precision
  */
 static inline double __fmsub (double a, double c, double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fmsub (double  a, double c, double b)
 {
   double result;
-  __asm__ ("fmsub %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fmsub %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -616,12 +616,12 @@ __fmsub (double  a, double c, double b)
  * issuing frsp instructions upstream.
  */
 static inline float __fmsubs (double a, double c, double b) __attribute__((always_inline));
-static inline float
+static inline float 
 __fmsubs (double  a, double c, double b)
 {
   float result;
-  __asm__ ("fmsubs %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fmsubs %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -632,12 +632,12 @@ __fmsubs (double  a, double c, double b)
  *   (a * c) double precision
  */
 static inline double __fmul (double a, double c) __attribute__((always_inline));
-static inline double
+static inline double 
 __fmul (double  a, double c)
 {
   double result;
-  __asm__ ("fmul %0, %1, %2"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fmul %0, %1, %2" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c));
   return result;
 }
@@ -651,12 +651,12 @@ __fmul (double  a, double c)
  * issuing frsp instructions upstream.
  */
 static inline float __fmuls (double a, double c) __attribute__((always_inline));
-static inline float
+static inline float 
 __fmuls (double  a, double c)
 {
   float result;
-  __asm__ ("fmuls %0, %1, %2"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fmuls %0, %1, %2" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c));
   return result;
 }
@@ -667,12 +667,12 @@ __fmuls (double  a, double c)
  *   -(a * c + b) double precision
  */
 static inline double __fnmadd (double a, double c, double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fnmadd (double  a, double c, double b)
 {
   double result;
-  __asm__ ("fnmadd %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fnmadd %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -686,12 +686,12 @@ __fnmadd (double  a, double c, double b)
  * issuing frsp instructions upstream.
  */
 static inline float __fnmadds (double a, double c, double b) __attribute__((always_inline));
-static inline float
+static inline float 
 __fnmadds (double  a, double c, double b)
 {
   float result;
-  __asm__ ("fnmadds %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fnmadds %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -702,12 +702,12 @@ __fnmadds (double  a, double c, double b)
  *   -(a * c - B) double precision
  */
 static inline double __fnmsub (double a, double c, double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fnmsub (double  a, double c, double b)
 {
   double result;
-  __asm__ ("fnmsub %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fnmsub %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -721,12 +721,12 @@ __fnmsub (double  a, double c, double b)
  * issuing frsp instructions upstream.
  */
 static inline float __fnmsubs (double a, double c, double b) __attribute__((always_inline));
-static inline float
+static inline float 
 __fnmsubs (double  a, double c, double b)
 {
   float result;
-  __asm__ ("fnmsubs %0, %1, %2, %3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fnmsubs %0, %1, %2, %3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (a), "f" (c), "f" (b));
   return result;
 }
@@ -740,12 +740,12 @@ __fnmsubs (double  a, double c, double b)
  * ??? CW: float __fres(float)
  */
 static inline float __fres (float val) __attribute__((always_inline));
-static inline float
+static inline float 
 __fres (float val)
 {
   float estimate;
-  __asm__ ("fres %0,%1"
-           /* outputs:  */ : "=f" (estimate)
+  __asm__ ("fres %0,%1" 
+           /* outputs:  */ : "=f" (estimate) 
            /* inputs:   */ : "f" (val));
   return estimate;
 }
@@ -754,12 +754,12 @@ __fres (float val)
  * __frsp - Floating Round to Single-Precision
  */
 static inline float __frsp (double d) __attribute__((always_inline));
-static inline float
+static inline float 
 __frsp (double d)
 {
   float result;
-  __asm__ ("frsp %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("frsp %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (d));
   return result;
 }
@@ -770,13 +770,13 @@ __frsp (double d)
  * Note: not valid on the PowerPC 601.
  */
 static inline double __frsqrte (double val) __attribute__((always_inline));
-static inline double
+static inline double 
 __frsqrte (double val)
 {
   double estimate;
 
-  __asm__ ("frsqrte %0,%1"
-           /* outputs:  */ : "=f" (estimate)
+  __asm__ ("frsqrte %0,%1" 
+           /* outputs:  */ : "=f" (estimate) 
            /* inputs:   */ : "f" (val));
   return estimate;
 }
@@ -785,12 +785,12 @@ __frsqrte (double val)
  * __frsqrtes - Floating Reciprocal Square Root Estimate Single
  */
 static inline float __frsqrtes (double f) __attribute__((always_inline));
-static inline float
+static inline float 
 __frsqrtes (double f)
 {
   float result;
-  __asm__ ("frsqrte %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("frsqrte %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (f));
   return result;
 }
@@ -803,12 +803,12 @@ __frsqrtes (double f)
  * Note: not valid on the PowerPC 601.
  */
 static inline double __fsel (double test, double a, double b) __attribute__((always_inline));
-static inline double
+static inline double 
 __fsel (double test, double a, double b)
 {
   double result;
-  __asm__ ("fsel %0,%1,%2,%3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fsel %0,%1,%2,%3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (test), "f" (a), "f" (b));
   return result;
 }
@@ -816,18 +816,18 @@ __fsel (double test, double a, double b)
 /*
  * __fsels - Floating Select (Single-Precision variant)
  *
- * An artificial single precision variant of fsel. This produces the
- * same results as fsel, but is useful because the result is cast as
- * a float, discouraging the compiler from issuing a frsp instruction
+ * An artificial single precision variant of fsel. This produces the 
+ * same results as fsel, but is useful because the result is cast as 
+ * a float, discouraging the compiler from issuing a frsp instruction 
  * afterward.
  */
 static inline float __fsels (double test, double a, double b) __attribute__((always_inline));
-static inline float
+static inline float 
 __fsels (double test, double a, double b)
 {
   float result;
-  __asm__ ("fsel %0,%1,%2,%3"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fsel %0,%1,%2,%3" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (test), "f" (a), "f" (b));
   return result;
 }
@@ -835,7 +835,7 @@ __fsels (double test, double a, double b)
 /*
  * __fsqrt - Floating-Point Square Root (Double-Precision)
  *
- * WARNING: Illegal instruction for PowerPC 603, 604, 750, 7400, 7410,
+ * WARNING: Illegal instruction for PowerPC 603, 604, 750, 7400, 7410, 
  * 7450, and 7455
  */
 static inline double __fsqrt (double b) __attribute__((always_inline));
@@ -843,8 +843,8 @@ static inline double
 __fsqrt(double d)
 {
   double result;
-  __asm__ ("fsqrt %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fsqrt %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (d));
   return result;
 }
@@ -852,16 +852,16 @@ __fsqrt(double d)
 /*
  * __fsqrts - Floating-Point Square Root Single-Precision
  *
- * WARNING: Illegal instruction for PowerPC 603, 604, 750, 7400, 7410,
+ * WARNING: Illegal instruction for PowerPC 603, 604, 750, 7400, 7410, 
  * 7450, and 7455
  */
 static inline float __fsqrts (float f) __attribute__((always_inline));
-static inline float
+static inline float 
 __fsqrts (float f)
 {
   float result;
-  __asm__ ("fsqrts %0, %1"
-           /* outputs:  */ : "=f" (result)
+  __asm__ ("fsqrts %0, %1" 
+           /* outputs:  */ : "=f" (result) 
            /* inputs:   */ : "f" (f));
   return result;
 }
@@ -870,12 +870,12 @@ __fsqrts (float f)
  * __mulhw - Multiply High Word
  */
 static inline int __mulhw (int a, int b) __attribute__((always_inline));
-static inline int
+static inline int 
 __mulhw (int a, int b)
 {
   int result;
-  __asm__ ("mulhw %0, %1, %2"
-           /* outputs:  */ : "=r" (result)
+  __asm__ ("mulhw %0, %1, %2" 
+           /* outputs:  */ : "=r" (result) 
            /* inputs:   */ : "r" (a), "r"(b));
   return result;
 }
@@ -884,12 +884,12 @@ __mulhw (int a, int b)
  * __mulhwu - Multiply High Word Unsigned
  */
 static inline unsigned int __mulhwu (unsigned int a, unsigned int b) __attribute__((always_inline));
-static inline unsigned int
+static inline unsigned int 
 __mulhwu (unsigned int a, unsigned int b)
 {
   unsigned int result;
-  __asm__ ("mulhwu %0, %1, %2"
-           /* outputs:  */ : "=r" (result)
+  __asm__ ("mulhwu %0, %1, %2" 
+           /* outputs:  */ : "=r" (result) 
            /* inputs:   */ : "r" (a), "r"(b));
   return result;
 }
@@ -928,11 +928,11 @@ __mulhwu (unsigned int a, unsigned int b)
  * __mffs - Move from FPSCR
  */
 static inline double __mffs (void) __attribute__((always_inline));
-static inline double
+static inline double 
 __mffs (void)
 {
   double result;
-  __asm__ volatile ("mffs %0"
+  __asm__ volatile ("mffs %0" 
                     /* outputs:  */ : "=f" (result));
   return result;
 }
@@ -966,17 +966,17 @@ __mffs (void)
 /*
  * __OSReadSwapSInt16
  *
- * lhbrx for signed shorts.  This will do the required sign
+ * lhbrx for signed shorts.  This will do the required sign 
  * extension after load and byteswap.
  */
 static inline signed short __OSReadSwapSInt16 (signed short *base, int index) __attribute__((always_inline));
-static inline signed short
+static inline signed short 
 __OSReadSwapSInt16 (signed short *base, int index)
 {
   signed long result;
-  __asm__ volatile ("lhbrx %0, %1, %2"
-		    /* outputs:  */ : "=r" (result)
-		    /* inputs:   */ : "b%" (index), "r" (base)
+  __asm__ volatile ("lhbrx %0, %1, %2" 
+		    /* outputs:  */ : "=r" (result) 
+		    /* inputs:   */ : "b%" (index), "r" (base) 
 		    /* clobbers: */ : "memory");
   return result;
 }
@@ -985,7 +985,7 @@ __OSReadSwapSInt16 (signed short *base, int index)
  * __OSReadSwapUInt16
  */
 static inline unsigned short __OSReadSwapUInt16 (volatile void *base, int inex) __attribute__((always_inline));
-static inline unsigned short
+static inline unsigned short 
 __OSReadSwapUInt16 (volatile void *base, int index)
 {
   unsigned long result;
@@ -1000,7 +1000,7 @@ __OSReadSwapUInt16 (volatile void *base, int index)
  * __astrcmp - assembly strcmp
  */
 static inline int astrcmp (const char *in_s1, const char *in_s2) __attribute__((always_inline));
-static inline int
+static inline int 
 astrcmp (const char *in_s1, const char *in_s2)
 {
   int result, temp;
@@ -1014,7 +1014,7 @@ astrcmp (const char *in_s1, const char *in_s2)
            "\tbeq- cr1,2f\n"
            "\tbeq+ 1b\n2:"
             /* outputs: */  : "=&r" (result), "+b" (s1), "+b" (s2), "=r" (temp)
-            /* inputs: */   :
+            /* inputs: */   : 
             /* clobbers: */ : "cr0", "cr1", "memory");
 
   return result;
@@ -1026,7 +1026,7 @@ astrcmp (const char *in_s1, const char *in_s2)
    * "+b" (s1)          means: 's1' is read from and written to (the '+'),
    *                    and it must be a base GP register (i.e., not R0.)
    * "=r" (temp)        means: 'temp' is any GP reg and it's only written to.
-   *
+   * 
    * "memory"           in the 'clobbers' section means that gcc will make
    *                    sure that anything that should be in memory IS there
    *                    before calling this routine.
