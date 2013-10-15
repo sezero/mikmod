@@ -75,6 +75,7 @@ libmikmod_la_SOURCES = \
 		loaders/load_stm.c \
 		loaders/load_stx.c \
 		loaders/load_ult.c \
+		loaders/load_umx.c \
 		loaders/load_uni.c \
 		loaders/load_xm.c \
 		mmio/mmalloc.c \

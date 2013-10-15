@@ -51,6 +51,7 @@ static void MikMod_RegisterAllLoaders_internal(void)
 	_mm_registerloader(&load_stm);
 	_mm_registerloader(&load_stx);
 	_mm_registerloader(&load_ult);
+	_mm_registerloader(&load_umx);
 	_mm_registerloader(&load_uni);
 	_mm_registerloader(&load_xm);
 

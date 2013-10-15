@@ -98,6 +98,7 @@ out/load_s3m.o: include/config.h ../include/mikmod_internals.h
 out/load_stm.o: include/config.h ../include/mikmod_internals.h
 out/load_stx.o: include/config.h ../include/mikmod_internals.h
 out/load_ult.o: include/config.h ../include/mikmod_internals.h
+out/load_umx.o: include/config.h ../include/mikmod_internals.h
 out/load_uni.o: include/config.h ../include/mikmod_internals.h
 out/load_xm.o: include/config.h ../include/mikmod_internals.h
 out/mdreg.o: include/config.h ../include/mikmod_internals.h

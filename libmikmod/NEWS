@@ -1,9 +1,14 @@
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================
 
-libmikmod 3.3.3 was released on 14-Oct-2013.
-This is a minor bug fix/maintenance release.
+libmikmod 3.3.3 was released on 15-Oct-2013.
+This is a minor bug fix/maintenance release, with a new umx loader
+as the new feature.
 
+- New loader to load modules contained in UMX files from games like
+  Unreal, DeusEx, etc. (Developers: custom MREADER implementations
+  must respect the 'iobase' field for umx loading to work for them.
+  see the splayMEM example app source.)
 - AIFF file writer now silently ignores and clears float output mode.
 - Fixed a small memory leak in samples freeing (thanks to S. Michel.)
 - Fixed calling the previous position while at position 0 resulting

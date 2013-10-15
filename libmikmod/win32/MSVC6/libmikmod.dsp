@@ -208,6 +208,10 @@ SOURCE=..\..\loaders\load_ult.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\loaders\load_umx.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\loaders\load_uni.c
 # End Source File
 # Begin Source File

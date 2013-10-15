@@ -131,14 +131,15 @@ EXPORTS
     load_stm @130 DATA
     load_stx @131 DATA
     load_ult @132 DATA
-    load_uni @133 DATA
-    load_xm @134 DATA
-    md_device @135 DATA
-    md_driver @136 DATA
-    md_mixfreq @137 DATA
-    md_mode @138 DATA
-    md_musicvolume @139 DATA
-    md_pansep @140 DATA
-    md_reverb @141 DATA
-    md_sndfxvolume @142 DATA
-    md_volume @143 DATA
+    load_umx @133 DATA
+    load_uni @134 DATA
+    load_xm @135 DATA
+    md_device @136 DATA
+    md_driver @137 DATA
+    md_mixfreq @138 DATA
+    md_mode @139 DATA
+    md_musicvolume @140 DATA
+    md_pansep @141 DATA
+    md_reverb @142 DATA
+    md_sndfxvolume @143 DATA
+    md_volume @144 DATA

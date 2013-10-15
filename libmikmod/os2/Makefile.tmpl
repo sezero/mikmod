@@ -21,7 +21,7 @@ OBJ=$(DRIVER_OBJ) \
     drv_nos.o drv_aiff.o drv_raw.o drv_stdout.o drv_wav.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
-    load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
+    load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
@@ -116,6 +116,9 @@ load_stx.o:	../loaders/load_stx.c \
 load_ult.o:	../loaders/load_ult.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_ult.c
+load_umx.o:	../loaders/load_umx.c \
+			../include/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) @ORULE@ ../loaders/load_umx.c
 load_uni.o:	../loaders/load_uni.c \
 			../include/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) @ORULE@ ../loaders/load_uni.c

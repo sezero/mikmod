@@ -47,7 +47,7 @@
 		A4E3AF4805D43FCC000F1B47 /* mmio.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE78017CB3D10103A810 /* mmio.c */; };
 		A4E3AF4905D43FCC000F1B47 /* mdreg.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5A017CB3B80103A810 /* mdreg.c */; };
 		A4E3AF4A05D43FCC000F1B47 /* mdriver.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5B017CB3B80103A810 /* mdriver.c */; };
-		A4E3AF4B05D43FCC000F1B47 /* mdulaw.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5C017CB3B80103A810 /* mdulaw.c */; };
+		A4E3AF4B05D43FCC000F1B47 /* load_umx.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5C017CB3B80103A810 /* load_umx.c */; };
 		A4E3AF4C05D43FCC000F1B47 /* mloader.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5D017CB3B80103A810 /* mloader.c */; };
 		A4E3AF4D05D43FCC000F1B47 /* mlreg.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5E017CB3B80103A810 /* mlreg.c */; };
 		A4E3AF4E05D43FCC000F1B47 /* mlutil.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5F017CB3B80103A810 /* mlutil.c */; };
@@ -92,7 +92,7 @@
 		A4E3AF7D05D43FCC000F1B47 /* mmio.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE78017CB3D10103A810 /* mmio.c */; };
 		A4E3AF7E05D43FCC000F1B47 /* mdreg.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5A017CB3B80103A810 /* mdreg.c */; };
 		A4E3AF7F05D43FCC000F1B47 /* mdriver.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5B017CB3B80103A810 /* mdriver.c */; };
-		A4E3AF8005D43FCC000F1B47 /* mdulaw.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5C017CB3B80103A810 /* mdulaw.c */; };
+		A4E3AF8005D43FCC000F1B47 /* load_umx.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5C017CB3B80103A810 /* load_umx.c */; };
 		A4E3AF8105D43FCC000F1B47 /* mloader.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5D017CB3B80103A810 /* mloader.c */; };
 		A4E3AF8205D43FCC000F1B47 /* mlreg.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5E017CB3B80103A810 /* mlreg.c */; };
 		A4E3AF8305D43FCC000F1B47 /* mlutil.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE5F017CB3B80103A810 /* mlutil.c */; };
@@ -158,7 +158,7 @@
 		F5F5DE43017CB3950103A810 /* load_xm.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = load_xm.c; path = ../loaders/load_xm.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5A017CB3B80103A810 /* mdreg.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mdreg.c; path = /Users/stephane/Dev/libmikmod/playercode/mdreg.c; sourceTree = "<absolute>"; };
 		F5F5DE5B017CB3B80103A810 /* mdriver.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mdriver.c; path = ../playercode/mdriver.c; sourceTree = SOURCE_ROOT; };
-		F5F5DE5C017CB3B80103A810 /* mdulaw.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mdulaw.c; path = ../playercode/mdulaw.c; sourceTree = SOURCE_ROOT; };
+		F5F5DE5C017CB3B80103A810 /* load_umx.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = load_umx.c; path = ../loaders/load_umx.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5D017CB3B80103A810 /* mloader.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mloader.c; path = ../playercode/mloader.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5E017CB3B80103A810 /* mlreg.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mlreg.c; path = ../playercode/mlreg.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5F017CB3B80103A810 /* mlutil.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mlutil.c; path = ../playercode/mlutil.c; sourceTree = SOURCE_ROOT; };
@@ -325,7 +325,7 @@
 			children = (
 				F5F5DE5A017CB3B80103A810 /* mdreg.c */,
 				F5F5DE5B017CB3B80103A810 /* mdriver.c */,
-				F5F5DE5C017CB3B80103A810 /* mdulaw.c */,
+				F5F5DE5C017CB3B80103A810 /* load_umx.c */,
 				F5F5DE5D017CB3B80103A810 /* mloader.c */,
 				F5F5DE5E017CB3B80103A810 /* mlreg.c */,
 				F5F5DE5F017CB3B80103A810 /* mlutil.c */,
@@ -493,7 +493,7 @@
 				A4E3AF4805D43FCC000F1B47 /* mmio.c in Sources */,
 				A4E3AF4905D43FCC000F1B47 /* mdreg.c in Sources */,
 				A4E3AF4A05D43FCC000F1B47 /* mdriver.c in Sources */,
-				A4E3AF4B05D43FCC000F1B47 /* mdulaw.c in Sources */,
+				A4E3AF4B05D43FCC000F1B47 /* load_umx.c in Sources */,
 				A4E3AF4C05D43FCC000F1B47 /* mloader.c in Sources */,
 				A4E3AF4D05D43FCC000F1B47 /* mlreg.c in Sources */,
 				A4E3AF4E05D43FCC000F1B47 /* mlutil.c in Sources */,
@@ -545,7 +545,7 @@
 				A4E3AF7D05D43FCC000F1B47 /* mmio.c in Sources */,
 				A4E3AF7E05D43FCC000F1B47 /* mdreg.c in Sources */,
 				A4E3AF7F05D43FCC000F1B47 /* mdriver.c in Sources */,
-				A4E3AF8005D43FCC000F1B47 /* mdulaw.c in Sources */,
+				A4E3AF8005D43FCC000F1B47 /* load_umx.c in Sources */,
 				A4E3AF8105D43FCC000F1B47 /* mloader.c in Sources */,
 				A4E3AF8205D43FCC000F1B47 /* mlreg.c in Sources */,
 				A4E3AF8305D43FCC000F1B47 /* mlutil.c in Sources */,
@@ -568,7 +568,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 5;
+				DYLIB_CURRENT_VERSION = 6;
 				EXPORTED_SYMBOLS_FILE = libmikmod.export;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
@@ -603,7 +603,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 5;
+				DYLIB_CURRENT_VERSION = 6;
 				EXPORTED_SYMBOLS_FILE = libmikmod.export;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
@@ -640,7 +640,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 5;
+				DYLIB_CURRENT_VERSION = 6;
 				EXPORTED_SYMBOLS_FILE = libmikmod.export;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
@@ -669,7 +669,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 5;
+				DYLIB_CURRENT_VERSION = 6;
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -700,7 +700,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 5;
+				DYLIB_CURRENT_VERSION = 6;
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -733,7 +733,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 5;
+				DYLIB_CURRENT_VERSION = 6;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "MIKMOD_BUILD HAVE_CONFIG_H";

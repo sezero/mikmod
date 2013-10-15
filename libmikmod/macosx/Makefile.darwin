@@ -60,7 +60,7 @@ CFLAGS+=-ffast-math -fno-common
 CFLAGS+=-fvisibility=hidden -DSYM_VISIBILITY
 #CFLAGS+=-g
 LDFLAGS=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
-LDFLAGS+=-Wl,-compatibility_version,4 -Wl,-current_version,5.0
+LDFLAGS+=-Wl,-compatibility_version,4 -Wl,-current_version,6.0
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6
 #CPPFLAGS+=-DHAVE_POSIX_MEMALIGN
@@ -84,7 +84,7 @@ OBJ=$(DRIVER_OBJ) \
     drv_openal.o drv_sdl.o drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
-    load_s3m.o load_stm.o load_stx.o load_ult.o load_uni.o load_xm.o \
+    load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o mdriver.o mdreg.o \
     mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
@@ -216,6 +216,9 @@ load_stx.o:     ../loaders/load_stx.c \
 load_ult.o:     ../loaders/load_ult.c \
 	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../loaders/load_ult.c -o load_ult.o
+load_umx.o:     ../loaders/load_umx.c \
+	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+	$(COMPILE) ../loaders/load_umx.c -o load_umx.o
 load_uni.o:     ../loaders/load_uni.c \
 	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
 	$(COMPILE) ../loaders/load_uni.c -o load_uni.o

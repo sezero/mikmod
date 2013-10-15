@@ -20,9 +20,9 @@ AM_MAINTAINER_MODE
 # - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 # - interfaces added -> increment AGE
 # - interfaces removed -> AGE = 0
-MIKMOD_LT_CURRENT=4
+MIKMOD_LT_CURRENT=5
 MIKMOD_LT_REVISION=0
-MIKMOD_LT_AGE=1
+MIKMOD_LT_AGE=2
 
 AC_SUBST(MIKMOD_LT_CURRENT)
 AC_SUBST(MIKMOD_LT_REVISION)

@@ -608,6 +608,7 @@ MIKMODAPI extern struct MLOADER load_stm; /* ScreamTracker 2 (by Future Crew) */
 MIKMODAPI extern struct MLOADER load_stx; /* STMIK 0.2 (by Future Crew) */
 MIKMODAPI extern struct MLOADER load_s3m; /* ScreamTracker 3 (by Future Crew) */
 MIKMODAPI extern struct MLOADER load_ult; /* UltraTracker (by MAS) */
+MIKMODAPI extern struct MLOADER load_umx; /* Unreal UMX container of Epic Games */
 MIKMODAPI extern struct MLOADER load_uni; /* MikMod and APlayer internal module format */
 MIKMODAPI extern struct MLOADER load_xm;  /* FastTracker 2 (by Triton) */
 

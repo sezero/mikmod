@@ -170,6 +170,7 @@ LibObjects68K		=	¶
 					{obj68k}load_stm.c.o ¶
 					{obj68k}load_stx.c.o ¶
 					{obj68k}load_ult.c.o ¶
+					{obj68k}load_umx.c.o ¶
 					{obj68k}load_uni.c.o ¶
 					{obj68k}load_xm.c.o ¶
 					{obj68k}drv_nos.c.o ¶
@@ -215,6 +216,7 @@ LibObjectsPPC	=	¶
 					{objppc}load_stm.c.x ¶
 					{objppc}load_stx.c.x ¶
 					{objppc}load_ult.c.x ¶
+					{objppc}load_umx.c.x ¶
 					{objppc}load_uni.c.x ¶
 					{objppc}load_xm.c.x ¶
 					{objppc}drv_nos.c.x ¶

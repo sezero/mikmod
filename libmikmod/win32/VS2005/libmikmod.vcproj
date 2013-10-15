@@ -430,6 +430,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\loaders\load_umx.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\loaders\load_uni.c"
 				>
 			</File>

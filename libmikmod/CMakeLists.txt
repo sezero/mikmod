@@ -275,7 +275,6 @@ ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 # always define MIKMOD_BUILD when building libmikmod
 ADD_DEFINITIONS("-DMIKMOD_BUILD")
 
-
 SET (MIKMOD_LIB_MODULES
     drivers/drv_AF.c
     drivers/drv_aiff.c
@@ -321,6 +320,7 @@ SET (MIKMOD_LIB_MODULES
     loaders/load_stm.c
     loaders/load_stx.c
     loaders/load_ult.c
+    loaders/load_umx.c
     loaders/load_uni.c
     loaders/load_xm.c
     mmio/mmalloc.c
@@ -372,7 +372,7 @@ IF (ENABLE_STATIC)
 ENDIF (ENABLE_STATIC)
 
 SET_TARGET_PROPERTIES(mikmod
-    PROPERTIES VERSION 3.1.0 SOVERSION 3
+    PROPERTIES VERSION 3.2.0 SOVERSION 3
     )
 IF(WIN32)
     SET_TARGET_PROPERTIES(mikmod

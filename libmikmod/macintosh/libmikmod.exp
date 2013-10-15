@@ -69,6 +69,7 @@ load_s3m
 load_stm
 load_stx
 load_ult
+load_umx
 load_uni
 load_xm
 Player_Load

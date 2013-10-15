@@ -17,5 +17,6 @@ EXTRA_DIST = CMakeLists.txt \
              load_stm.c \
              load_stx.c \
              load_ult.c \
+             load_umx.c \
              load_uni.c \
              load_xm.c

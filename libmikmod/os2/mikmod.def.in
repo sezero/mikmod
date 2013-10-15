@@ -120,12 +120,13 @@ EXPORTS
 	load_stm					@122
 	load_stx					@123
 	load_ult					@124
-	load_uni					@125
-	load_xm						@126
-	load_gdm					@127
-	load_okt					@128
-	load_asy					@129
-	load_gt2					@130
+	load_umx					@125
+	load_uni					@126
+	load_xm						@127
+	load_gdm					@128
+	load_okt					@129
+	load_asy					@130
+	load_gt2					@131
 
 	Sample_LoadMem					@135
 	Sample_LoadRaw					@136
@@ -156,4 +157,3 @@ EXPORTS
 	VC_VoiceGetFrequency				@161
 	VC_VoiceGetPanning				@162
 	VC_SetCallback					@163
-

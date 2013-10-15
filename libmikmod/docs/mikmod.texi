@@ -3059,6 +3059,11 @@ This loader recognizes ``UltraTracker'' modules. They are mostly similar to
 Protracker modules, but support two effects per channel.@*
 ``UltraTracker'' was written by MAS of Prophecy, a.k.a.@: Marc Andre Schallehn,
 and released in 1993.
+@item load_umx
+This loader recognizes the modules in ``umx'' files from games like ``Unreal'',
+``DeusEx'', etc. To libmikmod, UMX is just a container and the real music
+format may be one of ``ScreamTracker 3'', ``Impulse Tracker'', ``FastTracker 2'',
+or possibly a ``Protracker'' compatible one.
 @item load_uni
 This loader recognizes ``UNIMOD'' modules. This is the internal format used by
 MikMod and APlayer. Use of this format is discouraged, this loader being
