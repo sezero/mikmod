@@ -348,8 +348,8 @@ static umx_info *umx_data = NULL;
 
 static BOOL UMX_Test(void)
 {
-	SLONG ofs, size;
 	int type;
+	SLONG ofs = 0, size = 0;
 
 	if (umx_data) {
 #ifdef MIKMOD_DEBUG
