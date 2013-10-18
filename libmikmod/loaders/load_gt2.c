@@ -226,6 +226,7 @@ static GT_CHUNK *loadChunk(void)
 		_mm_read_M_UWORDS(&new_chunk->gt2.initial_master_volume, 1, modreader);
 		_mm_read_M_UWORDS(&new_chunk->gt2.num_voices, 1, modreader);
 		new_chunk->gt2.voice_pannings = MikMod_malloc(2*new_chunk->gt2.num_voices);
+		if (new_chunk->gt2.voice_pannings == NULL) goto fail;
 		_mm_read_M_UWORDS(new_chunk->gt2.voice_pannings, new_chunk->gt2.num_voices, modreader);
 		return new_chunk;
 	}
@@ -234,14 +235,19 @@ static GT_CHUNK *loadChunk(void)
 		new_chunk->tvol.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->tvol.num_tracks = _mm_read_M_UWORD(modreader);
 		new_chunk->tvol.track_volumes = MikMod_malloc(new_chunk->tvol.num_tracks * 2);
+		if (new_chunk->tvol.track_volumes == NULL) goto fail;
 		_mm_read_M_UWORDS(new_chunk->tvol.track_volumes, new_chunk->tvol.num_tracks, modreader);
 		return new_chunk;
 	}
 
 	if (!memcmp(new_chunk, "XCOM", 4)) {
+		/* this chunk is a source of security vulnerabilities:
+		 * SA21196, CVE-2006-3879 */
 		new_chunk->xcom.chunk_size = _mm_read_M_ULONG(modreader);
 		new_chunk->xcom.comment_len = _mm_read_M_ULONG(modreader);
+		if (new_chunk->xcom.comment_len == 0xFFFFFFFF) goto fail;
 		new_chunk->xcom.comment = MikMod_malloc(new_chunk->xcom.comment_len + 1);
+		if (new_chunk->xcom.comment == NULL) goto fail;
 		_mm_read_UBYTES(new_chunk->xcom.comment, new_chunk->xcom.comment_len, modreader);
 		return new_chunk;
 	}
@@ -251,6 +257,7 @@ static GT_CHUNK *loadChunk(void)
 		new_chunk->song.song_length = _mm_read_M_UWORD(modreader);
 		new_chunk->song.song_repeat_point = _mm_read_M_UWORD(modreader);
 		new_chunk->song.patterns = MikMod_malloc(2*new_chunk->song.song_length);
+		if (new_chunk->song.patterns == NULL) goto fail;
 		_mm_read_M_UWORDS(new_chunk->song.patterns, new_chunk->song.song_length, modreader);
 		return new_chunk;
 	}
@@ -273,6 +280,7 @@ static GT_CHUNK *loadChunk(void)
 		new_chunk->patd.notes = MikMod_malloc(5 *
 								new_chunk->patd.num_lines *
 								new_chunk->patd.num_tracks);
+		if (new_chunk->patd.notes == NULL) goto fail;
 		_mm_read_UBYTES(new_chunk->patd.notes,
 				new_chunk->patd.num_lines * new_chunk->patd.num_tracks * 5,
 				modreader);
@@ -304,9 +312,34 @@ static GT_CHUNK *loadChunk(void)
 	}
 
 	printf("?? %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
-
+fail:
 	MikMod_free(new_chunk);
 	return NULL; /* unknown chunk */
+}
+
+static void freeChunk(GT_CHUNK *c)
+{
+	if (!memcmp(c, "GT2", 3)) {
+		if (c->gt2.voice_pannings)
+			MikMod_free(c->gt2.voice_pannings);
+	}
+	else if (!memcmp(c, "TVOL", 4)) {
+		if (c->tvol.track_volumes)
+			MikMod_free(c->tvol.track_volumes);
+	}
+	else if (!memcmp(c, "XCOM", 4)) {
+		if (c->xcom.comment)
+			MikMod_free(c->xcom.comment);
+	}
+	else if (!memcmp(c, "SONG", 4)) {
+		if (c->song.patterns)
+			MikMod_free(c->song.patterns);
+	}
+	else if (!memcmp(c, "PATD", 4)) {
+		if (c->patd.notes)
+			MikMod_free(c->patd.notes);
+	}
+	MikMod_free(c);
 }
 
 static BOOL GT2_Test(void)
@@ -338,7 +371,7 @@ static BOOL GT2_Load(BOOL curious)
 	while ((tmp = loadChunk()) != NULL) {
 		/* FIXME: to be completed */
 		printf("%c%c%c%c\n", tmp->id[0], tmp->id[1], tmp->id[2], tmp->id[3]);
-		MikMod_free(tmp);
+		freeChunk(tmp);
 	}
 
 	return 0;
