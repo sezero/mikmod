@@ -6,7 +6,7 @@ libmikmod 3.3.4 was released on XX-XXX-XXX.
 - Fix CVE-2006-3879 (Secunia 21196) for Graoumf tracker (gt2) loader.
   (the loader is non-functional yet but the issue was there.)
 - Fix memory leaks in the  for Graoumf tracker (gt2) loader.
-
+- UMX loader: Support umx music files from unreal 1997/98 beta version.
 
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================
@@ -120,27 +120,26 @@ libmikmod 3.2.0 was released on 01-June-2012.
 
 THANKS
 
-- Axel "awe" Wefers <awe@fruitz-of-dojo.de>,
-  for creating the CoreAudio driver, the new
-  AIFF driver, and fixes for the wav output driver.
-- Frank Loemker, for sending me his collection of patches
-  for libmikmod.
+- Axel "awe" Wefers <awe@fruitz-of-dojo.de>, for creating the CoreAudio
+  driver, the new AIFF driver, and fixes for the wav output driver.
+- Frank Loemker, for sending me his collection of patches for libmikmod.
 - Anders F Björklund <afb@algonet.se>, for updates, fixes and tests on
   Mac Platforms and rpm support.
 - Ivan Shmakov, for the NAS audio driver.
 - Various downstream patch writers (from Mandriva, SuSE, Red Hat/Fedora,
-Debian, etc.)
+  Debian, etc.)
 - P. Martin - the macports maintainer for some patches.
 - Stéphan Kochen for two patches: one to change MDRIVER fields to "const",
-and the other with putting variable declarations at the start of block (which
-is more C89 compliant and fixes compilation on Microsoft Visual C++).
+  and the other with putting variable declarations at the start of block
+  (which is more C89 compliant and fixes compilation on Microsoft Visual
+  C++).
 
 NEW FEATURES
 
 - MacOS X CoreAudio driver
 - Carbon support
-- Loader for ASYLUM Music Format v1.0 (.amf) modules,
-  as used in crusader games.
+- Loader for ASYLUM Music Format v1.0 (.amf) modules, as used in crusader
+  games.
 - New function 'Player_QueryVoices' added, which is used to return
   dynamic channel information about the module player. (Mikmod 3.2.2 uses
   it for its dynamic panels).
@@ -149,21 +148,25 @@ NEW FEATURES
 - AIFF disk writer driver.
 - RPM support. To build a rpm, download the tar.gz, and run this:
    % rpmbuild -tb libmikmod-3.2.0-beta2.tar.gz
-- New NAS driver (Network Audio System). Tested with nasd and NCD X terminals.
-- MREADERs now have an iobase member (previously was a static variable in mmio.c). This
-  permits to have many MREADERs with different iobase base values.
+- New NAS driver (Network Audio System). Tested with nasd and NCD X
+  terminals.
+- MREADERs now have an iobase member (previously was a static variable
+  in mmio.c). This permits to have many MREADERs with different iobase
+  base values.
 - Created an example/ subdirectory, to hold programming examples.
-- Added functions to read from memory (Player_LoadMem, Sample_LoadMem...) and a memory reader in mmio.c
+- Added functions to read from memory (Player_LoadMem, Sample_LoadMem...)
+  and a memory reader in mmio.c
 - renamed internal _mm_malloc function to MikMod_malloc, which is now
   part of the API.
-- Raw samples can now be loaded using the new Sample_LoadRaw* family of functions for sound effects.
+- Raw samples can now be loaded using the new Sample_LoadRaw* family of
+  functions for sound effects.
 - PowerPC 64 support
-- ALSA (Advanced Linux Sound Architecture) driver is now working with "recent"
-(actually a few years back) ALSAs.
+- ALSA (Advanced Linux Sound Architecture) driver is now working with
+  "recent" (actually a few years back) ALSAs.
 - Change MDRIVER "char *" fields to "const char *".
     - Thanks to Stéphan Kochen.
-- Implement a fix to the ALSA driver in MIKMOD_DYNAMIC mode so it will allow
-linking against libmikmod when "-Wl,--no-undefined" is passed.
+- Implement a fix to the ALSA driver in MIKMOD_DYNAMIC mode so it will
+  allow linking against libmikmod when "-Wl,--no-undefined" is passed.
     - Reported by Andrey Bondrov from Mandriva.
     - The problem was that we used some snd_... identifiers indirectly in
     some macro expansions.
@@ -174,7 +177,8 @@ BUGFIXES
   for sending me Jonathan Perkin's fix)
 - The wav output driver had problems on big endian systems. Thanks to
   Axel "awe" Wefers for fixing this.
-- A warning reported by Stéphane LOEUILLET in libmikmod.m4 with autoconf 1.8 was fixed.
+- A warning reported by Stéphane LOEUILLET in libmikmod.m4 with autoconf
+  1.8 was fixed.
 - The 'card' argument, supported by the OSS driver was not documented via
   the MDRIVER->CmdLineHelp string.
 - libmikmod-3.1.11-CVE-2010-2546,2971.diff (from Mandriva/Mageia).
@@ -187,10 +191,11 @@ BUGFIXES
     suffers from the
     http://en.wikipedia.org/wiki/Schlemiel_the_Painter%27s_algorithm
     syndrome.
-- Apply a patch for non-blocking opening of the OSS driver. (from Mandriva/Mageia).
+- Apply a patch for non-blocking opening of the OSS driver.
+  (from Mandriva/Mageia).
 - Fixed the prototypes of vc_callback (thanks to P. Martin).
 - Cast a vc_callback parameter to "unsigned char *" instead of "char *",
-becuase the former is what it accepts (thanks to P. Martin).
+  because the former is what it accepts (thanks to P. Martin).
 - Check for Samples' validatity in virtch_common.c (thanks to P. Martin).
 - Fix compilation on MSVC.
     - Thanks to Stéphan Kochen.

@@ -186,7 +186,9 @@ static int read_export (const struct upkg_hdr *hdr,
 	if (!_mm_read_UBYTES(buf, 40, modreader))
 		return -1;
 
+	if (hdr->file_version < 40) idx += 8;	/* 00 00 00 00 00 00 00 00 */
 	get_fci(&buf[idx], &idx);		/* skip junk */
+	if (hdr->file_version < 60) idx += 16;	/* 00 00 00 00 00 FF FF FF FF FF FF FF FF 00 00 00 */
 	t = get_fci(&buf[idx], &idx);		/* type_name */
 	if (hdr->file_version > 61) idx += 4;	/* skip export size */
 	*objsize = get_fci(&buf[idx], &idx);
@@ -243,7 +245,7 @@ static int probe_umx   (const struct upkg_hdr *hdr,
 	_mm_read_UBYTES(buf, 64, modreader);
 
 	get_fci(&buf[idx], &idx);	/* skip class_index */
-	idx += 4;			/* skip int32 package_index */
+	if (hdr->file_version >= 60) idx += 4; /* skip int32 package_index */
 	get_fci(&buf[idx], &idx);	/* skip super_index */
 	get_fci(&buf[idx], &idx);	/* skip object_name */
 	idx += 4;			/* skip int32 object_flags */
@@ -299,6 +301,8 @@ static SLONG probe_header (void *header)
 	}
 
 	switch (hdr->file_version) {
+	case 35: case 37:	/* Unreal beta - */
+	case 40: case 41:				/* 1998 */
 	case 61:/* Unreal */
 	case 62:/* Unreal Tournament */
 	case 63:/* Return to NaPali */
