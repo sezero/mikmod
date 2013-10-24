@@ -1,35 +1,42 @@
 This is the instructions to compile mikmod on win32.
 
-Mikmod can be compiler using the lcc-win32 compiler. I have not tested with
-other compilers. 
+Mikmod can be compiler using Microsoft Visual Studio, lcc-win32,
+or MinGW or MinGW-w64 compilers.
 
-WARNING: I am not an expert in using windows or lcc, but I have
-been able to compile mikmod successfully. It is possible that the 
-instructions I give here are overcomplicated, or things may not be 
-done "the right way". If you have enough knowledge, please feel free 
-to write a better readme for the win32 port.
-
-Step by step instructions.
-
-1) First, compile libmikmod, and install it. 
+1) First, compile libmikmod, and install it.
 
    To install libmikmod, I copied libmikmod.lib (generated
-   when compiling libmikmod) in the /lib directory of lcc. 
-   Next, I copied the file mikmod_build.h in the /include directory
-   of lcc, and renamed it to mikmod.h
+   when compiling libmikmod) in the /lib directory of lcc.
+   Next, I copied the file mikmod.h in the /include directory
+   of lcc.  Should be similar if you used MinGW[-w64] or MSVC.
 
-2) Compile mikmod
+2) Compiling mikmod:
+
+ - using lcc:
    cd to the win32 directory and type make -f Makefile.lcc
 
-   Hopefully, it will compile and a file named mikmod.exe will be created.
+ - using MinGW or MinGW-w64:
+   cd to the win32 directory and type make -f Makefile.mingw
+   (you need GNU make: gmake, or mingw32-make, or whatever)
 
-3) Try it! 
-   There are 2 audio drivers for window. 
-   - DirectSound Driver (Requires DirectX 6)
+ - using MSVC:
+   Compile using project files from MSVC6 or VS2005. The VS2005
+   project file imports just fine into newer Visual Studio versions,
+   e.g. VS2012.
+
+   Hopefully, it will compile and a file named mikmod.exe will be
+   created.
+
+3) Try it!
+   There are 2 audio drivers for windows.
+   - DirectSound Driver (Requires DirectX 6 or newer)
    - waveform-audio
- 
+
+   Depending on how you compliled libmikmod, the XAudio2 driver,
+   and possibly others may be there too.
+
    To choose which driver to use from the command line,
-   do a mikmod -n to get the list of drivers and once you
+   do a mikmod -n to get the list of drivers, and once you
    know the correct driver id, do mikmod -d ?? where ?? is the id.
 
    do mikmod -h for more command line options.

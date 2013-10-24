@@ -7,12 +7,12 @@
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation; either version 2 of the License, or
 	(at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
- 
+
 	You should have received a copy of the GNU General Public License
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -34,18 +34,14 @@
 
 #define playerversion "3.2.4"
 
-#if defined(__OS2__)||defined(__EMX__)
-#define mikversion "-= MikMod/2 " playerversion " =-"
-#else
 #define mikversion "-= MikMod " playerversion " =-"
-#endif
 
 #define mikcopyr mikversion \
 "\n(c) 2004 Raphael Assenat and others - see file AUTHORS for complete list"
 
 #define mikbanner mikcopyr "\n\n" \
 " - MikMod authors and contributors are:\n"                                    \
-"   Jean-Philippe Ajirent - Peter Amstutz - Raphael Assenat - Anders Bjoerklund\n"               \
+"   Jean-Philippe Ajirent - Peter Amstutz - Raphael Assenat - Anders Bjoerklund\n"\
 "   Dimitri Boldyrev - Peter Breitling - Arne de Bruijn - Douglas Carmichael\n"\
 "   Chris Conn - Arnout Cosman - Shlomi Fish - Paul Fisher - Tobias Gloth\n"   \
 "   Roine Gustaffson - Bjornar Henden - Simon Hosie - Stephan Kanthak\n"       \
@@ -53,7 +49,7 @@
 "   Andy Lo A Foe - Frank Loemker - Sylvain Marchand - Claudio Matsuoka\n"     \
 "   Jeremy McDonald - Steve McIntyre - Brian McKinney - Samuel A Megens\n"     \
 "   ``MenTaLguY'' - Jean-Paul Mikkers - Thomas Neumann - C Ray C\n"            \
-"   Steffen Rusitschka - Jake Stine - Stefan Tibus - Tinic Urou\n"             \
+"   Steffen Rusitschka - Ozkan Sezer - Jake Stine - Stefan Tibus - Tinic Urou\n"\
 "   Miodrag Vallat - Kev Vance - Lutz Vieweg - Vince Vu\n"                     \
 "   Valtteri Vuorikoski - Andrew Zabolotny\n"                                  \
 "\n"                                                                           \

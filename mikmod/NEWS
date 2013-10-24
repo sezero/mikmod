@@ -100,6 +100,51 @@ PLATFORM SPECIFIC
   srandom() seed on UNIX platforms. Its primary intent is to assist in
   testing - see https://bitbucket.org/shlomif/mikmod-test-suite .
 
+
+Summary of changes between MikMod 3.2.0 and MikMod 3.2.1:
+================================================================
+
+MikMod 3.2.1 was released on 07/10/2003
+
+BUGFIXES
+
+- Enable/disable color gui should have appeared in configuration dialog, 
+  and On exit sub-menu in other options did not appear.
+
+NEW FEATURES
+
+- If a supported terminal is detected int the $TERM env var,
+  MikMod will set the title bar with -= MikMod x.x.x =- followed by
+  the song title between (). There is a configuration option for this
+  in config->other_options
+
+
+Summary of changes between MikMod 3.1.6 and MikMod 3.2.0:
+================================================================
+
+MikMod 3.2.0 was released on 04/10/2003
+
+THANKS
+- Info Saitz <ingo@debian.org>, the debian MikMod package maintainer for many bug fixes.
+
+BUGFIXES
+
+- Bugfixes from the debian MikMod package
+  + cleaned up the documentation to match the output of the manpage,
+  mikmod --help and the actual option processing.
+  + Security fix when dealing with archives
+  + Won't play LHA-compressed MODs with spaces in their names
+  + Support for files with the extension prepended to the filename. Pretty
+  common on Aminet. Maybe an Amiga convention?
+  + Installed new versions of configure.{guess.sub} to support compiling on newer
+  arches. They are taken from autotools-dev 20030110.1.
+
+NEW FEATURES
+
+- Color ncurse interface, and Option to enable/disable it.
+- Option to quit MikMod automatically when the playlist is finished.
+
+
 Summary of changes between MikMod 3.1.5 and MikMod 3.1.6 (Riom):
 ================================================================
 
