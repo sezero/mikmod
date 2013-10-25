@@ -331,6 +331,7 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 		todo--;
+		if(!todo) goto end;
 	}
 
 	/* Srce is always aligned */
@@ -430,7 +431,7 @@ static SLONGLONG MixSIMDStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLO
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 	}
-
+end:
 	vnf->lastvalL=vnf->lvolsel*sample;
 	vnf->lastvalR=vnf->rvolsel*sample;
 	return idx;
@@ -822,6 +823,7 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 		dste+=2;
 		srce+=8;
 		count--;
+		if(!count) return;
 	}
 
 	/* dste and srce aligned. srce is always aligned. */
@@ -898,6 +900,7 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 		dste+=2;
 		srce+=8;
 		count--;
+		if(!count) return;
 	}
 
 	/* dste and srce aligned. srce is always aligned. */

@@ -158,6 +158,7 @@ static SINTPTR_T MixSIMDStereoNormal(const SWORD* srce,SLONG* dest,SINTPTR_T idx
 		*dest++ += vol[0] * sample;
 		*dest++ += vol[1] * sample;
 		todo--;
+		if(!todo) return idx;
 	}
 
 	/* Srce is always aligned */
