@@ -374,7 +374,8 @@ static BOOL S3M_Load(BOOL curious)
 		_mm_read_string(s.scrs,4,modreader);
 
 		/* ScreamTracker imposes a 64000 bytes (not 64k !) limit */
-		if (s.length > 64000)
+		/* enforce it, if we'll use S3MIT_SCREAM in S3M_ConvertTrack() */
+		if (s.length > 64000 && tracker == 1)
 			s.length = 64000;
 
 		if(_mm_eof(modreader)) {

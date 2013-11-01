@@ -5,8 +5,13 @@ libmikmod 3.3.4 was released on XX-XXX-XXX.
 
 - Fix CVE-2006-3879 (Secunia 21196) for Graoumf tracker (gt2) loader.
   (the loader is non-functional yet but the issue was there.)
-- Fix memory leaks in the  for Graoumf tracker (gt2) loader.
-- UMX loader: Support umx music files from unreal 1997/98 beta version.
+- Fix memory leaks in the Graoumf tracker (gt2) loader.
+- UMX loader: Support umx music files from Unreal 1997/98 beta version.
+- S3M loader: Enforce the 64000 bytes sample length limit, which has
+  been in effect since libmikmod-v3.1.10, only for tracker id 1, i.e.
+  only if setting the S3MIT_SCREAM flag during track conversion. Fixes
+  playback of some rare brokenly prepared files - e.g. Arena2.umx from
+  the unreal game community add-on level decyberduel.
 
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================
