@@ -79,7 +79,7 @@
 #define DMA_MODE_CASCADE	0xC0	/* pass thru DREQ->HRQ, DACK<-HLDA only */
 
 /* Indexable specific DMA registers */
-typedef struct {
+typedef struct __dma_regs_s {
 	unsigned char addr;			/* DMA transfer address register */
 	unsigned char page;			/* DMA page register */
 	unsigned char size;			/* DMA transfer size register */
@@ -169,7 +169,7 @@ static inline int dma_get_count(unsigned int channel)
 	return (channel <= 3) ? count : (count << 1);
 }
 
-typedef struct {
+typedef struct dma_buffer_s {
 	unsigned char *linear;		/* Linear address */
 	unsigned long physical;		/* Physical address */
 	unsigned long size;			/* Buffer size */

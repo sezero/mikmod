@@ -137,12 +137,12 @@ typedef unsigned char boolean;
 /* You can fill some members of this struct (i.e. port,irq,dma) before
  * calling wss_detect() or wss_open()... this will ignore environment settings.
  */
-typedef struct {
+typedef struct __wss_state_s {
 	boolean ok;			/* Set if this structure is properly filled */
 	int port;			/* Base codec port */
 	int irq;			/* codec IRQ */
 	int dma;			/* codec DMA */
-	irq_handle *irq_handle;		/* The interrupt handler */
+	struct irq_handle *irq_handle;	/* The interrupt handler */
 	dma_buffer *dma_buff;		/* Pre-allocated DMA buffer */
 	unsigned char mode;		/* Current WSS mode (WSSMODE_XXX) */
 	boolean open;			/* Whenever the card has been opened */

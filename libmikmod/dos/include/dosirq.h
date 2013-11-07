@@ -25,7 +25,7 @@
 #define PIC1_BASE	0x20		/* PIC1 base */
 #define PIC2_BASE	0xA0		/* PIC2 base */
 
-typedef struct {
+struct irq_handle {
 	void (*c_handler) ();		/* The real interrupt handler */
 	unsigned long handler_size;	/* The size of interrupt handler */
 	unsigned long handler;		/* Interrupt wrapper address */
@@ -35,10 +35,10 @@ typedef struct {
 	unsigned char int_num;		/* Interrupt number */
 	unsigned char pic_base;		/* PIC base (0x20 or 0xA0) */
 	unsigned char pic_mask;		/* Old PIC mask state */
-} irq_handle;
+};
 
 /* Return the enabled state for specific IRQ */
-static inline unsigned char irq_state(irq_handle * irq)
+static inline unsigned char irq_state(struct irq_handle * irq)
 {
 	return ((~inportb(irq->pic_base + 1)) & (0x01 << (irq->irq_num & 7)));
 }
@@ -53,7 +53,7 @@ static inline void _irq_ack(int irqno)
 }
 
 /* Acknowledge the end of interrupt */
-static inline void irq_ack(irq_handle * irq)
+static inline void irq_ack(struct irq_handle * irq)
 {
 	outportb(irq->pic_base, 0x60 | (irq->irq_num & 7));
 	/* For second controller we also should acknowledge first controller */
@@ -76,31 +76,31 @@ static inline void _irq_enable(int irqno)
 }
 
 /* Mask (disable) the particular IRQ given its irq_handle structure */
-static inline void irq_disable(irq_handle * irq)
+static inline void irq_disable(struct irq_handle * irq)
 {
 	outportb(irq->pic_base + 1,
                  inportb(irq->pic_base + 1) | (1 << (irq->irq_num & 7)));
 }
 
 /* Unmask (enable) the particular IRQ given its irq_handle structure */
-static inline void irq_enable(irq_handle * irq)
+static inline void irq_enable(struct irq_handle * irq)
 {
 	outportb(irq->pic_base + 1,
                  inportb(irq->pic_base + 1) & ~(1 << (irq->irq_num & 7)));
 }
 
 /* Check if a specific IRQ is pending: return 0 is no */
-static inline int irq_check(irq_handle * irq)
+static inline int irq_check(struct irq_handle * irq)
 {
 	outportb(irq->pic_base, 0x0B);	/* Read IRR vector */
 	return (inportb(irq->pic_base) & (1 << (irq->irq_num & 7)));
 }
 
 /* Hook a specific IRQ; NOTE: IRQ is disabled upon return, irq_enable() it */
-extern irq_handle *irq_hook(int irqno, void (*handler) (),
-                            unsigned long size);
+extern struct irq_handle *irq_hook(int irqno, void (*handler)(),
+                                   unsigned long size);
 /* Unhook a previously hooked IRQ */
-extern void irq_unhook(irq_handle * irq);
+extern void irq_unhook(struct irq_handle * irq);
 /* Start IRQ detection process (IRQ list is given with irq mask) */
 /* irq_confirm should return "1" if the IRQ really comes from the device */
 extern void irq_detect_start(unsigned int irqs,

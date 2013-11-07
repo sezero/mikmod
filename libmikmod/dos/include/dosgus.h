@@ -281,8 +281,8 @@
 typedef unsigned char boolean;
 /* Prototype for functions that do block transfers to GUS DRAM:
    flags can contain any of the following bits:
-      GUS_WAVE_16BIT    - sample is 16-bit
-      GUS_WAVE_UNSIGNED - do not invert sign bit while downloading
+   GUS_WAVE_16BIT    - sample is 16-bit
+   GUS_WAVE_UNSIGNED - do not invert sign bit while downloading
  */
 typedef void (*__gus_transfer_func) (unsigned long address,
                                      unsigned char *source,
@@ -300,7 +300,7 @@ typedef struct __struct_gus_mcb {
 } __gus_mcb;
 
 /* Structure defining overall GUS state/information */
-typedef struct {
+typedef struct __gus_state_s {
 	unsigned int port;			/* Base I/O port (0x220, 0x240, ...) */
 	unsigned int irq[2];			/* GF1 IRQ and MIDI IRQ */
 	unsigned int dma[2];			/* Play / record DMA */
@@ -316,7 +316,7 @@ typedef struct {
 	volatile unsigned int t2_countdown;	/* t2_callback is called when this reaches zero */
 	unsigned int t1_multiple;		/* Timer1 handler is called once per such many ticks */
 	unsigned int t2_multiple;		/* Timer2 handler is called once per such many ticks */
-	irq_handle *gf1_irq;			/* The interrupt handler for GF1 events */
+	struct irq_handle *gf1_irq;		/* The interrupt handler for GF1 events */
 	dma_buffer *dma_buff;			/* Pre-allocated DMA buffer */
 	__gus_callback dma_callback;		/* Routine called at end of DMA transfers */
 	__gus_callback t1_callback;		/* Routine called on Timer1 events */

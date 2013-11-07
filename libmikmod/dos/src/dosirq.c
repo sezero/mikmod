@@ -135,10 +135,10 @@ static void _free_iret_wrapper(_go32_dpmi_seginfo * info)
 	MikMod_free((void *)info->pm_offset);
 }
 
-irq_handle *irq_hook(int irqno, void (*handler) (), unsigned long size)
+struct irq_handle *irq_hook(int irqno, void (*handler)(), unsigned long size)
 {
 	int interrupt;
-	irq_handle *irq;
+	struct irq_handle *irq;
 	__dpmi_version_ret version;
 	__dpmi_meminfo handler_info, struct_info;
 	_go32_dpmi_seginfo info;
@@ -168,7 +168,7 @@ irq_handle *irq_hook(int irqno, void (*handler) (), unsigned long size)
 		return NULL;
 	}
 
-	irq = (irq_handle *) MikMod_malloc(sizeof(irq_handle));
+	irq = (struct irq_handle *) MikMod_malloc(sizeof(struct irq_handle));
 	irq->c_handler = handler;
 	irq->handler_size = size;
 	irq->handler = info.pm_offset;
@@ -179,7 +179,7 @@ irq_handle *irq_hook(int irqno, void (*handler) (), unsigned long size)
 	irq->pic_base = irqno < 8 ? PIC1_BASE : PIC2_BASE;
 
 	struct_info.address = __djgpp_base_address + (unsigned long)irq;
-	struct_info.size = sizeof(irq_handle);
+	struct_info.size = sizeof(struct irq_handle);
 	if (__dpmi_lock_linear_region(&struct_info)) {
 		MikMod_free(irq);
 		__dpmi_unlock_linear_region(&handler_info);
@@ -193,7 +193,7 @@ irq_handle *irq_hook(int irqno, void (*handler) (), unsigned long size)
 	return irq;
 }
 
-void irq_unhook(irq_handle * irq)
+void irq_unhook(struct irq_handle *irq)
 {
 	_go32_dpmi_seginfo info;
 	__dpmi_meminfo mem_info;
@@ -214,7 +214,7 @@ void irq_unhook(irq_handle * irq)
 
 	/* Unlock the irq_handle structure */
 	mem_info.address = __djgpp_base_address + (unsigned long)irq;
-	mem_info.size = sizeof(irq_handle);
+	mem_info.size = sizeof(struct irq_handle);
 	__dpmi_unlock_linear_region(&mem_info);
 
 	info.pm_offset = irq->handler;
@@ -230,7 +230,7 @@ void irq_unhook(irq_handle * irq)
 }
 
 /*---------------------------------------------- IRQ detection mechanism -----*/
-static irq_handle *__irqs[16];
+static struct irq_handle *__irqs[16];
 static int (*__irq_confirm) (int irqno);
 static volatile unsigned int __irq_mask;
 static volatile unsigned int __irq_count[16];
@@ -278,7 +278,7 @@ void irq_detect_start(unsigned int irqs, int (*irq_confirm) (int irqno))
 	__irq_mask = 0;
 	__irq_confirm = irq_confirm;
 	memset(&__irqs, 0, sizeof(__irqs));
-	memset(&__irq_count, 0, sizeof(__irq_count));
+	memset((void *) &__irq_count, 0, sizeof(__irq_count));
 
 	/* Hook all specified IRQs */
 	for (i = 1; i <= 15; i++)
@@ -314,7 +314,7 @@ int irq_detect_get(int irqno, unsigned int *irqmask)
 void irq_detect_clear()
 {
 	int oldirq = disable();
-	memset(&__irq_count, 0, sizeof(__irq_count));
+	memset((void *) &__irq_count, 0, sizeof(__irq_count));
 	__irq_mask = 0;
 	if (oldirq)
 		enable();

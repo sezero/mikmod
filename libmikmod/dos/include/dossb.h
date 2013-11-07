@@ -199,7 +199,7 @@ typedef unsigned char boolean;
 /* You can fill some members of this struct (i.e. port,irq,dma) before
  * calling sb_detect() or sb_open()... this will ignore environment settings.
  */
-typedef struct {
+typedef struct __sb_state_s {
 	boolean ok;			/* Are structure contents valid? */
 	int port, aweport;		/* sb/awe32 base port */
 	int irq;			/* SoundBlaster IRQ */
@@ -207,7 +207,7 @@ typedef struct {
 	int maxfreq_mono;		/* Maximum discretization frequency / mono mode */
 	int maxfreq_stereo;		/* Maximum discretization frequency / stereo mode */
 	unsigned short dspver;		/* DSP version number */
-	irq_handle *irq_handle;		/* The interrupt handler */
+	struct irq_handle *irq_handle;	/* The interrupt handler */
 	dma_buffer *dma_buff;		/* Pre-allocated DMA buffer */
 	unsigned char caps;		/* SoundBlaster capabilities (SBMODE_XXX) */
 	unsigned char mode;		/* Current SB mode (SBMODE_XXX) */
