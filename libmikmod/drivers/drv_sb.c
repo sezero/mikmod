@@ -131,15 +131,15 @@ static void SB_Callback(void)
 
 	/* If DMA pointer still didn't wrapped around ... */
 	if (dma_pos > buff_tail) {
-		buff_tail += mixer (sb.dma_buff->linear + buff_tail, dma_pos - buff_tail);
+		buff_tail += mixer ((SBYTE *)(sb.dma_buff->linear + buff_tail), dma_pos - buff_tail);
 		/* If we arrived right to the DMA buffer end, jump to the beginning */
 		if (buff_tail >= dma_size)
 			buff_tail = 0;
 	} else {
 		/* If wrapped around, fill first to the end of buffer */
-		mixer (sb.dma_buff->linear + buff_tail, dma_size - buff_tail);
+		mixer ((SBYTE *)(sb.dma_buff->linear + buff_tail), dma_size - buff_tail);
 		/* Now fill from buffer beginning to current DMA pointer */
-		buff_tail = mixer (sb.dma_buff->linear, dma_pos);
+		buff_tail = mixer ((SBYTE *)sb.dma_buff->linear, dma_pos);
 	}
 }
 

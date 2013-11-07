@@ -138,8 +138,8 @@ dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
 		goto exit;
 	}
 
-	buffer = MikMod_malloc(sizeof(dma_buffer));
-	buffer->linear = (void *)(__djgpp_conventional_base + bound * 16);
+	buffer = (dma_buffer *) MikMod_malloc(sizeof(dma_buffer));
+	buffer->linear = (unsigned char *)(__djgpp_conventional_base + bound * 16);
 	buffer->physical = bound * 16;
 	buffer->size = parsize * 16;
 	buffer->selector = selector;

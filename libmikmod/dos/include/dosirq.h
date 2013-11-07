@@ -108,7 +108,7 @@ extern void irq_detect_start(unsigned int irqs,
 /* Finish IRQ detection process */
 extern void irq_detect_end();
 /* Get the count of specific irqno that happened */
-extern int irq_detect_get(int irqno, int *irqmask);
+extern int irq_detect_get(int irqno, unsigned int *irqmask);
 /* Clear IRQ counters */
 extern void irq_detect_clear();
 

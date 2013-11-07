@@ -67,7 +67,7 @@ MIKMODAPI CHAR* MikMod_InfoLoader(void)
 		len += 1 + (l->next ? 1 : 0) + strlen(l->version);
 
 	if(len)
-	  if((list=MikMod_malloc(len*sizeof(CHAR)))) {
+	  if((list=(CHAR*)MikMod_malloc(len*sizeof(CHAR)))) {
 		CHAR *list_end = list;
 		list[0] = 0;
 		/* list all registered module loders */
@@ -172,7 +172,7 @@ BOOL AllocPositions(int total)
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
 	}
-	if(!(of.positions=MikMod_calloc(total,sizeof(UWORD)))) return 0;
+	if(!(of.positions=(UWORD*)MikMod_calloc(total,sizeof(UWORD)))) return 0;
 	return 1;
 }
 
@@ -338,7 +338,7 @@ static MODULE *ML_AllocUniMod(void)
 {
 	MODULE *mf;
 
-	return (mf=MikMod_malloc(sizeof(MODULE)));
+	return (mf=(MODULE*)MikMod_malloc(sizeof(MODULE)));
 }
 
 static void Player_Free_internal(MODULE *mf)

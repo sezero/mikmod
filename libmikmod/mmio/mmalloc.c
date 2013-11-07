@@ -143,7 +143,7 @@ CHAR *MikMod_strdup(const CHAR *s)
 	if (!s) return NULL;
 
 	l = strlen(s) + 1;
-	d = MikMod_calloc(1, l);
+	d = (CHAR *) MikMod_calloc(1, l * sizeof(CHAR));
 	if (d) strcpy(d, s);
 	return d;
 }

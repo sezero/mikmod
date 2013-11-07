@@ -584,12 +584,12 @@ static BOOL LoadInstruments(void)
 					/* Allocate more room for sample information if necessary */
 					if(of.numsmp+u==wavcnt) {
 						wavcnt+=XM_SMPINCR;
-						if(!(nextwav=MikMod_realloc(nextwav,wavcnt*sizeof(ULONG)))){
+						if(!(nextwav=(ULONG*)MikMod_realloc(nextwav,wavcnt*sizeof(ULONG)))){
 							if(wh) { MikMod_free(wh);wh=NULL; }
 							_mm_errno = MMERR_OUT_OF_MEMORY;
 							return 0;
 						}
-						if(!(wh=MikMod_realloc(wh,wavcnt*sizeof(XMWAVHEADER)))) {
+						if(!(wh=(XMWAVHEADER*)MikMod_realloc(wh,wavcnt*sizeof(XMWAVHEADER)))) {
 							MikMod_free(nextwav);nextwav=NULL;
 							_mm_errno = MMERR_OUT_OF_MEMORY;
 							return 0;

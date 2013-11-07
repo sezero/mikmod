@@ -612,12 +612,12 @@ static BOOL IMF_Load(BOOL curious)
 			/* allocate more room for sample information if necessary */
 			if(of.numsmp+u==wavcnt) {
 				wavcnt+=IMF_SMPINCR;
-				if(!(nextwav=MikMod_realloc(nextwav,wavcnt*sizeof(ULONG)))) {
+				if(!(nextwav=(ULONG*)MikMod_realloc(nextwav,wavcnt*sizeof(ULONG)))) {
 					if(wh) MikMod_free(wh);
 					_mm_errno=MMERR_OUT_OF_MEMORY;
 					return 0;
 				}
-				if(!(wh=MikMod_realloc(wh,wavcnt*sizeof(IMFWAVHEADER)))) {
+				if(!(wh=(IMFWAVHEADER*)MikMod_realloc(wh,wavcnt*sizeof(IMFWAVHEADER)))) {
 					MikMod_free(nextwav);
 					_mm_errno=MMERR_OUT_OF_MEMORY;
 					return 0;

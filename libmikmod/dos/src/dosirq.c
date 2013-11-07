@@ -89,7 +89,7 @@ static int _allocate_iret_wrapper(_go32_dpmi_seginfo * info)
 
 	wrappersize = 4 + __irq_stack_size * __irq_stack_count + 4 +
 	  ((long)irqend - (long)irqtpl);
-	irqwrapper = MikMod_malloc(wrappersize);
+	irqwrapper = (unsigned char *) MikMod_malloc(wrappersize);
 	/* Lock the wrapper */
 	handler_info.address = __djgpp_base_address + (unsigned long)irqwrapper;
 	handler_info.size = wrappersize;
@@ -168,7 +168,7 @@ irq_handle *irq_hook(int irqno, void (*handler) (), unsigned long size)
 		return NULL;
 	}
 
-	irq = MikMod_malloc(sizeof(irq_handle));
+	irq = (irq_handle *) MikMod_malloc(sizeof(irq_handle));
 	irq->c_handler = handler;
 	irq->handler_size = size;
 	irq->handler = info.pm_offset;
@@ -300,7 +300,7 @@ void irq_detect_end()
 			irq_unhook(__irqs[i]);
 }
 
-int irq_detect_get(int irqno, int *irqmask)
+int irq_detect_get(int irqno, unsigned int *irqmask)
 {
 	int oldirq = disable();
 	int count = __irq_count[irqno];

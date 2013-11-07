@@ -128,7 +128,7 @@ static int WIN_Init(void)
 	buffersize=md_mixfreq*samplesize*BUFFERSIZE/1000;
 
 	for (n=0;n<NUMBUFFERS;n++) {
-		buffer[n]=MikMod_malloc(buffersize);
+		buffer[n]=(HPSTR)MikMod_malloc(buffersize);
 		header[n].lpData=buffer[n];
 		header[n].dwBufferLength=buffersize;
 		mmr=waveOutPrepareHeader(hwaveout,&header[n],sizeof(WAVEHDR));

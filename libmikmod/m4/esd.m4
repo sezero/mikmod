@@ -69,15 +69,15 @@ char*
 my_strdup (char *str)
 {
   char *new_str;
-  
+
   if (str)
     {
-      new_str = malloc ((strlen (str) + 1) * sizeof(char));
+      new_str = (char *) malloc ((strlen (str) + 1) * sizeof(char));
       strcpy (new_str, str);
     }
   else
     new_str = NULL;
-  
+
   return new_str;
 }
 

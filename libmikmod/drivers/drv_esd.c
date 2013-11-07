@@ -98,8 +98,9 @@ static int ESD_Link(void)
 	if (!libesd) return 1;
 
 	/* resolve function references */
-	if (!(esd_closestream=dlsym(libesd,"esd_close"))) return 1;
-	if (!(esd_playstream=dlsym(libesd,"esd_play_stream"))) return 1;
+	if (!(esd_closestream = (int (*)(int)) dlsym(libesd,"esd_close"))) return 1;
+	if (!(esd_playstream = (int (*)(esd_format_t,int,const char*,const char*))
+					 dlsym(libesd,"esd_play_stream"))) return 1;
 
 	return 0;
 }

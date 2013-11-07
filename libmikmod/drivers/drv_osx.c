@@ -551,7 +551,7 @@ static int OSX_Init (void)
 
 #if !USE_FILL_THREAD
 	/* get the buffer memory */
-	if ((gSoundBuffer = MikMod_malloc_aligned16(gInBufferSize)) == NULL) {
+	if ((gSoundBuffer = (unsigned char *) MikMod_malloc_aligned16(gInBufferSize)) == NULL) {
 		_mm_errno = MMERR_OUT_OF_MEMORY;
 		return 1;
 	}
@@ -564,7 +564,7 @@ static int OSX_Init (void)
 	}
 
 	for (i = 0; i < NUMBER_BACK_BUFFERS; i++) {
-		if ((gSoundBackBuffer[i] = MikMod_malloc_aligned16(gInBufferSize)) == NULL) {
+		if ((gSoundBackBuffer[i] = (unsigned char *) MikMod_malloc_aligned16(gInBufferSize)) == NULL) {
 			_mm_errno = MMERR_OUT_OF_MEMORY;
 			return 1;
 		}

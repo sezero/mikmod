@@ -277,10 +277,10 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 		ret = 1;
 	}
 
-	s = mr->buffer;
+	s = (const unsigned char *) mr->buffer;
 	s += mr->pos;
 	mr->pos += siz;
-	d = ptr;
+	d = (unsigned char *) ptr;
 
 	while (siz) {
 		*d++ = *s++;

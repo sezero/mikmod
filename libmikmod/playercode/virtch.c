@@ -1306,7 +1306,7 @@ int VC1_SetNumVoices(void)
 	if(!(vc_softchn=md_softchn)) return 0;
 
 	if(vinf) MikMod_free(vinf);
-	if(!(vinf= MikMod_calloc(vc_softchn,sizeof(VINFO)))) return 1;
+	if(!(vinf=(VINFO*)MikMod_calloc(vc_softchn,sizeof(VINFO)))) return 1;
 
 	for(t=0;t<vc_softchn;t++) {
 		vinf[t].frq=10000;

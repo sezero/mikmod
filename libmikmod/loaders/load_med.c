@@ -582,7 +582,7 @@ static BOOL MED_Load(BOOL curious)
 		char *name;
 
 		_mm_fseek(modreader, me->songname, SEEK_SET);
-		name = MikMod_malloc(me->songnamelen);
+		name = (char *) MikMod_malloc(me->songnamelen);
 		_mm_read_UBYTES(name, me->songnamelen, modreader);
 		of.songname = DupStr(name, me->songnamelen, 1);
 		MikMod_free(name);
@@ -694,7 +694,7 @@ static CHAR *MED_LoadTitle(void)
 		namelen = _mm_read_M_ULONG(modreader);
 
 		_mm_fseek(modreader, posit, SEEK_SET);
-		name = MikMod_malloc(namelen);
+		name = (CHAR*) MikMod_malloc(namelen);
 		_mm_read_UBYTES(name, namelen, modreader);
 		retvalue = DupStr(name, namelen, 1);
 		MikMod_free(name);

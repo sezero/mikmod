@@ -77,7 +77,7 @@ int *AllocLinear(void)
 {
 	if(of.numsmp>noteindexcount) {
 		noteindexcount=of.numsmp;
-		noteindex=MikMod_realloc(noteindex,noteindexcount*sizeof(int));
+		noteindex=(int*)MikMod_realloc(noteindex,noteindexcount*sizeof(int));
 	}
 	return noteindex;
 }

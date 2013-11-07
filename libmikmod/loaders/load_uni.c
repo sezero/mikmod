@@ -101,7 +101,7 @@ static char * readstring(void)
 
 	len=_mm_read_I_UWORD(modreader);
 	if(len) {
-		str=MikMod_malloc(len+1);
+		str=(char *) MikMod_malloc(len+1);
 		_mm_read_UBYTES(str,len,modreader);
 		str[len]=0;
 	}
@@ -148,7 +148,7 @@ static UBYTE* readtrack(void)
 		len=_mm_read_I_UWORD(modreader);
 
 	if(!len) return NULL;
-	if(!(t=MikMod_malloc(len))) return NULL;
+	if(!(t=(UBYTE*)MikMod_malloc(len))) return NULL;
 	_mm_read_UBYTES(t,len,modreader);
 
 	/* Check if the track is correct */
@@ -415,7 +415,7 @@ static BOOL loadinstr5(void)
 			/* Allocate more room for sample information if necessary */
 			if(of.numsmp+u==wavcnt) {
 				wavcnt+=UNI_SMPINCR;
-				if(!(wh=MikMod_realloc(wh,wavcnt*sizeof(UNISMP05)))) {
+				if(!(wh=(UNISMP05*)MikMod_realloc(wh,wavcnt*sizeof(UNISMP05)))) {
 					_mm_errno=MMERR_OUT_OF_MEMORY;
 					return 0;
 				}
@@ -577,14 +577,14 @@ static BOOL UNI_Load(BOOL curious)
 		oldtype=readstring();
 	if(oldtype) {
 		size_t len=strlen(oldtype)+20;
-		if(!(modtype=MikMod_malloc(len))) return 0;
+		if(!(modtype=(char*)MikMod_malloc(len))) return 0;
 #ifdef HAVE_SNPRINTF
 		snprintf(modtype,len,"%s (was %s)",(universion>=0x100)?"APlayer":"MikCvt2",oldtype);
 #else
 		sprintf(modtype,"%s (was %s)",(universion>=0x100)?"APlayer":"MikCvt2",oldtype);
 #endif
 	} else {
-		if(!(modtype=MikMod_malloc(10))) return 0;
+		if(!(modtype=(char*)MikMod_malloc(10))) return 0;
 #ifdef HAVE_SNPRINTF
 		snprintf(modtype,10,"%s",(universion>=0x100)?"APlayer":"MikCvt3");
 #else

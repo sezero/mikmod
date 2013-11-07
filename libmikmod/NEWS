@@ -15,6 +15,7 @@ libmikmod 3.3.4 was released on XX-XXX-XXX.
 - ULT loader: Fix version array size (was 1 less then its initializer.)
 - ESD driver: Fix signature for esd_playstream function pointer (const)
 - ALSA driver: Remove unused function pointers.
+- The library is compilable using C++ compilers.
 
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================

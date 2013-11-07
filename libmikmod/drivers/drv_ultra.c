@@ -337,7 +337,7 @@ static SWORD Ultra_SampleLoad(struct SAMPLOAD *sload, int type)
 	}
 
 	/* Load sample into normal memory */
-	if (!(buffer = MikMod_malloc(length))) {
+	if (!(buffer = (unsigned char *) MikMod_malloc(length))) {
 		_mm_errno = MMERR_SAMPLE_TOO_BIG;
 		return -1;
 	}

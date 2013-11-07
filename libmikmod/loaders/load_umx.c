@@ -368,7 +368,7 @@ static BOOL UMX_Test(void)
 	if (type < 0 || type > UMUSIC_MOD)
 		return 0;
 
-	umx_data = MikMod_calloc(1, sizeof(umx_info));
+	umx_data = (umx_info*) MikMod_calloc(1, sizeof(umx_info));
 	if (!umx_data) return 0;
 
 	umx_data->type = type;

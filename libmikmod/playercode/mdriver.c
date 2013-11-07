@@ -196,7 +196,7 @@ MIKMODAPI CHAR* MikMod_InfoDriver(void)
 		len += 4 + (l->next ? 1 : 0) + strlen(l->Version);
 
 	if(len)
-	  if((list=MikMod_malloc(len*sizeof(CHAR)))) {
+	  if((list=(CHAR*)MikMod_malloc(len*sizeof(CHAR)))) {
 		CHAR *list_end = list;
 		list[0] = 0;
 		/* list all registered device drivers : */
@@ -902,12 +902,12 @@ CHAR *MD_GetAtom(const CHAR *atomname, const CHAR *cmdline, BOOL implicit)
 
 			if(*ptr=='=') {
 				for(buf=++ptr;(*ptr)&&((*ptr)!=',');ptr++);
-				ret=MikMod_malloc((1+ptr-buf)*sizeof(CHAR));
+				ret=(CHAR *)MikMod_malloc((1+ptr-buf)*sizeof(CHAR));
 				if(ret)
 					strncpy(ret,buf,ptr-buf);
 			} else if((*ptr==',')||(!*ptr)) {
 				if(implicit) {
-					ret=MikMod_malloc((1+ptr-buf)*sizeof(CHAR));
+					ret=(CHAR *)MikMod_malloc((1+ptr-buf)*sizeof(CHAR));
 					if(ret)
 						strncpy(ret,buf,ptr-buf);
 				}
