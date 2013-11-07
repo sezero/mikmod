@@ -12,6 +12,8 @@ libmikmod 3.3.4 was released on XX-XXX-XXX.
   only if setting the S3MIT_SCREAM flag during track conversion. Fixes
   playback of some rare brokenly prepared files - e.g. Arena2.umx from
   the unreal game community add-on level decyberduel.
+- ULT loader: Fix version array size (was 1 less then its initializer.)
+- ALSA driver: Remove unused function pointers.
 
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================

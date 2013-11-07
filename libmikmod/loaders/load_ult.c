@@ -80,7 +80,7 @@ typedef struct ULTEVENT {
 #define ULTS_REVERSE    16
 
 #define ULT_VERSION_LEN 18
-static	CHAR ULT_Version[ULT_VERSION_LEN]="Ultra Tracker v1.x";
+static	CHAR ULT_Version[ULT_VERSION_LEN+1]="Ultra Tracker v1.x";
 
 static	ULTEVENT ev;
 
