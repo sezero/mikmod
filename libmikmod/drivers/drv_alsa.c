@@ -76,11 +76,9 @@ static int (*alsa_pcm_resume)(snd_pcm_t *);
 static int (*alsa_pcm_prepare)(snd_pcm_t *);
 static int (*alsa_pcm_sw_params_sizeof)(void);
 static int (*alsa_pcm_hw_params_sizeof)(void);
-static int(*alsa_ctl_close)(snd_ctl_t*);
 static int(*alsa_pcm_open)(snd_pcm_t**, const char *, int, int);
 static int (*alsa_pcm_set_params)(snd_pcm_t *, snd_pcm_format_t, snd_pcm_access_t,
 				  unsigned int, unsigned int, int, unsigned int);
-static int (*alsa_ctl_pcm_info)(snd_ctl_t*, int, snd_pcm_info_t*);
 static int (*alsa_pcm_close)(snd_pcm_t*);
 static int (*alsa_pcm_drain)(snd_pcm_t*);
 static int (*alsa_pcm_drop)(snd_pcm_t*);
@@ -103,8 +101,6 @@ static void* libasound = NULL;
 #define alsa_pcm_sw_params			snd_pcm_sw_params
 #define alsa_pcm_resume				snd_pcm_resume
 #define alsa_pcm_prepare			snd_pcm_prepare
-#define alsa_ctl_close				snd_ctl_close
-#define alsa_ctl_pcm_info			snd_ctl_pcm_info
 #define alsa_pcm_close				snd_pcm_close
 #define alsa_pcm_drain				snd_pcm_drain
 #define alsa_pcm_drop				snd_pcm_drop
@@ -142,9 +138,7 @@ static int ALSA_Link(void)
 	if (!(alsa_pcm_get_params = dlsym(libasound,"snd_pcm_get_params"))) return 1;
 	if (!(alsa_pcm_hw_params_any = dlsym(libasound,"snd_pcm_hw_params_any"))) return 1;
 	if (!(alsa_pcm_set_params = dlsym(libasound,"snd_pcm_set_params"))) return 1;
-	if (!(alsa_ctl_close = dlsym(libasound,"snd_ctl_close"))) return 1;
 	if (!(alsa_pcm_open = dlsym(libasound,"snd_pcm_open"))) return 1;
-	if (!(alsa_ctl_pcm_info = dlsym(libasound,"snd_ctl_pcm_info"))) return 1;
 	if (!(alsa_pcm_close = dlsym(libasound,"snd_pcm_close"))) return 1;
 	if (!(alsa_pcm_drain = dlsym(libasound,"snd_pcm_drain"))) return 1;
 	if (!(alsa_pcm_drop = dlsym(libasound,"snd_pcm_drop"))) return 1;
@@ -169,9 +163,6 @@ static void ALSA_Unlink(void)
 	alsa_pcm_set_params = NULL;
 	alsa_pcm_get_params = NULL;
 	alsa_pcm_hw_params_any = NULL;
-	alsa_ctl_close = NULL;
-	alsa_ctl_pcm_info = NULL;
-	alsa_ctl_pcm_info = NULL;
 	alsa_pcm_close = NULL;
 	alsa_pcm_drain = NULL;
 	alsa_pcm_drop = NULL;
