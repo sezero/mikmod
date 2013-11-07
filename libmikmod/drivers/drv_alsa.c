@@ -68,10 +68,6 @@ static int (*alsa_pcm_subformat_mask_malloc)(snd_pcm_subformat_mask_t **);
 static int (*alsa_pcm_hw_params_any)(snd_pcm_t *, snd_pcm_hw_params_t *);
 static int (*alsa_pcm_get_params)(snd_pcm_t *, snd_pcm_uframes_t *, snd_pcm_uframes_t *);
 static const char * (*alsa_strerror)(int);
-static int (*alsa_pcm_sw_params_current)(snd_pcm_t *, snd_pcm_sw_params_t *);
-static int (*alsa_pcm_sw_params_set_start_threshold)(snd_pcm_t *, snd_pcm_sw_params_t *,snd_pcm_uframes_t);
-static int (*alsa_pcm_sw_params_set_avail_min)(snd_pcm_t *, snd_pcm_sw_params_t *, snd_pcm_uframes_t);
-static int (*alsa_pcm_sw_params)(snd_pcm_t *, snd_pcm_sw_params_t *);
 static int (*alsa_pcm_resume)(snd_pcm_t *);
 static int (*alsa_pcm_prepare)(snd_pcm_t *);
 static int (*alsa_pcm_sw_params_sizeof)(void);
@@ -83,7 +79,6 @@ static int (*alsa_pcm_close)(snd_pcm_t*);
 static int (*alsa_pcm_drain)(snd_pcm_t*);
 static int (*alsa_pcm_drop)(snd_pcm_t*);
 static int (*alsa_pcm_start)(snd_pcm_t *);
-static snd_pcm_sframes_t (*alsa_pcm_avail_update)(snd_pcm_t*);
 static snd_pcm_sframes_t (*alsa_pcm_writei)(snd_pcm_t*,const void*,snd_pcm_uframes_t);
 
 static void* libasound = NULL;
@@ -95,10 +90,6 @@ static void* libasound = NULL;
 #define alsa_pcm_get_params			snd_pcm_get_params
 #define alsa_pcm_hw_params_any			snd_pcm_hw_params_any
 #define alsa_pcm_set_params			snd_pcm_set_params
-#define alsa_pcm_sw_params_current		snd_pcm_sw_params_current
-#define alsa_pcm_sw_params_set_start_threshold	snd_pcm_sw_params_set_start_threshold
-#define alsa_pcm_sw_params_set_avail_min	snd_pcm_sw_params_set_avail_min
-#define alsa_pcm_sw_params			snd_pcm_sw_params
 #define alsa_pcm_resume				snd_pcm_resume
 #define alsa_pcm_prepare			snd_pcm_prepare
 #define alsa_pcm_close				snd_pcm_close
@@ -106,7 +97,6 @@ static void* libasound = NULL;
 #define alsa_pcm_drop				snd_pcm_drop
 #define alsa_pcm_start				snd_pcm_start
 #define alsa_pcm_open				snd_pcm_open
-#define alsa_pcm_avail_update			snd_pcm_avail_update
 #define alsa_pcm_writei				snd_pcm_writei
 #endif /* MIKMOD_DYNAMIC */
 
@@ -127,14 +117,10 @@ static int ALSA_Link(void)
 
 	if (!(alsa_pcm_subformat_mask_malloc = dlsym(libasound,"snd_pcm_subformat_mask_malloc"))) return 1;
 	if (!(alsa_strerror = dlsym(libasound,"snd_strerror"))) return 1;
-	if (!(alsa_pcm_sw_params = dlsym(libasound,"snd_pcm_sw_params"))) return 1;
 	if (!(alsa_pcm_prepare = dlsym(libasound,"snd_pcm_prepare"))) return 1;
 	if (!(alsa_pcm_sw_params_sizeof = dlsym(libasound,"snd_pcm_sw_params_sizeof"))) return 1;
 	if (!(alsa_pcm_hw_params_sizeof = dlsym(libasound,"snd_pcm_hw_params_sizeof"))) return 1;
 	if (!(alsa_pcm_resume = dlsym(libasound,"snd_pcm_resume"))) return 1;
-	if (!(alsa_pcm_sw_params_set_avail_min = dlsym(libasound,"snd_pcm_sw_params_set_avail_min"))) return 1;
-	if (!(alsa_pcm_sw_params_current = dlsym(libasound,"snd_pcm_sw_params_current"))) return 1;
-	if (!(alsa_pcm_sw_params_set_start_threshold = dlsym(libasound,"snd_pcm_sw_params_set_start_threshold"))) return 1;
 	if (!(alsa_pcm_get_params = dlsym(libasound,"snd_pcm_get_params"))) return 1;
 	if (!(alsa_pcm_hw_params_any = dlsym(libasound,"snd_pcm_hw_params_any"))) return 1;
 	if (!(alsa_pcm_set_params = dlsym(libasound,"snd_pcm_set_params"))) return 1;
@@ -143,8 +129,6 @@ static int ALSA_Link(void)
 	if (!(alsa_pcm_drain = dlsym(libasound,"snd_pcm_drain"))) return 1;
 	if (!(alsa_pcm_drop = dlsym(libasound,"snd_pcm_drop"))) return 1;
 	if (!(alsa_pcm_start = dlsym(libasound,"snd_pcm_start"))) return 1;
-	if (!(alsa_pcm_open = dlsym(libasound,"snd_pcm_open"))) return 1;
-	if (!(alsa_pcm_avail_update = dlsym(libasound,"snd_pcm_avail_update"))) return 1;
 	if (!(alsa_pcm_writei = dlsym(libasound,"snd_pcm_writei"))) return 1;
 
 	return 0;
@@ -154,10 +138,6 @@ static void ALSA_Unlink(void)
 {
 	alsa_pcm_subformat_mask_malloc = NULL;
 	alsa_strerror = NULL;
-	alsa_pcm_sw_params_set_start_threshold = NULL;
-	alsa_pcm_sw_params_current = NULL;
-	alsa_pcm_sw_params_set_avail_min = NULL;
-	alsa_pcm_sw_params = NULL;
 	alsa_pcm_resume = NULL;
 	alsa_pcm_prepare = NULL;
 	alsa_pcm_set_params = NULL;
@@ -168,7 +148,6 @@ static void ALSA_Unlink(void)
 	alsa_pcm_drop = NULL;
 	alsa_pcm_start = NULL;
 	alsa_pcm_open = NULL;
-	alsa_pcm_avail_update = NULL;
 	alsa_pcm_writei = NULL;
 
 	if (libasound) {
@@ -289,7 +268,7 @@ static void ALSA_Exit_internal(void)
 	if (pcm_h) {
 		alsa_pcm_drain(pcm_h);
 		alsa_pcm_close(pcm_h);
-		pcm_h=NULL;
+		pcm_h = NULL;
 	}
 	MikMod_free(audiobuffer);
 }

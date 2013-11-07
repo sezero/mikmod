@@ -62,7 +62,7 @@
 /* note that since we only need the network part of EsounD, we don't need to
    load libasound.so or libaudiofile.so as well */
 static int(*esd_closestream)(int);
-static int(*esd_playstream)(esd_format_t,int,char*,char*);
+static int(*esd_playstream)(esd_format_t,int,const char*,const char*);
 static void* libesd=NULL;
 #ifndef HAVE_RTLD_GLOBAL
 #define RTLD_GLOBAL (0)
@@ -106,9 +106,7 @@ static int ESD_Link(void)
 
 static void ESD_Unlink(void)
 {
-#ifdef HAVE_ESD_CLOSE
 	esd_closestream=NULL;
-#endif
 	esd_playstream=NULL;
 
 	if (libesd) {
