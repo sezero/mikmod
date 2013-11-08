@@ -191,35 +191,35 @@ static int Ultra_Link(void)
 		return 1;
 
 	/* resolve function references */
-#define IMPORT_SYMBOL(x) \
-	if (!(lib##x = dlsym(libgus, #x))) return 1
+#define IMPORT_SYMBOL(x,ret,params) \
+	if (!(lib##x = (ret (*)params) dlsym(libgus, #x))) return 1
 
-	IMPORT_SYMBOL(gus_cards);
-	IMPORT_SYMBOL(gus_close);
-	IMPORT_SYMBOL(gus_do_flush);
-	IMPORT_SYMBOL(gus_do_tempo);
-	IMPORT_SYMBOL(gus_do_voice_frequency);
-	IMPORT_SYMBOL(gus_do_voice_pan);
-	IMPORT_SYMBOL(gus_do_voice_start);
-	IMPORT_SYMBOL(gus_do_voice_start_position);
-	IMPORT_SYMBOL(gus_do_voice_stop);
-	IMPORT_SYMBOL(gus_do_voice_volume);
-	IMPORT_SYMBOL(gus_do_wait);
-	IMPORT_SYMBOL(gus_get_handle);
-	IMPORT_SYMBOL(gus_info);
-	IMPORT_SYMBOL(gus_memory_alloc);
-	IMPORT_SYMBOL(gus_memory_free);
-	IMPORT_SYMBOL(gus_memory_free_size);
-	IMPORT_SYMBOL(gus_memory_pack);
-	IMPORT_SYMBOL(gus_open);
-	IMPORT_SYMBOL(gus_queue_flush);
-	IMPORT_SYMBOL(gus_queue_read_set_size);
-	IMPORT_SYMBOL(gus_queue_write_set_size);
-	IMPORT_SYMBOL(gus_reset);
-	IMPORT_SYMBOL(gus_select);
-	IMPORT_SYMBOL(gus_timer_start);
-	IMPORT_SYMBOL(gus_timer_stop);
-	IMPORT_SYMBOL(gus_timer_tempo);
+	IMPORT_SYMBOL(gus_cards, int, (void));
+	IMPORT_SYMBOL(gus_close, int, (int));
+	IMPORT_SYMBOL(gus_do_flush, int, (void));
+	IMPORT_SYMBOL(gus_do_tempo, void, (unsigned int));
+	IMPORT_SYMBOL(gus_do_voice_frequency, void, (unsigned char, unsigned int));
+	IMPORT_SYMBOL(gus_do_voice_pan, void, (unsigned char, unsigned short));
+	IMPORT_SYMBOL(gus_do_voice_start, void, (unsigned char, unsigned int, unsigned int, unsigned short, unsigned short));
+	IMPORT_SYMBOL(gus_do_voice_start_position, void, (unsigned char, unsigned int, unsigned int, unsigned short, unsigned short, unsigned int));
+	IMPORT_SYMBOL(gus_do_voice_stop, void, (unsigned char, unsigned char));
+	IMPORT_SYMBOL(gus_do_voice_volume, void, (unsigned char, unsigned short));
+	IMPORT_SYMBOL(gus_do_wait, void, (unsigned int));
+	IMPORT_SYMBOL(gus_get_handle, int, (void));
+	IMPORT_SYMBOL(gus_info, int, (gus_info_t *, int));
+	IMPORT_SYMBOL(gus_memory_alloc, int, (gus_instrument_t *));
+	IMPORT_SYMBOL(gus_memory_free, int, (gus_instrument_t *));
+	IMPORT_SYMBOL(gus_memory_free_size, int, (void));
+	IMPORT_SYMBOL(gus_memory_pack, int, (void));
+	IMPORT_SYMBOL(gus_open, int, (int, size_t, int));
+	IMPORT_SYMBOL(gus_queue_flush, int, (void));
+	IMPORT_SYMBOL(gus_queue_read_set_size, int, (int));
+	IMPORT_SYMBOL(gus_queue_write_set_size, int, (int));
+	IMPORT_SYMBOL(gus_reset, int, (int, unsigned int));
+	IMPORT_SYMBOL(gus_select, int, (int));
+	IMPORT_SYMBOL(gus_timer_start, int, (void));
+	IMPORT_SYMBOL(gus_timer_stop, int, (void));
+	IMPORT_SYMBOL(gus_timer_tempo, int, (int));
 #undef IMPORT_SYMBOL
 
 	return 0;

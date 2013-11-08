@@ -182,7 +182,7 @@ static SWORD sampleLoad(SAMPLOAD *s, int type)
 	}
 
 	modSamples.handle=handle;
-	modSamples.data=samples;
+	modSamples.data=(unsigned short *)samples;
 	modSamples.size=bankP->length;
 	if((rc=ioctl(modfd, SAM_IOC_MOD_SAMPLES_LOAD, &modSamples))<0) {
 		MikMod_free(samples);
@@ -479,6 +479,7 @@ MIKMODAPI MDRIVER drv_sam9407={
 	"Linux sam9407 driver v1.0",
 	SAM_NUM_VOICES, 0,
 	"sam9407",
+	NULL,
 
 	commandLine,
 	isPresent,
