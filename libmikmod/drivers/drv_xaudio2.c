@@ -71,50 +71,45 @@
 #define XAUDIO2_NUM_BUFFERS	4
 #define XAUDIO2_BUFFER_SIZE	32768
 
+#if defined(MIKMOD_DEBUG)
+# define dprintf			fprintf
+#elif defined (__GNUC__) && !(defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
+# define dprintf(f, fmt, args...)	do {} while (0)
+#else
+# define dprintf(f, ...)		do {} while (0)
+#endif
+
+#ifndef __cplusplus
+/* doing things C-only .. */
 static HANDLE hBufferEvent;
 
-/* doing things C-only .. */
 static void STDMETHODCALLTYPE cb_OnVoiceProcessPassStart(IXAudio2VoiceCallback* p,
 							 UINT32 SamplesRequired) {
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
 }
 static void STDMETHODCALLTYPE cb_OnVoiceProcessPassEnd(IXAudio2VoiceCallback* p) {
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnStreamEnd(IXAudio2VoiceCallback* p) {
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnBufferStart(IXAudio2VoiceCallback* p,
 						 void* pBufferContext) {
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnBufferStart<\n");*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
 }
 static void STDMETHODCALLTYPE cb_OnBufferEnd(IXAudio2VoiceCallback* p,
 						 void* pBufferContext) {
 	SetEvent(hBufferEvent);
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnBufferEnd<\n");*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnBufferEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnLoopEnd(IXAudio2VoiceCallback* p,
 						 void* pBufferContext) {
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnVoiceError(IXAudio2VoiceCallback* p,
 						 void* pBufferContext,
 						 HRESULT Error) {
-#ifdef _DEBUG
-/*	fprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);*/
-#endif
+	dprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
 }
 static IXAudio2VoiceCallbackVtbl cbVoice_vtbl = {
 	cb_OnVoiceProcessPassStart,
@@ -128,6 +123,55 @@ static IXAudio2VoiceCallbackVtbl cbVoice_vtbl = {
 static IXAudio2VoiceCallback cbVoice = {
 	&cbVoice_vtbl
 };
+#define pcbVoice		&cbVoice
+
+#else /* __cplusplus: */
+class XAudio2VoiceCallback: public IXAudio2VoiceCallback {
+public:
+	HANDLE hBufferEvent;
+public:
+	XAudio2VoiceCallback(): hBufferEvent(CreateEvent(NULL, FALSE, FALSE, "libmikmod XAudio2 Driver buffer Event")) { }
+	virtual ~XAudio2VoiceCallback() { CloseHandle(hBufferEvent); }
+	STDMETHOD_(void, cb_OnVoiceProcessPassStart)(UINT32 SamplesRequired) {
+		dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
+	}
+	STDMETHOD_(void, cb_OnVoiceProcessPassEnd)() {
+		dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");
+	}
+	STDMETHOD_(void, cb_OnStreamEnd)() {
+		dprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
+	}
+	STDMETHOD_(void, cb_OnBufferStart)(void* pBufferContext) {
+		dprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
+	}
+	STDMETHOD_(void, cb_OnBufferEnd)(void* pBufferContext) {
+		SetEvent(hBufferEvent);
+		dprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
+	}
+	STDMETHOD_(void, cb_OnLoopEnd)(void* pBufferContext) {
+		dprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
+	}
+	STDMETHOD_(void, cb_OnVoiceError)(void* pBufferContext, HRESULT Error) {
+		dprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
+	}
+};
+static XAudio2VoiceCallback *pcbVoice = NULL;
+#define hBufferEvent	pcbVoice->hBufferEvent
+#define IXAudio2_Release(p)				((p)->Release())
+#if !defined(DRV_XAUDIO28)
+#define IXAudio2_CreateMasteringVoice(p,a,b,c,d,e,f)	((p)->CreateMasteringVoice(a,b,c,d,e,f))
+#define IXAudio2SourceVoice_GetState(p,a)		((p)->GetState(a))
+#else
+#define IXAudio2_CreateMasteringVoice(p,a,b,c,d,e,f,g)	((p)->CreateMasteringVoice(a,b,c,d,e,f,g))
+#define IXAudio2SourceVoice_GetState(p,a,b)		((p)->GetState(a,b))
+#endif
+#define IXAudio2SourceVoice_SubmitSourceBuffer(p,a,b)	((p)->SubmitSourceBuffer(a,b))
+#define IXAudio2_CreateSourceVoice(p,a,b,c,d,e,f,g)	((p)->CreateSourceVoice(a,b,c,d,e,f,g))
+#define IXAudio2SourceVoice_DestroyVoice(p)		((p)->DestroyVoice())
+#define IXAudio2MasteringVoice_DestroyVoice(p)		((p)->DestroyVoice())
+#define IXAudio2SourceVoice_Start(p,a,b)		((p)->Start(a,b))
+#define IXAudio2SourceVoice_Stop( p,a,b)		((p)->Stop(a,b))
+#endif /* __cplusplus */
 
 static IXAudio2* pXAudio2 = NULL;
 static IXAudio2MasteringVoice* pMasterVoice = NULL;
@@ -225,7 +269,7 @@ static int XAudio2_Init(void) {
 	}
 #if defined(DRV_XAUDIO28)
 	if (FAILED(IXAudio2_CreateMasteringVoice(pXAudio2, &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE,
-						 0, NULL, NULL, 0 /*AudioCategory_Other*/))) {
+						 0, NULL, NULL, AudioCategory_Other))) {
 		goto fail;
 	}
 #else
@@ -233,12 +277,14 @@ static int XAudio2_Init(void) {
 		goto fail;
 	}
 #endif
-	if (FAILED(IXAudio2_CreateSourceVoice(pXAudio2, &pSourceVoice, &wfmt, 0, 1.0f, &cbVoice, NULL, NULL))) {
+	if (FAILED(IXAudio2_CreateSourceVoice(pXAudio2, &pSourceVoice, &wfmt, 0, 1.0f, pcbVoice, NULL, NULL))) {
 		goto fail;
 	}
+#ifndef __cplusplus
 	if ((hBufferEvent = CreateEvent(NULL, FALSE, FALSE, "libmikmod XAudio2 Driver buffer Event")) == NULL) {
 		goto fail;
 	}
+#endif
 	if ((UpdateBufferHandle = CreateThread(NULL, 0, UpdateBufferProc, NULL, CREATE_SUSPENDED, &thread_id)) == NULL) {
 		goto fail;
 	}
@@ -295,10 +341,12 @@ static void XAudio2_Exit(void) {
 		IXAudio2_Release(pXAudio2);
 		pXAudio2 = NULL;
 	}
+#ifndef __cplusplus
 	if (hBufferEvent != NULL) {
 		CloseHandle(hBufferEvent);
 		hBufferEvent = NULL;
 	}
+#endif
 #ifndef _XBOX
 	CoUninitialize();
 #endif
@@ -355,7 +403,7 @@ static int XAudio2_PlayStart(void) {
 MIKMODAPI MDRIVER drv_xaudio2 = {
 	NULL,
 	"XAudio2",
-	"DirectX XAudio2 Driver v0.2",
+	"DirectX XAudio2 Driver v0.3",
 	0,255,
 	"xaudio2",
 	"",
@@ -393,4 +441,4 @@ MISSING(drv_xaudio2);
 
 #endif
 
-/* ex:set ts=4: */
+/* ex:set ts=8: */
