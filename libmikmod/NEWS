@@ -1,8 +1,9 @@
-Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.4 ():
+Summary of changes between libmikmod 3.3.3 and libmikmod 3.3.4 ():
 ==========================================================================
 
 libmikmod 3.3.4 was released on XX-XXX-XXX.
 
+- libmikmod.m4: fixed so that it works with C++ compilers.
 - Fix CVE-2006-3879 (Secunia 21196) for Graoumf tracker (gt2) loader.
   (the loader is non-functional yet but the issue was there.)
 - Fix memory leaks in the Graoumf tracker (gt2) loader.
@@ -16,7 +17,6 @@ libmikmod 3.3.4 was released on XX-XXX-XXX.
 - ESD driver: Fix signature for esd_playstream function pointer (const)
 - ALSA driver: Remove unused function pointers.
 - The library is compilable using C++ compilers.
-- libmikmod.m4: fixed so that it works with C++ compilers.
 
 Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
 ==========================================================================
