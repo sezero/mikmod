@@ -472,10 +472,15 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURREN
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/mikmod_build.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/win32/mikmod.h")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/win32/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc" @ONLY)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/macosx/Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/Info.plist")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/macosx/InfoPlist.strings.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/InfoPlist.strings")
+
+SET(prefix ${CMAKE_INSTALL_PREFIX})
+SET(exec_prefix "\${prefix}")
+SET(libdir "\${exec_prefix}/lib${LIB_SUFFIX}")
+SET(includedir "\${prefix}/include")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config" @ONLY)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc" @ONLY)
 
 IF (ENABLE_OPENAL)
     LIST (APPEND EXTRA_LIBS ${OPENAL_LIBRARY})
