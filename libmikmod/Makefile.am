@@ -6,7 +6,6 @@ bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     libmikmod.pc.cmake libmikmod-config.cmake \
 	     config.h.cmake CMakeLists.txt cmake \
 	     t run-tests.pl
 
