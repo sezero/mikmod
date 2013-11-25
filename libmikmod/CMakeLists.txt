@@ -71,8 +71,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/CPackSourceConfig\\\\.cmake$"
     "/tags$"
     "/libmikmod-config$"
-    "/libfreecell-solver\\\\.pc$"
-    "/([0-9]+)\\\\.board$"
     "^config\\\\.h$"
     "/install_manifest\\\\.txt$"
     "/t/card-test-(parse|render)\\\\.c$"
@@ -82,26 +80,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/(B|build|BUILD)/"
     "/autom4te.cache/"
 )
-
-IF(WIN32 AND NOT UNIX)
-    # There is a bug in NSI that does not handle full unix paths properly. Make
-    # sure there is at least one set of four (4) backlasshes.
-    SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\dondorf-king.bmp")
-    SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\fc-solve.exe")
-    SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\mikmod.shlomifish.org")
-    SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\mikmod.shlomifish.org")
-    SET(CPACK_NSIS_DISPLAY_NAME "libmikmod")
-    SET(CPACK_NSIS_CONTACT "shlomif@cpan.org")
-    SET(CPACK_NSIS_MODIFY_PATH ON)
-    # Setting for NSIS :
-    SET(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\fc-solve.ico")
-    SET(CPACK_NSIS_MUI_UNIICON ${CPACK_NSIS_MUI_ICON})
-    SET(CPACK_PACKAGE_ICON ${CPACK_NSIS_MUI_ICON})
-    SET(CPACK_NSIS_MODIFY_PATH "ON")
-ELSE(WIN32 AND NOT UNIX)
-    # SET(CPACK_STRIP_FILES "fc-solve")
-    # SET(CPACK_SOURCE_STRIP_FILES "")
-ENDIF(WIN32 AND NOT UNIX)
 
 SET (ENABLE_ALSA 1 CACHE BOOL "Include the ALSA driver")
 SET (ENABLE_ESD 0 CACHE BOOL "Include the EsounD (Enlightened Sound Daemon) driver")
@@ -160,7 +138,6 @@ ADD_SUBDIRECTORY ("mmio")
 ADD_SUBDIRECTORY ("os2")
 ADD_SUBDIRECTORY ("playercode")
 ADD_SUBDIRECTORY ("posix")
-ADD_SUBDIRECTORY ("t")
 ADD_SUBDIRECTORY ("win32")
 
 SET(COMPILER_FLAGS_TO_CHECK
@@ -252,11 +229,11 @@ ENDIF()
 
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
-# So it can find the includes when building libavl.avl.h.
+# to find mikmod_internals.h:
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-# So it can find config.h and mikmod.h
+# to find config.h and mikmod[_build].h:
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 FILE (MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
 INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/include")
@@ -539,14 +516,4 @@ INSTALL(
         "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc"
     DESTINATION
         "lib${LIB_SUFFIX}/pkgconfig"
-)
-
-ADD_CUSTOM_TARGET(
-    "test"
-    "perl" "${CMAKE_CURRENT_SOURCE_DIR}/run-tests.pl"
-)
-
-ADD_DEPENDENCIES(
-    "test"
-    "all"
 )

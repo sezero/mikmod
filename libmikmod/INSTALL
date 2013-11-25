@@ -4,7 +4,7 @@ INSTALL file for libmikmod
 INSTALL USING CMAKE :
 =====================
 
-Starting from version 3.3.2, libmikmod supports CMake.  You'll need to
+Starting from version 3.3.2, libmikmod supports CMake.  You will need to
 install CMake version 2.8.x or later from your distribution's repository
 or from its source. CMake homepage is at http://www.cmake.org/ .
 
@@ -26,10 +26,6 @@ With a fallback to:
 This will build and install the libmikmod shared and static libraries.
 For installing under windows, consult the CMake documentation for
 generating a Visual C, MinGW32, etc. compatible makefile or project.
-
-For testing, a mikmod/libmikmod test suite is available at
-https://bitbucket.org/shlomif/mikmod-test-suite/.  Note that currently
-it is dependent on system-specific random()/rand() routines.
 
 
 INSTALL USING CONFIGURE / AUTOTOOLS :
