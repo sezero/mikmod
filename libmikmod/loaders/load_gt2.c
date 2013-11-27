@@ -61,6 +61,7 @@ typedef struct GT2_CHUNK {
 	UBYTE	date_month;
 	UWORD	date_year;
 	CHAR	tracker_name[25]; /* 24 in file */
+	/* the rest are for file versions <= 5. */
 	UWORD	initial_speed;
 	UWORD	initial_tempo;
 	UWORD	initial_master_volume; /* 000 - fff */
@@ -80,7 +81,7 @@ typedef struct TVOL_CHUNK {
 typedef struct XCOM_CHUNK {
 	UBYTE	id[4]; /* must be XCOM */
 	ULONG	chunk_size;
-	ULONG	comment_len;
+	UWORD	comment_len;
 	CHAR	*comment; /* comment_len + 1 allocated */
 } XCOM_CHUNK;
 
@@ -122,7 +123,7 @@ typedef struct ORCH_CHUNK {
 } ORCH_CHUNK;
 
 typedef struct INST_NOTE {
-	UBYTE 	samp_number;/* sample number for midi note */
+	UBYTE	samp_number;/* sample number for midi note */
 	CHAR	tranp;		/* transposition for note */
 } INST_NOTE;
 
@@ -221,6 +222,7 @@ static GT_CHUNK *loadChunk(void)
 		_mm_read_M_UWORDS(&new_chunk->gt2.date_year, 1, modreader);
 		new_chunk->gt2.tracker_name[24] = 0;
 		_mm_read_UBYTES(&new_chunk->gt2.tracker_name, 24, modreader);
+		if (new_chunk->gt2.version > 5) return new_chunk;
 		_mm_read_M_UWORDS(&new_chunk->gt2.initial_speed, 1, modreader);
 		_mm_read_M_UWORDS(&new_chunk->gt2.initial_tempo, 1, modreader);
 		_mm_read_M_UWORDS(&new_chunk->gt2.initial_master_volume, 1, modreader);
@@ -241,12 +243,13 @@ static GT_CHUNK *loadChunk(void)
 	}
 
 	if (!memcmp(new_chunk, "XCOM", 4)) {
-		/* this chunk is a source of security vulnerabilities:
-		 * SA21196, CVE-2006-3879 */
 		new_chunk->xcom.chunk_size = _mm_read_M_ULONG(modreader);
-		new_chunk->xcom.comment_len = _mm_read_M_ULONG(modreader);
-		if (new_chunk->xcom.comment_len == 0xFFFFFFFF) goto fail;
-		new_chunk->xcom.comment = (CHAR *) MikMod_malloc(new_chunk->xcom.comment_len + 1);
+		new_chunk->xcom.comment_len = _mm_read_M_UWORD(modreader);
+		if (!new_chunk->xcom.comment_len) {
+			new_chunk->xcom.comment = NULL;
+			return new_chunk;
+		}
+		new_chunk->xcom.comment = (CHAR *) MikMod_malloc((ULONG)new_chunk->xcom.comment_len + 1);
 		if (new_chunk->xcom.comment == NULL) goto fail;
 		_mm_read_UBYTES(new_chunk->xcom.comment, new_chunk->xcom.comment_len, modreader);
 		return new_chunk;
