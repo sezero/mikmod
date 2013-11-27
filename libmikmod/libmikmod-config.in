@@ -50,13 +50,14 @@ while test $# -gt 0 ; do
 		echo @LIB_LDADD@
 	;;
 	--libs)
-		echo $libdir -lmikmod @LIBRARY_LIB@
+		echo -L${libdir} -lmikmod @LIBRARY_LIB@
 	;;
 	*)
 		echo "${usage}" 1>&2
 		exit 1
 	;;
 	esac
+
 	shift
 done
 
