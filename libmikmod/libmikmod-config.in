@@ -50,7 +50,7 @@ while test $# -gt 0 ; do
 		echo @LIB_LDADD@
 	;;
 	--libs)
-		echo -L${libdir} -lmikmod @LIBRARY_LIB@
+		echo -L@libdir@ -lmikmod @LIBRARY_LIB@
 	;;
 	*)
 		echo "${usage}" 1>&2
