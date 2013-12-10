@@ -29,19 +29,11 @@ IF (NOT HAVE_GETOPT_LONG_ONLY)
     LIST (APPEND mikmod_SRCS "mgetopt1.c")
 ENDIF (NOT HAVE_GETOPT_LONG_ONLY)
 
-find_library(LIBMIKMOD_LIB "mikmod")
-IF(LIBMIKMOD_LIB STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
-    # Do nothing.
-    MESSAGE (FATAL_ERROR "libmikmod must be present")
-ELSE(LIBMIKMOD_LIB STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
-    SET(LIBMIKMOD_LIB_LIST ${LIBMIKMOD_LIB})
-ENDIF(LIBMIKMOD_LIB STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
-
-include_directories(${libmikmod_INCLUDE_DIRS})
+include_directories(${MIKMOD_INCLUDE_DIR})
 
 add_executable(mikmod ${mikmod_SRCS})
 
-target_link_libraries(mikmod "ncurses" "pthread" ${LIBMIKMOD_LIB_LIST})
+target_link_libraries(mikmod "ncurses" "pthread" ${MIKMOD_LIBRARIES})
 
 install(TARGETS mikmod DESTINATION bin)
 

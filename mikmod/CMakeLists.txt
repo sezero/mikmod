@@ -1,3 +1,7 @@
+# if necessary, set CMAKE_PREFIX_PATH to the path where libmikmod
+# is installed, which you can do on your cmake command line, like:
+# cmake -DCMAKE_PREFIX_PATH=/path/to/libmikmod_dir ....
+
 PROJECT(mikmod C)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 LIST(APPEND CMAKE_MODULE_PATH "${mikmod_SOURCE_DIR}/cmake")
@@ -15,11 +19,25 @@ SET(MIKMOD_VERSION_MAJOR "${CPACK_PACKAGE_VERSION_MAJOR}")
 SET(MIKMOD_VERSION_MINOR "${CPACK_PACKAGE_VERSION_MINOR}")
 SET(MIKMOD_REVISION "${CPACK_PACKAGE_VERSION_PATCH}")
 
-INCLUDE(FindCurses)
 INCLUDE(CheckFunctionExists)
 INCLUDE(CheckIncludeFiles)
 INCLUDE(CheckCSourceCompiles)
 include(${mikmod_SOURCE_DIR}/cmake/macros.cmake)
+
+find_path(MIKMOD_INCLUDE_DIR mikmod.h)
+find_library(MIKMOD_LIBRARIES mikmod)
+IF (MIKMOD_LIBRARIES STREQUAL "LIBMIKMOD_LIB-NOTFOUND")
+    MESSAGE(FATAL_ERROR "libmikmod not found.")
+ELSE()
+    MESSAGE(STATUS "Found MikMod: ${MIKMOD_LIBRARIES}")
+ENDIF()
+
+IF(UNIX OR APPLE)
+  INCLUDE(FindCurses)
+  IF(NOT CURSES_FOUND)
+    MESSAGE(FATAL_ERROR "Curses not found.")
+  ENDIF()
+ENDIF()
 
 CHECK_INCLUDE_FILES (fcntl.h HAVE_FCNTL_H)
 CHECK_INCLUDE_FILES (fnmatch.h HAVE_FNMATCH_H)
@@ -58,12 +76,6 @@ IF (HAVE_USLEEP)
     SET (HAVE_USLEEP_PROTO 1)
 ENDIF (HAVE_USLEEP)
 
-IF (UNIX OR APPLE)
-IF (NOT CURSES_FOUND)
-    MESSAGE(FATAL_ERROR "Curses not found.")
-ENDIF (NOT CURSES_FOUND)
-ENDIF (UNIX OR APPLE)
-
 CHECK_C_SOURCE_COMPILES(
  "#include <sys/types.h>
   #include <signal.h>
@@ -76,6 +88,10 @@ else(RETSIGTYPE_INT)
   set(RETSIGTYPE void)
 endif(RETSIGTYPE_INT)
 MESSAGE(STATUS "Return type of signal handlers: ${RETSIGTYPE}")
+
+SET(CMAKE_REQUIRED_INCLUDES ${MIKMOD_INCLUDE_DIR})
+SET(CMAKE_REQUIRED_LIBRARIES ${MIKMOD_LIBRARIES})
+CHECK_FUNCTION_EXISTS (MikMod_free HAVE_MIKMOD_FREE)
 
 ########### install files ###############
 
