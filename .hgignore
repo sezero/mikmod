@@ -5,7 +5,6 @@
 ^libmikmod/build$
 ^libmikmod/autom4te\.cache$
 ^libmikmod/Makefile.in$
-^libmikmod/cmake/Shlomif_Common\.cmake$
 ^libmikmod/dlapi/Makefile.in$
 ^libmikmod/docs/Makefile.in$
 ^libmikmod/dos/Makefile.in$
@@ -51,8 +50,7 @@
 ^libmikmod/macintosh/_libmikmodversion\.r$
 ^libmikmod/macintosh/mikmod\.h$
 ^libmikmod/stamp-h$
-^mikmod/B
-^mikmod/CMake/Shlomif_Common\.cmake$
+^mikmod/B$
 ^mikmod/src/Makefile$
 ^mikmod/src/mikmod$
 ^mikmod/src/stamp-h1$
@@ -68,7 +66,7 @@
 ^mikmod/stamp-h1$
 ^mikmod/Makefile\.in$
 ^mikmod/aclocal\.m4$
-mikmod/autom4te.cache
+^mikmod/autom4te\.cache$
 ^mikmod/configure$
 ^mikmod/dos/Makefile\.in$
 ^mikmod/os2/Makefile\.in$
