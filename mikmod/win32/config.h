@@ -125,7 +125,7 @@
 #define PACKAGE_VERSION ""
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#undef RETSIGTYPE
+#define RETSIGTYPE void
 
 /* Define if your system is SOLARIS. */
 #undef SOLARIS
@@ -151,3 +151,4 @@
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
+
