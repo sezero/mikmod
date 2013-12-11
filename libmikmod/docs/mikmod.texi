@@ -16,7 +16,7 @@
 
 @syncodeindex tp vr
 @set documentation-version 1.3
-@set documentation-date October 2013
+@set documentation-date December 2013
 @set library-version 3.3.4
 @set authorname Miodrag Vallat
 @set authoraddress miod@@mikmod.org
@@ -30,12 +30,12 @@ This library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as
 published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
- 
+
 You should have received a copy of the GNU Library General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -59,12 +59,12 @@ This library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as
 published by the Free Software Foundation; either version 2 of
 the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
- 
+
 You should have received a copy of the GNU Library General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -1053,7 +1053,7 @@ only for stereo sound, this flag has no effect if the sound playback is in
 mono.
 @end table
 
-@*The following flags aren't taken in account until the sound driver is changed
+The following flags aren't taken in account until the sound driver is changed
 or reset:
 @table @samp
 @item DMODE_16BIT
@@ -1071,7 +1071,7 @@ This flag, if set, selects software mixing of the sound effects.
 This flag, if set, selects stereo sound.
 @end table
 
-@*The default value of this variable is @samp{DMODE_STEREO | DMODE_SURROUND |
+The default value of this variable is @samp{DMODE_STEREO | DMODE_SURROUND |
 DMODE_16BITS | DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX}.
 @end table
 
@@ -1309,7 +1309,7 @@ unsigned values.
 If set, sample data is stereo (two channels); otherwise, it is mono.
 @end table
 
-@*Playback flags:
+Playback flags:
 @table @samp
 @item SF_BIDI
 If set, sample loops ``ping pong'' (back and forth).
@@ -2980,7 +2980,9 @@ application was DMP, the Dual Module Player.@*
 DMP and the DSMI library were written by Otto Chrons. DSMI was first released
 in 1993.
 @item load_asy
-This loader recognize the ``ASYLUM Music Format'', which was used in Crusader series of games by Origin. This format uses the .amf extension, but is very similar to a 8 Channel Mod file.
+This loader recognize the ``ASYLUM Music Format'', which was used in Crusader
+series of games by Origin. This format uses the .amf extension, but is very
+similar to a 8 Channel Mod file.
 @item load_dsm
 This loader recognizes the internal DSIK format, which is the internal module
 format of the ``Digital Sound Interface Kit'' (DSIK) library, the ancester of
@@ -3148,7 +3150,8 @@ This driver only supports software mixing.
 This driver is only available under MacOS, and uses the ``Sound Manager''.@*
 This driver supports the Classic and Carbon environments, and does only software mixing.
 @item drv_openal
-This driver is available for all platforms where ``OpenAL'' is supported, and uses the ``OpenAL'' api.@*
+This driver is available for all platforms where ``OpenAL'' is supported,
+and uses the ``OpenAL'' api.@*
 This driver only supports software mixing.
 @item drv_os2
 This driver is only available under OS/2 version 3 and higher (Warp), and OS/2
@@ -3170,7 +3173,8 @@ This driver only supports hardware mixing.
 This driver is only available under DOS, and supports the SoundBlaster/Pro/16/AWE32.@*
 This driver only supports hardware mixing. This driver needs to be tested.
 @item drv_sdl
-This driver is available for all platforms where ``SDL'' is supported, and uses the ``Simple DirectMedia Layer'' apis.@*
+This driver is available for all platforms where ``SDL'' is supported, and
+uses the ``Simple DirectMedia Layer'' apis.@*
 This driver only supports software mixing.
 @item drv_sgi
 This driver is only available under IRIX, and uses the SGI audio library.@*
@@ -3181,16 +3185,20 @@ device interfaces, that is, SunOS, Solaris, NetBSD and OpenBSD.@*
 This driver only supports software mixing.
 @item drv_ultra
 This driver is available under Linux, and requires the Linux Ultrasound
-driver (the ancestor of ALSA) to be compiled for your current kernel. This driver is also available under DOS/DJGPP and OS/2.@*
-This driver only supports hardware mixing. The DOS/DJGPP and OS/2 parts needs to be tested.
+driver (the ancestor of ALSA) to be compiled for your current kernel. This
+driver is also available under DOS/DJGPP and OS/2.@*
+This driver only supports hardware mixing. The DOS/DJGPP and OS/2 parts
+needs to be tested.
 @item drv_win
 This driver is only available under WIN32, and uses the ``multimedia API''.@*
 This driver only supports software mixing.
 @item drv_wss
-This driver is only available under DOS, and supports Windows Sound System compatible sound cards.@*
+This driver is only available under DOS, and supports Windows Sound System
+compatible sound cards.@*
 This driver only supports software mixing. This driver needs to be tested.
 @item drv_xaudio2
-This driver is only available under Windows XP and newer Windows versions and uses the ``XAudio2'' 2.7 or 2.8 apis.@*
+This driver is only available under Windows XP and newer Windows versions
+and uses the ``XAudio2'' 2.7 or 2.8 apis.@*
 This driver only supports software mixing.
 @end table
 
@@ -3203,7 +3211,9 @@ mixing.
 
 @table @code
 @item drv_aiff
-This driver outputs the sound data in a AIFF (Audio Interchange File Format) file by default named @file{music.aiff} or @file{music.aif} on win32/dos in the current directory.
+This driver outputs the sound data in a AIFF (Audio Interchange File Format)
+file by default named @file{music.aiff} or @file{music.aif} on win32/dos in
+the current directory.
 @item drv_raw
 This driver outputs the sound data in a file by default named @file{music.raw}
 in the current directory. The file has no header and only contains the sound
