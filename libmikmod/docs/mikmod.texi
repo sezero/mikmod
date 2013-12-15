@@ -1803,7 +1803,7 @@ This function starts the sound mixing.
 @item Result
 @itemx 0
 Sound mixing is ready.
-@itemx nonzero
+@item nonzero
 An error occurred during the operation.
 @item Notes
 Calls to @code{MikMod_Update} will be ignored when sound output is disabled.
@@ -1890,7 +1890,7 @@ the value of @code{md_device} is zero (autodetection).
 @item Result
 @itemx 0
 Initialization was successful.
-@itemx nonzero
+@item nonzero
 An error occurred during initialization.
 @item Notes
 When the initialization fails, the library uses the nosound sound driver to
@@ -1910,7 +1910,7 @@ This function returns whether libmikmod is thread-safe.
 @item Result
 @itemx 0
 The library is not thread-safe.
-@itemx 1
+@item 1
 The library is thread-safe.
 @item Notes
 This function should be called before any call to @code{MikMod_Lock} or
@@ -2096,7 +2096,7 @@ Optional parameters given to the sound driver. If you set the value of
 @item Result
 @itemx 0
 Reinitialization was successful.
-@itemx nonzero
+@item nonzero
 An error occurred during reinitialization.
 @item Notes
 Use this function when you have changed the global configuration variables:
@@ -2124,7 +2124,7 @@ The number of voices to reserve for sound effects.
 @item Result
 @itemx 0
 Initialization was successful.
-@itemx nonzero
+@item nonzero
 An error occurred during initialization.
 @item Notes
 A value of @code{-1} for any of the parameters will retain the current number
@@ -2211,7 +2211,7 @@ This function returns whether the module player is active or not.
 @item Result
 @itemx 0
 No module is playing.
-@itemx nonzero
+@item nonzero
 A module is currently playing.
 @item Notes
 This function will still report that the player is active if the playing module
@@ -2424,7 +2424,7 @@ The module channel to test (starting from zero).
 @item Result
 @itemx 0
 The channel is not muted.
-@itemx 1
+@item 1
 The channel is muted.
 @item See also
 @code{Player_Mute}, @code{Player_ToggleMute}, @code{Player_Unmute}.
@@ -2941,7 +2941,7 @@ The number of the voice to be checked (starting from zero).
 @item Result
 @itemx 0
 The voice is stopped or has no sample assigned.
-@itemx nonzero
+@item nonzero
 The voice is playing a sample.
 @item Notes
 This function may not work with some drivers (especially for hardware mixed
