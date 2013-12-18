@@ -181,7 +181,7 @@ static void freq_check_searchlist (FREQ_DATA *data)
 	int i, len = PL_GetLength(&playlist);
 
 	if (len != data->cnt_list) {
-		data->searchlist = realloc (data->searchlist, sizeof(char*) * len);
+		data->searchlist = (char **) realloc (data->searchlist, sizeof(char*) * len);
 		data->cnt_list = len;
 		if (len) {
 			for (i=0; i<len; i++) {
@@ -257,7 +257,7 @@ static int entry_add (char *path, char *file, FREQ_DATA *data)
 	if (len>old_len && data) {
 		int i, start, end;
 
-		data->searchlist = realloc (data->searchlist, sizeof(char*) * len);
+		data->searchlist = (char **) realloc (data->searchlist, sizeof(char*) * len);
 
 		start = data->actline;
 		if (start<0) start = old_len;
@@ -289,7 +289,7 @@ static int entry_remove_by_name(char *path, char *file, FREQ_DATA *data)
 
 	/* Update the searchlist */
 	while (data->cnt_list>0 &&
-		   (pos=bsearch (buffer,data->searchlist,data->cnt_list,
+		   (pos = (char **) bsearch(buffer,data->searchlist,data->cnt_list,
 						 sizeof(char*),(int(*)())searchlist_search_cmp))) {
 		while (pos < data->searchlist + data->cnt_list - 1) {
 			*pos = *(pos+1);
@@ -297,7 +297,7 @@ static int entry_remove_by_name(char *path, char *file, FREQ_DATA *data)
 		}
 		data->cnt_list--;
 	}
-	data->searchlist = realloc (data->searchlist, sizeof(char*) * data->cnt_list);
+	data->searchlist = (char **) realloc (data->searchlist, sizeof(char*) * data->cnt_list);
 
 	/* Remove the entries from the playlist */
 	for (i=len-1; i>=0; i--) {
@@ -362,7 +362,7 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 					/* FIXME: check for cyclic links is missing */
 					if (cnt >= max) {
 						max += DIR_BLOCK;
-						dirs = realloc (dirs, sizeof(char*) * max);
+						dirs = (char **) realloc (dirs, sizeof(char*) * max);
 					}
 					dirs[cnt++] = strdup (entry->d_name);
 				}
@@ -373,8 +373,8 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 				char **pos = NULL;
 				int j = 0;
 				if (freq_data && freq_data->cnt_list > 0)
-					pos = bsearch (file,freq_data->searchlist,freq_data->cnt_list,
-								   sizeof(char*),(int(*)())searchlist_search_cmp);
+					pos = (char **) bsearch(file,freq_data->searchlist,freq_data->cnt_list,
+								 sizeof(char*),(int(*)())searchlist_search_cmp);
 				if (pos) {
 					if (mode != FREQ_ADD) {
 						j = entry_remove_by_name(file, NULL, freq_data);
@@ -425,7 +425,7 @@ static void freq_readdir (char *path, char ***entries, int *cnt, FREQ_DATA *data
 		while ((entry = readdir (dir))) {
 			if (*cnt >= max) {
 				max += ENT_BLOCK;
-				*entries = realloc (*entries, sizeof(char*) * max);
+				*entries = (char **) realloc (*entries, sizeof(char*) * max);
 			}
 			strcpy (pathend,entry->d_name);
 			path_conv (pathend);
@@ -433,7 +433,7 @@ static void freq_readdir (char *path, char ***entries, int *cnt, FREQ_DATA *data
 				if (S_ISDIR(statbuf.st_mode))
 					strcat (pathend,PATH_SEP_STR);
 
-			help = malloc (sizeof(char) * (strlen(pathend) + 3));
+			help = (char *) malloc (sizeof(char) * (strlen(pathend) + 3));
 			strcpy (help,"  ");
 			strcat (help,pathend);
 			(*entries)[(*cnt)++] = help;
@@ -491,7 +491,7 @@ static void freq_changedir (char *path, FREQ_DATA *data)
 					end++;
 				if (*end == PATH_SEP) {
 					*(end+1) = '\0';
-					pos=bsearch (last, entries, cnt, sizeof(char*),
+					pos=(char**) bsearch(last, entries, cnt, sizeof(char*),
 								 (int(*)())dirlist_search_cmp);
 				} else
 					pos = NULL;
@@ -516,7 +516,7 @@ static void hlist_close (HLIST_DATA *data)
 static int cb_hlist_list_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		HLIST_DATA *data = w->data;
+		HLIST_DATA *data = (HLIST_DATA *) w->data;
 		int cur = ((WID_LIST*)w)->cur;
 
 		/* return in hotlist -> change to the selected dir */
@@ -532,7 +532,7 @@ static int cb_hlist_list_focus(struct WIDGET *w, int focus)
 static int cb_hlist_button_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		HLIST_DATA *data = w->data;
+		HLIST_DATA *data = (HLIST_DATA *) w->data;
 		int button = ((WID_BUTTON *) w)->active;
 		int cur = data->w->cur;
 
@@ -568,7 +568,7 @@ static void freq_hotlist (FREQ_DATA *freq_data)
 {
 	DIALOG *d = dialog_new();
 	WIDGET *w;
-	HLIST_DATA *data = malloc (sizeof(HLIST_DATA));
+	HLIST_DATA *data = (HLIST_DATA *) malloc (sizeof(HLIST_DATA));
 
 	w = wid_list_add(d, 1, config.hotlist, config.cnt_hotlist);
 	wid_set_size (w, 74, 10);
@@ -718,7 +718,7 @@ static BOOL freq_call_func (int button, FREQ_DATA *data)
 static int cb_freq_list_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		FREQ_DATA *data = w->data;
+		FREQ_DATA *data = (FREQ_DATA *) w->data;
 		int cur = ((WID_LIST*)w)->cur;
 		char path[PATH_MAX<<1], *cur_entry;
 
@@ -749,14 +749,14 @@ static BOOL cb_freq_cd_do (WIDGET *w,int button, void *input, void *data)
 	if (button<=0) {
 		char *pos;
 		path_conv(input);
-		pos = (char*)input + strlen(input);
+		pos = (char*)input + strlen((char*)input);
 		/* Check if path ends with '/' */
 		if (*(pos-1) != PATH_SEP) {
 			*pos = PATH_SEP;
 			*(pos+1) = '\0';
 		}
-		freq_check_searchlist (data);
-		freq_changedir (input,data);
+		freq_check_searchlist ((FREQ_DATA *)data);
+		freq_changedir ((char *)input, (FREQ_DATA *)data);
 	}
 	return 1;
 }
@@ -769,7 +769,7 @@ static void freq_cd (FREQ_DATA *data)
 
 static int cb_freq_list_key(WIDGET *w, int ch)
 {
-	FREQ_DATA *data = w->data;
+	FREQ_DATA *data = (FREQ_DATA *) w->data;
 
 	freq_check_searchlist (data);
 	if ((ch < 256) && (isalpha(ch)))
@@ -787,7 +787,7 @@ static int cb_freq_list_key(WIDGET *w, int ch)
 static int cb_freq_button_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		FREQ_DATA *data = w->data;
+		FREQ_DATA *data = (FREQ_DATA *) w->data;
 		int button = ((WID_BUTTON *) w)->active;
 
 		freq_check_searchlist (data);
@@ -822,7 +822,7 @@ static int cb_freq_button_focus(struct WIDGET *w, int focus)
 static FREQ_DATA *freq_data_init (char *path)
 {
 	struct stat statbuf;
-	FREQ_DATA *data = malloc(sizeof(FREQ_DATA));
+	FREQ_DATA *data = (FREQ_DATA *) malloc(sizeof(FREQ_DATA));
 	char *pos;
 
 	data->path[0] = '\0';
@@ -1069,8 +1069,8 @@ static BOOL cb_overwrite (WIDGET *w, int button, void *input, void *file)
 {
 	if (button<=0) {
 		path_conv(file);
-		if (PL_Save(&playlist, file))
-			rc_set_string(&config.pl_name, file, PATH_MAX);
+		if (PL_Save(&playlist, (char *)file))
+			rc_set_string(&config.pl_name, (char *)file, PATH_MAX);
 		else
 			dlg_error_show("Error saving playlist \"%s\"!",file);
 	}
@@ -1092,19 +1092,19 @@ static BOOL cb_save_as(WIDGET *w, int button, void *input, void *data)
 {
 	path_conv(input);
 	if (button == 0) {								/* Browse */
-		freq_open ("Select directory/file",input,(SINTPTR_T)data,
+		freq_open ("Select directory/file",(char*)input,(SINTPTR_T)data,
 				   cb_browse,w);
 		return 0;
 	} else if (button == 1 || button == -1) {		/* Ok / Str-Widget */
-		if (file_exist(input)) {
-			char *f_copy = strdup(input);
+		if (file_exist((char*)input)) {
+			char *f_copy = strdup((char*)input);
 			char *msg = str_sprintf("File \"%s\" exists.\n"
 									"Really overwrite the file?", f_copy);
 			dlg_message_open(msg, "&Yes|&No", 1, 1, cb_overwrite, f_copy);
 			free(msg);
 		} else {
-			if (PL_Save(&playlist, input))
-				rc_set_string(&config.pl_name, input, PATH_MAX);
+			if (PL_Save(&playlist, (char*)input))
+				rc_set_string(&config.pl_name, (char*)input, PATH_MAX);
 			else
 				dlg_error_show("Error saving playlist \"%s\"!",input);
 		}
@@ -1115,7 +1115,7 @@ static BOOL cb_save_as(WIDGET *w, int button, void *input, void *data)
 /* playlist menu handler */
 static void cb_handle_menu(MMENU * menu)
 {
-	MENU_DATA *data = menu->data;
+	MENU_DATA *data = (MENU_DATA *) menu->data;
 	int actLine = *data->actLine;
 	PLAYENTRY *cur;
 	char *name, *msg;

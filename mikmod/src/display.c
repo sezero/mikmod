@@ -232,7 +232,8 @@ static void remove_message(void)
 static int display_banner(MWINDOW *win, char *banner, int origin, int skip,
 						  BOOL wrap)
 {
-	char *buf = banner, str[MAXWIDTH + 1];
+	char *buf = banner;
+	char str[MAXWIDTH + 1];
 	int i, n, t, winx, winy;
 
 	win_get_size(win, &winx, &winy);

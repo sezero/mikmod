@@ -985,7 +985,7 @@ static void win_timeout_insert (TIMEOUT *src)
 			sum += timeouts[pos].remaining;
 		if (sum>time || pos==cnt_timeouts) {
 			if (src) {
-				timeouts = realloc (timeouts,
+				timeouts = (TIMEOUT *) realloc (timeouts,
 									sizeof(TIMEOUT)*(++cnt_timeouts));
 				for (i=cnt_timeouts-1; i>pos; i--)
 					timeouts[i] = timeouts[i-1];
@@ -1020,7 +1020,7 @@ static void win_timeout_remove (int number)
 		timeouts[i-1] = timeouts[i];
 	cnt_timeouts--;
 	if (cnt_timeouts) {
-		timeouts = realloc (timeouts,sizeof(TIMEOUT)*cnt_timeouts);
+		timeouts = (TIMEOUT *) realloc (timeouts,sizeof(TIMEOUT)*cnt_timeouts);
 	} else {
 		free (timeouts);
 		timeouts = NULL;

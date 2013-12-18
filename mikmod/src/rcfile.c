@@ -130,10 +130,12 @@ BOOL rc_write_bool (char *label, int arg, char *description)
 	}
 	return 0;
 }
+
 BOOL rc_write_bit (char *label, int arg, int mask, char *description)
 {
 	return rc_write_bool (label,BTST(arg,mask),description);
 }
+
 BOOL rc_write_int (char *label, int arg, char *description)
 {
 	if (fp) {
@@ -142,6 +144,7 @@ BOOL rc_write_int (char *label, int arg, char *description)
 	}
 	return 0;
 }
+
 BOOL rc_write_float (char *label, float arg, char *description)
 {
 	if (fp) {
@@ -150,6 +153,7 @@ BOOL rc_write_float (char *label, float arg, char *description)
 	}
 	return 0;
 }
+
 BOOL rc_write_label(char *label, LABEL_CONV *convert, int arg, char *description)
 {
 	if (fp) {
@@ -160,6 +164,7 @@ BOOL rc_write_label(char *label, LABEL_CONV *convert, int arg, char *description
 	}
 	return 0;
 }
+
 BOOL rc_write_string (char *label, char *arg, char *description)
 {
 	if (fp) {
@@ -182,6 +187,7 @@ BOOL rc_write_string (char *label, char *arg, char *description)
 	}
 	return 0;
 }
+
 BOOL rc_write_struct (char *label, char *description)
 {
 	if (fp) {
@@ -199,6 +205,7 @@ BOOL rc_write_struct (char *label, char *description)
 	}
 	return 0;
 }
+
 BOOL rc_write_struct_end (char *description)
 {
 	if (fp && structs) {
@@ -267,6 +274,7 @@ BOOL rc_read_bool (char *label, int *value)
 	}
 	return 0;
 }
+
 BOOL rc_read_bit (char *label, int *value, int mask)
 {
 	char *arg = get_argument (label);
@@ -282,6 +290,7 @@ BOOL rc_read_bit (char *label, int *value, int mask)
 	}
 	return 0;
 }
+
 BOOL rc_read_int (char *label, int *value, int min, int max)
 {
 	char *arg = get_argument (label);
@@ -295,6 +304,7 @@ BOOL rc_read_int (char *label, int *value, int min, int max)
 	}
 	return 0;
 }
+
 BOOL rc_read_float (char *label, float *value, float min, float max)
 {
 	char *arg = get_argument (label);
@@ -308,6 +318,7 @@ BOOL rc_read_float (char *label, float *value, float min, float max)
 	}
 	return 0;
 }
+
 BOOL rc_read_label(char *label, int *value, LABEL_CONV *convert)
 {
 	char *arg = get_argument (label);
@@ -323,6 +334,7 @@ BOOL rc_read_label(char *label, int *value, LABEL_CONV *convert)
 	}
 	return 0;
 }
+
 BOOL rc_read_struct (char *label)
 {
 	OPTIONS *arg = get_begin (label);
@@ -332,6 +344,7 @@ BOOL rc_read_struct (char *label)
 	}
 	return 0;
 }
+
 BOOL rc_read_struct_end (void)
 {
 	if (options->parent) {
@@ -493,12 +506,12 @@ static BOOL rc_parse (OPTIONS *opts, char *sec_name)
 			} else {
 				if (opts->cnt >= opts->max) {
 					opts->max += OPTION_BLOCK;
-					opts->option = realloc (opts->option,sizeof(OPTION)*opts->max);
+					opts->option = (OPTION *) realloc (opts->option,sizeof(OPTION)*opts->max);
 				}
 				opts->option[opts->cnt].label = strdup (label);
 				opts->option[opts->cnt].arg = strdup (arg);
 				if (!strcmp("BEGIN", label)) {
-					OPTIONS *new_opts = malloc(sizeof(OPTIONS));
+					OPTIONS *new_opts = (OPTIONS *) malloc(sizeof(OPTIONS));
 					new_opts->cnt = new_opts->max = 0;
 					new_opts->option = NULL;
 					new_opts->parent = opts;
@@ -522,7 +535,7 @@ BOOL rc_load (char *name)
 	BOOL ret = 0;
 
 	if (!(fp = fopen (path_conv_sys(name),"r"))) return 0;
-	options = malloc(sizeof(OPTIONS));
+	options = (OPTIONS *) malloc(sizeof(OPTIONS));
 	options->cnt = options->max = 0;
 	options->option = NULL;
 	options->parent = NULL;

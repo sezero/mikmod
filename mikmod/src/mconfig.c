@@ -351,7 +351,7 @@ char *CF_GetDefaultFilename(void)
 static void init_themes(CONFIG *cfg)
 {
 	cfg->cnt_themes = THEME_COUNT;
-	cfg->themes = malloc (sizeof(THEME)*cfg->cnt_themes);
+	cfg->themes = (THEME *) malloc (sizeof(THEME)*cfg->cnt_themes);
 	cfg->themes[THEME_COLOR].name = "<defaultColor>";
 	cfg->themes[THEME_COLOR].color = 1;
 	cfg->themes[THEME_COLOR].attrs = color_attributes;
@@ -395,7 +395,7 @@ void CF_theme_copy (THEME *dest, THEME *src)
 {
 	dest->color = src->color;
 	dest->name = strdup (src->name);
-	dest->attrs = malloc (sizeof(int)*ATTRS_COUNT);
+	dest->attrs = (int *) malloc (sizeof(int)*ATTRS_COUNT);
 	memcpy (dest->attrs,src->attrs,sizeof(int)*ATTRS_COUNT);
 }
 
@@ -420,7 +420,7 @@ void CF_themes_free_user (THEME **themes, int *cnt)
 		for (i=THEME_COUNT; i<*cnt; i++)
 			CF_theme_free (&(*themes)[i]);
 		*cnt = THEME_COUNT;
-		*themes = realloc (*themes, sizeof(THEME)*(*cnt));
+		*themes = (THEME *) realloc (*themes, sizeof(THEME)*(*cnt));
 	}
 }
 
@@ -436,7 +436,7 @@ void CF_theme_remove (int pos, THEME **themes, int *cnt)
 		if (*cnt>0) {
 			for (i=pos; i<*cnt; i++)
 				(*themes)[i] = (*themes)[i+1];
-			*themes = realloc (*themes, sizeof(THEME)*(*cnt));
+			*themes = (THEME *) realloc (*themes, sizeof(THEME)*(*cnt));
 		} else {
 			free (*themes);
 			*themes = NULL;
@@ -458,7 +458,7 @@ int CF_theme_insert (THEME **themes, int *cnt, THEME *theme)
 	}
 
 	(*cnt)++;
-	*themes = realloc (*themes,sizeof(THEME)*(*cnt));
+	*themes = (THEME *) realloc (*themes,sizeof(THEME)*(*cnt));
 	for (i=*cnt-1; i>pos; i--)
 		(*themes)[i] = (*themes)[i-1];
 
@@ -550,10 +550,10 @@ static void read_archiver(CONFIG *cfg)
 
 	if (cfg->archiver == archiver_def) {
 		cfg->cnt_archiver = 1;
-		cfg->archiver = malloc (sizeof(ARCHIVE));
+		cfg->archiver = (ARCHIVE *) malloc (sizeof(ARCHIVE));
 	} else {
 		cfg->cnt_archiver++;
-		cfg->archiver = realloc (cfg->archiver, sizeof(ARCHIVE)*cfg->cnt_archiver);
+		cfg->archiver = (ARCHIVE *) realloc (cfg->archiver, sizeof(ARCHIVE)*cfg->cnt_archiver);
 	}
 	cfg->archiver[cfg->cnt_archiver-1] = arch;
 }
@@ -764,7 +764,7 @@ void CF_string_array_insert (int pos, char ***value, int *cnt,
 	int i;
 
 	(*cnt)++;
-	*value = realloc (*value, sizeof(char*)*(*cnt));
+	*value = (char **) realloc (*value, sizeof(char*)*(*cnt));
 	for (i=*cnt-1; i>pos; i--)
 		(*value)[i] = (*value)[i-1];
 	(*value)[pos] = NULL;
@@ -782,7 +782,7 @@ void CF_string_array_remove (int pos, char ***value, int *cnt)
 		if (*cnt>0) {
 			for (i=pos; i<*cnt; i++)
 				(*value)[i] = (*value)[i+1];
-			*value = realloc (*value, sizeof(char*)*(*cnt));
+			*value = (char **) realloc (*value, sizeof(char*)*(*cnt));
 		} else {
 			free (*value);
 			*value = NULL;

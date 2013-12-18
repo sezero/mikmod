@@ -207,7 +207,7 @@ BOOL PL_DelEntry(PLAYLIST * pl, int number)
 	for (i = number; i < pl->length; i++)
 		pl->entry[i] = pl->entry[i + 1];
 
-	pl->entry = realloc(pl->entry, pl->length * sizeof(PLAYENTRY));
+	pl->entry = (PLAYENTRY *) realloc(pl->entry, pl->length * sizeof(PLAYENTRY));
 
 	return 1;
 }
@@ -254,7 +254,7 @@ static void PL_Insert(PLAYLIST * pl, int pos, CHAR *file, CHAR *arc, int time,
 	int i;
 
 	pl->length++;
-	pl->entry = realloc(pl->entry, pl->length * sizeof(PLAYENTRY));
+	pl->entry = (PLAYENTRY *) realloc(pl->entry, pl->length * sizeof(PLAYENTRY));
 
 	for (i = pl->length - 1; i > pos; i--)
 		pl->entry[i] = pl->entry[i - 1];
@@ -342,7 +342,7 @@ BOOL PL_Load(PLAYLIST * pl, CHAR *filename)
 			if (slash && path_relative(arc ? arc : mod)) {
 				CHAR *dummy;
 
-				dummy =
+				dummy = (CHAR *)
 				  malloc(slash + 1 - filename + strlen(arc ? arc : mod) + 1);
 				strncpy(dummy, filename, slash + 1 - filename);
 				dummy[slash + 1 - filename] = '\0';

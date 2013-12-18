@@ -109,7 +109,7 @@ char *path_conv_sys2(char *file)
 /* allocate memory for a formated string and do a sprintf */
 char *str_sprintf2(char *fmt, char *arg1, char *arg2)
 {
-	char *msg = malloc(strlen(fmt) + strlen(arg1) + strlen(arg2) + 1);
+	char *msg = (char *) malloc(strlen(fmt) + strlen(arg1) + strlen(arg2) + 1);
 
 	if (msg)
 		sprintf(msg, fmt, arg1, arg2);
@@ -239,7 +239,7 @@ int get_tmp_file (char *tmpl, char **name_used)
 	}
 	if (tmpl == NULL) tmpl = "mmXXXXXX";
 
-	fulltmpl = malloc (strlen(tmpdir)+strlen(tmpsep)+strlen(tmpl)+1);
+	fulltmpl = (char *) malloc (strlen(tmpdir)+strlen(tmpsep)+strlen(tmpl)+1);
 	sprintf (fulltmpl, "%s%s%s", tmpdir, tmpsep, tmpl);
 
 	retval = m_mkstemp (fulltmpl);
@@ -285,6 +285,7 @@ char *get_tmp_name(void)
 char *get_cfg_name(char *name)
 {
 	char *home = getenv("HOME");
+	char *p;
 	if (!home) {
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
 		home = "C:";
@@ -297,9 +298,9 @@ char *get_cfg_name(char *name)
 			return NULL;
 #endif
 	}
-	home = str_sprintf2("%s" PATH_SEP_STR "%s", home, name);
-	path_conv (home);
-	return home;
+	p = str_sprintf2("%s" PATH_SEP_STR "%s", home, name);
+	path_conv (p);
+	return p;
 }
 
 #ifndef HAVE_SNPRINTF

@@ -50,14 +50,14 @@ typedef struct {
 static int handle_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		DLG_DATA *data = w->data;
+		DLG_DATA *data = (DLG_DATA *) w->data;
 		if (data) {
 			int button = -1;
 			if (w->type == TYPE_BUTTON)
 				button = ((WID_BUTTON *) w)->active;
 
 			if ((button <= 0) && (data->min >= 0) && (data->max >= 0)) {
-				int value = atoi(data->input);
+				int value = atoi((char*)data->input);
 				if ((value < data->min) || (value > data->max))
 					return focus;
 			}
@@ -77,7 +77,7 @@ static DLG_DATA *init_dlg_data(handleDlgFunc handle_dlg,
 {
 	DLG_DATA *dlg_data = NULL;
 	if (handle_dlg) {
-		dlg_data = malloc(sizeof(DLG_DATA));
+		dlg_data = (DLG_DATA *) malloc(sizeof(DLG_DATA));
 		dlg_data->handle_dlg = handle_dlg;
 		dlg_data->w = w;
 		dlg_data->input = input;

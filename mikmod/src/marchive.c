@@ -280,7 +280,8 @@ static BOOL filename2short (char *l, char *s, int len_s)
 static char* get_command (char *pattern, char *arc, char *file, char *dest)
 {
 	int i = 0, len = 0;
-	char *arg[3], *pos, *pat, *command;
+	char *arg[3];
+	char *pos, *pat, *command;
 	char buf[PATH_MAX];
 
 	pat = strdup (pattern);
@@ -309,7 +310,7 @@ static char* get_command (char *pattern, char *arc, char *file, char *dest)
 			i++;
 		}
 	}
-	command = malloc (len*sizeof(char));
+	command = (char *) malloc (len*sizeof(char));
 	SNPRINTF (command,len,pat,arg[0],arg[1],arg[2]);
 	free (pat);
 	return command;
@@ -357,7 +358,8 @@ static void split_command (char *command, char **argv, int sizeargv)
 static int MA_truncate (int fd, char *startpat, int start, int end, char **file)
 {
 #define BUFSIZE	5000
-	char buf[BUFSIZE], *pos;
+	char buf[BUFSIZE];
+	char *pos;
 	int dest, cnt = -1;
 	long size;
 	char *fdest;
@@ -667,7 +669,7 @@ void MA_FindFiles(PLAYLIST * pl, CHAR *filename)
 			/* multi-file archive, need to invoke list function */
 			BOOL endspace = config.archiver[archive].nameoffset < 0;
 			int offset = endspace ? 0:config.archiver[archive].nameoffset;
-			char *string = malloc (PATH_MAX + 2 + offset);
+			char *string = (char *) malloc (PATH_MAX + 2 + offset);
 			char *command;
 
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
@@ -787,7 +789,8 @@ void MA_FindFiles(PLAYLIST * pl, CHAR *filename)
 			free (string);
 		} else {
 			/* single-file archive, guess the name */
-			CHAR *dot, *slash, *spare;
+			CHAR *dot, *slash;
+			CHAR *spare;
 
 			dot = strrchr(filename, '.');
 			slash = strrchr(filename, PATH_SEP);
@@ -799,7 +802,7 @@ void MA_FindFiles(PLAYLIST * pl, CHAR *filename)
 			if (!dot)
 				for (dot = slash; *dot; dot++);
 
-			spare = malloc((1 + dot - slash) * sizeof(CHAR));
+			spare = (CHAR *) malloc((1 + dot - slash) * sizeof(CHAR));
 			if (spare) {
 				strncpy(spare, slash, dot - slash);
 				spare[dot - slash] = 0;

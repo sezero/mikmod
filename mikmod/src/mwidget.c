@@ -954,7 +954,7 @@ static void colorsel_get_size(WID_COLORSEL *w, int *width, int *height)
 
 static void dialog_add(DIALOG *d, WIDGET *w)
 {
-	d->widget = realloc(d->widget, (d->cnt + 1) * sizeof(WIDGET *));
+	d->widget = (WIDGET **) realloc(d->widget, (d->cnt + 1) * sizeof(WIDGET *));
 	d->widget[d->cnt] = w;
 	d->cnt++;
 }
@@ -976,7 +976,7 @@ static void widget_init(WIDGET *w, DIALOG *d, BOOL focus, int spacing)
 
 WIDGET *wid_label_add(DIALOG *d, int spacing, char *msg)
 {
-	WID_LABEL *w = malloc(sizeof(WID_LABEL));
+	WID_LABEL *w = (WID_LABEL *) malloc(sizeof(WID_LABEL));
 
 	widget_init((WIDGET *) w, d, 0, spacing);
 	w->w.type = TYPE_LABEL;
@@ -999,7 +999,7 @@ void wid_label_set_label (WID_LABEL *w, char *label)
 WIDGET *wid_str_add(DIALOG *d, int spacing, char *input, int length)
 {
 	int i;
-	WID_STR *w = malloc(sizeof(WID_STR));
+	WID_STR *w = (WID_STR *) malloc(sizeof(WID_STR));
 
 	widget_init((WIDGET *) w, d, 1, spacing);
 	w->w.type = TYPE_STR;
@@ -1011,7 +1011,7 @@ WIDGET *wid_str_add(DIALOG *d, int spacing, char *input, int length)
 	w->length = length;
 	w->w.def_width = STR_WIDTH_MAX;
 
-	w->input = malloc(length + 1);
+	w->input = (char *) malloc(length + 1);
 
 	i = MIN(strlen(input), length);
 	strncpy(w->input, input, i);
@@ -1047,7 +1047,7 @@ void wid_str_set_input (WID_STR *w, char *input, int length)
 
 WIDGET *wid_int_add(DIALOG *d, int spacing, int value, int length)
 {
-	WID_INT *w = malloc(sizeof(WID_INT));
+	WID_INT *w = (WID_INT *) malloc(sizeof(WID_INT));
 
 	widget_init((WIDGET *) w, d, 1, spacing);
 	w->w.type = TYPE_INT;
@@ -1060,7 +1060,7 @@ WIDGET *wid_int_add(DIALOG *d, int spacing, int value, int length)
 	w->length = length;
 	w->w.def_width = INT_WIDTH_MAX;
 
-	w->input = malloc(w->length + 1);
+	w->input = (char *) malloc(w->length + 1);
 	sprintf(w->input, "%d", value);
 	w->cur_pos = strlen(w->input);
 
@@ -1077,7 +1077,7 @@ void wid_int_set_input (WID_INT *w, int value, int length)
 
 WIDGET *wid_button_add(DIALOG *d, int spacing, char *button, int active)
 {
-	WID_BUTTON *w = malloc(sizeof(WID_BUTTON));
+	WID_BUTTON *w = (WID_BUTTON *) malloc(sizeof(WID_BUTTON));
 
 	widget_init((WIDGET *) w, d, 1, spacing);
 	w->w.type = TYPE_BUTTON;
@@ -1094,7 +1094,7 @@ WIDGET *wid_button_add(DIALOG *d, int spacing, char *button, int active)
 
 WIDGET *wid_list_add(DIALOG *d, int spacing, char **entries, int cnt)
 {
-	WID_LIST *w = malloc(sizeof(WID_LIST));
+	WID_LIST *w = (WID_LIST *) malloc(sizeof(WID_LIST));
 
 	widget_init((WIDGET *) w, d, 1, spacing);
 	w->w.type = TYPE_LIST;
@@ -1141,7 +1141,7 @@ void wid_list_set_entries (WID_LIST *w, char **entries, int cur, int cnt)
 	if (w->first > w->cur) w->first = w->cur>0 ? w->cur-1:0;
 
 	if (cnt>0) {
-		w->entries = malloc(sizeof(char*) * cnt);
+		w->entries = (char **) malloc(sizeof(char*) * cnt);
 		for (i=0; i<cnt; i++)
 			w->entries[i] = strdup(entries[i]);
 	}
@@ -1166,7 +1166,7 @@ void wid_list_set_selection_mode (WID_LIST *w, WID_SEL_MODE mode)
 
 WIDGET *wid_check_add(DIALOG *d, int spacing, char *button, int active, int selected)
 {
-	WID_CHECK *w = malloc(sizeof(WID_CHECK));
+	WID_CHECK *w = (WID_CHECK *) malloc(sizeof(WID_CHECK));
 
 	widget_init((WIDGET *) w, d, 1, spacing);
 	w->w.type = TYPE_CHECK;
@@ -1189,7 +1189,7 @@ void wid_check_set_selected(WID_CHECK *w, int selected)
 
 WIDGET *wid_toggle_add(DIALOG *d, int spacing, char *button, int active, int selected)
 {
-	WID_TOGGLE *w = malloc(sizeof(WID_TOGGLE));
+	WID_TOGGLE *w = (WID_TOGGLE *) malloc(sizeof(WID_TOGGLE));
 
 	widget_init((WIDGET *) w, d, 1, spacing);
 	w->w.type = TYPE_TOGGLE;
@@ -1212,7 +1212,7 @@ void wid_toggle_set_selected(WID_TOGGLE *w, int selected)
 
 WIDGET *wid_colorsel_add(DIALOG *d, int spacing, char *hotkeys, int active)
 {
-	WID_COLORSEL *w = malloc(sizeof(WID_COLORSEL));
+	WID_COLORSEL *w = (WID_COLORSEL *) malloc(sizeof(WID_COLORSEL));
 	int i;
 
 	widget_init((WIDGET *) w, d, 1, spacing);
@@ -1261,7 +1261,7 @@ void wid_repaint (WIDGET *w)
 
 BOOL dialog_repaint(MWINDOW *win)
 {
-	DIALOG *d = win->data;
+	DIALOG *d = (DIALOG *) win->data;
 	int i = 0;
 
 	win_attrset(base_attr(d,ATTR_DLG_FRAME));
@@ -1286,7 +1286,7 @@ void dialog_close(DIALOG *d)
 
 static BOOL dialog_handle_key(MWINDOW *win, int ch)
 {
-	DIALOG *d = win->data;
+	DIALOG *d = (DIALOG *) win->data;
 	int ret, i;
 
 	/* Handle keys common for all widgets here */
@@ -1504,7 +1504,7 @@ static void dialog_layout(DIALOG *d, int initial,
 
 static void dialog_handle_resize(MWINDOW *win, int dx, int dy)
 {
-	DIALOG *d = win->data;
+	DIALOG *d = (DIALOG *) win->data;
 	int x,y,width,height;
 
 	dialog_layout (d,0,&x,&y,&width,&height);
@@ -1541,7 +1541,7 @@ void dialog_set_attr (DIALOG *d, ATTRS attrs)
 
 DIALOG *dialog_new(void)
 {
-	DIALOG *d = malloc(sizeof(DIALOG));
+	DIALOG *d = (DIALOG *) malloc(sizeof(DIALOG));
 
 	d->active = 0;
 	d->cnt = 0;

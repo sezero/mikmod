@@ -209,7 +209,7 @@ static char *get_text(MENTRY *entry, int width)
 
 static void menu_do_repaint(MWINDOW * win, int diff)
 {
-	MMENU *m = win->data;
+	MMENU *m = (MMENU *) win->data;
 	int height, t, hl_pos;
 	char *pos, *txt, hl[2], *help;
 
@@ -285,7 +285,7 @@ static BOOL menu_repaint(MWINDOW * win)
 static void handle_opt_menu(MMENU * menu)
 {
 	int i;
-	MMENU *m = menu->data;
+	MMENU *m = (MMENU *) menu->data;
 
 	m->entries[m->cur].data = (void *)(SINTPTR_T)menu->cur;
 	menu_close(menu);
@@ -301,8 +301,8 @@ static void handle_opt_menu(MMENU * menu)
 static BOOL handle_input_str(WIDGET *w, int button, void *input, void *data)
 {
 	if (button<=0) {
-		MMENU* m = data;
-		strcpy(m->entries[m->cur].data, input);
+		MMENU* m = (MMENU*) data;
+		strcpy((char*)m->entries[m->cur].data, (char*)input);
 
 		if (m->handle_select)
 			m->handle_select(m);
@@ -313,8 +313,8 @@ static BOOL handle_input_str(WIDGET *w, int button, void *input, void *data)
 static BOOL handle_input_int(WIDGET *w, int button, void *input, void *data)
 {
 	if (button<=0) {
-		MMENU* m = data;
-		m->entries[m->cur].data = (void *)(SINTPTR_T)atoi(input);
+		MMENU* m = (MMENU*) data;
+		m->entries[m->cur].data = (void *)(SINTPTR_T)atoi((char*)input);
 
 		if (m->handle_select)
 			m->handle_select(m);
@@ -324,7 +324,7 @@ static BOOL handle_input_int(WIDGET *w, int button, void *input, void *data)
 
 static BOOL menu_do_select(MWINDOW * win)
 {
-	MMENU *m = win->data;
+	MMENU *m = (MMENU *) win->data;
 	MENTRY *entry = &m->entries[m->cur];
 
 	if (menu_is_toggle(entry)) {
@@ -371,7 +371,7 @@ static BOOL menu_do_select(MWINDOW * win)
 		start = strchr(entry->text, '|') + 1;
 		pos = strchr(start, '|');
 
-		msg = malloc(sizeof(char) * (pos - start + 1));
+		msg = (char *) malloc(sizeof(char) * (pos - start + 1));
 		strncpy(msg, start, pos - start);
 		msg[pos - start] = '\0';
 		sscanf(pos + 1, "%d", &length);
@@ -381,13 +381,14 @@ static BOOL menu_do_select(MWINDOW * win)
 		free(msg);
 		return 1;
 	} else if (menu_is_int(entry)) {
-		char *msg = NULL, *start, *pos;
+		char *start, *pos;
+		char *msg = NULL;
 		int min = 0, max = 0;
 
 		start = strchr(entry->text, '|') + 1;
 		pos = strchr(start, '|');
 
-		msg = malloc(sizeof(char) * (pos - start + 1));
+		msg = (char *) malloc(sizeof(char) * (pos - start + 1));
 		strncpy(msg, start, pos - start);
 		msg[pos - start] = '\0';
 		sscanf(pos + 1, "%d|%d", &min, &max);
@@ -397,7 +398,7 @@ static BOOL menu_do_select(MWINDOW * win)
 		free(msg);
 		return 1;
 	} else if (menu_is_sub(entry)) {
-		MMENU *sub = entry->data;
+		MMENU *sub = (MMENU *) entry->data;
 
 		sub->cur = sub->first = 0;
 		menu_open(sub, win->x + win->width + 1, win->y + m->cur - m->first);
@@ -412,7 +413,7 @@ void menu_close(MMENU * menu)
 
 	for (i = 0; i < menu->count; i++)
 		if (menu_is_sub(&menu->entries[i]))
-			menu_close(menu->entries[i].data);
+			menu_close((MMENU *) menu->entries[i].data);
 	if (menu->win) {
 		win_status(NULL);
 		win_close(menu->win);
@@ -422,7 +423,7 @@ void menu_close(MMENU * menu)
 
 static BOOL menu_handle_key(MWINDOW * win, int ch)
 {
-	MMENU *menu = win->data;
+	MMENU *menu = (MMENU *) win->data;
 	char *pos, *help;
 	int i, key;
 
@@ -479,7 +480,7 @@ static BOOL menu_handle_key(MWINDOW * win, int ch)
 static void menu_handle_resize(MWINDOW * win, int dx, int dy)
 {
 	int m_y, m_width, m_height;
-	MMENU *menu = win->data;
+	MMENU *menu = (MMENU *) win->data;
 
 	win_get_size_max(&m_y, &m_width, &m_height);
 	m_width -= 2;

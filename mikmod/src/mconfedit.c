@@ -226,7 +226,7 @@ void set_help(MENTRY *entry, char *str, ...)
 	va_end(args);
 
 	len = MIN(strlen(storage), STORAGELEN);
-	entry->help = malloc(sizeof(char) * (len + 1));
+	entry->help = (char *) malloc(sizeof(char) * (len + 1));
 	strncpy(entry->help, storage, len);
 	entry->help[len] = '\0';
 }
@@ -265,7 +265,7 @@ static void get_drivers(MENTRY *entry)
 
 	if (entry->text)
 		free(entry->text);
-	entry->text = malloc(sizeof(char) * (len + 25));
+	entry->text = (char *) malloc(sizeof(char) * (len + 25));
 	strcpy(entry->text, "&Driver [%o]|Autodetect");
 
 	start = skip_number(driver);
@@ -328,7 +328,7 @@ static void get_driver_options(MENTRY *entry, MENTRY *dr_entry)
 			if (cmdline[cmdlen-1] == '\n')
 				cmdlen--;
 		}
-		entry->text = malloc(sizeof(char) * (cmdlen+end-pos+50+20));
+		entry->text = (char *) malloc(sizeof(char) * (cmdlen+end-pos+50+20));
 		strcpy(entry->text, "Driver &options [%s]|Enter driver options");
 		if (end > pos && cmdlen > 0) {
 			strcat (entry->text, " (Options for ");
@@ -340,7 +340,7 @@ static void get_driver_options(MENTRY *entry, MENTRY *dr_entry)
 			strcat(entry->text, ":|255|16");
 		if (cmdline) free (cmdline);
 	} else {
-		entry->text = malloc(sizeof(char) * 50);
+		entry->text = (char *) malloc(sizeof(char) * 50);
 		strcpy(entry->text, "Driver &options [%s]|Enter driver options:|255|16");
 	}
 }
@@ -356,7 +356,7 @@ static void get_themes(MENTRY *entry)
 	}
 	if (entry->text)
 		free (entry->text);
-	entry->text = malloc(sizeof(char) * (len + 15));
+	entry->text = (char *) malloc(sizeof(char) * (len + 15));
 	strcpy(entry->text, "T&heme  [%o]");
 	for (i=0; i<cnt_themes; i++) {
 		strcat(entry->text, "|");
@@ -434,7 +434,7 @@ static void theme_set_attrs (THEME_DATA *data, int repaint)
 static int cb_theme_list_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		THEME_DATA *data = w->data;
+		THEME_DATA *data = (THEME_DATA *) w->data;
 
 		theme_get_attrs (data);
 		data->cur_attr = ((WID_LIST*)w)->cur;
@@ -460,7 +460,7 @@ static void theme_edit_close (THEME_DATA *data)
 static int cb_theme_button_focus(WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		THEME_DATA *data = w->data;
+		THEME_DATA *data = (THEME_DATA *) w->data;
 		int button = ((WID_BUTTON *) w)->active;
 
 		switch (button) {
@@ -497,7 +497,7 @@ static int cb_theme_button_focus(WIDGET *w, int focus)
 static int cb_focus(struct WIDGET *w, int focus)
 {
 	if (focus == FOCUS_ACTIVATE) {
-		THEME_DATA *data = w->data;
+		THEME_DATA *data = (THEME_DATA *) w->data;
 		if (data->list_w->w.has_focus)
 			return FOCUS_DONT;
 	}
@@ -509,7 +509,7 @@ static void theme_edit (int act_theme)
 	DIALOG *d = dialog_new();
 	WIDGET *w;
 	char title[200];
-	THEME_DATA *data = malloc(sizeof(THEME_DATA));
+	THEME_DATA *data = (THEME_DATA *) malloc(sizeof(THEME_DATA));
 
 	data->cur_attr = 0;
 	data->orig_theme = act_theme;
@@ -571,7 +571,7 @@ static char *theme_uniq_name (char *src_name)
 	strcat (buf," %02d");
 
 	len = strlen(buf)+1;
-	name = malloc (sizeof(char)*len);
+	name = (char *) malloc (sizeof(char)*len);
 	n = 2;
 	do {
 		SNPRINTF (name,len,buf,n);
