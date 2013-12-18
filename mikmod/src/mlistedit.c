@@ -371,22 +371,22 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 					   MA_TestName (file, 0 , 0)) {
 				/* file of known type: add/remove it */
 				char **pos = NULL;
-				int i = 0;
+				int j = 0;
 				if (freq_data && freq_data->cnt_list > 0)
 					pos = bsearch (file,freq_data->searchlist,freq_data->cnt_list,
 								   sizeof(char*),(int(*)())searchlist_search_cmp);
 				if (pos) {
 					if (mode != FREQ_ADD) {
-						i=entry_remove_by_name(file, NULL, freq_data);
-						if (removed) *removed += i;
+						j = entry_remove_by_name(file, NULL, freq_data);
+						if (removed) *removed += j;
 					} else if (freq_data->actline < 0 && freq_data->before_add) {
-						i=entry_add(file, NULL, freq_data);
-						if (added) *added += i;
+						j = entry_add(file, NULL, freq_data);
+						if (added) *added += j;
 					}
 				} else {
 					if (mode != FREQ_REMOVE) {
-						i=entry_add(file, NULL, freq_data);
-						if (added) *added += i;
+						j = entry_add(file, NULL, freq_data);
+						if (added) *added += j;
 					}
 				}
 			}

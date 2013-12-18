@@ -186,11 +186,11 @@ BOOL rc_write_struct (char *label, char *description)
 {
 	if (fp) {
 		BOOL ret;
-		STACK *new = malloc (sizeof(STACK));
+		STACK *newstack = (STACK *) malloc (sizeof(STACK));
 
-		new->data = strdup (label);
-		new->next = structs;
-		structs = new;
+		newstack->data = strdup (label);
+		newstack->next = structs;
+		structs = newstack;
 
 		write_description (description);
 		ret = fprintf(fp,"%sBEGIN \"%s\"\n", indent, label) > 0;

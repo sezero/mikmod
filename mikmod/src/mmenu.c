@@ -333,7 +333,7 @@ static BOOL menu_do_select(MWINDOW * win)
 	} else if (menu_is_option(entry)) {
 		char *pos, *start;
 		MENTRY *sub;
-		MMENU *new = malloc(sizeof(MMENU));
+		MMENU *newmenu = (MMENU *) malloc(sizeof(MMENU));
 		int cnt = 1, i;
 
 		start = strchr(entry->text, '|');
@@ -342,19 +342,19 @@ static BOOL menu_do_select(MWINDOW * win)
 			pos++;
 			cnt++;
 		}
-		new->cur = (SINTPTR_T)(entry->data);
-		new->first = 0;
-		new->count = cnt;
-		new->key_left = 1;
-		new->entries = malloc(sizeof(MENTRY) * cnt);
-		new->handle_select = handle_opt_menu;
-		new->win = NULL;
-		new->data = m;
-		sub = new->entries;
+		newmenu->cur = (SINTPTR_T)(entry->data);
+		newmenu->first = 0;
+		newmenu->count = cnt;
+		newmenu->key_left = 1;
+		newmenu->entries = (MENTRY *) malloc(sizeof(MENTRY) * cnt);
+		newmenu->handle_select = handle_opt_menu;
+		newmenu->win = NULL;
+		newmenu->data = m;
+		sub = newmenu->entries;
 		for (i = 0; i < cnt; i++) {
 			if (!(pos = strchr(start, '|')))
 				pos = &start[strlen(start)];
-			sub->text = malloc(sizeof(char) * (pos - start + 1));
+			sub->text = (char *) malloc(sizeof(char) * (pos - start + 1));
 			strncpy(sub->text, start, pos - start);
 			sub->text[pos - start] = '\0';
 			sub->data = NULL;
@@ -362,7 +362,7 @@ static BOOL menu_do_select(MWINDOW * win)
 			start = pos + 1;
 			sub++;
 		}
-		menu_open(new, win->x + win->width + 1, win->y + m->cur - m->first);
+		menu_open(newmenu, win->x + win->width + 1, win->y + m->cur - m->first);
 		return 1;
 	} else if (menu_is_str(entry)) {
 		char *msg = NULL, *start, *pos;

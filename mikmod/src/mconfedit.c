@@ -587,12 +587,12 @@ static char *theme_uniq_name (char *src_name)
 
 static void theme_copy (int *act_theme)
 {
-	THEME new;
-	new.color = themes[*act_theme].color;
-	new.attrs = themes[*act_theme].attrs;
-	if ((new.name = theme_uniq_name (themes[*act_theme].name))) {
-		*act_theme = CF_theme_insert (&themes,&cnt_themes,&new);
-		free (new.name);
+	THEME newtheme;
+	newtheme.color = themes[*act_theme].color;
+	newtheme.attrs = themes[*act_theme].attrs;
+	if ((newtheme.name = theme_uniq_name (themes[*act_theme].name))) {
+		*act_theme = CF_theme_insert (&themes,&cnt_themes,&newtheme);
+		free (newtheme.name);
 	}
 }
 
@@ -625,115 +625,115 @@ static BOOL cb_themeedit (WIDGET *w, int button, void *input, void *data)
 	return 1;
 }
 
-static void config_set_config(CONFIG *config)
+static void config_set_config(CONFIG *cfg)
 {
 	int i;
 
-	output_entries[OPT_DRIVER].data = (void *)(SINTPTR_T)config->driver;
+	output_entries[OPT_DRIVER].data = (void *)(SINTPTR_T)cfg->driver;
 #if LIBMIKMOD_VERSION >= 0x030107
-	strcpy (output_entries[OPT_DRV_OPTION].data,config->driveroptions);
+	strcpy ((char *)output_entries[OPT_DRV_OPTION].data,cfg->driveroptions);
 #endif
-	output_entries[OPT_STEREO].data = (void *)(SINTPTR_T)config->stereo;
-	output_entries[OPT_MODE_16BIT].data = (void *)(SINTPTR_T)config->mode_16bit;
-	output_entries[OPT_FREQUENCY].data = (void *)(SINTPTR_T)config->frequency;
-	output_entries[OPT_INTERPOLATE].data = (void *)(SINTPTR_T)config->interpolate;
-	output_entries[OPT_HQMIXER].data = (void *)(SINTPTR_T)config->hqmixer;
-	output_entries[OPT_SURROUND].data = (void *)(SINTPTR_T)config->surround;
-	output_entries[OPT_REVERB].data = (void *)(SINTPTR_T)config->reverb;
+	output_entries[OPT_STEREO].data = (void *)(SINTPTR_T)cfg->stereo;
+	output_entries[OPT_MODE_16BIT].data = (void *)(SINTPTR_T)cfg->mode_16bit;
+	output_entries[OPT_FREQUENCY].data = (void *)(SINTPTR_T)cfg->frequency;
+	output_entries[OPT_INTERPOLATE].data = (void *)(SINTPTR_T)cfg->interpolate;
+	output_entries[OPT_HQMIXER].data = (void *)(SINTPTR_T)cfg->hqmixer;
+	output_entries[OPT_SURROUND].data = (void *)(SINTPTR_T)cfg->surround;
+	output_entries[OPT_REVERB].data = (void *)(SINTPTR_T)cfg->reverb;
 
-	playback_entries[OPT_VOLUME].data = (void *)(SINTPTR_T)config->volume;
+	playback_entries[OPT_VOLUME].data = (void *)(SINTPTR_T)cfg->volume;
 	playback_entries[OPT_VOLRESTRICT].data =
-	  (void *)(SINTPTR_T)config->volrestrict;
-	playback_entries[OPT_FADE].data = (void *)(SINTPTR_T)config->fade;
-	playback_entries[OPT_LOOP].data = (void *)(SINTPTR_T)config->loop;
-	playback_entries[OPT_PANNING].data = (void *)(SINTPTR_T)config->panning;
-	playback_entries[OPT_EXTSPD].data = (void *)(SINTPTR_T)config->extspd;
+	  (void *)(SINTPTR_T)cfg->volrestrict;
+	playback_entries[OPT_FADE].data = (void *)(SINTPTR_T)cfg->fade;
+	playback_entries[OPT_LOOP].data = (void *)(SINTPTR_T)cfg->loop;
+	playback_entries[OPT_PANNING].data = (void *)(SINTPTR_T)cfg->panning;
+	playback_entries[OPT_EXTSPD].data = (void *)(SINTPTR_T)cfg->extspd;
 
 	plmode_entries[OPT_PM_MODULE].data =
-	  (void *)(SINTPTR_T)BTST(config->playmode, PM_MODULE);
+	  (void *)(SINTPTR_T)BTST(cfg->playmode, PM_MODULE);
 	plmode_entries[OPT_PM_MULTI].data =
-	  (void *)(SINTPTR_T)BTST(config->playmode, PM_MULTI);
+	  (void *)(SINTPTR_T)BTST(cfg->playmode, PM_MULTI);
 	plmode_entries[OPT_PM_SHUFFLE].data =
-	  (void *)(SINTPTR_T)BTST(config->playmode, PM_SHUFFLE);
+	  (void *)(SINTPTR_T)BTST(cfg->playmode, PM_SHUFFLE);
 	plmode_entries[OPT_PM_RANDOM].data =
-	  (void *)(SINTPTR_T)BTST(config->playmode, PM_RANDOM);
-	other_entries[OPT_CURIOUS].data = (void *)(SINTPTR_T)config->curious;
-	other_entries[OPT_TOLERANT].data = (void *)(SINTPTR_T)config->tolerant;
-	other_entries[OPT_FULLPATHS].data = (void *)(SINTPTR_T)config->fullpaths;
-	other_entries[OPT_WINDOWTITLE].data = (void *)(SINTPTR_T)config->window_title;
+	  (void *)(SINTPTR_T)BTST(cfg->playmode, PM_RANDOM);
+	other_entries[OPT_CURIOUS].data = (void *)(SINTPTR_T)cfg->curious;
+	other_entries[OPT_TOLERANT].data = (void *)(SINTPTR_T)cfg->tolerant;
+	other_entries[OPT_FULLPATHS].data = (void *)(SINTPTR_T)cfg->fullpaths;
+	other_entries[OPT_WINDOWTITLE].data = (void *)(SINTPTR_T)cfg->window_title;
 #if LIBMIKMOD_VERSION >= 0x030200
-	other_entries[OPT_SAMPLES].data = (void *)(SINTPTR_T)config->forcesamples;
-	other_entries[OPT_FAKEVOLBARS].data = (void *)(SINTPTR_T)config->fakevolbars;
+	other_entries[OPT_SAMPLES].data = (void *)(SINTPTR_T)cfg->forcesamples;
+	other_entries[OPT_FAKEVOLBARS].data = (void *)(SINTPTR_T)cfg->fakevolbars;
 #endif
-	other_entries[OPT_RENICE].data = (void *)(SINTPTR_T)config->renice;
-	other_entries[OPT_STATUSBAR].data = (void *)(SINTPTR_T)config->statusbar;
+	other_entries[OPT_RENICE].data = (void *)(SINTPTR_T)cfg->renice;
+	other_entries[OPT_STATUSBAR].data = (void *)(SINTPTR_T)cfg->statusbar;
 
-	exit_entries[OPT_S_CONFIG].data = (void *)(SINTPTR_T)config->save_config;
-	exit_entries[OPT_S_PLAYLIST].data = (void *)(SINTPTR_T)config->save_playlist;
+	exit_entries[OPT_S_CONFIG].data = (void *)(SINTPTR_T)cfg->save_config;
+	exit_entries[OPT_S_PLAYLIST].data = (void *)(SINTPTR_T)cfg->save_playlist;
 
 	get_driver_options (&output_entries[OPT_DRV_OPTION],
 						&output_entries[OPT_DRIVER]);
 
 	CF_themes_free (&themes, &cnt_themes);
-	for (i=0; i<config->cnt_themes; i++)
-		CF_theme_insert (&themes, &cnt_themes, &config->themes[i]);
-	config_set_act_theme(config->theme);
+	for (i = 0; i < cfg->cnt_themes; i++)
+		CF_theme_insert (&themes, &cnt_themes, &cfg->themes[i]);
+	config_set_act_theme(cfg->theme);
 	get_themes(&other_entries[OPT_THEME]);
 }
 
-static void config_get_config(CONFIG *config)
+static void config_get_config(CONFIG *cfg)
 {
 	int i;
 
-	config->driver = (SINTPTR_T)output_entries[OPT_DRIVER].data;
+	cfg->driver = (SINTPTR_T)output_entries[OPT_DRIVER].data;
 #if LIBMIKMOD_VERSION >= 0x030107
-	rc_set_string(&config->driveroptions, output_entries[OPT_DRV_OPTION].data, 99);
+	rc_set_string(&cfg->driveroptions, (char *)output_entries[OPT_DRV_OPTION].data, 99);
 #endif
-	config->stereo = (BOOL)(SINTPTR_T)output_entries[OPT_STEREO].data;
-	config->mode_16bit = (BOOL)(SINTPTR_T)output_entries[OPT_MODE_16BIT].data;
-	config->frequency = (SINTPTR_T)output_entries[OPT_FREQUENCY].data;
-	config->interpolate = (BOOL)(SINTPTR_T)output_entries[OPT_INTERPOLATE].data;
-	config->hqmixer = (BOOL)(SINTPTR_T)output_entries[OPT_HQMIXER].data;
-	config->surround = (BOOL)(SINTPTR_T)output_entries[OPT_SURROUND].data;
-	config->reverb = (SINTPTR_T)output_entries[OPT_REVERB].data;
+	cfg->stereo = (BOOL)(SINTPTR_T)output_entries[OPT_STEREO].data;
+	cfg->mode_16bit = (BOOL)(SINTPTR_T)output_entries[OPT_MODE_16BIT].data;
+	cfg->frequency = (SINTPTR_T)output_entries[OPT_FREQUENCY].data;
+	cfg->interpolate = (BOOL)(SINTPTR_T)output_entries[OPT_INTERPOLATE].data;
+	cfg->hqmixer = (BOOL)(SINTPTR_T)output_entries[OPT_HQMIXER].data;
+	cfg->surround = (BOOL)(SINTPTR_T)output_entries[OPT_SURROUND].data;
+	cfg->reverb = (SINTPTR_T)output_entries[OPT_REVERB].data;
 
-	config->volume = (SINTPTR_T)playback_entries[OPT_VOLUME].data;
-	config->volrestrict = (BOOL)(SINTPTR_T)playback_entries[OPT_VOLRESTRICT].data;
-	config->fade = (BOOL)(SINTPTR_T)playback_entries[OPT_FADE].data;
-	config->loop = (BOOL)(SINTPTR_T)playback_entries[OPT_LOOP].data;
-	config->panning = (BOOL)(SINTPTR_T)playback_entries[OPT_PANNING].data;
-	config->extspd = (BOOL)(SINTPTR_T)playback_entries[OPT_EXTSPD].data;
+	cfg->volume = (SINTPTR_T)playback_entries[OPT_VOLUME].data;
+	cfg->volrestrict = (BOOL)(SINTPTR_T)playback_entries[OPT_VOLRESTRICT].data;
+	cfg->fade = (BOOL)(SINTPTR_T)playback_entries[OPT_FADE].data;
+	cfg->loop = (BOOL)(SINTPTR_T)playback_entries[OPT_LOOP].data;
+	cfg->panning = (BOOL)(SINTPTR_T)playback_entries[OPT_PANNING].data;
+	cfg->extspd = (BOOL)(SINTPTR_T)playback_entries[OPT_EXTSPD].data;
 
-	config->playmode =
+	cfg->playmode =
 	  (((BOOL)(SINTPTR_T)plmode_entries[OPT_PM_MODULE].data) ? PM_MODULE : 0) |
 	  (((BOOL)(SINTPTR_T)plmode_entries[OPT_PM_MULTI].data) ? PM_MULTI : 0) |
 	  (((BOOL)(SINTPTR_T)plmode_entries[OPT_PM_SHUFFLE].data) ? PM_SHUFFLE : 0) |
 	  (((BOOL)(SINTPTR_T)plmode_entries[OPT_PM_RANDOM].data) ? PM_RANDOM : 0);
-	config->curious = (BOOL)(SINTPTR_T)other_entries[OPT_CURIOUS].data;
-	config->tolerant = (BOOL)(SINTPTR_T)other_entries[OPT_TOLERANT].data;
-	config->fullpaths = (BOOL)(SINTPTR_T)other_entries[OPT_FULLPATHS].data;
-	config->window_title = (BOOL)(SINTPTR_T)other_entries[OPT_WINDOWTITLE].data;
+	cfg->curious = (BOOL)(SINTPTR_T)other_entries[OPT_CURIOUS].data;
+	cfg->tolerant = (BOOL)(SINTPTR_T)other_entries[OPT_TOLERANT].data;
+	cfg->fullpaths = (BOOL)(SINTPTR_T)other_entries[OPT_FULLPATHS].data;
+	cfg->window_title = (BOOL)(SINTPTR_T)other_entries[OPT_WINDOWTITLE].data;
 #if LIBMIKMOD_VERSION >= 0x030200
-	config->forcesamples = (BOOL)(SINTPTR_T)other_entries[OPT_SAMPLES].data;
-	config->fakevolbars = (BOOL)(SINTPTR_T)other_entries[OPT_FAKEVOLBARS].data;
+	cfg->forcesamples = (BOOL)(SINTPTR_T)other_entries[OPT_SAMPLES].data;
+	cfg->fakevolbars = (BOOL)(SINTPTR_T)other_entries[OPT_FAKEVOLBARS].data;
 #endif
-	config->renice = (SINTPTR_T)other_entries[OPT_RENICE].data;
-	config->statusbar = (SINTPTR_T)other_entries[OPT_STATUSBAR].data;
+	cfg->renice = (SINTPTR_T)other_entries[OPT_RENICE].data;
+	cfg->statusbar = (SINTPTR_T)other_entries[OPT_STATUSBAR].data;
 
-	config->save_config = (BOOL)(SINTPTR_T)exit_entries[OPT_S_CONFIG].data;
-	config->save_playlist = (BOOL)(SINTPTR_T)exit_entries[OPT_S_PLAYLIST].data;
+	cfg->save_config = (BOOL)(SINTPTR_T)exit_entries[OPT_S_CONFIG].data;
+	cfg->save_playlist = (BOOL)(SINTPTR_T)exit_entries[OPT_S_PLAYLIST].data;
 
-	CF_themes_free_user (&config->themes, &config->cnt_themes);
+	CF_themes_free_user (&cfg->themes, &cfg->cnt_themes);
 	for (i=THEME_COUNT; i<cnt_themes; i++)
-		CF_theme_insert (&config->themes, &config->cnt_themes, &themes[i]);
-	config->theme = config_get_act_theme();
+		CF_theme_insert (&cfg->themes, &cfg->cnt_themes, &themes[i]);
+	cfg->theme = config_get_act_theme();
 }
 
-static void handle_menu(MMENU *menu)
+static void handle_menu(MMENU *mn)
 {
-	switch (menu->id) {
+	switch (mn->id) {
 	  case MENU_MAIN:
-		switch (menu->cur) {
+		switch (mn->cur) {
 		  case MENU_USE:
 			config_get_config(&config);
 			Player_SetConfig(&config);
@@ -754,12 +754,12 @@ static void handle_menu(MMENU *menu)
 		}
 		break;
 	  case MENU_OUTPUT:
-		if (menu->cur == OPT_DRIVER)
+		if (mn->cur == OPT_DRIVER)
 			get_driver_options(&output_entries[OPT_DRV_OPTION],
 							   &output_entries[OPT_DRIVER]);
 		break;
 	  case MENU_OTHER:
-		if (menu->cur == OPT_EDITTHEME) {
+		if (mn->cur == OPT_EDITTHEME) {
 			if (config_get_act_theme() < THEME_COUNT)
 				dlg_message_open("Copy or copy and edit active (default-)theme?",
 								 "&Copy|Copy + &Edit|&Cancel", 2, 0,

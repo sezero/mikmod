@@ -457,6 +457,7 @@ int closedir (DIR* dir)
 
 #endif
 
+#if LIBMIKMOD_VERSION < 0x030200
 static char *skip_number(char *str)
 {
 	while (str && *str == ' ')
@@ -467,6 +468,7 @@ static char *skip_number(char *str)
 		str++;
 	return str;
 }
+#endif
 
 /* Return newly malloced version and cmdline for the driver
    with the number drvno. */

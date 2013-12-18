@@ -495,9 +495,9 @@ void win_set_repaint(WinRepaintFunc func)
 {
 	cur_window->repaint = func;
 }
-void win_panel_set_repaint(int panel, WinRepaintFunc func)
+void win_panel_set_repaint(int _panel, WinRepaintFunc func)
 {
-	win_get_first(panel)->repaint = func;
+	win_get_first(_panel)->repaint = func;
 }
 
 /* set function which sould be called on a key press */
@@ -505,9 +505,9 @@ void win_set_handle_key(WinKeyFunc func)
 {
 	cur_window->handle_key = func;
 }
-void win_panel_set_handle_key(int panel, WinKeyFunc func)
+void win_panel_set_handle_key(int _panel, WinKeyFunc func)
 {
-	win_get_first(panel)->handle_key = func;
+	win_get_first(_panel)->handle_key = func;
 }
 
 /* should window be automatically resized?
@@ -517,9 +517,9 @@ void win_set_resize(BOOL auto_resize, WinResizeFunc func)
 	cur_window->resize = auto_resize;
 	cur_window->handle_resize = func;
 }
-void win_panel_set_resize(int panel, BOOL auto_resize, WinResizeFunc func)
+void win_panel_set_resize(int _panel, BOOL auto_resize, WinResizeFunc func)
 {
-	MWINDOW *win = win_get_first(panel);
+	MWINDOW *win = win_get_first(_panel);
 	win->resize = auto_resize;
 	win->handle_resize = func;
 }
@@ -530,9 +530,9 @@ void win_set_data(void *data)
 	cur_window->data = data;
 }
 
-void win_panel_set_data(int panel, void *data)
+void win_panel_set_data(int _panel, void *data)
 {
-	win_get_first(panel)->data = data;
+	win_get_first(_panel)->data = data;
 }
 
 void win_do_resize(int dx, int dy, BOOL root)
@@ -1006,11 +1006,11 @@ static void win_timeout_insert (TIMEOUT *src)
 /* add a new timeout function called approx. every interval ms */
 void win_timeout_add (int interval, WinTimeoutFunc func, void *data)
 {
-	TIMEOUT new;
-	new.func = func;
-	new.data = data;
-	new.interval = interval;
-	win_timeout_insert (&new);
+	TIMEOUT new_timeout;
+	new_timeout.func = func;
+	new_timeout.data = data;
+	new_timeout.interval = interval;
+	win_timeout_insert (&new_timeout);
 }
 
 static void win_timeout_remove (int number)

@@ -209,7 +209,7 @@ static int MA_identify(CHAR *filename, int header_location,
 			fclose(fp);
 			return 0;
 		}
-		if (!memcmp(id, (CHAR *)header_string, len)) {
+		if (!memcmp(id, header_string, len)) {
 			fclose(fp);
 			return 1;
 		}
@@ -576,16 +576,16 @@ int MA_dearchive(CHAR *arc, CHAR *file, CHAR **extracted)
 		lseek (tmp_fd, 0, SEEK_SET);
 		if (config.archiver[t].skippat ||
 			config.archiver[t].skipstart>0 || config.archiver[t].skipend>0) {
-			char *file;
+			char *f;
 
 			t = MA_truncate (tmp_fd, config.archiver[t].skippat, config.archiver[t].skipstart,
-							 config.archiver[t].skipend, &file);
+							 config.archiver[t].skipend, &f);
 			close (tmp_fd);
 			if (tmp_file) {
 				unlink (tmp_file_sys);
 				free (tmp_file);
 			}
-			tmp_file = file;
+			tmp_file = f;
 			tmp_fd = t;
 		}
 	}
@@ -602,11 +602,11 @@ int MA_dearchive(CHAR *arc, CHAR *file, CHAR **extracted)
    playlist==1: also test against a playlist
    deep==1    : use Player_LoadTite() for testing against a module,
 		        otherwise test based on the filename */
-BOOL MA_TestName (char *filename, BOOL playlist, BOOL deep)
+BOOL MA_TestName (char *filename, BOOL plist, BOOL deep)
 {
 	int t;
 
-	if (playlist && PL_isPlaylistFilename(filename))
+	if (plist && PL_isPlaylistFilename(filename))
 		return 1;
 	if (deep) {
 		char *title;
