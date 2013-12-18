@@ -6,7 +6,7 @@ mikmod - play soundtracker etc. modules on a Unix machine.
 
 
 .SH SYNOPSIS
-.B mikmod [\fB-options\fR]... [\fBmodule\fR|\fBplaylist\fR]...
+.B mikmod [\fB\-options\fR]... [\fBmodule\fR|\fBplaylist\fR]...
 
 
 .SH DESCRIPTION
@@ -33,39 +33,39 @@ defaults shown in this man page.
 .SH OUTPUT OPTIONS
 
 
-.IP "\fB-d \fIn\fR"
-.IP "\fB--driver \fIn\fR"
+.IP "\fB\-d \fIn\fR"
+.IP "\fB\-\-driver \fIn\fR"
 Use the specified device driver for output, 0 is autodetect. The default is 0. 
 If your installed libmikmod engine is recent enough (>=3.1.7), you can also
 specify the driver with an alias, as well as driver options separated by
 commas. The list and driver aliases and recognized options can be found in
 libmikmod's documentation.
-.IP "\fB-o[utput] \fI8m\fR|\fI8s\fR|\fI16m\fR|\fI16s\fR"
+.IP "\fB\-o[utput] \fI8m\fR|\fI8s\fR|\fI16m\fR|\fI16s\fR"
 Output settings, 8 or 16 bit in stereo or mono. The default is "16s".
-.IP "\fB-f \fIfreq\fR"
-.IP "\fB--frequency \fIfreq\fR"
+.IP "\fB\-f \fIfreq\fR"
+.IP "\fB\-\-frequency \fIfreq\fR"
 Set mixing frequency in hertz. The default is 44100.
-.IP "\fB-i\fR"
-.IP "\fB--interpolate\fR"
+.IP "\fB\-i\fR"
+.IP "\fB\-\-interpolate\fR"
 Use interpolated mixing. This will generally improve audio quality, at the
 expense of a bit more CPU usage. Note that this option alters the behaviour of
 software drivers only ; hardware drivers are not affected (default).
-.IP "\fB--nointerpolate\fR"
+.IP "\fB\-\-nointerpolate\fR"
 Do not use interpolated mixing.
-.IP "\fB-hq\fR"
-.IP "\fB--hqmixer\fR"
+.IP "\fB\-hq\fR"
+.IP "\fB\-\-hqmixer\fR"
 Use high quality software mixer. This improves audio quality, but requires a lot
 more CPU power. Note that this option alters the behaviour of software drivers
 only ; hardware drivers are not affected.
-.IP "\fB--nohqmixer"
+.IP "\fB\-\-nohqmixer"
 Do not use high quality software mixer (default).
-.IP "\fB-s\fR"
-.IP "\fB--surround\fR"
+.IP "\fB\-s\fR"
+.IP "\fB\-\-surround\fR"
 Use surround mixing.
-.IP "\fB--nosurround\fR"
+.IP "\fB\-\-nosurround\fR"
 Do not use surround mixing (default).
-.IP "\fB-r \fIn\fR"
-.IP "\fB--reverb \fIn\fR"
+.IP "\fB\-r \fIn\fR"
+.IP "\fB\-\-reverb \fIn\fR"
 Sets reverb amount from 0 (no reverb) to 15 (max reverb). The default is 0 (no
 reverb).
 
@@ -73,57 +73,57 @@ reverb).
 .SH PLAYBACK OPTIONS
 
 
-.IP "\fB-v \fIvolume\fR"
-.IP "\fB--volume \fIvolume\fR"
+.IP "\fB\-v \fIvolume\fR"
+.IP "\fB\-\-volume \fIvolume\fR"
 Set volume from 0% (silence) to 100%. The default is 100%.
-.IP "\fB-F\fR"
-.IP "\fB--fadeout\fR"
+.IP "\fB\-F\fR"
+.IP "\fB\-\-fadeout\fR"
 Fade out the volume during the last pattern of each module.
-.IP "\fB--nofadeout\fR"
+.IP "\fB\-\-nofadeout\fR"
 Do not fade out the volume during the last pattern of each module (default).
-.IP "\fB-l\fR"
-.IP "\fB--loops\fR"
+.IP "\fB\-l\fR"
+.IP "\fB\-\-loops\fR"
 Enable in-module backwards loops.
-.IP "\fB--noloops\fR"
+.IP "\fB\-\-noloops\fR"
 Disable in-module backwards loops (default).
-.IP "\fB-a\fR"
-.IP "\fB--panning\fR"
-Process panning effects (default). This should be disabled (using --nopanning)
+.IP "\fB\-a\fR"
+.IP "\fB\-\-panning\fR"
+Process panning effects (default). This should be disabled (using \-\-nopanning)
 for very old demo modules which use the panning effects for synchronization
 purposes.
-.IP "\fB--nopanning\fR"
+.IP "\fB\-\-nopanning\fR"
 Do not process panning effects.
-.IP "\fB-x\fR"
-.IP "\fB--protracker\fR"
+.IP "\fB\-x\fR"
+.IP "\fB\-\-protracker\fR"
 Enable protracker extended speed effect (default). This should be disabled
-(using --noprotracker) for very old demo modules which use the extended speed
+(using \-\-noprotracker) for very old demo modules which use the extended speed
 effect for synchronization purposes.
-.IP "\fB--noprotracker\fR"
+.IP "\fB\-\-noprotracker\fR"
 Disable protracker extended speed effect.
 
 
 .SH LOADING OPTIONS
 
 
-.IP "\fB-y \fIdir\fR"
-.IP "\fB--directory \fIdir\fR"
+.IP "\fB\-y \fIdir\fR"
+.IP "\fB\-\-directory \fIdir\fR"
 Scan directory recursively for modules.
-.IP "\fB-c\fR"
-.IP "\fB--curious\fR"
+.IP "\fB\-c\fR"
+.IP "\fB\-\-curious\fR"
 Look for hidden patterns in module. Most modules don't have hidden patterns,
 but you can find "bonus" patterns (or just silence) in some modules.
-.IP "\fB--nocurious\fR"
+.IP "\fB\-\-nocurious\fR"
 Do not look for hidden patterns in module (default).
-.IP "\fB-p \fIn\fR"
-.IP "\fB--playmode \fIn\fR"
+.IP "\fB\-p \fIn\fR"
+.IP "\fB\-\-playmode \fIn\fR"
 Playlist mode. The allowed values here are 1, to loop the current
 module; 2, to play the whole playlist repeatedly; 4, to shuffle the
 list before playing, and 8, to play the whole list randomly. The
 default is 2.
-.IP "\fB-t\fR"
-.IP "\fB--tolerant\fR"
+.IP "\fB\-t\fR"
+.IP "\fB\-\-tolerant\fR"
 Don't halt MikMod if a module cannot be read or is an unknown format (default).
-.IP "\fB--notolerant\fR"
+.IP "\fB\-\-notolerant\fR"
 Halt MikMod if a module cannot be read or is an unknown format.
 
 
@@ -132,50 +132,50 @@ Halt MikMod if a module cannot be read or is an unknown format.
 
 The following options need root privileges (or a setuid root binary), and
 don't work under all systems.
-.IP "\fB-s\fR"
-.IP "\fB--renice\fR"
+.IP "\fB\-s\fR"
+.IP "\fB\-\-renice\fR"
 Renice to -20 if possible to gain more CPU priority. This option is only
 available under FreeBSD, Linux, NetBSD, OpenBSD and OS/2.
-.IP "\fB--norenice\fR"
+.IP "\fB\-\-norenice\fR"
 Do not renice to -20 (default).
-.IP "\fB-S\fR"
-.IP "\fB--realtime\fR"
+.IP "\fB\-S\fR"
+.IP "\fB\-\-realtime\fR"
 Reschedule mikmod to gain real-time priority (and thus more CPU time).
 \fBDANGEROUS! USE WITH CAUTION!\fR This option is only available under FreeBSD,
 Linux and OS/2.
-.IP "\fB--norealtime\fR"
-Do not reschedule MikMod to gain real-time priority (default).
+.IP "\fB\-\-norealtime\fR"
+Do not reschedule MikMod to gain real\-time priority (default).
 
 
 .SH DISPLAY OPTIONS
 
 
-.IP "\fB-q\fR"
-.IP "\fB--quiet\fR"
+.IP "\fB\-q\fR"
+.IP "\fB\-\-quiet\fR"
 Quiet mode. Disables interactive commands and displays only errors.
 
 
 .SH INFORMATION OPTIONS
 
 
-.IP "\fB-n\fR"
-.IP "\fB--information\fR"
+.IP "\fB\-n\fR"
+.IP "\fB\-\-information\fR"
 Display the list of the known drivers and module loaders.
-.IP "\fB-N \fIn\fR"
-.IP "\fB--drvinfo \fIn\fR"
+.IP "\fB\-N \fIn\fR"
+.IP "\fB\-\-drvinfo \fIn\fR"
 Display information about a specific driver.
-.IP "\fB-V\fR"
-.IP "\fB--version\fR"
+.IP "\fB\-V\fR"
+.IP "\fB\-\-version\fR"
 Display MikMod version.
-.IP "\fB-h\fR"
-.IP "\fB--help\fR"
+.IP "\fB\-h\fR"
+.IP "\fB\-\-help\fR"
 Display a summary of the options.
 
 
 .SH CONFIGURATION OPTION
 
 
-.IP "\fB--norc\fR"
+.IP "\fB\-\-norc\fR"
 Do not parse the $HOME/.mikmodrc configuration file. This file contains your
 default settings, so that you don't have to specify them each time you run
 MikMod. The file is read when you run MikMod and updated on exit. Using this
@@ -206,7 +206,7 @@ Set volume from 10% (digit 1) to 100% (digit 0).
 Decrease volume.
 .IP "\fB>\fR"
 Increase volume.
-.IP "\fB-\fR, \fBLeft\fR"
+.IP "\fB\-\fR, \fBLeft\fR"
 Restart current pattern / skip to previous pattern.
 .IP "\fB+\fR, \fBRight\fR"
 Skip to next pattern in current module.
