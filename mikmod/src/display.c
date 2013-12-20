@@ -115,7 +115,7 @@ static MWINDOW *dynamic_repaint_win;
 #endif
 
 static void display_title(void);
-static void set_window_title(char *content);
+static void set_window_title(const char *content);
 
 /*========== Variables */
 
@@ -229,10 +229,10 @@ static void remove_message(void)
 /* display a banner/message from line skip, at position origin
    returns updated skip value if it is out of bounds and would prevent the
    message from being seen. */
-static int display_banner(MWINDOW *win, char *banner, int origin, int skip,
-						  BOOL wrap)
+static int display_banner(MWINDOW *win, const char *banner, int origin,
+			  int skip, BOOL wrap)
 {
-	char *buf = banner;
+	const char *buf = banner;
 	char str[MAXWIDTH + 1];
 	int i, n, t, winx, winy;
 
@@ -492,7 +492,7 @@ void display_status(void)
 /* seventh line to bottom of screen: information panel */
 static BOOL display_information(void)
 {
-	static char *panel_name[] = {
+	static const char *panel_name[] = {
 		"Help",
 		"Samples",
 		"Instruments",
@@ -585,7 +585,7 @@ static BOOL display_information(void)
 static void display_help(MWINDOW *win, int diff)
 {
 /* *INDENT-OFF* */
-	static char helptext[] =
+	static const char helptext[] =
 #if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
 		"Keys help             (depending on your terminal and your curses library,\n"
 		"=========                      some of these keys might not be recognized)\n"
@@ -1008,7 +1008,7 @@ static void display_playentry(MWINDOW *win, PLAYENTRY *pos, PLAYENTRY *cur,
 /* playlist panel */
 static void display_list(MWINDOW *win, int diff, COMMAND com)
 {
-	static char *no_data = "\nPlaylist is empty!\n";
+	static const char *no_data = "\nPlaylist is empty!\n";
 	static int actLine = -1;
 	int count, semicount, playcount, t, winx, x, width;
 	PLAYENTRY *cur;
@@ -1294,7 +1294,7 @@ static void display_title(void)
  *
  * pass NULL as songname to reset the title
  */
-static void set_window_title(char *content)
+static void set_window_title(const char *content)
 {
 	/* TODO: Can we do something similar for OS2? */
 

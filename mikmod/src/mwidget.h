@@ -196,32 +196,32 @@ typedef struct {
      =0 : Start of a new column of widget
      <0 : Start of a new row of columns of widgets, value is spacing
           between this and the previous row */
-WIDGET *wid_label_add(DIALOG *d, int spacing, char *msg);
-void wid_label_set_label (WID_LABEL *w, char *label);
+WIDGET *wid_label_add(DIALOG *d, int spacing, const char *msg);
+void wid_label_set_label (WID_LABEL *w, const char *label);
 
-WIDGET *wid_str_add(DIALOG *d, int spacing, char *input, int length);
-void wid_str_set_input (WID_STR *w, char *input, int length);
+WIDGET *wid_str_add(DIALOG *d, int spacing, const char *input, int length);
+void wid_str_set_input (WID_STR *w, const char *input, int length);
 
 WIDGET *wid_int_add(DIALOG *d, int spacing, int value, int length);
 void wid_int_set_input(WID_INT *w, int value, int length);
 
-WIDGET *wid_button_add(DIALOG *d, int spacing, char *button, int active);
+WIDGET *wid_button_add(DIALOG *d, int spacing, const char *button, int active);
 
-WIDGET *wid_list_add(DIALOG *d, int spacing, char **entries, int cnt);
-void wid_list_set_title(WID_LIST *w, char *title);
-void wid_list_set_entries(WID_LIST *w, char **entries, int cur, int cnt);
+WIDGET *wid_list_add(DIALOG *d, int spacing, const char **entries, int cnt);
+void wid_list_set_title(WID_LIST *w, const char *title);
+void wid_list_set_entries(WID_LIST *w, const char **entries, int cur, int cnt);
 void wid_list_set_active(WID_LIST *w, int cur);
 void wid_list_set_selection_mode (WID_LIST *w, WID_SEL_MODE mode);
 
-WIDGET *wid_check_add(DIALOG *d, int spacing, char *button,
+WIDGET *wid_check_add(DIALOG *d, int spacing, const char *button,
 					  int selected, int active);
 void wid_check_set_selected(WID_CHECK *w, int selected);
 
-WIDGET *wid_toggle_add(DIALOG *d, int spacing, char *button,
+WIDGET *wid_toggle_add(DIALOG *d, int spacing, const char *button,
 					   int selected, int active);
 void wid_toggle_set_selected(WID_TOGGLE *w, int selected);
 
-WIDGET *wid_colorsel_add(DIALOG *d, int spacing, char *hotkeys, int active);
+WIDGET *wid_colorsel_add(DIALOG *d, int spacing, const char *hotkeys, int active);
 void wid_colorsel_set_active(WID_COLORSEL *w, int active);
 
 /* Set default size of widget, -1: ignore value */
@@ -232,7 +232,7 @@ void wid_set_func(WIDGET *w, handleKeyFunc key, handleFocusFunc focus,
 void wid_repaint (WIDGET *w);
 
 DIALOG *dialog_new(void);
-void dialog_open(DIALOG *d, char *title);
+void dialog_open(DIALOG *d, const char *title);
 
 /* set attribute which is used for DLG_FRAME and DLG_LABEL,
    works only before dialog_open() */

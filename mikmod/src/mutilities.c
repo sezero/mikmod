@@ -70,7 +70,7 @@ void path_conv(char *file)
 	}
 }
 
-char *path_conv_sys(char *file)
+char *path_conv_sys(const char *file)
 {
 	static char f[PATH_MAX];
 	char *pos = f;
@@ -89,7 +89,7 @@ char *path_conv_sys(char *file)
 	return f;
 }
 
-char *path_conv_sys2(char *file)
+char *path_conv_sys2(const char *file)
 {
 	static char f[PATH_MAX];
 	char *pos = f;
@@ -109,7 +109,7 @@ char *path_conv_sys2(char *file)
 #endif
 
 /* allocate memory for a formated string and do a sprintf */
-char *str_sprintf2(char *fmt, char *arg1, char *arg2)
+char *str_sprintf2(const char *fmt, const char *arg1, const char *arg2)
 {
 	char *msg = (char *) malloc(strlen(fmt) + strlen(arg1) + strlen(arg2) + 1);
 
@@ -119,12 +119,12 @@ char *str_sprintf2(char *fmt, char *arg1, char *arg2)
 }
 
 /* allocate memory for a formated string and do a sprintf */
-char *str_sprintf(char *fmt, char *arg)
+char *str_sprintf(const char *fmt, const char *arg)
 {
 	return str_sprintf2(fmt, arg, "");
 }
 
-BOOL file_exist(char *file)
+BOOL file_exist(const char *file)
 {
 	struct stat sb;
 
@@ -132,7 +132,7 @@ BOOL file_exist(char *file)
 }
 
 /* determines if a given path is absolute or relative */
-BOOL path_relative(char *path)
+BOOL path_relative(const char *path)
 {
 	if (!path)
 		return 1;
@@ -213,10 +213,10 @@ static int m_mkstemp (char *tmpl)
 /* tmpl: file name template ending in 'XXXXXX' without path or NULL
    name_used: if !=NULL pointer to name of temp file, must be freed
    return: file descriptor or -1 */
-int get_tmp_file (char *tmpl, char **name_used)
+int get_tmp_file (const char *tmpl, char **name_used)
 {
-	static char *tmpdir = NULL;
-	static char *tmpsep = "";
+	static const char *tmpdir = NULL;
+	static const char *tmpsep = "";
 	char *fulltmpl;
 	int retval;
 
@@ -284,9 +284,9 @@ char *get_tmp_name(void)
 
 /* allocate and return a filename including the path for a config file
    'name': filename without the path */
-char *get_cfg_name(char *name)
+char *get_cfg_name(const char *name)
 {
-	char *home = getenv("HOME");
+	const char *home = getenv("HOME");
 	char *p;
 	if (!home) {
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)

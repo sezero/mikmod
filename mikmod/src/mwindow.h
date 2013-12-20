@@ -82,10 +82,10 @@ void win_set_theme (THEME *new_theme);
 
 /* open new window on current panel */
 MWINDOW *win_open(int x, int y, int width, int height, BOOL border,
-				  char *title, ATTRS attrs);
+				  const char *title, ATTRS attrs);
 /* open new window on panel 'panel' */
 MWINDOW *win_panel_open(int dst_panel, int x, int y, int width, int height,
-						BOOL border, char *title, ATTRS attrs);
+				BOOL border, const char *title, ATTRS attrs);
 /* set function which should be called on a repaint request */
 void win_set_repaint(WinRepaintFunc func);
 void win_panel_set_repaint(int panel, WinRepaintFunc func);
@@ -112,7 +112,7 @@ void win_panel_repaint_force(void);
 /* init the status line (height=0,1,2  0: no status line) */
 void win_init_status(int height);
 /* set the status line */
-void win_status(char *msg);
+void win_status(const char *msg);
 
 /* clear to end of line on window win */
 void win_clrtoeol(MWINDOW *win, int x, int y);
@@ -130,7 +130,7 @@ MWINDOW *win_get_window(void);
 MWINDOW *win_get_window_root(void);
 
 /* print string in window win */
-void win_print(MWINDOW *win, int x, int y, char *str);
+void win_print(MWINDOW *win, int x, int y, const char *str);
 
 /* draw horizontal/verticall line */
 void win_line(MWINDOW *win, int x1, int y1, int x2, int y2);

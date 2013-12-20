@@ -33,7 +33,7 @@
 
 /* set help text of menu entry
    free old menu->help and malloc new entry */
-void set_help(MENTRY * entry, char *str, ...);
+void set_help(MENTRY * entry, const char *str, ...);
 
 /* open config editor */
 void config_open(void);

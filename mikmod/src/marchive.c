@@ -75,7 +75,7 @@
 #include "display.h"
 
 /* module filenames patterns */
-static CHAR *modulepatterns[] = {
+static const CHAR *modulepatterns[] = {
 	"*.669",
 	"*.[Aa][Mm][Ff]",
 	"*.[Aa][Pp][Uu][Nn]",
@@ -97,7 +97,7 @@ static CHAR *modulepatterns[] = {
 	NULL
 };
 
-static CHAR *prefixmodulepatterns[] = {
+static const CHAR *prefixmodulepatterns[] = {
 	"[Mm][Ee][Dd].*",
 	"[Mm][Oo][Dd].*",
 	"[Nn][Ss][Tt].*",
@@ -133,7 +133,7 @@ BOOL DropPrivileges(void)
 #endif
 
 /* Determines if a filename matches a module filename pattern */
-static BOOL MA_isModuleFilename(CHAR *filename)
+static BOOL MA_isModuleFilename(const CHAR *filename)
 {
 	int t = 0;
 
@@ -144,7 +144,7 @@ static BOOL MA_isModuleFilename(CHAR *filename)
 }
 
 /* The same, but also checks for prefix names */
-static BOOL MA_isModuleFilename2(CHAR *filename)
+static BOOL MA_isModuleFilename2(const CHAR *filename)
 {
 	int t = 0;
 
@@ -159,9 +159,9 @@ static BOOL MA_isModuleFilename2(CHAR *filename)
 
 /* Determines if a filename extension matches an archive filename extension
    pattern */
-static BOOL MA_MatchExtension(CHAR *archive, CHAR *ends)
+static BOOL MA_MatchExtension(const CHAR *archive, const CHAR *ends)
 {
-	CHAR *pos = ends;
+	const CHAR *pos = ends;
 	int nr, arch_nr;
 
 	do {
@@ -184,8 +184,8 @@ static BOOL MA_MatchExtension(CHAR *archive, CHAR *ends)
 
 /* Tests if 'filename' has the signature 'header-string' at offset
    'header_location' */
-static int MA_identify(CHAR *filename, int header_location,
-					   CHAR *header_string)
+static int MA_identify(const CHAR *filename, int header_location,
+					const CHAR *header_string)
 {
 	int len = MIN(strlen(header_string), 255);
 
@@ -223,7 +223,7 @@ static int MA_identify(CHAR *filename, int header_location,
 #include <dpmi.h>
 #include <go32.h>
 
-static BOOL filename2short (char *l, char *s, int len_s)
+static BOOL filename2short (const char *l, char *s, int len_s)
 {
 	__dpmi_regs r;
 
@@ -253,7 +253,7 @@ static BOOL filename2short (char *l, char *s, int len_s)
 
 #elif defined(WIN32)
 
-static BOOL filename2short (char *l, char *s, int len_s)
+static BOOL filename2short (const char *l, char *s, int len_s)
 {
 	int copied = GetShortPathName (l, s, len_s);
 	if (copied == 0 || copied >= len_s) {
@@ -266,7 +266,7 @@ static BOOL filename2short (char *l, char *s, int len_s)
 
 #else
 
-static BOOL filename2short (char *l, char *s, int len_s)
+static BOOL filename2short (const char *l, char *s, int len_s)
 {
 	strncpy (s, l, len_s);
 	s[len_s - 1] = '\0';
@@ -277,10 +277,10 @@ static BOOL filename2short (char *l, char *s, int len_s)
 
 /* Copy pattern, replace in the copy %A with arc, %a with a short version
    of arc, %f with file, and %d with dest, and return the copy. */
-static char* get_command (char *pattern, char *arc, char *file, char *dest)
+static char* get_command (const char *pattern, const char *arc, const char *file, const char *dest)
 {
 	int i = 0, len = 0;
-	char *arg[3];
+	const char *arg[3];
 	char *pos, *pat, *command;
 	char buf[PATH_MAX];
 
@@ -355,11 +355,11 @@ static void split_command (char *command, char **argv, int sizeargv)
    descriptor to the copy. If the file could not be unlinked (e.g.
    under Windows an open file can not be unlinked), return its
    name in 'file'.*/
-static int MA_truncate (int fd, char *startpat, int start, int end, char **file)
+static int MA_truncate (int fd, const char *startpat, int start, int end, char **file)
 {
 #define BUFSIZE	5000
 	char buf[BUFSIZE];
-	char *pos;
+	const char *pos;
 	int dest, cnt = -1;
 	long size;
 	char *fdest;
@@ -475,7 +475,7 @@ static void stop_redirect (void)
    descriptor to the extracted file. If the file could not be unlinked
    (e.g. under Windows an open file can not be unlinked), return its
    name in 'extracted'. */
-int MA_dearchive(CHAR *arc, CHAR *file, CHAR **extracted)
+int MA_dearchive(const CHAR *arc, const CHAR *file, CHAR **extracted)
 {
 	CHAR *tmp_file = NULL, tmp_file_sys[PATH_MAX+1], *command;
 	int tmp_fd = -1, t;
@@ -604,7 +604,7 @@ int MA_dearchive(CHAR *arc, CHAR *file, CHAR **extracted)
    playlist==1: also test against a playlist
    deep==1    : use Player_LoadTite() for testing against a module,
 		        otherwise test based on the filename */
-BOOL MA_TestName (char *filename, BOOL plist, BOOL deep)
+BOOL MA_TestName (const char *filename, BOOL plist, BOOL deep)
 {
 	int t;
 
@@ -633,7 +633,7 @@ BOOL MA_TestName (char *filename, BOOL plist, BOOL deep)
 }
 
 /* Examines file 'filename' to add modules to the playlist 'pl' */
-void MA_FindFiles(PLAYLIST * pl, CHAR *filename)
+void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 {
 	int t, archive = 0;
 	struct stat statbuf;
@@ -789,7 +789,7 @@ void MA_FindFiles(PLAYLIST * pl, CHAR *filename)
 			free (string);
 		} else {
 			/* single-file archive, guess the name */
-			CHAR *dot, *slash;
+			const CHAR *dot, *slash;
 			CHAR *spare;
 
 			dot = strrchr(filename, '.');

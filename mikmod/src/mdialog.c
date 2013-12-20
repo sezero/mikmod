@@ -93,7 +93,7 @@ static DLG_DATA *init_dlg_data(handleDlgFunc handle_dlg,
    active: active button(0...n)
    warn  : open message box with ATTR_WARNING?
    data  : passed to handle_dlg */
-void dlg_message_open(char *msg, char *button, int active, BOOL warn,
+void dlg_message_open(const char *msg, const char *button, int active, BOOL warn,
 					  handleDlgFunc handle_dlg, void *data)
 {
 	WIDGET *w;
@@ -110,7 +110,7 @@ void dlg_message_open(char *msg, char *button, int active, BOOL warn,
 
 /* Shows a message. If errno is set a text describing the errno
    error code is appended to the message. */
-void dlg_error_show(char *txt, ...)
+void dlg_error_show(const char *txt, ...)
 {
 	va_list args;
 	char *err = NULL;
@@ -139,7 +139,7 @@ void dlg_error_show(char *txt, ...)
    msg   : text to display,can contain '\n'
    str   : default text
    length: max allowed input length */
-void dlg_input_str(char *msg, char *buttons, char *str, int length,
+void dlg_input_str(const char *msg, const char *buttons, const char *str, int length,
 				   handleDlgFunc handle_dlg, void *data)
 {
 	WIDGET *w, *str_wid;
@@ -162,7 +162,7 @@ void dlg_input_str(char *msg, char *buttons, char *str, int length,
    msg   : text to display,can contain '\n'
    value : default integer
    min,max: min,max allowed values */
-void dlg_input_int(char *msg, char *buttons, int value, int min, int max,
+void dlg_input_int(const char *msg, const char *buttons, int value, int min, int max,
 				   handleDlgFunc handle_dlg, void *data)
 {
 	char title[40];

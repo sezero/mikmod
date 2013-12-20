@@ -40,7 +40,7 @@ void clear(void)
 	VioWrtNCell(clearscreen, winy * winx, 0, 0, hvio);
 }
 
-void mvaddnstr(int y,int x,char *str,int len)
+void mvaddnstr(int y,int x,const char *str,int len)
 {
 	char buffer[STORAGELEN];
 	int l=strlen(str);

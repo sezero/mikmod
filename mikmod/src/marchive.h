@@ -40,16 +40,16 @@ BOOL DropPrivileges (void);
    descriptor to the extracted file. If the file could not be unlinked
    (e.g. under Windows an open file can not be unlinked), return its
    name in 'extracted'. */
-int MA_dearchive (CHAR *arc, CHAR *file, CHAR **extracted);
+int MA_dearchive (const CHAR *arc, const CHAR *file, CHAR **extracted);
 
 /* Test if filename looks like a module or an archive
    playlist==1: also test against a playlist
    deep==1    : use Player_LoadTite() for testing against a module,
 		        otherwise test based on the filename */
-BOOL MA_TestName (char *filename, BOOL playlist, BOOL deep);
+BOOL MA_TestName (const char *filename, BOOL playlist, BOOL deep);
 
 /* Examines file 'filename' to add modules to the playlist 'pl'. */
-void MA_FindFiles (PLAYLIST * pl, CHAR *filename);
+void MA_FindFiles (PLAYLIST * pl, const CHAR *filename);
 
 #endif
 

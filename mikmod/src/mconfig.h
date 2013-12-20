@@ -145,7 +145,7 @@ typedef enum {
 
 #define THEME_NAME_LEN	99		/* max length of theme name */
 
-extern char *attrs_label[ATTRS_COUNT];	/* "WARNING", "TITLE", ... */
+extern const char *attrs_label[ATTRS_COUNT];	/* "WARNING", "TITLE", ... */
 
 typedef struct {
 	char *name;					/* name of the theme */

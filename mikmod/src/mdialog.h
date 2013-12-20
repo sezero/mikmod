@@ -46,19 +46,19 @@ typedef BOOL (*handleDlgFunc) (WIDGET *w, int button, void *input, void *data);
    active: active button (0...n)
    warn  : open message box with ATTR_WARNING?
    data  : passed to handle_dlg */
-void dlg_message_open(char *msg, char *button, int active, BOOL warn,
+void dlg_message_open(const char *msg, const char *button, int active, BOOL warn,
 					  handleDlgFunc handle_dlg, void *data);
 
 /* Shows a message. If errno is set a text describing the errno
    error code is appended to the message. */
-void dlg_error_show(char *txt, ...);
+void dlg_error_show(const char *txt, ...);
 
 /* Opens a string input dialog
    msg    : text to display, can contain '\n'
    buttons: definition of the dialog buttons
    str    : default text
    length : max allowed input length */
-void dlg_input_str(char *msg, char *buttons, char *str, int length,
+void dlg_input_str(const char *msg, const char *buttons, const char *str, int length,
 				   handleDlgFunc handle_dlg, void *data);
 
 /* Opens an integer input dialog
@@ -66,7 +66,7 @@ void dlg_input_str(char *msg, char *buttons, char *str, int length,
    buttons: definition of the dialog buttons
    value  : default integer
    min,max: min, max allowed values */
-void dlg_input_int(char *msg, char *buttons, int value, int min, int max,
+void dlg_input_int(const char *msg, const char *buttons, int value, int min, int max,
 				   handleDlgFunc handle_dlg, void *data);
 
 #endif /* MDIALOG_H */

@@ -68,14 +68,14 @@ static void PL_ClearPlayed(PLAYLIST * pl)
 		pl->entry[i].played = 0;
 }
 
-BOOL PL_isPlaylistFilename(CHAR *filename)
+BOOL PL_isPlaylistFilename(const CHAR *filename)
 {
 	char *cfg_name = NULL;
 	if (!fnmatch("*.mpl", filename, 0))
 		return 1;
 	if ((cfg_name = PL_GetFilename())) {
-		char *p1 = strrchr (cfg_name,PATH_SEP);
-		char *p2 = strrchr (filename,PATH_SEP);
+		const char *p1 = strrchr (cfg_name,PATH_SEP);
+		const char *p2 = strrchr (filename,PATH_SEP);
 		if (!p1) p1 = cfg_name;
 		if (!p2) p2 = filename;
 		if (!filecmp(p1, p2)) {
@@ -248,8 +248,8 @@ void PL_StopInsert(PLAYLIST * pl)
 	pl->add_pos = -1;
 }
 
-static void PL_Insert(PLAYLIST * pl, int pos, CHAR *file, CHAR *arc, int time,
-					  BOOL played)
+static void PL_Insert(PLAYLIST * pl, int pos, const CHAR *file, const CHAR *arc,
+					 int time, BOOL played)
 {
 	int i;
 
@@ -274,7 +274,7 @@ static void PL_Insert(PLAYLIST * pl, int pos, CHAR *file, CHAR *arc, int time,
 
 /* pl->add_pos < 0 => Append entry at end of playlist
    pl->add_pos >= 0 => Insert entry at pl->add_pos and increment pl->add_pos */
-void PL_Add(PLAYLIST * pl, CHAR *file, CHAR *arc, int time, BOOL played)
+void PL_Add(PLAYLIST * pl, const CHAR *file, const CHAR *arc, int time, BOOL played)
 {
 	if (pl->add_pos >= 0) {
 		PL_Insert(pl, pl->add_pos, file, arc, time, played);
@@ -285,7 +285,7 @@ void PL_Add(PLAYLIST * pl, CHAR *file, CHAR *arc, int time, BOOL played)
 
 #define LINE_LEN (PATH_MAX*2+20)	/* "file" "arc" time played */
 /* Loads a playlist */
-BOOL PL_Load(PLAYLIST * pl, CHAR *filename)
+BOOL PL_Load(PLAYLIST * pl, const CHAR *filename)
 {
 	FILE *file;
 	CHAR line[LINE_LEN];
@@ -359,7 +359,7 @@ BOOL PL_Load(PLAYLIST * pl, CHAR *filename)
 	return 1;
 }
 
-BOOL PL_Save(PLAYLIST * pl, CHAR *filename)
+BOOL PL_Save(PLAYLIST * pl, const CHAR *filename)
 {
 	FILE *file;
 	int i;

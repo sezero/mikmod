@@ -59,7 +59,7 @@ typedef struct {
 
 extern PLAYLIST playlist;
 
-BOOL PL_isPlaylistFilename(CHAR *filename);
+BOOL PL_isPlaylistFilename(const CHAR *filename);
 void PL_InitList(PLAYLIST * pl);
 void PL_InitCurrent(PLAYLIST * pl);
 void PL_ClearList(PLAYLIST * pl);
@@ -75,12 +75,12 @@ void PL_SetPlayedCurrent(PLAYLIST * pl);
 
 BOOL PL_DelEntry(PLAYLIST * pl, int number);
 BOOL PL_DelDouble(PLAYLIST * pl);
-void PL_Add(PLAYLIST * pl, CHAR *file, CHAR *arc, int time, BOOL played);
+void PL_Add(PLAYLIST * pl, const CHAR *file, const CHAR *arc, int time, BOOL played);
 void PL_StartInsert(PLAYLIST * pl, int pos);
 void PL_StopInsert(PLAYLIST * pl);
 
-BOOL PL_Load(PLAYLIST * pl, CHAR *filename);
-BOOL PL_Save(PLAYLIST * pl, CHAR *filename);
+BOOL PL_Load(PLAYLIST * pl, const CHAR *filename);
+BOOL PL_Save(PLAYLIST * pl, const CHAR *filename);
 char *PL_GetFilename(void);
 BOOL PL_LoadDefault(PLAYLIST * pl);
 BOOL PL_SaveDefault(PLAYLIST * pl);

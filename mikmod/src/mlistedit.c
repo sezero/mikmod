@@ -155,7 +155,7 @@ static int dirlist_search_cmp (char *key, char **member)
 
 /* Add/Remove tag marks to the files in entries (count: cnt) from
    directory path according to the searchlist */
-static void freq_set_marks (char **entries, int cnt, char *path, FREQ_DATA *data)
+static void freq_set_marks (char **entries, int cnt, const char *path, FREQ_DATA *data)
 {
 	int i;
 	char file[PATH_MAX<<1], *fstart;
@@ -407,7 +407,7 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 }
 
 /* read directory path and store the entries in entries */
-static void freq_readdir (char *path, char ***entries, int *cnt, FREQ_DATA *data)
+static void freq_readdir (const char *path, char ***entries, int *cnt, FREQ_DATA *data)
 {
 #define ENT_BLOCK 10
 	int max;
@@ -470,7 +470,7 @@ static void freq_set_title (FREQ_DATA *data)
 }
 
 /* change directory to path (read directory and display it) */
-static void freq_changedir (char *path, FREQ_DATA *data)
+static void freq_changedir (const char *path, FREQ_DATA *data)
 {
 	char **entries, *last= NULL, *end, **pos = NULL, ch;
 	int cnt;
@@ -499,7 +499,7 @@ static void freq_changedir (char *path, FREQ_DATA *data)
 		}
 		if (!pos) pos = entries;
 		strcpy (data->path, path);
-		wid_list_set_entries (data->w, entries, 0, cnt);
+		wid_list_set_entries (data->w, (const char **)entries, 0, cnt);
 		wid_list_set_active (data->w, pos-entries);
 		freq_set_title (data);
 		freq_freedir (entries,cnt);
@@ -546,12 +546,12 @@ static int cb_hlist_button_focus(struct WIDGET *w, int focus)
 			case 1:				/* Add current */
 				CF_string_array_insert (cur,&config.hotlist,&config.cnt_hotlist,
 										data->freq->path,PATH_MAX);
-				wid_list_set_entries (data->w,config.hotlist,-1,config.cnt_hotlist);
+				wid_list_set_entries (data->w,(const char **)config.hotlist,-1,config.cnt_hotlist);
 				wid_repaint ((WIDGET*)data->w);
 				break;
 			case 2:				/* Remove */
 				CF_string_array_remove (cur,&config.hotlist,&config.cnt_hotlist);
-				wid_list_set_entries (data->w,config.hotlist,-1,config.cnt_hotlist);
+				wid_list_set_entries (data->w,(const char **)config.hotlist,-1,config.cnt_hotlist);
 				wid_repaint ((WIDGET*)data->w);
 				break;
 			case 3:				/* Cancel */
@@ -570,7 +570,7 @@ static void freq_hotlist (FREQ_DATA *freq_data)
 	WIDGET *w;
 	HLIST_DATA *data = (HLIST_DATA *) malloc (sizeof(HLIST_DATA));
 
-	w = wid_list_add(d, 1, config.hotlist, config.cnt_hotlist);
+	w = wid_list_add(d, 1, (const char **)config.hotlist, config.cnt_hotlist);
 	wid_set_size (w, 74, 10);
 	data->w = (WID_LIST*)w;
 	data->freq = freq_data;
@@ -819,7 +819,7 @@ static int cb_freq_button_focus(struct WIDGET *w, int focus)
 }
 
 /* Init initial path and searchlist */
-static FREQ_DATA *freq_data_init (char *path)
+static FREQ_DATA *freq_data_init (const char *path)
 {
 	struct stat statbuf;
 	FREQ_DATA *data = (FREQ_DATA *) malloc(sizeof(FREQ_DATA));
@@ -860,7 +860,7 @@ static FREQ_DATA *freq_data_init (char *path)
 /* Open a file requester.
    func!=NULL: func is called if Ok or Cancel is selected
    func==NULL: no Ok button, Add is default */
-void freq_open (char *title, char *path, int actline,
+void freq_open (const char *title, const char *path, int actline,
 				handleFreqFunc func, void *data)
 {
 	FREQ_DATA *freq_data;
@@ -894,7 +894,7 @@ void freq_open (char *title, char *path, int actline,
 		}
 	}
 
-	w = wid_list_add(d, 1, entries, cnt);
+	w = wid_list_add(d, 1, (const char **)entries, cnt);
 	freq_data->w = (WID_LIST*)w;
 	wid_set_func(w, cb_freq_list_key, cb_freq_list_focus, freq_data);
 	freq_freedir(entries, cnt);

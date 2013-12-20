@@ -102,9 +102,9 @@ static void options_free (OPTIONS *opts)
 }
 
 /* Save desc in file fp. Add '# ' in front of all lines. */
-static void write_description (char *desc)
+static void write_description (const char *desc)
 {
-	char *start;
+	const char *start;
 	if (fp && desc) {
 		fputs ("\n",fp);
 		while (*desc) {
@@ -119,7 +119,7 @@ static void write_description (char *desc)
 }
 
 /* write argument arg with optional description and mark it with label */
-BOOL rc_write_bool (char *label, int arg, char *description)
+BOOL rc_write_bool (const char *label, int arg, const char *description)
 {
 	if (fp) {
 		write_description (description);
@@ -131,12 +131,12 @@ BOOL rc_write_bool (char *label, int arg, char *description)
 	return 0;
 }
 
-BOOL rc_write_bit (char *label, int arg, int mask, char *description)
+BOOL rc_write_bit (const char *label, int arg, int mask, const char *description)
 {
 	return rc_write_bool (label,BTST(arg,mask),description);
 }
 
-BOOL rc_write_int (char *label, int arg, char *description)
+BOOL rc_write_int (const char *label, int arg, const char *description)
 {
 	if (fp) {
 		write_description (description);
@@ -145,7 +145,7 @@ BOOL rc_write_int (char *label, int arg, char *description)
 	return 0;
 }
 
-BOOL rc_write_float (char *label, float arg, char *description)
+BOOL rc_write_float (const char *label, float arg, const char *description)
 {
 	if (fp) {
 		write_description (description);
@@ -154,7 +154,7 @@ BOOL rc_write_float (char *label, float arg, char *description)
 	return 0;
 }
 
-BOOL rc_write_label(char *label, LABEL_CONV *convert, int arg, char *description)
+BOOL rc_write_label(const char *label, LABEL_CONV *convert, int arg, const char *description)
 {
 	if (fp) {
 		int i;
@@ -165,7 +165,7 @@ BOOL rc_write_label(char *label, LABEL_CONV *convert, int arg, char *description
 	return 0;
 }
 
-BOOL rc_write_string (char *label, char *arg, char *description)
+BOOL rc_write_string (const char *label, const char *arg, const char *description)
 {
 	if (fp) {
 		write_description (description);
@@ -188,7 +188,7 @@ BOOL rc_write_string (char *label, char *arg, char *description)
 	return 0;
 }
 
-BOOL rc_write_struct (char *label, char *description)
+BOOL rc_write_struct (const char *label, const char *description)
 {
 	if (fp) {
 		BOOL ret;
@@ -206,7 +206,7 @@ BOOL rc_write_struct (char *label, char *description)
 	return 0;
 }
 
-BOOL rc_write_struct_end (char *description)
+BOOL rc_write_struct_end (const char *description)
 {
 	if (fp && structs) {
 		BOOL ret;
@@ -225,7 +225,7 @@ BOOL rc_write_struct_end (char *description)
 }
 
 /* search for label in loaded options and return the associated value */
-static char *get_argument (char *label)
+static char *get_argument (const char *label)
 {
 	int i;
 	for (i=0; i<options->cnt; i++)
@@ -240,7 +240,7 @@ static char *get_argument (char *label)
 }
 
 /* search for label in loaded options and return the associated value */
-static OPTIONS *get_begin (char *label)
+static OPTIONS *get_begin (const char *label)
 {
 	int i;
 	for (i=0; i<options->cnt; i++)
@@ -259,7 +259,7 @@ static OPTIONS *get_begin (char *label)
    Change 'value' only if label is present in config-file and
    associated value is valid.
    Return: value changed ? */
-BOOL rc_read_bool (char *label, int *value)
+BOOL rc_read_bool (const char *label, int *value)
 {
 	char *arg = get_argument (label);
 	if (arg) {
@@ -275,9 +275,9 @@ BOOL rc_read_bool (char *label, int *value)
 	return 0;
 }
 
-BOOL rc_read_bit (char *label, int *value, int mask)
+BOOL rc_read_bit (const char *label, int *value, int mask)
 {
-	char *arg = get_argument (label);
+	const char *arg = get_argument (label);
 	if (arg) {
 		if ((!strcasecmp(arg, "YES")) || (!strcasecmp(arg, "ON")) || (*arg == '1')) {
 			*value |= mask;
@@ -291,9 +291,9 @@ BOOL rc_read_bit (char *label, int *value, int mask)
 	return 0;
 }
 
-BOOL rc_read_int (char *label, int *value, int min, int max)
+BOOL rc_read_int (const char *label, int *value, int min, int max)
 {
-	char *arg = get_argument (label);
+	const char *arg = get_argument (label);
 	if (arg) {
 		char *end;
 		int t = strtol(arg, &end, 10);
@@ -305,9 +305,9 @@ BOOL rc_read_int (char *label, int *value, int min, int max)
 	return 0;
 }
 
-BOOL rc_read_float (char *label, float *value, float min, float max)
+BOOL rc_read_float (const char *label, float *value, float min, float max)
 {
-	char *arg = get_argument (label);
+	const char *arg = get_argument (label);
 	if (arg) {
 		float t;
 		if (sscanf (arg,"%f",&t) == 1)
@@ -319,9 +319,9 @@ BOOL rc_read_float (char *label, float *value, float min, float max)
 	return 0;
 }
 
-BOOL rc_read_label(char *label, int *value, LABEL_CONV *convert)
+BOOL rc_read_label(const char *label, int *value, LABEL_CONV *convert)
 {
-	char *arg = get_argument (label);
+	const char *arg = get_argument (label);
 	if (arg) {
 		int i = 0;
 		while (convert[i].label) {
@@ -335,7 +335,7 @@ BOOL rc_read_label(char *label, int *value, LABEL_CONV *convert)
 	return 0;
 }
 
-BOOL rc_read_struct (char *label)
+BOOL rc_read_struct (const char *label)
 {
 	OPTIONS *arg = get_begin (label);
 	if (arg) {
@@ -355,7 +355,7 @@ BOOL rc_read_struct_end (void)
 }
 
 /* Free old *value and allocate min(strlen(newvalue),length)+1 bytes for new string. */
-void rc_set_string (char **value, char *arg, int length)
+void rc_set_string (char **value, const char *arg, int length)
 {
 	int len = strlen(arg);
 
@@ -370,9 +370,9 @@ void rc_set_string (char **value, char *arg, int length)
 
 /* Read a string. Free old *value and allocate
    min(strlen(newvalue),length)+1 bytes for new string. */
-BOOL rc_read_string (char *label, char **value,int length)
+BOOL rc_read_string (const char *label, char **value, int length)
 {
-	char *arg = get_argument (label);
+	const char *arg = get_argument (label);
 	if (arg) {
 		rc_set_string (value,arg,length);
 		return 1;
@@ -387,7 +387,7 @@ static char skip_space (char **line)
 	return **line;
 }
 
-static BOOL parse_line (char *line,char **label,char **arg)
+static BOOL parse_line (char *line, char **label, char **arg)
 {
 	char *end;
 
@@ -485,7 +485,7 @@ static BOOL parse_line (char *line,char **label,char **arg)
 	return 0;
 }
 
-static BOOL rc_parse (OPTIONS *opts, char *sec_name)
+static BOOL rc_parse (OPTIONS *opts, const char *sec_name)
 {
 	char line[LINE_LEN],*label,*arg;
 	BOOL ret = 1;
@@ -530,7 +530,7 @@ static BOOL rc_parse (OPTIONS *opts, char *sec_name)
 }
 
 /* open config-file 'name' and parse the file for following rc_read_...() */
-BOOL rc_load (char *name)
+BOOL rc_load (const char *name)
 {
 	BOOL ret = 0;
 
@@ -547,7 +547,7 @@ BOOL rc_load (char *name)
 
 /* open config-file 'name' for following rc_write_...()
    and write a header for program 'prg_name' */
-BOOL rc_save (char *name, char *prg_name)
+BOOL rc_save (const char *name, const char *prg_name)
 {
 	if (!(fp=fopen(path_conv_sys(name),"w"))) return 0;
 

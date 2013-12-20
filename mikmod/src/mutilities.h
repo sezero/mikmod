@@ -60,8 +60,8 @@
 #define PATH_SEP_SYS '\\'
 #define PATH_SEP_SYS_STR "\\"
 void path_conv(char *file);
-char *path_conv_sys(char *file);
-char *path_conv_sys2(char *file);
+char *path_conv_sys(const char *file);
+char *path_conv_sys2(const char *file);
 
 #else
 
@@ -139,13 +139,13 @@ int closedir (DIR* dir);
 #endif
 
 /* allocate memory for a formated string and do a sprintf */
-char *str_sprintf2(char *fmt, char *arg1, char *arg2);
-char *str_sprintf(char *fmt, char *arg);
+char *str_sprintf2(const char *fmt, const char *arg1, const char *arg2);
+char *str_sprintf(const char *fmt, const char *arg);
 
 /* tmpl: file name template ending in 'XXXXXX' without path or NULL
    name_used: if !=NULL pointer to name of temp file, must be freed
    return: file descriptor or -1 */
-int get_tmp_file (char *tmpl, char **name_used);
+int get_tmp_file (const char *tmpl, char **name_used);
 
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
@@ -153,13 +153,13 @@ int get_tmp_file (char *tmpl, char **name_used);
 char *get_tmp_name(void);
 #endif
 
-BOOL file_exist(char *file);
+BOOL file_exist(const char *file);
 /* determines if a given path is absolute or relative */
-BOOL path_relative(char *path);
+BOOL path_relative(const char *path);
 
 /* allocate and return a filename including the path for a config file
    'name': filename without the path */
-char *get_cfg_name(char *name);
+char *get_cfg_name(const char *name);
 
 /* Return precise time in milliseconds */
 unsigned long Time1000(void);

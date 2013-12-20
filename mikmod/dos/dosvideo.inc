@@ -52,7 +52,7 @@ int attrset(int attrs)
 	return 1;
 }
 
-void mvaddnstr(int y,int x,char *str,int len)
+void mvaddnstr(int y,int x,const char *str,int len)
 {
 	int i, d;
 

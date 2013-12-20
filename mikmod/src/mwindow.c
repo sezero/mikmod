@@ -133,7 +133,7 @@ static BOOL resize = 0;
 
 /* old AIX curses are very limited */
 #if defined(AIX) && !defined(mvaddnstr)
-void mvaddnstr(int y, int x, char *str, int len)
+void mvaddnstr(int y, int x, const char *str, int len)
 {
 	char buffer[STORAGELEN];
 	int l = strlen(str);
@@ -376,7 +376,7 @@ BOOL win_clear(MWINDOW * win)
 	return 1;
 }
 
-void win_box_win(int x1, int y1, int x2, int y2, char *title)
+void win_box_win(int x1, int y1, int x2, int y2, const char *title)
 {
 	int i, sx1, sx2, sy1, sy2;
 
@@ -420,7 +420,7 @@ void win_box_win(int x1, int y1, int x2, int y2, char *title)
 
 /* open new window on panel 'panel' */
 MWINDOW *win_panel_open(int dst_panel, int x, int y, int width, int height,
-						BOOL border, char *title, ATTRS attrs)
+				BOOL border, const char *title, ATTRS attrs)
 {
 	MWINDOW *win = (MWINDOW *) malloc(sizeof(MWINDOW)), *help;
 
@@ -478,7 +478,7 @@ MWINDOW *win_panel_open(int dst_panel, int x, int y, int width, int height,
 
 /* open new window on current panel */
 MWINDOW *win_open(int x, int y, int width, int height, BOOL border,
-				  char *title, ATTRS attrs)
+				  const char *title, ATTRS attrs)
 {
 	return win_panel_open(cur_panel, x, y, width, height, border, title, attrs);
 }
@@ -589,7 +589,7 @@ void win_init_status(int height)
 }
 
 /* set the status line */
-void win_status(char *msg)
+void win_status(const char *msg)
 {
 	MWINDOW *win = panel[0];
 	int len;
@@ -706,7 +706,7 @@ MWINDOW *win_get_window_root(void)
 }
 
 /* print string in window win */
-void win_print(MWINDOW *win, int x, int y, char *str)
+void win_print(MWINDOW *win, int x, int y, const char *str)
 {
 	int len = strlen(str);
 

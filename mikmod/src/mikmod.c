@@ -132,7 +132,7 @@ static struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static CHAR *PRG_NAME;
+static const CHAR *PRG_NAME;
 PLAYLIST playlist;
 CONFIG config;
 MODULE *mf = NULL;				/* current module */
@@ -231,7 +231,7 @@ static void help(CONFIG * c)
 }
 
 /* nice exit function */
-static void exit_player(int exitcode, char *message, ...)
+static void exit_player(int exitcode, const char *message, ...)
 {
 	va_list args;
 
@@ -370,7 +370,7 @@ static void set_bit (UWORD *value, int mask, BOOL boolv)
 	else
 		*value &= ~mask;
 }
-static void config_error (char *err, PL_STATE state)
+static void config_error (const char *err, PL_STATE state)
 {
 	if (quiet) {
 		exit_player (1, "%s: %s.\n", err, MikMod_strerror(MikMod_errno));
@@ -463,7 +463,7 @@ void Player_SetConfig (CONFIG * cfg)
 
 /* Display the error when loading a file, and take the appropriate resume
    action */
-static void handle_ListError(BOOL tolerant, CHAR *filename, CHAR *archive,
+static void handle_ListError(BOOL tolerant, const CHAR *filename, const CHAR *archive,
 							 BOOL mm_error)
 {
 	char buf[PATH_MAX + 40] = "";
@@ -492,7 +492,7 @@ static void handle_ListError(BOOL tolerant, CHAR *filename, CHAR *archive,
 }
 
 /* parse an integer argument */
-static void get_int(char *arg, int *value, int min, int max)
+static void get_int(const char *arg, int *value, int min, int max)
 {
 	char *end = NULL;
 	int t = min - 1;

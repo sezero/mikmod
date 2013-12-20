@@ -837,7 +837,7 @@ static void colorsel_paint(WID_COLORSEL *w)
 		ATTRS hotkey = w->w.has_focus ? ATTR_DLG_BUT_AHOTKEY:ATTR_DLG_BUT_IHOTKEY;
 		ATTRS text = w->w.has_focus ? ATTR_DLG_BUT_ATEXT:ATTR_DLG_BUT_ITEXT;
 		char key[2] = " ";
-		char *pat[2] = {".......< h      h >",
+		const char *pat[2] = {".......< h      h >",
 						"..^h  hv"};
 		int p, h = 0;
 
@@ -974,7 +974,7 @@ static void widget_init(WIDGET *w, DIALOG *d, BOOL focus, int spacing)
 	w->data = NULL;
 }
 
-WIDGET *wid_label_add(DIALOG *d, int spacing, char *msg)
+WIDGET *wid_label_add(DIALOG *d, int spacing, const char *msg)
 {
 	WID_LABEL *w = (WID_LABEL *) malloc(sizeof(WID_LABEL));
 
@@ -990,13 +990,13 @@ WIDGET *wid_label_add(DIALOG *d, int spacing, char *msg)
 	return (WIDGET *) w;
 }
 
-void wid_label_set_label (WID_LABEL *w, char *label)
+void wid_label_set_label (WID_LABEL *w, const char *label)
 {
 	if (w->msg) free (w->msg);
 	w->msg = strdup (label);
 }
 
-WIDGET *wid_str_add(DIALOG *d, int spacing, char *input, int length)
+WIDGET *wid_str_add(DIALOG *d, int spacing, const char *input, int length)
 {
 	int i;
 	WID_STR *w = (WID_STR *) malloc(sizeof(WID_STR));
@@ -1022,7 +1022,7 @@ WIDGET *wid_str_add(DIALOG *d, int spacing, char *input, int length)
 	return (WIDGET *) w;
 }
 
-void wid_str_set_input (WID_STR *w, char *input, int length)
+void wid_str_set_input (WID_STR *w, const char *input, int length)
 {
 	if (length>=0) {
 		if (w->input) free (w->input);
@@ -1075,7 +1075,7 @@ void wid_int_set_input (WID_INT *w, int value, int length)
 	wid_str_set_input ((WID_STR*)w, val,length);
 }
 
-WIDGET *wid_button_add(DIALOG *d, int spacing, char *button, int active)
+WIDGET *wid_button_add(DIALOG *d, int spacing, const char *button, int active)
 {
 	WID_BUTTON *w = (WID_BUTTON *) malloc(sizeof(WID_BUTTON));
 
@@ -1092,7 +1092,7 @@ WIDGET *wid_button_add(DIALOG *d, int spacing, char *button, int active)
 	return (WIDGET *) w;
 }
 
-WIDGET *wid_list_add(DIALOG *d, int spacing, char **entries, int cnt)
+WIDGET *wid_list_add(DIALOG *d, int spacing, const char **entries, int cnt)
 {
 	WID_LIST *w = (WID_LIST *) malloc(sizeof(WID_LIST));
 
@@ -1116,13 +1116,13 @@ WIDGET *wid_list_add(DIALOG *d, int spacing, char **entries, int cnt)
 	return (WIDGET *) w;
 }
 
-void wid_list_set_title (WID_LIST *w, char *title)
+void wid_list_set_title (WID_LIST *w, const char *title)
 {
 	if (w->title) free (w->title);
 	w->title = strdup (title);
 }
 
-void wid_list_set_entries (WID_LIST *w, char **entries, int cur, int cnt)
+void wid_list_set_entries (WID_LIST *w, const char **entries, int cur, int cnt)
 {
 	int i;
 
@@ -1164,7 +1164,7 @@ void wid_list_set_selection_mode (WID_LIST *w, WID_SEL_MODE mode)
 	w->sel_mode = mode;
 }
 
-WIDGET *wid_check_add(DIALOG *d, int spacing, char *button, int active, int selected)
+WIDGET *wid_check_add(DIALOG *d, int spacing, const char *button, int active, int selected)
 {
 	WID_CHECK *w = (WID_CHECK *) malloc(sizeof(WID_CHECK));
 
@@ -1187,7 +1187,7 @@ void wid_check_set_selected(WID_CHECK *w, int selected)
 	w->selected = selected;
 }
 
-WIDGET *wid_toggle_add(DIALOG *d, int spacing, char *button, int active, int selected)
+WIDGET *wid_toggle_add(DIALOG *d, int spacing, const char *button, int active, int selected)
 {
 	WID_TOGGLE *w = (WID_TOGGLE *) malloc(sizeof(WID_TOGGLE));
 
@@ -1210,7 +1210,7 @@ void wid_toggle_set_selected(WID_TOGGLE *w, int selected)
 	w->selected = selected;
 }
 
-WIDGET *wid_colorsel_add(DIALOG *d, int spacing, char *hotkeys, int active)
+WIDGET *wid_colorsel_add(DIALOG *d, int spacing, const char *hotkeys, int active)
 {
 	WID_COLORSEL *w = (WID_COLORSEL *) malloc(sizeof(WID_COLORSEL));
 	int i;
@@ -1514,7 +1514,7 @@ static void dialog_handle_resize(MWINDOW *win, int dx, int dy)
 	win->height = height;
 }
 
-void dialog_open(DIALOG *d, char *title)
+void dialog_open(DIALOG *d, const char *title)
 {
 	int x,y,width,height;
 

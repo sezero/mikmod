@@ -31,45 +31,45 @@
 
 typedef struct {
     int id;
-    char *label;
+    const char *label;
 } LABEL_CONV;
 
 /* Write argument arg with optional description (multiple lines
   allowed) and mark it with label.
   Return: arg successfully written ? */
-BOOL rc_write_bool (char *label, int arg, char *description);
-BOOL rc_write_bit (char *label, int arg, int mask, char *description);
-BOOL rc_write_int (char *label, int arg, char *description);
-BOOL rc_write_float (char *label, float arg, char *description);
-BOOL rc_write_label(char *label, LABEL_CONV *convert, int arg, char *description);
-BOOL rc_write_string (char *label, char *arg, char *description);
-BOOL rc_write_struct (char *label, char *description);
-BOOL rc_write_struct_end (char *description);
+BOOL rc_write_bool (const char *label, int arg, const char *description);
+BOOL rc_write_bit (const char *label, int arg, int mask, const char *description);
+BOOL rc_write_int (const char *label, int arg, const char *description);
+BOOL rc_write_float (const char *label, float arg, const char *description);
+BOOL rc_write_label(const char *label, LABEL_CONV *convert, int arg, const char *description);
+BOOL rc_write_string (const char *label, const char *arg, const char *description);
+BOOL rc_write_struct (const char *label, const char *description);
+BOOL rc_write_struct_end (const char *description);
 
 /* Read 'value', which is saved in the config-file under label.
    Change 'value' only if label is present in config-file and
    associated value is valid.
    Return: value changed ? */
-BOOL rc_read_bool (char *label, int *value);
-BOOL rc_read_bit (char *label, int *value, int mask);
-BOOL rc_read_int (char *label, int *value, int min, int max);
-BOOL rc_read_float (char *label, float *value, float min, float max);
-BOOL rc_read_label(char *label, int *value, LABEL_CONV *convert);
-BOOL rc_read_struct (char *label);
+BOOL rc_read_bool (const char *label, int *value);
+BOOL rc_read_bit (const char *label, int *value, int mask);
+BOOL rc_read_int (const char *label, int *value, int min, int max);
+BOOL rc_read_float (const char *label, float *value, float min, float max);
+BOOL rc_read_label(const char *label, int *value, LABEL_CONV *convert);
+BOOL rc_read_struct (const char *label);
 BOOL rc_read_struct_end (void);
 
 /* Free old *value and allocate min(strlen(newvalue),length)+1 bytes for new string. */
-void rc_set_string (char **value, char *arg, int length);
+void rc_set_string (char **value, const char *arg, int length);
 /* Read a string. Free old *value and allocate
    min(strlen(newvalue),length)+1 bytes for new string. */
-BOOL rc_read_string (char *label, char **value, int length);
+BOOL rc_read_string (const char *label, char **value, int length);
 
 /* open config-file 'name' and parse the file for following rc_read_...() */
-BOOL rc_load (char *name);
+BOOL rc_load (const char *name);
 
 /* open config-file 'name' for following rc_write_...()
    and write a header for program 'prg_name' */
-BOOL rc_save (char *name, char *prg_name);
+BOOL rc_save (const char *name, const char *prg_name);
 
 /* close config-file opened by rc_load() or rc_save() */
 void rc_close (void);

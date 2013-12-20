@@ -381,7 +381,7 @@ static BOOL menu_do_select(MWINDOW * win)
 		free(msg);
 		return 1;
 	} else if (menu_is_int(entry)) {
-		char *start, *pos;
+		const char *start, *pos;
 		char *msg = NULL;
 		int min = 0, max = 0;
 
@@ -424,7 +424,7 @@ void menu_close(MMENU * menu)
 static BOOL menu_handle_key(MWINDOW * win, int ch)
 {
 	MMENU *menu = (MMENU *) win->data;
-	char *pos, *help;
+	const char *pos, *help;
 	int i, key;
 
 	if ((ch < 256) && (isalpha(ch)))

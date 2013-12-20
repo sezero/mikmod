@@ -35,7 +35,7 @@ struct SCREEN {
 	SHORT minx,miny,maxx,maxy;
 } screen = {A_NORMAL, NULL, NULL, 0, 0, 0, 0};
 
-static HANDLE WINAPI GetConHandle (TCHAR *name)
+static HANDLE WINAPI GetConHandle (const TCHAR *name)
 {
 	SECURITY_ATTRIBUTES sa;
 
@@ -150,7 +150,7 @@ int attrset(int attrs)
 	return 1;
 }
 
-void mvaddnstr(int y,int x,char *str,int len)
+void mvaddnstr(int y,int x,const char *str,int len)
 {
 	int i, d;
 

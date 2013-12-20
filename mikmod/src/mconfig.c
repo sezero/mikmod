@@ -56,19 +56,19 @@ static LABEL_CONV attrs_mono_conv[] = {
 	{-1, NULL}
 };
 
-static char *attrs_colf_label[] = {
+static const char *attrs_colf_label[] = {
 	"black","blue","green","cyan","red","magenta","brown","gray",
 	"b_black","b_blue","b_green","b_cyan","b_red","b_magenta",
 	"yellow","white",
 	NULL
 };
 
-static char *attrs_colb_label[] = {
+static const char *attrs_colb_label[] = {
 	"black","blue","green","cyan","red","magenta","brown","gray",
 	NULL
 };
 
-char *attrs_label[ATTRS_COUNT] = {
+const char *attrs_label[ATTRS_COUNT] = {
 	"WARNING",
 
 	"TITLE",
