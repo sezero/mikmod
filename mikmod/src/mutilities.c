@@ -73,7 +73,8 @@ void path_conv(char *file)
 char *path_conv_sys(char *file)
 {
 	static char f[PATH_MAX];
-	char *pos = f, *end = file+PATH_MAX-1;
+	char *pos = f;
+	const char *end = file + PATH_MAX-1;
 
 	if (!file) return NULL;
 	for (; *file && file<end; file++, pos++) {
@@ -91,7 +92,8 @@ char *path_conv_sys(char *file)
 char *path_conv_sys2(char *file)
 {
 	static char f[PATH_MAX];
-	char *pos = f, *end = file+PATH_MAX-1;
+	char *pos = f;
+	const char *end = file + PATH_MAX-1;
 
 	if (!file) return NULL;
 	for (; *file && file<end; file++, pos++) {

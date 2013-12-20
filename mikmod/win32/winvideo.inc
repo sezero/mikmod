@@ -61,7 +61,7 @@ static void console_store (BOOL restore)
 	static CHAR_INFO *screen_content = NULL;
 
 	if (!restore && (oldx!=winx || oldy!=winy)) {
-		screen_content = realloc (screen_content, sizeof(CHAR_INFO)*winx*winy);
+		screen_content = (CHAR_INFO *) realloc(screen_content, sizeof(CHAR_INFO)*winx*winy);
 		oldx = winx;
 		oldy = winy;
 	}
@@ -114,8 +114,8 @@ static void screen_alloc (void)
 	winx = screen.maxx-screen.minx+1;
 	winy = screen.maxy-screen.miny+1;
 
-	screen.changed = realloc (screen.changed, winx*winy);
-	screen.text = realloc (screen.text, sizeof(CHAR_INFO)*winx*winy);
+	screen.changed = (char *) realloc (screen.changed, winx*winy);
+	screen.text = (CHAR_INFO *) realloc(screen.text, sizeof(CHAR_INFO)*winx*winy);
 
 	for (y=0; y<oldy && y<winy; y++) {
 		for (x=oldx; x<winx; x++) {

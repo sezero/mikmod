@@ -129,9 +129,9 @@ void win_refresh(void)
 
 static void screen_alloc (void)
 {
-	screen.changed = malloc(winx*winy);
-	screen.attrs = malloc(winx*winy);
-	screen.text = malloc(winx*winy);
+	screen.changed = (char *) malloc(winx*winy);
+	screen.attrs = (char *) malloc(winx*winy);
+	screen.text = (char *) malloc(winx*winy);
 	clear();
 }
 
@@ -148,7 +148,7 @@ void win_init_system(void)
 	gettextinfo(&screen_info);
 	winx = screen_info.screenwidth;
 	winy = screen_info.screenheight;
-	screen_contents = malloc(winx * winy * 2);
+	screen_contents = (unsigned char *) malloc(winx * winy * 2);
 	gettext(1, 1, winx , winy , screen_contents);
 
 	screen_alloc();

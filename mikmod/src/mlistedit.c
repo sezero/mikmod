@@ -748,7 +748,7 @@ static BOOL cb_freq_cd_do (WIDGET *w,int button, void *input, void *data)
 {
 	if (button<=0) {
 		char *pos;
-		path_conv(input);
+		path_conv((char *)input);
 		pos = (char*)input + strlen((char*)input);
 		/* Check if path ends with '/' */
 		if (*(pos-1) != PATH_SEP) {
@@ -1068,7 +1068,7 @@ static int cb_cmp_sort(PLAYENTRY * small, PLAYENTRY * big)
 static BOOL cb_overwrite (WIDGET *w, int button, void *input, void *file)
 {
 	if (button<=0) {
-		path_conv(file);
+		path_conv((char *)file);
 		if (PL_Save(&playlist, (char *)file))
 			rc_set_string(&config.pl_name, (char *)file, PATH_MAX);
 		else
@@ -1090,7 +1090,7 @@ static BOOL cb_browse (int button, char *file, void *data)
 /* saves a playlist */
 static BOOL cb_save_as(WIDGET *w, int button, void *input, void *data)
 {
-	path_conv(input);
+	path_conv((char *)input);
 	if (button == 0) {								/* Browse */
 		freq_open ("Select directory/file",(char*)input,(SINTPTR_T)data,
 				   cb_browse,w);
