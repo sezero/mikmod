@@ -602,9 +602,13 @@ int MA_dearchive(const CHAR *arc, const CHAR *file, CHAR **extracted)
 
 /* Test if filename looks like a module or an archive
    playlist==1: also test against a playlist
-   deep==1    : use Player_LoadTite() for testing against a module,
+   deep==1    : use Player_LoadTitle() for testing against a module,
 		        otherwise test based on the filename */
+#if LIBMIKMOD_VERSION < 0x030302
+BOOL MA_TestName (char *filename, BOOL plist, BOOL deep)
+#else
 BOOL MA_TestName (const char *filename, BOOL plist, BOOL deep)
+#endif
 {
 	int t;
 
