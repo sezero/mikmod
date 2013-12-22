@@ -1,3 +1,13 @@
+Summary of changes between MikMod 3.2.4 and MikMod 3.2.5 ():
+==================================================================
+
+MikMod 3.2.4 was released on XX/XXX/XXXX.
+
+- New CMake build system.
+- Small autotols updates.
+- Several code clean-ups.
+
+
 Summary of changes between MikMod 3.2.3 and MikMod 3.2.4 ():
 ==================================================================
 

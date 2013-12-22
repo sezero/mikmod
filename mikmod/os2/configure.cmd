@@ -109,7 +109,7 @@ main:
  *========== 1. Check the system and the compiler
  */
 
-	SAY "MikMod/2 version 3.2.4 configuration"
+	SAY "MikMod/2 version 3.2.5 configuration"
 	SAY
 
 /* OS/2

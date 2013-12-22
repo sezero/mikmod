@@ -10,6 +10,5 @@ simpleplayMEM/
 	Shows how to initialize the library, load a module using a
 	custom MREADER (which will read from memory), and play it.
 
-simpleplayMEM2/
-	Shows how to initialize the library, load a module from memory
-	using Player_LoadMem, and play it.
+soundeffects/
+	An example on how to use libmikmod to play sound effects.
