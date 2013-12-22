@@ -35,8 +35,13 @@
 #include <stdarg.h>
 #include <string.h>
 
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
+#if !defined(GWINSZ_IN_SYS_IOCTL) && defined(HAVE_TERMIOS_H)
+#include <termios.h>
+#endif
 #endif
 
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
@@ -122,11 +127,14 @@ static TIMEOUT *timeouts = NULL;
 
 #if defined(__OS2__)||defined(__EMX__)
 #include "os2video.inc"
+
 #elif defined(__DJGPP__)
 #include "dosvideo.inc"
+
 #elif defined(WIN32)
 #include "winvideo.inc"
-#else
+
+#else /* unix, ncurses */
 
 static int cursor_old = 0;
 static BOOL resize = 0;

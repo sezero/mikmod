@@ -40,15 +40,6 @@
 #include <string.h>
 #include <time.h>
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#ifndef GWINSZ_IN_SYS_IOCTL
-#include <termios.h>
-#endif
-#endif
-
 #include <mikmod.h>
 #include "display.h"
 #include "player.h"

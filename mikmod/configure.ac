@@ -96,6 +96,7 @@ AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(fnmatch.h)
 AC_CHECK_HEADERS(ncurses.h)
 AC_CHECK_HEADERS(sched.h)
+AC_CHECK_HEADERS(termios.h)
 
 dnl Checks for bogus Linux old libc5 sched.h
 case "$host_os" in

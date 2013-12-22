@@ -51,6 +51,7 @@ SET(CPACK_SOURCE_IGNORE_FILES
 
 INCLUDE(CPack)
 INCLUDE(CheckFunctionExists)
+INCLUDE(CheckSymbolExists)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
 include(mik_macros)
@@ -74,8 +75,15 @@ CHECK_MULTI_INCLUDE_FILES(
     "ncurses.h"
     "fcntl.h" "fnmatch.h" "inttypes.h" "limits.h" "memory.h" "sched.h"
     "sys/ioctl.h" "sys/wait.h" "sys/time.h" "sys/types.h" "sys/stat.h"
-    "stdint.h" "stdlib.h" "string.h" "strings.h" "unistd.h" "pthread.h"
+    "stdint.h" "stdlib.h" "string.h" "strings.h" "termios.h" "unistd.h"
+    "pthread.h"
 )
+
+CHECK_SYMBOL_EXISTS(TIOCGWINSZ "sys/ioctl.h" GWINSZ_IN_SYS_IOCTL)
+CHECK_SYMBOL_EXISTS(usleep unistd.h HAVE_USLEEP_PROTO)
+IF (NOT HAVE_USLEEP_PROTO)
+    CHECK_SYMBOL_EXISTS(usleep "sys/unistd.h" HAVE_USLEEP_PROTO)
+ENDIF()
 
 IF (HAVE_PTHREAD_H)
     SET (HAVE_PTHREAD 1)
