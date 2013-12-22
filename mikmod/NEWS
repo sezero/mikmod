@@ -5,6 +5,7 @@ MikMod 3.2.4 was released on XX/XXX/XXXX.
 
 - New CMake build system.
 - Small autotols updates.
+- Fix configury $datadir variable expansion in PACKAGE_DATA_DIR.
 - Several code clean-ups.
 
 

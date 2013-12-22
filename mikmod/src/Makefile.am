@@ -19,7 +19,7 @@ noinst_HEADERS = \
 EXTRA_mikmod_SOURCES = \
 	mfnmatch.c mgetopt.c mgetopt1.c musleep.c
 
-EXTRA_DIST = \
+EXTRA_DIST = CMakeLists.txt \
 	mfnmatch.h mgetopt.h $(man_MANS)
 
 mikmod_LDFLAGS = @LIBMIKMOD_LDADD@
