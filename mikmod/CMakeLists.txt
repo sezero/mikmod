@@ -14,13 +14,44 @@ LIST(GET VERSION_DIGITS 0 CPACK_PACKAGE_VERSION_MAJOR)
 LIST(GET VERSION_DIGITS 1 CPACK_PACKAGE_VERSION_MINOR)
 LIST(GET VERSION_DIGITS 2 CPACK_PACKAGE_VERSION_PATCH)
 
-SET(MIKMOD_VERSION "${VERSION}")
-SET(MIKMOD_VERSION_MAJOR "${CPACK_PACKAGE_VERSION_MAJOR}")
-SET(MIKMOD_VERSION_MINOR "${CPACK_PACKAGE_VERSION_MINOR}")
-SET(MIKMOD_REVISION "${CPACK_PACKAGE_VERSION_PATCH}")
+# these to perform "make package" and "make package_source"
+SET(CPACK_PACKAGE_NAME "mikmod")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MikMod - a module player")
+SET(CPACK_PACKAGE_VENDOR "Shlomi Fish")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_DESCRIPTION_SUMMARY} ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+
+SET (base_with_ver "mikmod-[0-9]+\\\\.[0-9]+\\\\.[0-9]+")
+SET(CPACK_SOURCE_IGNORE_FILES
+    "/_CPack_Packages/"
+    "/CMakeFiles/"
+    "/.deps/"
+    "^${base_with_ver}(-Source|-Linux)?/"
+    "${base_with_ver}.tar\\\\.(gz|bz2|Z|lzma|xz)$"
+    "\\\\.o$"
+    "~$"
+    "/\\\\.svn/"
+    "/CMakeCache\\\\.txt$"
+    "/CTestTestfile\\\\.cmake$"
+    "/cmake_install\\\\.cmake$"
+    "/CPackConfig\\\\.cmake$"
+    "/CPackSourceConfig\\\\.cmake$"
+    "/tags$"
+    "^config\\\\.h$"
+    "/install_manifest\\\\.txt$"
+    "/Testing/"
+    "ids-whitelist\\\\.txt"
+    "/_Inline/"
+    "/(B|build|BUILD)/"
+    "/autom4te.cache/"
+)
+
+INCLUDE(CPack)
 INCLUDE(CheckFunctionExists)
-INCLUDE(CheckIncludeFiles)
+INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
 include(${mikmod_SOURCE_DIR}/cmake/macros.cmake)
 
@@ -39,24 +70,12 @@ IF(UNIX OR APPLE)
   ENDIF()
 ENDIF()
 
-CHECK_INCLUDE_FILES (fcntl.h HAVE_FCNTL_H)
-CHECK_INCLUDE_FILES (fnmatch.h HAVE_FNMATCH_H)
-CHECK_INCLUDE_FILES (inttypes.h HAVE_INTTYPES_H)
-CHECK_INCLUDE_FILES (limits.h HAVE_LIMITS_H)
-CHECK_INCLUDE_FILES (memory.h HAVE_MEMORY_H)
-CHECK_INCLUDE_FILES (ncurses.h HAVE_NCURSES_H)
-CHECK_INCLUDE_FILES (sched.h HAVE_SCHED_H)
-CHECK_INCLUDE_FILES ("sys/ioctl.h" HAVE_SYS_IOCTL_H)
-CHECK_INCLUDE_FILES ("sys/wait.h" HAVE_SYS_WAIT_H)
-CHECK_INCLUDE_FILES ("sys/time.h" HAVE_SYS_TIME_H)
-CHECK_INCLUDE_FILES ("sys/types.h" HAVE_SYS_TYPES_H)
-CHECK_INCLUDE_FILES (stdint.h HAVE_STDINT_H)
-CHECK_INCLUDE_FILES (stdlib.h HAVE_STDLIB_H)
-CHECK_INCLUDE_FILES (strings.h HAVE_STRINGS_H)
-CHECK_INCLUDE_FILES (string.h HAVE_STRING_H)
-CHECK_INCLUDE_FILES ("sys/stat.h" HAVE_SYS_STAT_H)
-CHECK_INCLUDE_FILES (unistd.h HAVE_UNISTD_H)
-CHECK_INCLUDE_FILES (pthread.h HAVE_PTHREAD_H)
+CHECK_MULTI_INCLUDE_FILES(
+    "ncurses.h"
+    "fcntl.h" "fnmatch.h" "inttypes.h" "limits.h" "memory.h" "sched.h"
+    "sys/ioctl.h" "sys/wait.h" "sys/time.h" "sys/types.h" "sys/stat.h"
+    "stdint.h" "stdlib.h" "string.h" "strings.h" "unistd.h" "pthread.h"
+)
 
 IF (HAVE_PTHREAD_H)
     SET (HAVE_PTHREAD 1)
@@ -89,14 +108,37 @@ else(RETSIGTYPE_INT)
 endif(RETSIGTYPE_INT)
 MESSAGE(STATUS "Return type of signal handlers: ${RETSIGTYPE}")
 
+SET(CMAKE_REQUIRED_LIBRARIES "ncurses")
+CHECK_FUNCTION_EXISTS (resizeterm HAVE_NCURSES_RESIZETERM)
+
 SET(CMAKE_REQUIRED_INCLUDES ${MIKMOD_INCLUDE_DIR})
 SET(CMAKE_REQUIRED_LIBRARIES ${MIKMOD_LIBRARIES})
 CHECK_FUNCTION_EXISTS (MikMod_free HAVE_MIKMOD_FREE)
 
+########### compiler flags ##############
+
+SET(COMPILER_FLAGS_TO_CHECK
+    "-Wall" "-Werror=implicit-function-declaration"
+)
+
+IF (CPU_ARCH)
+    LIST(APPEND COMPILER_FLAGS_TO_CHECK "-march=${CPU_ARCH}")
+ENDIF(CPU_ARCH)
+
+SET (IDX 1)
+FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
+    SET (FLAG_EXISTS_VAR "FLAG_EXISTS_${IDX}")
+    MATH (EXPR IDX "${IDX} + 1")
+    CHECK_C_COMPILER_FLAG("${CFLAG_TO_CHECK}" ${FLAG_EXISTS_VAR})
+    IF (${FLAG_EXISTS_VAR})
+        ADD_DEFINITIONS(${CFLAG_TO_CHECK})
+    ENDIF (${FLAG_EXISTS_VAR})
+ENDFOREACH(CFLAG_TO_CHECK)
+
 ########### install files ###############
 
 ADD_DEFINITIONS("-DHAVE_CONFIG_H")
-SET (PACKAGE_DATA_DIR "${DATADIR}/mikmod")
+SET (PACKAGE_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/mikmod")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
@@ -110,7 +152,7 @@ install(
     FILES
         mikmodrc
     DESTINATION
-        "share"
+        "share/mikmod"
 )
 
 add_subdirectory(src)

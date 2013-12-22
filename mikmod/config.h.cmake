@@ -8,9 +8,6 @@
 /* Define to 1 if `TIOCGWINSZ' requires <sys/ioctl.h>. */
 #cmakedefine GWINSZ_IN_SYS_IOCTL
 
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#cmakedefine HAVE_DOPRNT
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine HAVE_FCNTL_H
 
@@ -101,29 +98,8 @@
 /* Define to 1 if you have the `vsnprintf' function. */
 #cmakedefine HAVE_VSNPRINTF
 
-/* Name of package */
-#cmakedefine PACKAGE
-
-/* Define to the address where bug reports for this package should be sent. */
-#cmakedefine PACKAGE_BUGREPORT
-
 /* Define the directory for shared data. */
 #cmakedefine PACKAGE_DATA_DIR "${PACKAGE_DATA_DIR}"
-
-/* Define to the full name of this package. */
-#cmakedefine PACKAGE_NAME
-
-/* Define to the full name and version of this package. */
-#cmakedefine PACKAGE_STRING
-
-/* Define to the one symbol short name of this package. */
-#cmakedefine PACKAGE_TARNAME
-
-/* Define to the home page for this package. */
-#cmakedefine PACKAGE_URL
-
-/* Define to the version of this package. */
-#cmakedefine PACKAGE_VERSION
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #cmakedefine RETSIGTYPE ${RETSIGTYPE}
@@ -142,7 +118,7 @@
 #cmakedefine TIME_WITH_SYS_TIME
 
 /* Version number of package */
-#cmakedefine VERSION
+#cmakedefine VERSION "${VERSION}"
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const
