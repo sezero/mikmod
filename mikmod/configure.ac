@@ -22,16 +22,13 @@ dnl =========================
 dnl Configure script options.
 dnl =========================
 
-AC_ARG_ENABLE(
-        threads,
-        [  --enable-threads        use an own thread for the player [default=guessed]],
-        if test "$enableval" = "yes"
-        then
-                mikmod_threads=yes
-        else
-                mikmod_threads=no
-        fi
-)
+AC_ARG_ENABLE([threads],[AS_HELP_STRING([--enable-threads],[use an own thread for the player [default=guessed]])],
+[if test "$enableval" = "yes"
+then
+    mikmod_threads=yes
+else
+    mikmod_threads=no
+fi])
 
 dnl ====================
 dnl Checks for programs.
