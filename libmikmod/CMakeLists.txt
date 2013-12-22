@@ -37,7 +37,7 @@ SET(CPACK_PACKAGE_VERSION_MAJOR ${LIBMIKMOD_MAJOR_VERSION})
 SET(CPACK_PACKAGE_VERSION_MINOR ${LIBMIKMOD_MINOR_VERSION})
 SET(CPACK_PACKAGE_VERSION_PATCH ${LIBMIKMOD_MICRO_VERSION})
 
-# these to perform "make package" and "make package_source"
+# package generation (make package[_source])
 SET(CPACK_PACKAGE_NAME "libmikmod")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libmikmod - a module file playing and sound library")
 SET(CPACK_PACKAGE_VENDOR "Shlomi Fish")
@@ -95,8 +95,6 @@ SET (ENABLE_STATIC "1" CACHE BOOL "Whether to build the static library (which ta
 ### This is to set the RPATH correctly, so when installed
 ### under a prefix the executables will find the libraries.
 ### See:  http://www.cmake.org/Wiki/CMake_RPATH_handling
-### (Taken from that wiki page)
-
 IF (ENABLE_RPATH)
     # use, i.e. don't skip the full RPATH for the build tree
     SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -123,7 +121,7 @@ INCLUDE(CheckCSourceCompiles)
 INCLUDE(FindThreads)
 include(FindPkgConfig)
 include(TestBigEndian)
-include(${libmikmod_SOURCE_DIR}/cmake/macros.cmake)
+include(mik_macros)
 
 ADD_SUBDIRECTORY ("dlapi")
 ADD_SUBDIRECTORY ("docs")
@@ -141,7 +139,6 @@ ADD_SUBDIRECTORY ("win32")
 
 SET(COMPILER_FLAGS_TO_CHECK
     "-Wall" "-Werror=implicit-function-declaration"
-    # -fvisibility=hidden check is down below
 )
 
 IF (CPU_ARCH)

@@ -14,7 +14,7 @@ LIST(GET VERSION_DIGITS 0 CPACK_PACKAGE_VERSION_MAJOR)
 LIST(GET VERSION_DIGITS 1 CPACK_PACKAGE_VERSION_MINOR)
 LIST(GET VERSION_DIGITS 2 CPACK_PACKAGE_VERSION_PATCH)
 
-# these to perform "make package" and "make package_source"
+# package generation (make package[_source])
 SET(CPACK_PACKAGE_NAME "mikmod")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MikMod - a module player")
 SET(CPACK_PACKAGE_VENDOR "Shlomi Fish")
@@ -53,7 +53,7 @@ INCLUDE(CPack)
 INCLUDE(CheckFunctionExists)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
-include(${mikmod_SOURCE_DIR}/cmake/macros.cmake)
+include(mik_macros)
 
 find_path(MIKMOD_INCLUDE_DIR mikmod.h)
 find_library(MIKMOD_LIBRARIES mikmod)
