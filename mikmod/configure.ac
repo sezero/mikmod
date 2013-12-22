@@ -71,6 +71,10 @@ AC_HEADER_TIOCGWINSZ
 
 dnl POSIX.4 threads
 dnl ---------------
+case "$host_os" in
+  # mikmod_threads variable is for pthreads only
+    mingw*) mikmod_threads=no ;;
+esac
 if test "$mikmod_threads" = "yes"; then
         mikmod_threads=no
         dnl AC_CHECK_HEADERS(pthread.h) unreliable
@@ -148,16 +152,8 @@ dnl =================================
 dnl Set PACKAGE_DATA_DIR in config.h.
 dnl =================================
 
-if test "x${datadir}" = 'x${prefix}/share'; then
-  if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}",
-		       [Define the directory for shared data.])
-  else
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}")
-  fi
-else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
-fi
+ax_package_data_dir="${datadir}/${PACKAGE}"
+AX_DEFINE_DIR([PACKAGE_DATA_DIR], [ax_package_data_dir], [Define the directory for shared data.])
 
 dnl ================
 dnl Choose settings.
