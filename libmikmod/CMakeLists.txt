@@ -118,7 +118,6 @@ include(CheckFunctionExists)
 include(CheckSymbolExists)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
-INCLUDE(FindThreads)
 include(FindPkgConfig)
 include(TestBigEndian)
 include(mik_macros)
@@ -236,6 +235,7 @@ CHECK_MULTI_FUNCTIONS_EXISTS(
 )
 
 CHECK_SYMBOL_EXISTS(RTLD_GLOBAL dlfcn.h HAVE_RTLD_GLOBAL)
+CHECK_SYMBOL_EXISTS(srandom math.h SRANDOM_IN_MATH_H)
 
 ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 # always define MIKMOD_BUILD when building libmikmod

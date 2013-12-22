@@ -59,9 +59,12 @@
 /* Define if your system defines random(3) and srandom(3) in math.h instead
    of stdlib.h */
 #cmakedefine SRANDOM_IN_MATH_H 1
+
 /* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
 #cmakedefine HAVE_RTLD_GLOBAL 1
-/* Define if your system needs leading underscore to function names in dlsym() calls */
+
+/* Define if your system needs leading underscore to function names in dlsym()
+   calls */
 #cmakedefine DLSYM_NEEDS_UNDERSCORE 1
 
 /* define this if you are running a bigendian system (motorola, sparc, etc) */
