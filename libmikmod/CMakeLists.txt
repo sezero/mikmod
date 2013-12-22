@@ -37,7 +37,7 @@ SET(CPACK_PACKAGE_VERSION_MAJOR ${LIBMIKMOD_MAJOR_VERSION})
 SET(CPACK_PACKAGE_VERSION_MINOR ${LIBMIKMOD_MINOR_VERSION})
 SET(CPACK_PACKAGE_VERSION_PATCH ${LIBMIKMOD_MICRO_VERSION})
 
-# This is the equivalent to perform a "make dist"/"make distdir" etc.
+# these to perform "make package" and "make package_source"
 SET(CPACK_PACKAGE_NAME "libmikmod")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libmikmod - a module file playing and sound library")
 SET(CPACK_PACKAGE_VENDOR "Shlomi Fish")
@@ -165,13 +165,7 @@ IF (ENABLE_SIMD)
     ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
 ENDIF(ENABLE_SIMD)
 
-SET (IS_DEBUG "")
 IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
-    SET (IS_DEBUG 1)
-
-    # Removed these flags because they emitted spurious warnings, which were of
-    # no use to us:
-    # "-Winline"
     IF (${CMAKE_COMPILER_IS_GNUCC})
         ADD_DEFINITIONS(
             "-Wold-style-declaration"
@@ -206,7 +200,6 @@ FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
     CHECK_C_COMPILER_FLAG("${CFLAG_TO_CHECK}" ${FLAG_EXISTS_VAR})
     IF (${FLAG_EXISTS_VAR})
         ADD_DEFINITIONS(${CFLAG_TO_CHECK})
-        LIST(APPEND MY_LINK_FLAGS "${CFLAG_TO_CHECK}")
     ENDIF (${FLAG_EXISTS_VAR})
 ENDFOREACH(CFLAG_TO_CHECK)
 
