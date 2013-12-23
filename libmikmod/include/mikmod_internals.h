@@ -33,7 +33,7 @@ extern "C" {
 
 #include <stdarg.h>
 
-#if defined(__OS2__) || defined(__EMX__) || defined(_WIN32)
+#if defined(__OS2__) || defined(__EMX__) || (defined(_WIN32) && !defined(__MINGW32__))
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
 
