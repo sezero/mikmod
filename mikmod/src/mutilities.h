@@ -164,14 +164,13 @@ char *get_cfg_name(const char *name);
 /* Return precise time in milliseconds */
 unsigned long Time1000(void);
 
-#if defined(__OS2__)||defined(__EMX__)||defined(WIN32)
-#define strcasecmp(s,t) stricmp(s,t)
-#endif
-
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
 #define filecmp strcasecmp
 #else
 #define filecmp strcmp
+#endif
+#if defined(__OS2__)||defined(__EMX__)||(defined(WIN32)&&!defined(__MINGW32__))
+#define strcasecmp(s,t) stricmp(s,t)
 #endif
 
 #ifdef HAVE_VSNPRINTF
