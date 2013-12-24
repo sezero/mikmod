@@ -591,10 +591,20 @@ case $host_os in
 			CPPFLAGS="$CPPLAGS -D_WIN32_WINNT=0x0602"
 		fi
 		AC_CHECK_HEADERS(xaudio2.h)
-		CPPFLAGS=$ac_save_CPPFLAGS
 		if test $ac_cv_header_xaudio2_h = yes ; then
 			libmikmod_driver_xaudio2=yes
+			AC_CACHE_CHECK([if XAUDIO2_DEBUG_ENGINE is defined],libmikmod_cv_xaudio2_7_header,
+			AC_TRY_COMPILE([#include <xaudio2.h>],[int flag=XAUDIO2_DEBUG_ENGINE;],
+					libmikmod_cv_xaudio2_7_header=yes,
+					libmikmod_cv_xaudio2_7_header=no))
+			if test $libmikmod_cv_xaudio2_7_header = yes && test $use_xaudio28 = yes; then
+			  AC_MSG_WARN([xaudio2.h <= 2.7 and xaudio2.8 enabled - build will likely fail.])
+			fi
+			if test $libmikmod_cv_xaudio2_7_header = no && test $use_xaudio28 != yes; then
+			  AC_MSG_WARN([xaudio2.h >= 2.8 and xaudio2.8 disabled - build will likely fail.])
+			fi
 		fi
+		CPPFLAGS=$ac_save_CPPFLAGS
 	fi
 	;;
 
