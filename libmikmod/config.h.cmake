@@ -37,6 +37,14 @@
 #cmakedefine DRV_OSX 1
 /* Define this if you want the Carbon Mac Audio driver */
 #cmakedefine DRV_MAC 1
+/* Define if the Windows DirectSound driver is compiled */
+#cmakedefine DRV_DS 1
+/* Define if the Windows MCI driver is compiled */
+#cmakedefine DRV_WIN 1
+/* Define if the Windows XAudio2 driver is compiled */
+#cmakedefine DRV_XAUDIO2 1
+/* Define if using XAudio 2.8 for Windows8 with XAudio2 driver */
+#cmakedefine DRV_XAUDIO28 1
 
 /* Define if you want a debug version of the library */
 #cmakedefine MIKMOD_DEBUG 1
@@ -96,6 +104,9 @@
 
 /* Define to 1 if you have the <dmedia/audio.h> header file. */
 #cmakedefine HAVE_DMEDIA_AUDIO_H 1
+
+/* Define to 1 if you have the <dsound.h> header file. */
+#cmakedefine HAVE_DSOUND_H 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine HAVE_FCNTL_H 1
@@ -186,6 +197,12 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
+
+/* Define to 1 if you have the <windows.h> header file. */
+#cmakedefine HAVE_WINDOWS_H 1
+
+/* Define to 1 if you have the <xaudio2.h> header file. */
+#cmakedefine HAVE_XAUDIO2_H 1
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
