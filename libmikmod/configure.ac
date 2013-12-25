@@ -98,7 +98,7 @@ libmikmod_unix=default
 # Configure script options.
 # =========================
 
-AC_ARG_ENABLE([af], [AS_HELP_STRING([--enable-af],[include AudioFile audio server driver [default=no]])],
+AC_ARG_ENABLE([af], [AS_HELP_STRING([--enable-af],[include DEC AudioFile server driver [default=no]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_af=yes
@@ -391,8 +391,8 @@ then
 		AC_LANG_SAVE
 		AC_LANG_C
 		AC_TRY_RUN([#include <dlfcn.h>
-#ifndef	RTLD_GLOBAL
-#define	RTLD_GLOBAL 0
+#ifndef RTLD_GLOBAL
+#define RTLD_GLOBAL 0
 #endif
 
 int main(void)
@@ -401,7 +401,7 @@ int main(void)
 	libc = dlopen("libc.so", RTLD_LAZY | RTLD_GLOBAL);
 	if (!libc)
 		exit(1);
-	
+
 	printfptr = dlsym(libc, "_printf");
 	dlclose(libc);
 	exit(!printfptr);
@@ -794,7 +794,7 @@ esac
 if test $libmikmod_driver_af = yes
 then
 	libmikmod_driverlist="$libmikmod_driverlist audiofile"
-	AC_DEFINE([DRV_AF], 1, [Define if the AudioFile audio server driver is compiled])
+	AC_DEFINE([DRV_AF], 1, [Define if the DEC AudioFile server driver is compiled])
 	LIBRARY_LIB="-lAF $LIBRARY_LIB"
 fi
 

@@ -6,7 +6,7 @@
 #cmakedefine DRV_STDOUT 1
 /* Define if you want a .aiff file writer driver */
 #cmakedefine DRV_AIFF 1
-/* Define if the AudioFile audio server driver is compiled */
+/* Define if the DEC AudioFile server driver is compiled */
 #cmakedefine DRV_AF 1
 /* Define if the AIX audio driver is compiled */
 #cmakedefine DRV_AIX 1
@@ -54,8 +54,6 @@
 #cmakedefine MIKMOD_SIMD 1
 /* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
 #cmakedefine MIKMOD_UNIX 1
-/* Define if your system provides POSIX.4 threads */
-#cmakedefine HAVE_PTHREAD 1
 
 /* ========== Build environment information */
 
@@ -70,6 +68,9 @@
 
 /* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
 #cmakedefine HAVE_RTLD_GLOBAL 1
+
+/* Define if your system provides POSIX.4 threads */
+#cmakedefine HAVE_PTHREAD 1
 
 /* Define if your system needs leading underscore to function names in dlsym()
    calls */

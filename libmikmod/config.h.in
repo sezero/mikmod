@@ -10,7 +10,7 @@
    calls */
 #undef DLSYM_NEEDS_UNDERSCORE
 
-/* Define if the AudioFile audio server driver is compiled */
+/* Define if the DEC AudioFile server driver is compiled */
 #undef DRV_AF
 
 /* Define if you want a .aiff file writer driver */
