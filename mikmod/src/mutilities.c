@@ -494,6 +494,8 @@ BOOL driver_get_info (int drvno, char **version, char **cmdline)
 
 #else
 
+	static char *drv_cmdlineNul[] = {
+		NULL, NULL};
 	static char *drv_cmdline317[] = {
 		"AudioFile",		"machine:t::Audio server machine (hostname:port)\n",
 		"AIX Audio",		"buffer:r:12,19,15:Audio buffer log2 size\n",
@@ -559,11 +561,20 @@ BOOL driver_get_info (int drvno, char **version, char **cmdline)
 							"count:r:2,255,16:Audio buffer count\n"
 							"card:r:0,99,0:Device number (/dev/dsp%d)\n",
 		NULL, NULL};
-#define VERSION_MAX		3
+	static char *drv_cmdline3113[] = {
+	/* 3.1.13 retires alsa-0.4/0.5 driver, adds alsa-1.0.x driver
+	 * and removes options */
+		"Advanced Linux Sound",		NULL,
+		NULL, NULL};
+#define VERSION_MAX		7
 	static char **drv_cmdline[VERSION_MAX] = {
 		drv_cmdline317,
 		drv_cmdline318,
-		drv_cmdline319};
+		drv_cmdline319,
+		drv_cmdlineNul,
+		drv_cmdlineNul,
+		drv_cmdlineNul,
+		drv_cmdline3113};
 
 	char *driver = MikMod_InfoDriver(), *pos, *start;
 	char **cmd;
@@ -588,7 +599,7 @@ BOOL driver_get_info (int drvno, char **version, char **cmdline)
 						if (version) {
 							start = pos;
 							while (*pos && *pos != '\n') pos++;
-							*version = malloc (pos-start+1);
+							*version = (char *) malloc (pos-start+1);
 							strncpy (*version, start, pos-start);
 							(*version)[pos-start] = '\0';
 						}

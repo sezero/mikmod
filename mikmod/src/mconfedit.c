@@ -671,8 +671,10 @@ static void config_set_config(CONFIG *cfg)
 	exit_entries[OPT_S_CONFIG].data = (void *)(SINTPTR_T)cfg->save_config;
 	exit_entries[OPT_S_PLAYLIST].data = (void *)(SINTPTR_T)cfg->save_playlist;
 
+#if LIBMIKMOD_VERSION >= 0x030107
 	get_driver_options (&output_entries[OPT_DRV_OPTION],
 						&output_entries[OPT_DRIVER]);
+#endif
 
 	CF_themes_free (&themes, &cnt_themes);
 	for (i = 0; i < cfg->cnt_themes; i++)
@@ -754,9 +756,11 @@ static void handle_menu(MMENU *mn)
 		}
 		break;
 	  case MENU_OUTPUT:
+#if LIBMIKMOD_VERSION >= 0x030107
 		if (mn->cur == OPT_DRIVER)
 			get_driver_options(&output_entries[OPT_DRV_OPTION],
 							   &output_entries[OPT_DRIVER]);
+#endif
 		break;
 	  case MENU_OTHER:
 		if (mn->cur == OPT_EDITTHEME) {
