@@ -665,7 +665,17 @@ then
 	AC_CHECK_HEADERS(libgus.h)
 	if test $ac_cv_header_libgus_h = yes
 	then
-		AC_CHECK_LIB(gus,gus_cards,libmikmod_driver_ultra=yes)
+		AC_CACHE_CHECK([if libgus is new enough],libmikmod_cv_libgus_h_good,
+		AC_TRY_COMPILE([#include <libgus.h>],
+[gus_info_t *info;
+int flg1=GUS_INSTR_SIMPLE;
+int flg2=GUS_WAVE_BIDIR;],
+				libmikmod_cv_libgus_h_good=yes, libmikmod_cv_libgus_h_good=no))
+
+		if test $libmikmod_cv_libgus_h_good = yes
+		then
+			AC_CHECK_LIB(gus,gus_cards,libmikmod_driver_ultra=yes)
+		fi
 	fi
 else
 	libmikmod_driver_ultra=no
