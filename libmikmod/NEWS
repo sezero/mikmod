@@ -1,11 +1,13 @@
 Summary of changes between libmikmod 3.3.4 and libmikmod 3.3.5 ():
 ==========================================================================
 
-libmikmod 3.3.5 was released on XX-XXX-XXXX.
+libmikmod v3.3.5 was released on XX-XXX-XXXX.
+This is a minor bugfix / maintenance release.
 
 - mikmod.texi: Fixed document generation using newer texinfo.
 - Small cmake and autotools updates/fixes.
 - Minor compilation fixes against ancient software versions.
+- Merged an updated gp32 driver (it is still an untested driver...)
 
 
 Summary of changes between libmikmod 3.3.3 and libmikmod 3.3.4 ():

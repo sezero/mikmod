@@ -2,7 +2,7 @@
 	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
-	This library is FREE software; you can redistribute it and/or modify
+	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
@@ -21,116 +21,86 @@
 /*==============================================================================
 
   Driver for output on gp32 platform
-  Written by Bjornar Henden <bhenden@online.no>
-  Adapted from the windows waveout driver
+  Originally from mikplay32 source by aj0 - http://www.cs.vu.nl/~cvwalta/
+  http://www.cs.vu.nl/~cvwalta/downloads/mikplay_src.rar
+  http://web.archive.org/web/20031018223157/http://www.cs.vu.nl/~cvwalta/?option=articles/gp32
+
+  Altered from mikplay source by aj0 for Mr.Mirkos SDK replacement
+  and updated to mikmod 3.2.0 --- PEA (www.gp32.co.nz), March 2005
+  http://www.pea.co.nz/gp32/downloads.php
+  http://web.archive.org/web/20050830081635/http://www.pea.co.nz/gp32/downloads.php
+  http://dl.openhandhelds.org/cgi-bin/gp32.cgi?0,0,0,0,46,632
 
 ==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifndef GP32
+#define GP32
+#endif
 
+#include <gp32.h>
 #include "mikmod_internals.h"
 
 #ifdef DRV_GP32
 
-#define NUMBUFFERS	6				/* number of buffers */
-#define BUFFERSIZE	120				/* buffer size in milliseconds */
+#define GP32_buffersize 2048
+#define GP32_ringsize (GP32_buffersize*2)
 
-unsigned short *buffer=NULL;
-unsigned short *buffer_end=NULL;
+static unsigned char *GP32_buffer = NULL;
 
-int *play_pos;
-int *play_chan;
-int buffer_size;
-int writting_buffer=0;
-
-#define SAMPLERATE 44100
-#define BUFFER1_SIZE ((SAMPLERATE*sizeof(unsigned short)*2*BUFFERSIZE)/1000)
-
-static BOOL GP32_IsThere(void)
-{
+static BOOL GP32_IsThere(void) {
 	return 1;
 }
 
-static int GP32_Init(void)
-{
-	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
-	GpPcmInit (PCM_S44, PCM_16BIT);
-
-	buffer_size=BUFFER1_SIZE*NUMBUFFERS;
-	buffer=gp_mem_func.malloc(buffer_size);
-	if (!buffer) {
-		_mm_errno = MMERR_OUT_OF_MEMORY;
-		return 1;
-	}
-	gp_str_func.memset(buffer,0,buffer_size);
-
-	GpPcmPlay((unsigned short *)buffer,buffer_size,1);
-	GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
-
-	writting_buffer=0;
-
+static int GP32_Init(void) {
+	md_mode = DMODE_STEREO | DMODE_16BITS | DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
+	md_mixfreq = 44100;
+	gp_initSound(44100, 16, GP32_ringsize); /* 44k sound, 16bpp, 2x4k buffers */
+	GP32_buffer = (unsigned char*) MikMod_malloc(GP32_buffersize); /* Half of the 8k ringbuffer */
+	if (!GP32_buffer) return 1;
+	gp_clearRingbuffer();
 	return VC_Init();
 }
 
-void GP32_Stop(void) {
-	GpPcmStop();
+static void GP32_Stop(void) {
+	gp_clearRingbuffer();
 }
 
-void GP32_Restart(void) {
-	GpPcmPlay((unsigned short *)buffer,buffer_size,1);
-	GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
+static void GP32_Restart(void) {
+	/* No restart yet */
 }
 
-static void GP32_Exit(void)
-{
-	GpPcmStop();
-	gp_mem_func.free(buffer);
+static void GP32_Exit(void) {
+	gp_clearRingbuffer();
+	MikMod_free(GP32_buffer);
 	VC_Exit();
 }
 
-int last_data;
-int next_data;
+static void GP32_Update(void) {
+	unsigned long bytesread;
+#ifdef GP32_DEBUG
+/*	gp_debug( 1, "Read bytes" );*/
+#endif
+	bytesread = VC_WriteBytes(GP32_buffer, GP32_buffersize);
+#ifdef GP32_DEBUG
+/*	gp_debug(1, "Read %d bytes", bytesread);*/
+#endif
+	if (!bytesread) return; /* exit if a whole buffer hasn't been read */
 
-static void GP32_Update(void)
-{
-	ULONG done;
-	int playing_buffer;
-	char *writeTo;
-	unsigned short *bTO;
-	int samples;
-	int top_buffer;
-
-	playing_buffer=(*play_pos-(int)buffer)/BUFFER1_SIZE;
-
-	while(writting_buffer!=playing_buffer) {
-		writeTo=(char *)(((unsigned int)buffer)+writting_buffer*BUFFER1_SIZE);
-		bTO=writeTo;
-		done=VC_WriteBytes(writeTo,BUFFER1_SIZE);
-		for (samples=0;samples<(BUFFER1_SIZE/2);samples++) {
-			/*next_data=*bTO;*/
-			*bTO=*bTO+0x8000; /* to unsigned... sdk.. */
-			bTO++;
-			/*last_data=next_data;*/
-		}
-
-		if(!done) break;
-		writting_buffer=(writting_buffer+1)%NUMBUFFERS;
-	}
+	gp_addRingsegment((unsigned short*)GP32_buffer);
 }
 
-static void GP32_PlayStop(void)
-{
-	/*GpPcmStop();*/
-	gp_str_func.memset(buffer,0,buffer_size);
+static void GP32_PlayStop(void) {
+	gp_clearRingbuffer();
 	VC_PlayStop();
 }
 
 MIKMODAPI MDRIVER drv_gp32={
 	NULL,
-	"GP32 SDK Audio v0.1",
-	"GP32 SDK Audio driver v0.1",
+	"GP32 SDK Audio v0.2",
+	"GP32 SDK Audio driver v0.2",
 	0,255,
 	"gp32",
 	NULL,
