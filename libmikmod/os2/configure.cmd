@@ -217,13 +217,6 @@ main:
 	SAY
 	SAY "Drivers..."
 
-/* AIFF disk writer driver */
-	cflags=cflags" -DDRV_AIFF"
-/* WAV disk writer driver */
-	cflags=cflags" -DDRV_WAV"
-/* RAW data disk writer driver */
-	cflags=cflags" -DDRV_RAW"
-
 /* MMPM/2 driver */
 	SAY "The MMPM/2 drivers will work with any OS/2 version starting from 2.1."
 	SAY "If you're not running Warp 4, these drivers are recommended."
@@ -245,6 +238,34 @@ main:
 	DO
 		cflags=cflags" -DDRV_DART"
 		IF libs="" THEN libs="-lmmpm2"
+	END
+
+/* WAV file writer driver */
+	SAY "The WAV file writer driver adds support for output to a WAV file."
+	message="Do you want the WAV file writer driver ?"
+	CALL yesno
+	IF RESULT='Y' THEN
+	DO
+		cflags=cflags" -DDRV_WAV"
+	END
+
+/* AIFF file writer driver */
+	SAY "The AIFF file writer driver adds support for output to an AIFF file."
+	message="Do you want the AIFF file writer driver ?"
+	CALL yesno
+	IF RESULT='Y' THEN
+	DO
+		cflags=cflags" -DDRV_AIFF"
+	END
+
+/* RAW data disk writer driver */
+	SAY "The RAW file writer driver adds support for raw sound data"
+	SAY "output to a file."
+	message="Do you want the RAW file writer driver ?"
+	CALL yesno
+	IF RESULT='Y' THEN
+	DO
+		cflags=cflags" -DDRV_RAW"
 	END
 
 /* stdout driver */
