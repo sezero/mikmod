@@ -219,6 +219,10 @@ main:
 
 /* AIFF disk writer driver */
 	cflags=cflags" -DDRV_AIFF"
+/* WAV disk writer driver */
+	cflags=cflags" -DDRV_WAV"
+/* RAW data disk writer driver */
+	cflags=cflags" -DDRV_RAW"
 
 /* MMPM/2 driver */
 	SAY "The MMPM/2 drivers will work with any OS/2 version starting from 2.1."

@@ -8,11 +8,18 @@
 /* Define if you want support for output to stdout */
 /*#define DRV_STDOUT*/
 
+/* Define if you want an .aiff file writer driver */
+#define DRV_AIFF
+/* Define if you want a raw pcm data file writer driver */
+#define DRV_RAW
+/* Define if you want a .wav file writer driver */
+#define DRV_WAV
+
 /* Define if the Gravis UltraSound driver is compiled */
 #define DRV_ULTRA
-/* We want Windows Sound System driver too */
+/* Define if the Windows Sound System driver is compiled */
 #define DRV_WSS
-/* We want SoundBlaster driver too */
+/* Define if the SoundBlaster driver is compiled */
 #define DRV_SB
 
 /* Define if you want a debug version of the library */

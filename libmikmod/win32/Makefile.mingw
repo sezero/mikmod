@@ -23,9 +23,6 @@ LDLIBS=
 # SIMD code is unstable at present: *not* recommended...
 SSE2FLAGS=-msse2
 
-# support for raw and wav file writers
-# are not configurable by default
-
 # support for WinMM sound output:
 LDLIBS+=-lwinmm
 CPPFLAGS+=-DDRV_WIN
@@ -53,6 +50,10 @@ CPPFLAGS+=-DDRV_DS
 
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF
+# support for wav file output:
+CPPFLAGS+=-DDRV_WAV
+# support for output raw data to a file:
+CPPFLAGS+=-DDRV_RAW
 
 # support for output to stdout:
 #CPPFLAGS+=-DDRV_STDOUT

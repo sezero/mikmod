@@ -13,7 +13,7 @@
 /* Define if the DEC AudioFile server driver is compiled */
 #undef DRV_AF
 
-/* Define if you want a .aiff file writer driver */
+/* Define if you want an .aiff file writer driver */
 #undef DRV_AIFF
 
 /* Define if the AIX audio driver is compiled */
@@ -55,6 +55,9 @@
 /* Define if your system supports binary pipes (i.e. Unix) */
 #undef DRV_PIPE
 
+/* Define if you want a raw pcm data file writer driver */
+#undef DRV_RAW
+
 /* Define if the Linux SAM9407 driver is compiled */
 #undef DRV_SAM9407
 
@@ -73,6 +76,9 @@
 
 /* Define if the Linux Ultra driver is compiled */
 #undef DRV_ULTRA
+
+/* Define if you want a .wav file writer driver */
+#undef DRV_WAV
 
 /* Define if the Windows MCI driver is compiled */
 #undef DRV_WIN

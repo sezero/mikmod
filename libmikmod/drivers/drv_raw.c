@@ -30,6 +30,8 @@
 #include "config.h"
 #endif
 
+#ifdef DRV_RAW
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -175,5 +177,11 @@ MIKMODAPI MDRIVER drv_raw={
 	VC_VoiceGetPosition,
 	VC_VoiceRealVolume
 };
+
+#else
+#include "mikmod_internals.h"
+MISSING(drv_raw);
+
+#endif
 
 /* ex:set ts=4: */

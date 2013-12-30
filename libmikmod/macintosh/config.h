@@ -1,5 +1,4 @@
-/* config.h.  Generated automatically by configure.  */
-/* config.h.in.  Generated automatically from configure.in by autoheader 2.13.  */
+/* config.h.in.  Generated for macintosh builds.  */
 
 /* Define if on AIX 3.
    System headers sometimes define this.
@@ -29,8 +28,12 @@
 /* Define if your system supports binary pipes (i.e. Unix) */
 /* #undef DRV_PIPE */
 
-/* Define if you want a .aiff file writer driver */
+/* Define if you want an .aiff file writer driver */
 #define DRV_AIFF 1
+/* Define if you want a raw pcm data file writer driver */
+#define DRV_RAW 1
+/* Define if you want a .wav file writer driver */
+#define DRV_WAV 1
 
 /* Define if the AudioFile driver is compiled */
 /* #undef DRV_AF */

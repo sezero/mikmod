@@ -4,8 +4,12 @@
 #cmakedefine DRV_PIPE 1
 /* Define if you want support for output to stdout */
 #cmakedefine DRV_STDOUT 1
-/* Define if you want a .aiff file writer driver */
+/* Define if you want an .aiff file writer driver */
 #cmakedefine DRV_AIFF 1
+/* Define if you want a .wav file writer driver */
+#cmakedefine DRV_WAV 1
+/* Define if you want a raw pcm data file writer driver */
+#cmakedefine DRV_RAW 1
 /* Define if the DEC AudioFile server driver is compiled */
 #cmakedefine DRV_AF 1
 /* Define if the AIX audio driver is compiled */

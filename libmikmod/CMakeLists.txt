@@ -144,6 +144,10 @@ SET (ENABLE_STDOUT 0)
 SET (ENABLE_PIPE 0)
 ENDIF()
 
+SET (ENABLE_AIFF 1 CACHE BOOL "Support for output to an .aiff file")
+SET (ENABLE_WAV 1 CACHE BOOL "Support for output to a .wav file")
+SET (ENABLE_RAW 1 CACHE BOOL "Support for output raw pcm data to a file")
+
 IF(NOT WIN32)
 SET (ENABLE_DL 0 CACHE BOOL "Load ALSA and EsounD drivers at runtime")
 SET (ENABLE_THREADS 1 CACHE BOOL "build a thread-safe version of libmikmod") # only for pthreads.
@@ -250,12 +254,12 @@ IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebIn
             "-Wold-style-definition"
             "-Wdeclaration-after-statement"
         )
-    ENDIF (${CMAKE_COMPILER_IS_GNUCC})
-ENDIF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
+    ENDIF()
+ENDIF()
 
 IF (CMAKE_BUILD_TYPE STREQUAL release)
     LIST(APPEND COMPILER_FLAGS_TO_CHECK "-flto")
-ENDIF (CMAKE_BUILD_TYPE STREQUAL release)
+ENDIF()
 
 SET (IDX 1)
 FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
@@ -434,7 +438,23 @@ ELSE()
   SET(DRV_STDOUT)
 ENDIF()
 
+IF(ENABLE_AIFF)
 SET(DRV_AIFF 1)
+ELSE()
+SET(DRV_AIFF)
+ENDIF()
+
+IF(ENABLE_WAV)
+SET(DRV_WAV 1)
+ELSE()
+SET(DRV_WAV)
+ENDIF()
+
+IF(ENABLE_RAW)
+SET(DRV_RAW 1)
+ELSE()
+SET(DRV_RAW)
+ENDIF()
 
 IF(ENABLE_SIMD)
   SET(MIKMOD_SIMD 1)

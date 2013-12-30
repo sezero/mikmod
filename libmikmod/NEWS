@@ -5,7 +5,11 @@ libmikmod v3.3.5 was released on XX-XXX-XXXX.
 This is a minor bugfix / maintenance release.
 
 - mikmod.texi: Fixed document generation using newer texinfo.
-- Small cmake and autotools updates/fixes.
+- Small cmake and autotools updates/fixes. Made cmake support to
+  cover more targets and options.
+- Made the aiff, wav and raw file writer drivers configurable: the
+  library can be configured and compiled without any audio output
+  drivers if so required, except for drv_nos ('nosound') of course.
 - Minor compilation fixes against ancient software versions.
 - Merged an updated gp32 driver (it is still an untested driver...)
 

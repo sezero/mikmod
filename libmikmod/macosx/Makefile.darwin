@@ -28,9 +28,6 @@ SSE2FLAGS=-msse2
 # SIMD code is unstable at present: *not* recommended...
 VECFLAGS=-faltivec
 
-# support for raw and wav file writers
-# are not configurable by default
-
 # support for CoreAudio sound output:
 LDLIBS+=-Wl,-framework,CoreAudio
 CPPFLAGS+=-DDRV_OSX
@@ -51,6 +48,10 @@ CPPFLAGS+=-DDRV_STDOUT
 
 # support for aiff file output:
 CPPFLAGS+=-DDRV_AIFF
+# support for wav file output:
+CPPFLAGS+=-DDRV_WAV
+# support for output raw data to a file:
+CPPFLAGS+=-DDRV_RAW
 
 CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SNPRINTF -DHAVE_PTHREAD -DHAVE_SRANDOM
 

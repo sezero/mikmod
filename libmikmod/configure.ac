@@ -80,10 +80,12 @@ libmikmod_driver_xaudio2=no
 libmikmod_driver_ultra=no
 libmikmod_driver_os2=yes
 libmikmod_driver_dart=yes
+libmikmod_driver_aiff=yes
+libmikmod_driver_wav=yes
+libmikmod_driver_raw=yes
 libmikmod_driver_stdout=yes
 libmikmod_driver_pipe=yes
 
-libmikmod_driverlist=
 libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
 libmikmod_debug=no
@@ -142,6 +144,30 @@ case $host_os in
      libmikmod_driver_sdl=no ;;
   *) ;;
 esac
+
+AC_ARG_ENABLE([aiff], [AS_HELP_STRING([--enable-aiff],[include support for output to an aiff file [default=yes]])],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_aiff=yes
+else
+  libmikmod_driver_aiff=no
+fi])
+
+AC_ARG_ENABLE([wav], [AS_HELP_STRING([--enable-wav],[include support for output to a wav file [default=yes]])],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_wav=yes
+else
+  libmikmod_driver_wav=no
+fi])
+
+AC_ARG_ENABLE([raw], [AS_HELP_STRING([--enable-raw],[include support for output raw data to a file [default=yes]])],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_raw=yes
+else
+  libmikmod_driver_raw=no
+fi])
 
 AC_ARG_ENABLE([stdout], [AS_HELP_STRING([--enable-stdout],[include support for output to stdout [guessed]])],
 [if test "$enableval" = "yes"
@@ -741,7 +767,20 @@ AC_HEADER_EGREP(srandom,math.h,AC_DEFINE([SRANDOM_IN_MATH_H], 1,
 # Choose settings.
 # ================
 
-AC_DEFINE([DRV_AIFF], 1, [Define if you want a .aiff file writer driver])
+libmikmod_driverlist=nosound
+
+if test $libmikmod_driver_raw = yes ; then
+	libmikmod_driverlist="raw $libmikmod_driverlist"
+	AC_DEFINE([DRV_RAW], 1, [Define if you want a raw pcm data file writer driver])
+fi
+if test $libmikmod_driver_wav = yes ; then
+	libmikmod_driverlist="wav $libmikmod_driverlist"
+	AC_DEFINE([DRV_WAV], 1, [Define if you want a .wav file writer driver])
+fi
+if test $libmikmod_driver_aiff = yes ; then
+	libmikmod_driverlist="aiff $libmikmod_driverlist"
+	AC_DEFINE([DRV_AIFF], 1, [Define if you want an .aiff file writer driver])
+fi
 
 if test $libmikmod_driver_pipe = yes ; then
 	libmikmod_driverlist="pipe $libmikmod_driverlist"
@@ -1234,7 +1273,7 @@ cat macintosh/_libmikmodversion.r | tr '\n' '\r' > macintosh/libmikmodversion.r
 # Print configuration.
 # ====================
 
-libmikmod_driverlist=`echo $libmikmod_driverlist raw wav aiff nosound|sed -e 's,  , ,g'`
+libmikmod_driverlist=`echo $libmikmod_driverlist|sed -e 's,  , ,g'`
 if test $libmikmod_dynload != no
 then
 	libmikmod_dynload="yes, ${libmikmod_dynload} style"
