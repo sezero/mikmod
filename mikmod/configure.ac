@@ -146,6 +146,14 @@ AC_EGREP_HEADER(srandom, math.h, AC_DEFINE(SRANDOM_IN_MATH_H, 1,
 		 in math.h instead of stdlib.h.]))
 
 dnl =================================
+dnl Use -Wall warning level with gcc.
+dnl =================================
+
+if test $ac_cv_prog_gcc = yes ; then
+	CFLAGS="$CFLAGS -Wall"
+fi
+
+dnl =================================
 dnl Set PACKAGE_DATA_DIR in config.h.
 dnl =================================
 
