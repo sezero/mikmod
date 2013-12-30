@@ -2,7 +2,7 @@
 	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
-	This library is DFREE software; you can redistribute it and/or modify
+	This library is FREE software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
@@ -20,19 +20,11 @@
 
 /*==============================================================================
 
-  $Id$
-
   Driver for output on gp32 platform
+  Written by Bjornar Henden <bhenden@online.no>
+  Adapted from the windows waveout driver
 
 ==============================================================================*/
-
-/*
-	Written by ??????
-
-    Adapted from the windows waveout driver,
-	Written by Bjornar Henden <bhenden@online.no>
-
-*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -67,13 +59,12 @@ static int GP32_Init(void)
 	GpPcmInit (PCM_S44, PCM_16BIT);
 
 	buffer_size=BUFFER1_SIZE*NUMBUFFERS;
-	buffer=gp_mem_func.MikMod_malloc(buffer_size);
-	gp_str_func.memset(buffer,0,buffer_size);
-
+	buffer=gp_mem_func.malloc(buffer_size);
 	if (!buffer) {
 		_mm_errno = MMERR_OUT_OF_MEMORY;
-		return 0;
+		return 1;
 	}
+	gp_str_func.memset(buffer,0,buffer_size);
 
 	GpPcmPlay((unsigned short *)buffer,buffer_size,1);
 	GpPcmLock((unsigned short *)buffer,(int *)&play_chan,(unsigned int *)&play_pos);
@@ -94,9 +85,8 @@ void GP32_Restart(void) {
 
 static void GP32_Exit(void)
 {
-	int n;
 	GpPcmStop();
-	gp_mem_func.MikMod_free(buffer);
+	gp_mem_func.free(buffer);
 	VC_Exit();
 }
 
@@ -119,10 +109,10 @@ static void GP32_Update(void)
 		bTO=writeTo;
 		done=VC_WriteBytes(writeTo,BUFFER1_SIZE);
 		for (samples=0;samples<(BUFFER1_SIZE/2);samples++) {
-			//next_data=*bTO;
-			*bTO=*bTO+0x8000; // to unsigned... sdk..
+			/*next_data=*bTO;*/
+			*bTO=*bTO+0x8000; /* to unsigned... sdk.. */
 			bTO++;
-			//last_data=next_data;
+			/*last_data=next_data;*/
 		}
 
 		if(!done) break;
@@ -132,7 +122,7 @@ static void GP32_Update(void)
 
 static void GP32_PlayStop(void)
 {
-	//GpPcmStop();
+	/*GpPcmStop();*/
 	gp_str_func.memset(buffer,0,buffer_size);
 	VC_PlayStop();
 }
