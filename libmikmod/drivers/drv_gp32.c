@@ -36,14 +36,14 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef GP32
-#define GP32
-#endif
-
-#include <gp32.h>
-#include "mikmod_internals.h"
 
 #ifdef DRV_GP32
+
+#ifndef GP32
+#define GP32 1
+#endif
+#include <gp32.h>
+#include "mikmod_internals.h"
 
 #define GP32_buffersize 2048
 #define GP32_ringsize (GP32_buffersize*2)
@@ -133,6 +133,7 @@ MIKMODAPI MDRIVER drv_gp32={
 
 #else
 
+#include "mikmod_internals.h"
 MISSING(drv_gp32);
 
 #endif

@@ -457,10 +457,7 @@ static void voiceStop(UBYTE voice)
 
 static BOOL voiceStopped(UBYTE voice)
 {
-	if(voice>=SAM_NUM_VOICES)
-		return 1;
-
-	return voice<SAM_NUM_VOICES ? !voices[voice].playing : 1;
+	return (voice<SAM_NUM_VOICES)? !voices[voice].playing : 1;
 }
 
 static SLONG voiceGetPosition(UBYTE voice)
@@ -480,7 +477,6 @@ MIKMODAPI MDRIVER drv_sam9407={
 	SAM_NUM_VOICES, 0,
 	"sam9407",
 	NULL,
-
 	commandLine,
 	isPresent,
 	sampleLoad,
