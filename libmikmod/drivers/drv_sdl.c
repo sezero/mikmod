@@ -20,16 +20,11 @@
 
 /*==============================================================================
 
-  $Id$
-
-  Driver for output on SDL platforms
-
-  ==============================================================================*/
-
-/*
+  libmikmod driver for audio output on SDL-supported platforms.
   Initially written by Paul Spark <sparkynz74@gmail.com>
   Rewrite/major fixes by O. Sezer <sezero@users.sourceforge.net>
-*/
+
+  ==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -95,6 +90,11 @@ static void SDLDrv_CommandLine(const CHAR *cmdline)
 
 static BOOL SDLDrv_IsPresent(void)
 {
+    if ((SDL_WasInit(SDL_INIT_AUDIO)) == 0) {
+        if (SDL_Init(SDL_INIT_AUDIO) == -1)
+            return 0;
+        SDL_QuitSubSystem(SDL_INIT_AUDIO);
+    }
     return 1;
 }
 
