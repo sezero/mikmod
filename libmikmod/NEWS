@@ -4,6 +4,7 @@ Summary of changes between libmikmod 3.3.4 and libmikmod 3.3.5 ():
 libmikmod v3.3.5 was released on XX-XXX-XXXX.
 This is a minor bugfix / maintenance release.
 
+- New PulseAudio driver for audio output, using pa_simple api.
 - mikmod.texi: Fixed document generation using newer texinfo.
 - Small cmake and autotools updates/fixes. Made cmake support to
   cover more targets and options.

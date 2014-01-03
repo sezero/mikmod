@@ -38,6 +38,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_AF
 	_mm_registerdriver(&drv_AF);
 #endif
+#ifdef DRV_PULSEAUDIO
+	_mm_registerdriver(&drv_pulseaudio);
+#endif
 #ifdef DRV_ESD
 	_mm_registerdriver(&drv_esd);
 #endif

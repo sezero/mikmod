@@ -16,6 +16,8 @@
 #cmakedefine DRV_AIX 1
 /* Define if the Linux ALSA driver is compiled */
 #cmakedefine DRV_ALSA 1
+/* Define if the PulseAudio driver is compiled */
+#cmakedefine DRV_PULSEAUDIO 1
 /* Define if the Enlightened Sound Daemon driver is compiled */
 #cmakedefine DRV_ESD 1
 /* Define if the HP-UX audio driver is compiled */
@@ -136,6 +138,9 @@
 
 /* Define to 1 if you have the `posix_memalign' function. */
 #cmakedefine HAVE_POSIX_MEMALIGN 1
+
+/* Define to 1 if you have the <pulse/simple.h> header file. */
+#cmakedefine HAVE_PULSE_SIMPLE_H 1
 
 /* Define to 1 if you have the `setenv' function. */
 #cmakedefine HAVE_SETENV 1

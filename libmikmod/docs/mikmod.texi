@@ -3115,6 +3115,12 @@ Start the esd daemon on the machine you want, set its hostname in the
 This driver works with the ``Network Audio System''.@*
 Start the nas server on the machine you want, and set its hostname with
 the @samp{server} driver command line argument.
+@item drv_pulseaudio
+This driver works with the ``PulseAudio'' server.@*
+Start the pulseaudio server on the machine you want, set the server name
+with @samp{server} and the device name with @samp{sink} driver command line
+arguments. Without the optional @samp{server} and @samp{sink} arguments, the
+driver leaves the server:device decision to the pulseaudio library defaults.
 @end table
 
 @node Hardware Drivers, Disk Writer Drivers, Network Drivers, Driver Reference

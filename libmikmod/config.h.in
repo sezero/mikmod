@@ -55,6 +55,9 @@
 /* Define if your system supports binary pipes (i.e. Unix) */
 #undef DRV_PIPE
 
+/* Define if the PulseAudio driver is compiled */
+#undef DRV_PULSEAUDIO
+
 /* Define if you want a raw pcm data file writer driver */
 #undef DRV_RAW
 
@@ -157,6 +160,9 @@
 
 /* Define if your system provides POSIX.4 threads */
 #undef HAVE_PTHREAD
+
+/* Define to 1 if you have the <pulse/simple.h> header file. */
+#undef HAVE_PULSE_SIMPLE_H
 
 /* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
 #undef HAVE_RTLD_GLOBAL

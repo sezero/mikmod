@@ -88,11 +88,13 @@ ENDIF()
 IF(UNIX AND NOT APPLE)
 SET (ENABLE_OSS 1 CACHE BOOL "Include the OSS driver")
 SET (ENABLE_ESD 0 CACHE BOOL "Include the EsounD (Enlightened Sound Daemon) driver")
+SET (ENABLE_PULSE 1 CACHE BOOL "Include the PulseAudio driver")
 SET (ENABLE_NAS 0 CACHE BOOL "Include the Network Audio System driver")
 SET (ENABLE_AF 0 CACHE BOOL "Include the DEC AudioFile server (AF) driver")
 ELSE()
 SET (ENABLE_AF 0)
 SET (ENABLE_OSS 0)
+SET (ENABLE_PULSE 0)
 SET (ENABLE_ESD 0)
 SET (ENABLE_NAS 0)
 ENDIF()
@@ -338,6 +340,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_oss.c
     drivers/drv_osx.c
     drivers/drv_pipe.c
+    drivers/drv_pulseaudio.c
     drivers/drv_raw.c
     drivers/drv_sam9407.c
     drivers/drv_sdl.c
@@ -418,7 +421,7 @@ IF (ENABLE_STATIC)
 ENDIF (ENABLE_STATIC)
 
 SET_TARGET_PROPERTIES(mikmod
-    PROPERTIES VERSION 3.2.0 SOVERSION 3
+    PROPERTIES VERSION 3.3.0 SOVERSION 3
     )
 IF(WIN32)
     SET_TARGET_PROPERTIES(mikmod
@@ -482,6 +485,33 @@ IF (NOT WIN32)
   ENDIF()
  ENDIF()
 ENDIF()
+
+IF (ENABLE_PULSE)
+    PKG_CHECK_MODULES(PKG_PULSESIMPLE "libpulse-simple")
+    IF(PKG_PULSESIMPLE_FOUND)
+        SET(DRV_PULSEAUDIO 1)
+        SET(PULSESIMPLE_LIBRARIES ${PKG_PULSESIMPLE_LDFLAGS})
+        ADD_DEFINITIONS (${PKG_PULSESIMPLE_CFLAGS})
+    ELSE()
+        find_path(PULSESIMPLE_INCLUDE_DIR "pulse/simple.h")
+        find_library(PULSESIMPLE_LIBRARIES "pulse-simple")
+        IF (PULSESIMPLE_LIBRARIES STREQUAL "PULSESIMPLE_LIBRARIES-NOTFOUND")
+            MESSAGE(STATUS "Could NOT find PulseAudio.")
+            SET(ENABLE_PULSE 0)
+            SET(DRV_PULSEAUDIO)
+            MESSAGE(WARNING "PulseAudio support is disabled.")
+        ELSE()
+            MESSAGE(STATUS "Found PulseAudio: ${PULSESIMPLE_LIBRARIES}")
+            SET(DRV_PULSEAUDIO 1)
+            INCLUDE_DIRECTORIES(${PULSESIMPLE_INCLUDE_DIR})
+        ENDIF()
+    ENDIF()
+    IF(ENABLE_PULSE)
+      LIST (APPEND EXTRA_LIBS ${PULSESIMPLE_LIBRARIES})
+    ENDIF()
+ELSE()
+    SET(DRV_PULSEAUDIO)
+ENDIF(ENABLE_PULSE)
 
 IF (ENABLE_ESD)
     PKG_CHECK_MODULES(PKG_ESD esound)

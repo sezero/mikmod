@@ -761,6 +761,7 @@ MIKMODAPI extern struct MDRIVER drv_AF;     /* Dec Alpha AudioFile */
 MIKMODAPI extern struct MDRIVER drv_aix;    /* AIX audio device */
 MIKMODAPI extern struct MDRIVER drv_alsa;   /* Advanced Linux Sound Architecture (ALSA) */
 MIKMODAPI extern struct MDRIVER drv_esd;    /* Enlightened sound daemon (EsounD) */
+MIKMODAPI extern struct MDRIVER drv_pulseaudio; /* PulseAudio  */
 MIKMODAPI extern struct MDRIVER drv_hp;     /* HP-UX audio device */
 MIKMODAPI extern struct MDRIVER drv_nas;    /* Network Audio System (NAS) */
 MIKMODAPI extern struct MDRIVER drv_oss;    /* OpenSound System (Linux,FreeBSD...) */

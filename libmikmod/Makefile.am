@@ -42,6 +42,7 @@ libmikmod_la_SOURCES = \
 		drivers/drv_os2.c \
 		drivers/drv_oss.c \
 		drivers/drv_osx.c \
+		drivers/drv_pulseaudio.c \
 		drivers/drv_pipe.c \
 		drivers/drv_raw.c \
 		drivers/drv_sam9407.c \

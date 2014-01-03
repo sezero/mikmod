@@ -21,9 +21,9 @@ AM_MAINTAINER_MODE
 # - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 # - interfaces added -> increment AGE
 # - interfaces removed -> AGE = 0
-MIKMOD_LT_CURRENT=5
+MIKMOD_LT_CURRENT=6
 MIKMOD_LT_REVISION=0
-MIKMOD_LT_AGE=2
+MIKMOD_LT_AGE=3
 
 AC_SUBST(MIKMOD_LT_CURRENT)
 AC_SUBST(MIKMOD_LT_REVISION)
@@ -63,6 +63,7 @@ esac
 libmikmod_driver_af=no
 libmikmod_driver_aix=no
 libmikmod_driver_alsa=yes
+libmikmod_driver_pulseaudio=yes
 libmikmod_driver_esd=no
 libmikmod_driver_nas=no
 libmikmod_driver_hp=no
@@ -116,6 +117,14 @@ else
   libmikmod_driver_alsa=no
 fi])
 
+AC_ARG_ENABLE([pulseaudio], [AS_HELP_STRING([--enable-pulseaudio],[include PulseAudio driver [guessed]])],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_pulseaudio=yes
+else
+  libmikmod_driver_pulseaudio=no
+fi])
+
 AC_ARG_ENABLE([esd], [AS_HELP_STRING([--enable-esd],[include EsounD (Enlightened Sound Daemon) driver [default=no]])],
 [if test "$enableval" = "yes"
 then
@@ -137,10 +146,12 @@ case $host_os in
      # windows, dos, os2 don't need sdl, stdout, or pipe.
      # so default to disabled, but still user-selectable.
      libmikmod_driver_pipe=no
+     libmikmod_driver_pulseaudio=no
      libmikmod_driver_stdout=no
      libmikmod_driver_sdl=no ;;
   cygwin*|darwin*)
      # cygwin, osx don't need sdl.
+     libmikmod_driver_pulseaudio=no
      libmikmod_driver_sdl=no ;;
   *) ;;
 esac
@@ -497,6 +508,20 @@ then
 	fi
 else
 	libmikmod_driver_alsa=no
+fi
+
+# pulseaudio
+# ----------
+if test $libmikmod_driver_pulseaudio = yes
+then
+	libmikmod_driver_pulseaudio=no
+	AC_CHECK_HEADERS(pulse/simple.h)
+	if test $ac_cv_header_pulse_simple_h = yes
+	then
+		AC_CHECK_LIB(pulse-simple,pa_simple_new,libmikmod_driver_pulseaudio=yes)
+	fi
+else
+	libmikmod_driver_pulseaudio=no
 fi
 
 # esd
@@ -904,6 +929,13 @@ then
 	then
 		LIBRARY_LIB="-lasound $LIBRARY_LIB"
 	fi
+fi
+
+if test $libmikmod_driver_pulseaudio = yes
+then
+	libmikmod_driverlist="pulseaudio $libmikmod_driverlist"
+	AC_DEFINE([DRV_PULSEAUDIO], 1, [Define if the PulseAudio driver is compiled])
+	LIBRARY_LIB="-lpulse-simple -lpulse $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_esd = yes
