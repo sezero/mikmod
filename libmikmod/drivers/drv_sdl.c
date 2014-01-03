@@ -85,13 +85,13 @@ static BOOL SetupSDLAudio(void)
 
 static void SDLDrv_CommandLine(const CHAR *cmdline)
 {
-	/* no options */
+    /* no options */
 }
 
 static BOOL SDLDrv_IsPresent(void)
 {
     if ((SDL_WasInit(SDL_INIT_AUDIO)) == 0) {
-        if (SDL_Init(SDL_INIT_AUDIO) == -1)
+        if (SDL_Init(SDL_INIT_AUDIO) < 0)
             return 0;
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
     }
