@@ -355,6 +355,7 @@ static void ALSA_Exit_internal(void)
 		pcm_h = NULL;
 	}
 	MikMod_free(audiobuffer);
+	audiobuffer = NULL;
 }
 
 static void ALSA_Exit(void)
@@ -365,11 +366,8 @@ static void ALSA_Exit(void)
 #endif
 }
 
-/*
- *   Underrun and suspend recovery .
- *   This was copied from test/pcm.c in the alsa-lib distribution.
+/* Underrun and suspend recovery - from alsa-lib:test/pcm.c
  */
-
 static int xrun_recovery(snd_pcm_t *handle, int err)
 {
 	if (err == -EPIPE) {	/* under-run */
