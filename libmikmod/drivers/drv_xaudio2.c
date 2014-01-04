@@ -72,11 +72,11 @@
 #define XAUDIO2_BUFFER_SIZE	32768
 
 #if defined(MIKMOD_DEBUG)
-# define dprintf			fprintf
+# define dbgprintf			fprintf
 #elif defined (__GNUC__) && !(defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
-# define dprintf(f, fmt, args...)	do {} while (0)
+# define dbgprintf(f, fmt, args...)	do {} while (0)
 #else
-# define dprintf(f, ...)		do {} while (0)
+# define dbgprintf(f, ...)		do {} while (0)
 #endif
 
 #ifndef __cplusplus
@@ -85,31 +85,31 @@ static HANDLE hBufferEvent;
 
 static void STDMETHODCALLTYPE cb_OnVoiceProcessPassStart(IXAudio2VoiceCallback* p,
 							 UINT32 SamplesRequired) {
-	dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
+	dbgprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
 }
 static void STDMETHODCALLTYPE cb_OnVoiceProcessPassEnd(IXAudio2VoiceCallback* p) {
-	dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");
+	dbgprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnStreamEnd(IXAudio2VoiceCallback* p) {
-	dprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
+	dbgprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnBufferStart(IXAudio2VoiceCallback* p,
 						 void* pBufferContext) {
-	dprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
+	dbgprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
 }
 static void STDMETHODCALLTYPE cb_OnBufferEnd(IXAudio2VoiceCallback* p,
 						 void* pBufferContext) {
 	SetEvent(hBufferEvent);
-	dprintf(stderr, "\n>XAudio2: OnBufferEnd<\n");
+	dbgprintf(stderr, "\n>XAudio2: OnBufferEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnLoopEnd(IXAudio2VoiceCallback* p,
 						 void* pBufferContext) {
-	dprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
+	dbgprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
 }
 static void STDMETHODCALLTYPE cb_OnVoiceError(IXAudio2VoiceCallback* p,
 						 void* pBufferContext,
 						 HRESULT Error) {
-	dprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
+	dbgprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
 }
 static IXAudio2VoiceCallbackVtbl cbVoice_vtbl = {
 	cb_OnVoiceProcessPassStart,
@@ -133,26 +133,26 @@ public:
 	XAudio2VoiceCallback(): hBufferEvent(CreateEvent(NULL, FALSE, FALSE, "libmikmod XAudio2 Driver buffer Event")) { }
 	virtual ~XAudio2VoiceCallback() { CloseHandle(hBufferEvent); }
 	STDMETHOD_(void, cb_OnVoiceProcessPassStart)(UINT32 SamplesRequired) {
-		dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
+		dbgprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
 	}
 	STDMETHOD_(void, cb_OnVoiceProcessPassEnd)() {
-		dprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");
+		dbgprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassEnd<\n");
 	}
 	STDMETHOD_(void, cb_OnStreamEnd)() {
-		dprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
+		dbgprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
 	}
 	STDMETHOD_(void, cb_OnBufferStart)(void* pBufferContext) {
-		dprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
+		dbgprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
 	}
 	STDMETHOD_(void, cb_OnBufferEnd)(void* pBufferContext) {
 		SetEvent(hBufferEvent);
-		dprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
+		dbgprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
 	}
 	STDMETHOD_(void, cb_OnLoopEnd)(void* pBufferContext) {
-		dprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
+		dbgprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
 	}
 	STDMETHOD_(void, cb_OnVoiceError)(void* pBufferContext, HRESULT Error) {
-		dprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
+		dbgprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
 	}
 };
 static XAudio2VoiceCallback *pcbVoice = NULL;
