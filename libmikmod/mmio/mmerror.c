@@ -91,8 +91,6 @@ static const char *_mm_errmsg[MMERR_MAX+1] =
 	"Configuration (control step) of audio device failed",
 	"Configuration (start step) of audio device failed",
 
-/* ALSA driver errors */
-
 /* EsounD driver errors */
 
 /* Ultrasound driver errors */
@@ -192,6 +190,18 @@ static const char *_mm_errmsg[MMERR_MAX+1] =
 	"Could not get source parameters",
 	"Could not play source",
 	"Could not stop source",
+
+/* ALSA driver errors */
+
+	"No ALSA configurations available",
+	"Could not set ALSA output params",
+	"Could not set playback format",
+	"Could not set sample rate",
+	"Could not set mono/stereo setting",
+	"Could not get buffer size from ALSA",
+	"ALSA PCM start error",
+	"ALSA PCM write error",
+	"ALSA PCM recovery failure",
 
 /* Invalid error */
 
