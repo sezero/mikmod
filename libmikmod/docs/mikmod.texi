@@ -23,7 +23,7 @@
 
 @c ========================================================== Copyright (info)
 @ifinfo
-Copyright @copyright{} 1998, 1999, 2000, 2001, 2002 Miodrag Vallat and others --- see
+Copyright @copyright{} 1998-2014 Miodrag Vallat and others --- see
 file AUTHORS for complete list.
 
 This library is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 @vskip 0pt plus 1filll
 
 @c ========================================================== Copyright (TeX)
-Copyright @copyright{} 1998, 1999, 2000, 2001, 2002 Miodrag Vallat and others --- see
+Copyright @copyright{} 1998-2014 Miodrag Vallat and others --- see
 file AUTHORS for complete list.
 
 This library is free software; you can redistribute it and/or modify
@@ -1546,6 +1546,34 @@ This error occurs when the HP driver can not set the requested sample size.
 This error occurs when the HP driver can not set the requested sample rate.
 @end table
 @ifnottex
+@subsubsection ALSA Driver Specific Errors
+@end ifnottex
+@iftex
+ALSA driver specific errors
+@end iftex
+@table @samp
+@item MMERR_ALSA_NOCONFIG
+This error occurs when no ALSA playback configuration is available.
+@item MMERR_ALSA_SETPARAMS
+This error occurs when the ALSA driver can not set the requested sample
+format, sample rate, number of channels, access type, or latency values.
+@item MMERR_ALSA_SETFORMAT
+This error occurs when the ALSA driver can not set the requested sample format.
+@item MMERR_ALSA_SETRATE
+This error occurs when the ALSA driver does not support the requested sample rate.
+@item MMERR_ALSA_SETCHANNELS
+This error occurs when the ALSA driver does not support the requested number of
+channels.
+@item MMERR_ALSA_BUFFERSIZE
+This error occurs when the ALSA driver can not retrieve the buffer or period size.
+@item MMERR_ALSA_PCM_START
+This error occurs when the ALSA driver can not start the pcm playback.
+@item MMERR_ALSA_PCM_WRITE
+This error occurs when the ALSA driver encounters a write error.
+@item MMERR_ALSA_PCM_RECOVER
+This error occurs when the ALSA driver encounters an error recovery failure.
+@end table
+@ifnottex
 @subsubsection Open Sound System Driver Specific Errors
 @end ifnottex
 @iftex
@@ -1678,12 +1706,13 @@ MacOS X Driver Specific Errors
 This error occurs if the default audio output device is not an audio device! If
 this happens, please contact the maintainer.
 @item MMERR_OSX_BAD_PROPERTY
-This error occurs...
+This error occurs when the driver encounters a bad parameter when setting device
+the properties.
 @item MMERR_OSX_UNSUPPORTED_FORMAT
 This error occurs when the detected audio device does not support
 the required format (Linear PCM).
 @item MMERR_OSX_SET_STEREO
-This error occurs...
+This error occurs when the driver does not support the requested channels setting.
 @item MMERR_OSX_BUFFER_ALLOC
 This error occurs if the driver fails to allocate the audio buffers.
 @item MMERR_OSX_ADD_IO_PROC
