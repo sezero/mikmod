@@ -158,11 +158,12 @@ static void PULSEAUDIO_Update(void)
 static void PULSEAUDIO_PlayStop(void)
 {
 	VC_PlayStop();
-	pa_simple_flush(pasp, NULL);
+	if (pasp) pa_simple_flush(pasp, NULL);
 }
 
 static int PULSEAUDIO_PlayStart(void)
 {
+	if (!pasp) return 1;
 	return VC_PlayStart();
 }
 

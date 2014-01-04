@@ -421,10 +421,14 @@ static void ALSA_Update(void)
 
 static int ALSA_PlayStart(void)
 {
-	int err = alsa_pcm_prepare(pcm_h);
+	int err;
+
+	if (pcm_h == NULL) return 1;
+	err = alsa_pcm_prepare(pcm_h);
 	if (err == 0)
 	    err = alsa_pcm_start(pcm_h);
 	if (err < 0) {
+		enabled = 0;
 		_mm_errno = MMERR_ALSA_PCM_START;
 		return 1;
 	}
@@ -435,7 +439,7 @@ static int ALSA_PlayStart(void)
 static void ALSA_PlayStop(void)
 {
 	VC_PlayStop();
-	alsa_pcm_drop(pcm_h);
+	if (pcm_h) alsa_pcm_drop(pcm_h);
 }
 
 static int ALSA_Reset(void)
