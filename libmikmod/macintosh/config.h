@@ -23,15 +23,17 @@
 #define STDC_HEADERS 1
 
 /* Define if you want support for output to stdout */
-#define DRV_STDOUT 1
+/* #undef DRV_STDOUT */
 
 /* Define if your system supports binary pipes (i.e. Unix) */
 /* #undef DRV_PIPE */
 
 /* Define if you want an .aiff file writer driver */
 #define DRV_AIFF 1
+
 /* Define if you want a raw pcm data file writer driver */
 #define DRV_RAW 1
+
 /* Define if you want a .wav file writer driver */
 #define DRV_WAV 1
 
