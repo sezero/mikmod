@@ -280,7 +280,7 @@ ULONG VC1_WriteBytes(SBYTE* buf,ULONG todo)
 
 void VC1_Exit(void)
 {
-	if(vinf) MikMod_free(vinf);
+	MikMod_free(vinf);
 	MikMod_free_aligned16(vc_tickbuf);
 	MikMod_free_aligned16(Samples);
 

@@ -20,17 +20,16 @@
 
 /*==============================================================================
 
-  $Id$
-
   Sound Blaster I/O routines, common for SB8, SBPro and SB16
+  Written by Andrew Zabolotny <bit@eltech.ru>
 
 ==============================================================================*/
 
-/*
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-	Written by Andrew Zabolotny <bit@eltech.ru>
-
-*/
+#ifdef DRV_SB
 
 #include <stdlib.h>
 #include <dpmi.h>
@@ -279,6 +278,7 @@ static boolean __sb_detect()
 		}
 
 		irq_unhook(sb.irq_handle);
+		sb.irq_handle = NULL;
 		if (!sb.dma8 || ((sb.dspver >= SBVER_16) && !sb.dma16))
 			return FALSE;
 	}
@@ -570,5 +570,7 @@ void sb_query_dma(unsigned int *dma_size, unsigned int *dma_pos)
 	}
 	*dma_pos = *dma_size - dma_left;
 }
+
+#endif /* DRV_SB */
 
 /* ex:set ts=4: */

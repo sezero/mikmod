@@ -300,6 +300,7 @@ static void OS2_Exit(void)
 		DeviceID = 0;
 	}
 	MikMod_free(AudioBuffer);
+	AudioBuffer = NULL;
 }
 
 static int OS2_PlayStart(void)

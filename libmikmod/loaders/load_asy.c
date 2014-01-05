@@ -140,6 +140,8 @@ static void ASY_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(patbuf);
+	mh = NULL;
+	patbuf = NULL;
 }
 
 static void ConvertNote(MODNOTE *n)

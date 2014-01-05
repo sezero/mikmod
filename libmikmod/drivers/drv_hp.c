@@ -150,10 +150,8 @@ static void HP_Exit(void)
 		close(fd);
 		fd=-1;
 	}
-	if (audiobuffer) {
-		MikMod_free(audiobuffer);
-		audiobuffer=NULL;
-	}
+	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 }
 
 static void HP_Update(void)

@@ -143,6 +143,10 @@ static void STX_Cleanup(void)
 	MikMod_free(paraptr);
 	MikMod_free(poslookup);
 	MikMod_free(mh);
+	stxbuf=NULL;
+	paraptr=NULL;
+	poslookup=NULL;
+	mh=NULL;
 }
 
 static BOOL STX_ReadPattern(void)

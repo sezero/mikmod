@@ -298,24 +298,24 @@ static void ML_XFreeSample(SAMPLE *s)
 
 static void ML_XFreeInstrument(INSTRUMENT *i)
 {
-	if(i->insname) MikMod_free(i->insname);
+	MikMod_free(i->insname);
 }
 
 static void ML_FreeEx(MODULE *mf)
 {
 	UWORD t;
 
-	if(mf->songname) MikMod_free(mf->songname);
-	if(mf->comment)  MikMod_free(mf->comment);
+	MikMod_free(mf->songname);
+	MikMod_free(mf->comment);
 
-	if(mf->modtype)   MikMod_free(mf->modtype);
-	if(mf->positions) MikMod_free(mf->positions);
-	if(mf->patterns)  MikMod_free(mf->patterns);
-	if(mf->pattrows)  MikMod_free(mf->pattrows);
+	MikMod_free(mf->modtype);
+	MikMod_free(mf->positions);
+	MikMod_free(mf->patterns);
+	MikMod_free(mf->pattrows);
 
 	if(mf->tracks) {
 		for(t=0;t<mf->numtrk;t++)
-			if(mf->tracks[t]) MikMod_free(mf->tracks[t]);
+			MikMod_free(mf->tracks[t]);
 		MikMod_free(mf->tracks);
 	}
 	if(mf->instruments) {
@@ -325,7 +325,7 @@ static void ML_FreeEx(MODULE *mf)
 	}
 	if(mf->samples) {
 		for(t=0;t<mf->numsmp;t++) {
-			if(mf->samples[t].samplename) MikMod_free(mf->samples[t].samplename);
+			MikMod_free(mf->samples[t].samplename);
 			if(mf->samples[t].length) ML_XFreeSample(&mf->samples[t]);
 		}
 		MikMod_free(mf->samples);

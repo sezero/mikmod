@@ -146,6 +146,8 @@ static void GDM_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(gdmbuf);
+	mh=NULL;
+	gdmbuf=NULL;
 }
 
 static BOOL GDM_ReadPattern(void)

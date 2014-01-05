@@ -119,6 +119,9 @@ static void FAR_Cleanup(void)
 	MikMod_free(mh1);
 	MikMod_free(mh2);
 	MikMod_free(pat);
+	mh1 = NULL;
+	mh2 = NULL;
+	pat = NULL;
 }
 
 static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)

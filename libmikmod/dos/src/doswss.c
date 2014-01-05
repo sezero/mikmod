@@ -20,17 +20,16 @@
 
 /*==============================================================================
 
-  $Id$
-
   Windows Sound System I/O routines (CS42XX, ESS18XX, GUS+DaughterBoard etc)
+  Written by Andrew Zabolotny <bit@eltech.ru>
 
 ==============================================================================*/
 
-/*
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-	Written by Andrew Zabolotny <bit@eltech.ru>
-
-*/
+#ifdef DRV_WSS
 
 #include <stdlib.h>
 #include <dpmi.h>
@@ -572,5 +571,7 @@ void wss_level(int level)
 	__wss_outreg(WSSR_MASTER_L, wss.curlevel);
 	__wss_outreg(WSSR_MASTER_R, wss.curlevel);
 }
+
+#endif /* DRV_WSS */
 
 /* ex:set ts=4: */

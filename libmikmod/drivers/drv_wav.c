@@ -155,10 +155,8 @@ static void WAV_Exit(void)
 		fclose(wavfile);
 		wavfile=NULL;wavout=NULL;
 	}
-	if(audiobuffer) {
-		MikMod_free(audiobuffer);
-		audiobuffer=NULL;
-	}
+	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 }
 
 static void WAV_Update(void)

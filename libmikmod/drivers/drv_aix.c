@@ -152,6 +152,7 @@ static void AIX_Exit(void)
 		fd=-1;
 	}
 	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 }
 
 static void AIX_Update(void)

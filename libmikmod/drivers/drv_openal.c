@@ -273,17 +273,10 @@ cleanup:
 		device = NULL;
 	}
 
-	if (audiobuffer)
-	{
-		MikMod_free(audiobuffer);
-		audiobuffer = NULL;
-	}
-
-	if (buffers)
-	{
-		MikMod_free(buffers);
-		buffers = NULL;
-	}
+	MikMod_free(audiobuffer);
+	audiobuffer = NULL;
+	MikMod_free(buffers);
+	buffers = NULL;
 }
 
 static void OPENAL_Update(void)

@@ -112,6 +112,8 @@ static void AMF_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(track);
+	mh=NULL;
+	track=NULL;
 }
 
 static BOOL AMF_UnpackTrack(MREADER* r)

@@ -61,6 +61,7 @@ static void NS_Exit(void)
 {
 	VC_Exit();
 	MikMod_free(zerobuf);
+	zerobuf=NULL;
 }
 
 static void NS_Update(void)

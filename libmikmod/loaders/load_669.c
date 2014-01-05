@@ -134,6 +134,8 @@ static void S69_Cleanup(void)
 {
 	MikMod_free(s69pat);
 	MikMod_free(mh);
+	mh=NULL;
+	s69pat=NULL;
 }
 
 static BOOL S69_LoadPatterns(void)

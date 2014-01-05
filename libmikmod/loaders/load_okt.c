@@ -314,6 +314,7 @@ static BOOL OKT_doPBOD(int patnum)
 	}
 	MikMod_free(patbuf);
 	MikMod_free(okttrk);
+	okttrk = NULL;
 	return 1;
 }
 

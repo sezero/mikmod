@@ -189,6 +189,12 @@ static void MED_Cleanup(void)
 	MikMod_free(ba);
 	MikMod_free(mmd0pat);
 	MikMod_free(mmd1pat);
+	me = NULL;
+	mh = NULL;
+	ms = NULL;
+	ba = NULL;
+	mmd0pat = NULL;
+	mmd1pat = NULL;
 }
 
 static void EffectCvt(UBYTE eff, UBYTE dat)
@@ -346,10 +352,8 @@ static BOOL LoadMEDPatterns(void)
 	if (!AllocPatterns())
 		return 0;
 
-	if (!
-		(mmd0pat =
-		 (MMD0NOTE *)MikMod_calloc(of.numchn * (maxlines + 1),
-								sizeof(MMD0NOTE)))) return 0;
+	if (!(mmd0pat = (MMD0NOTE *)MikMod_calloc(of.numchn * (maxlines + 1), sizeof(MMD0NOTE))))
+		return 0;
 
 	/* second read: read and convert patterns */
 	for (t = 0; t < of.numpat; t++) {
@@ -396,10 +400,8 @@ static BOOL LoadMMD1Patterns(void)
 	if (!AllocPatterns())
 		return 0;
 
-	if (!
-		(mmd1pat =
-		 (MMD1NOTE *)MikMod_calloc(of.numchn * (maxlines + 1),
-								sizeof(MMD1NOTE)))) return 0;
+	if (!(mmd1pat = (MMD1NOTE *)MikMod_calloc(of.numchn * (maxlines + 1), sizeof(MMD1NOTE))))
+		return 0;
 
 	/* second read: really read and convert patterns */
 	for (t = 0; t < of.numpat; t++) {

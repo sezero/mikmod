@@ -299,7 +299,7 @@ MIKMODAPI extern void*  MikMod_malloc(size_t);
 MIKMODAPI extern void*  MikMod_calloc(size_t,size_t);
 MIKMODAPI extern void*  MikMod_realloc(void*,size_t);
 MIKMODAPI extern CHAR*  MikMod_strdup(const CHAR*);
-MIKMODAPI extern void   MikMod_free(void*);
+MIKMODAPI extern void   MikMod_free(void*);  /* frees if ptr != NULL */
 
 /*
  *  ========== Reader, Writer

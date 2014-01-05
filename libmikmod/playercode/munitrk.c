@@ -296,7 +296,7 @@ BOOL UniInit(void)
 
 void UniCleanup(void)
 {
-	if(unibuf) MikMod_free(unibuf);
+	MikMod_free(unibuf);
 	unibuf = NULL;
 }
 

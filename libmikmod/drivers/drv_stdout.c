@@ -65,10 +65,8 @@ static void stdout_Exit(void)
 #ifdef __EMX__
 	_fsetmode(stdout,"t");
 #endif
-	if (audiobuffer) {
-		MikMod_free(audiobuffer);
-		audiobuffer=NULL;
-	}
+	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 }
 
 static void stdout_Update(void)

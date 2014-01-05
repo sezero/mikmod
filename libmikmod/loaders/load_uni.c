@@ -133,7 +133,7 @@ static BOOL UNI_Init(void)
 static void UNI_Cleanup(void)
 {
 	MikMod_free(wh);
-	s=NULL;
+	wh = s = NULL;
 }
 
 static UBYTE* readtrack(void)
@@ -447,7 +447,7 @@ static BOOL loadinstr5(void)
 
 	/* sanity check */
 	if(!of.numsmp) {
-		if(wh) { MikMod_free(wh);wh=NULL; }
+		MikMod_free(wh);wh=NULL;
 		_mm_errno=MMERR_LOADING_SAMPLEINFO;
 		return 0;
 	}
@@ -641,7 +641,7 @@ static BOOL UNI_Load(BOOL curious)
 		if(!AllocInstruments()) return 0;
 		if(!loadinstr5()) return 0;
 		if(!AllocSamples()) {
-			if(wh) { MikMod_free(wh);wh=NULL; }
+			MikMod_free(wh);wh=NULL;
 			return 0;
 		}
 		if(!loadsmp5()) return 0;

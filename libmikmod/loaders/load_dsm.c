@@ -126,6 +126,8 @@ static void DSM_Cleanup(void)
 {
 	MikMod_free(dsmbuf);
 	MikMod_free(mh);
+	dsmbuf = NULL;
+	mh = NULL;
 }
 
 static BOOL GetBlockHeader(void)

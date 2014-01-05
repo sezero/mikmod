@@ -148,6 +148,7 @@ static void pipe_Exit(void)
 
 	VC_Exit();
 	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 	if(pipeout) {
 		_mm_delete_file_writer(pipeout);
 		pipeout=NULL;

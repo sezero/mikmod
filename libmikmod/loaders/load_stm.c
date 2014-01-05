@@ -130,6 +130,8 @@ static void STM_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(stmbuf);
+	mh=NULL;
+	stmbuf=NULL;
 }
 
 static void STM_ConvertNote(STMNOTE *n)

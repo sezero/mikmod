@@ -75,6 +75,7 @@ static void GP32_Restart(void) {
 static void GP32_Exit(void) {
 	gp_clearRingbuffer();
 	MikMod_free(GP32_buffer);
+	GP32_buffer=NULL;
 	VC_Exit();
 }
 

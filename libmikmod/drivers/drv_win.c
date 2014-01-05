@@ -162,6 +162,7 @@ static void WIN_Exit(void)
 			if (header[n].dwFlags&WHDR_PREPARED)
 				waveOutUnprepareHeader(hwaveout,&header[n],sizeof(WAVEHDR));
 			MikMod_free(buffer[n]);
+			buffer[n] = NULL;
 		}
 		while (waveOutClose(hwaveout)==WAVERR_STILLPLAYING) Sleep(10);
 		hwaveout=NULL;

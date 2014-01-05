@@ -20,17 +20,16 @@
 
 /*==============================================================================
 
-  $Id$
-
   Driver for GUS cards under DOS
+  Written by Andrew Zabolotny <bit@eltech.ru>
 
 ==============================================================================*/
 
-/*
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-	Written by Andrew Zabolotny <bit@eltech.ru>
-
-*/
+#ifdef DRV_ULTRA
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1403,10 +1402,13 @@ int gus_open(int card, size_t queue_buffer_size, int non_block)
 
 		/* If no transfer function worked, fail */
 		if (!gus.transfer) {
-			if (gus.dma_buff)
+			if (gus.dma_buff) {
 				dma_free(gus.dma_buff);
+				gus.dma_buff = NULL;
+			}
 			__dpmi_unlock_linear_region(&struct_info);
 			irq_unhook(gus.gf1_irq);
+			gus.gf1_irq = NULL;
 			return -1;
 		}
 	}
@@ -1420,10 +1422,13 @@ int gus_open(int card, size_t queue_buffer_size, int non_block)
 	pool_info.address = __djgpp_base_address + (unsigned long)&gus.cmd_pool;
 	pool_info.size = sizeof(queue_buffer_size);
 	if (__dpmi_lock_linear_region(&pool_info)) {
-		if (gus.dma_buff)
+		if (gus.dma_buff) {
 			dma_free(gus.dma_buff);
+			gus.dma_buff = NULL;
+		}
 		__dpmi_unlock_linear_region(&struct_info);
 		irq_unhook(gus.gf1_irq);
+		gus.gf1_irq = NULL;
 		return -1;
 	}
 
@@ -1454,8 +1459,10 @@ int gus_close(int card)
 	gus_timer_stop();
 
 	/* Free DMA buffer if used */
-	if (gus.dma_buff)
+	if (gus.dma_buff) {
 		dma_free(gus.dma_buff);
+		gus.dma_buff = NULL;
+	}
 
 	/* And unhook the GF1 interrupt */
 	irq_unhook(gus.gf1_irq);
@@ -1894,5 +1901,7 @@ int gus_dma_usage (int use)
 	gus.transfer = __gus_transfer_io;
 	return 0;
 }
+
+#endif /* DRV_ULTRA */
 
 /* ex:set ts=4: */

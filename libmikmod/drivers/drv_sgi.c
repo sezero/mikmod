@@ -176,6 +176,7 @@ static void SGI_Exit(void)
 {
 	VC_Exit();
 	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 }
 
 static void SGI_Update(void)

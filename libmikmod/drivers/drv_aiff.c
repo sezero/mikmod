@@ -239,11 +239,9 @@ static void AIFF_Exit (void)
         gAiffFile = NULL;
         gAiffOut = NULL;
     }
-    if (gAiffAudioBuffer)
-    {
-        MikMod_free (gAiffAudioBuffer);
-        gAiffAudioBuffer = NULL;
-    }
+
+    MikMod_free (gAiffAudioBuffer);
+    gAiffAudioBuffer = NULL;
 }
 
 static void AIFF_Update (void)

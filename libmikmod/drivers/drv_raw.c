@@ -121,6 +121,7 @@ static void RAW_Exit(void)
 		rawout=-1;
 	}
 	MikMod_free(audiobuffer);
+	audiobuffer = NULL;
 }
 
 static void RAW_Update(void)

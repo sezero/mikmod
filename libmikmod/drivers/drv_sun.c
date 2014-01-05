@@ -405,6 +405,7 @@ static void Sun_Exit(void)
 {
 	VC_Exit();
 	MikMod_free(audiobuffer);
+	audiobuffer = NULL;
 	if (sndfd >= 0) {
 		close(sndfd);
 		sndfd = -1;

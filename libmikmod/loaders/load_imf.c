@@ -149,6 +149,8 @@ static void IMF_Cleanup(void)
 
 	MikMod_free(imfpat);
 	MikMod_free(mh);
+	imfpat=NULL;
+	mh=NULL;
 }
 
 static BOOL IMF_ReadPattern(SLONG size,UWORD rows)

@@ -250,6 +250,8 @@ static void M15_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(patbuf);
+	mh=NULL;
+	patbuf=NULL;
 }
 
 /*

@@ -108,6 +108,8 @@ static void MTM_Cleanup(void)
 {
 	MikMod_free(mtmtrk);
 	MikMod_free(mh);
+	mtmtrk=NULL;
+	mh=NULL;
 }
 
 static UBYTE* MTM_Convert(void)

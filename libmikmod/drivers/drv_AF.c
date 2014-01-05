@@ -157,6 +157,7 @@ static void AF_Exit(void)
 {
 	VC_Exit();
 	MikMod_free(audiobuffer);
+	audiobuffer=NULL;
 	if (AFaud) {
 		AFCloseAudioConn(AFaud);
 		AFaud=NULL;

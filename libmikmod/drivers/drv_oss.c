@@ -308,6 +308,7 @@ static void OSS_Exit_internal(void)
 {
 	VC_Exit();
 	MikMod_free(audiobuffer);
+	audiobuffer = NULL;
 }
 
 static void OSS_Exit(void)

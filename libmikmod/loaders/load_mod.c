@@ -190,6 +190,8 @@ static void MOD_Cleanup(void)
 {
 	MikMod_free(mh);
 	MikMod_free(patbuf);
+	mh=NULL;
+	patbuf=NULL;
 }
 
 /*

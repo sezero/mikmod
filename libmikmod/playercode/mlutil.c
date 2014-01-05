@@ -84,10 +84,8 @@ int *AllocLinear(void)
 
 void FreeLinear(void)
 {
-	if(noteindex) {
-		MikMod_free(noteindex);
-		noteindex=NULL;
-	}
+	MikMod_free(noteindex);
+	noteindex=NULL;
 	noteindexcount=0;
 }
 

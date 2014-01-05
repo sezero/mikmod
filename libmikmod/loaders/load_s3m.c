@@ -144,6 +144,11 @@ static void S3M_Cleanup(void)
 	MikMod_free(poslookup);
 	MikMod_free(mh);
 	MikMod_free(origpositions);
+	s3mbuf=NULL;
+	paraptr=NULL;
+	poslookup=NULL;
+	mh=NULL;
+	origpositions=NULL;
 }
 
 /* Because so many s3m files have 16 channels as the set number used, but really
@@ -154,9 +159,9 @@ static void S3M_Cleanup(void)
    global variable 'remap'
 
    NOTE: You must first seek to the file location of the pattern before calling
-         this procedure.
+   this procedure.
 
-   Returns 0 on fail.                                                         */
+   Returns 0 on fail. */
 static BOOL S3M_GetNumChannels(void)
 {
 	int row=0,flag,ch;

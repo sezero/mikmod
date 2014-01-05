@@ -30,7 +30,7 @@
 unsigned int __irq_stack_size = 0x4000;
 unsigned int __irq_stack_count = 1;
 
-static void __int_stub_template()
+static void __int_stub_template (void)
 {
 /* *INDENT-OFF* */
 	asm("	pushal\n"

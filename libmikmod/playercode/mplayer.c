@@ -3008,10 +3008,8 @@ void Player_Exit_internal(MODULE* mod)
 		pf=NULL;
 	}
 
-	if (mod->control)
-		MikMod_free(mod->control);
-	if (mod->voice)
-		MikMod_free(mod->voice);
+	MikMod_free(mod->control);
+	MikMod_free(mod->voice);
 	mod->control=NULL;
 	mod->voice=NULL;
 }

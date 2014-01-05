@@ -1276,22 +1276,22 @@ int VC2_PlayStart(void)
 
 void VC2_PlayStop(void)
 {
-	if(RVbufL1) MikMod_free(RVbufL1);
-	if(RVbufL2) MikMod_free(RVbufL2);
-	if(RVbufL3) MikMod_free(RVbufL3);
-	if(RVbufL4) MikMod_free(RVbufL4);
-	if(RVbufL5) MikMod_free(RVbufL5);
-	if(RVbufL6) MikMod_free(RVbufL6);
-	if(RVbufL7) MikMod_free(RVbufL7);
-	if(RVbufL8) MikMod_free(RVbufL8);
-	if(RVbufR1) MikMod_free(RVbufR1);
-	if(RVbufR2) MikMod_free(RVbufR2);
-	if(RVbufR3) MikMod_free(RVbufR3);
-	if(RVbufR4) MikMod_free(RVbufR4);
-	if(RVbufR5) MikMod_free(RVbufR5);
-	if(RVbufR6) MikMod_free(RVbufR6);
-	if(RVbufR7) MikMod_free(RVbufR7);
-	if(RVbufR8) MikMod_free(RVbufR8);
+	MikMod_free(RVbufL1);
+	MikMod_free(RVbufL2);
+	MikMod_free(RVbufL3);
+	MikMod_free(RVbufL4);
+	MikMod_free(RVbufL5);
+	MikMod_free(RVbufL6);
+	MikMod_free(RVbufL7);
+	MikMod_free(RVbufL8);
+	MikMod_free(RVbufR1);
+	MikMod_free(RVbufR2);
+	MikMod_free(RVbufR3);
+	MikMod_free(RVbufR4);
+	MikMod_free(RVbufR5);
+	MikMod_free(RVbufR6);
+	MikMod_free(RVbufR7);
+	MikMod_free(RVbufR8);
 
 	RVbufL1=RVbufL2=RVbufL3=RVbufL4=RVbufL5=RVbufL6=RVbufL7=RVbufL8=NULL;
 	RVbufR1=RVbufR2=RVbufR3=RVbufR4=RVbufR5=RVbufR6=RVbufR7=RVbufR8=NULL;
@@ -1305,7 +1305,7 @@ int VC2_SetNumVoices(void)
 
 	if(!(vc_softchn=md_softchn)) return 0;
 
-	if(vinf) MikMod_free(vinf);
+	MikMod_free(vinf);
 	if(!(vinf=(VINFO*)MikMod_calloc(vc_softchn,sizeof(VINFO)))) return 1;
 
 	for(t=0;t<vc_softchn;t++) {
