@@ -502,9 +502,7 @@ boolean sb_start_dma(unsigned char mode, unsigned int freq)
 	dma_start(sb.dma_buff, dmabuffsize, DMA_MODE_WRITE | DMA_MODE_AUTOINIT);
 
 	/* Tell SoundBlaster to start transfer */
-	dmabuffsize = (dmabuffsize >> 1) - 1;
 	if (sb.dspver >= SBVER_16) {	/* SB16 */
-		/* SoundBlaster 16 */
 		__sb_dspreg_outwhl(SBDSP_SET_RATE, freq);
 
 		/* Start DMA->DAC transfer */
@@ -515,10 +513,12 @@ boolean sb_start_dma(unsigned char mode, unsigned int freq)
 						((mode & SBMODE_STEREO) ? SBM_GENDAC_STEREO : 0));
 
 		/* Write the length of transfer */
+		dmabuffsize = (dmabuffsize >> 2) - 1;
 		__sb_dsp_out(dmabuffsize);
 		__sb_dsp_out(dmabuffsize >> 8);
 	} else {
 		__sb_dspreg_out(SBDSP_SET_TIMING, 256 - tc);
+		dmabuffsize = (dmabuffsize >> 1) - 1;
 		if (sb.dspver >= SBVER_20) {	/* SB 2.0/Pro */
 			/* Set stereo mode */
 			__sb_stereo((mode & SBMODE_STEREO) ? TRUE : FALSE);
@@ -528,7 +528,6 @@ boolean sb_start_dma(unsigned char mode, unsigned int freq)
 			else
 				__sb_dsp_out(SBDSP_DMA_PCM8_AUTO);
 		} else {				/* Original SB */
-
 			/* Start DMA->DAC transfer */
 			__sb_dspreg_outwlh(SBDSP_DMA_PCM8, dmabuffsize);
 		}

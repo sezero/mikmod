@@ -56,10 +56,7 @@ Currently three brands of sound cards are supported under DOS:
 	+ SB Pro (8-bit 22KHz stereo, 8-bit 44KHz mono)
 	+ SB 16+ (8- and 16-bit stereo, up to 44Khz both)
 
-  Note that SB16 should cover AWE32/64 as well... however, the code for SB16
-  has not been tested (although there is little SB16-specific code, but
-  anyway...). If someone can test/debug it, please notify us (or at least
-  report what doesn't work).
+  Note that SB16 should cover AWE32/64 as well...
 
 - Windows Sound System and compatibles. Most today SoundBlaster clones
   (including the CS4236B card used for testing) emulates (in hardware) WSS.
