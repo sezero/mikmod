@@ -508,7 +508,7 @@ boolean sb_start_dma(unsigned char mode, unsigned int freq)
 		__sb_dspreg_outwhl(SBDSP_SET_RATE, freq);
 
 		/* Start DMA->DAC transfer */
-		__sb_dspreg_out(SBM_GENDAC_AUTOINIT |
+		__sb_dspreg_out(SBM_GENDAC_AUTOINIT | SBM_GENDAC_FIFO |
 						((mode & SBMODE_16BITS) ? SBDSP_DMA_GENERIC16 :
 						 SBDSP_DMA_GENERIC8),
 						((mode & SBMODE_SIGNED) ? SBM_GENDAC_SIGNED : 0) |
