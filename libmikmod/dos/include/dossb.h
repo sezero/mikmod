@@ -169,8 +169,8 @@
 #define SBM_GENDAC_AUTOINIT		0x04
 #define SBM_GENDAC_ADC			0x08
 /* Second (mode) byte */
-#define SBM_GENDAC_SIGNED		0x20
-#define SBM_GENDAC_STEREO		0x40
+#define SBM_GENDAC_SIGNED		0x10
+#define SBM_GENDAC_STEREO		0x20
 
 /* DSP version masks */
 #define SBVER_10			0x0100	/* Original SoundBlaster */
