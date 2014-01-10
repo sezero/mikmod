@@ -207,8 +207,9 @@ static GT_CHUNK *loadChunk(void)
 	else {
 		new_chunk->id[3] = ' ';
 	}
-
-	printf(">> %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
+#ifdef MIKMOD_DEBUG
+	fprintf(stderr, ">> %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
+#endif
 
 	if (!memcmp(new_chunk, "GT2", 3)) {
 		_mm_read_UBYTES(&new_chunk->gt2.version, 1, modreader);
@@ -314,7 +315,9 @@ static GT_CHUNK *loadChunk(void)
 		return new_chunk;
 	}
 
-	printf("?? %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
+#ifdef MIKMOD_DEBUG
+	fprintf(stderr, "?? %c%c%c%c\n", new_chunk->id[0], new_chunk->id[1], new_chunk->id[2], new_chunk->id[3]);
+#endif
 fail:
 	MikMod_free(new_chunk);
 	return NULL; /* unknown chunk */
@@ -372,11 +375,13 @@ static BOOL GT2_Load(BOOL curious)
 
 	_mm_fseek(modreader, 0, SEEK_SET);
 	while ((tmp = loadChunk()) != NULL) {
+#ifdef MIKMOD_DEBUG
 		/* FIXME: to be completed */
-		printf("%c%c%c%c\n", tmp->id[0], tmp->id[1], tmp->id[2], tmp->id[3]);
+		fprintf(stderr, "%c%c%c%c\n", tmp->id[0], tmp->id[1], tmp->id[2], tmp->id[3]);
+#endif
 		freeChunk(tmp);
 	}
-
+	_mm_errno = MMERR_LOADING_HEADER;
 	return 0;
 }
 
