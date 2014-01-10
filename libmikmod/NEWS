@@ -5,7 +5,7 @@ libmikmod v3.3.5 was released on XX-XXX-XXXX.
 This is a minor bugfix / maintenance release.
 
 - New PulseAudio driver for audio output, using pa_simple_* api.
-- ALSA driver improvements and bug fixes.
+- Improved ALSA driver.
 - mikmod.texi: Fixed document generation using newer texinfo.
 - Updates and fixes to configury (autotools) and to cmake support.
   Cmake support covers more targets and options now.
@@ -13,7 +13,7 @@ This is a minor bugfix / maintenance release.
   library can be configured and compiled without any audio output
   drivers if so required, except for drv_nos ('nosound') of course.
 - DOS (djgpp): fixed the sound blaster SB16 driver.
-- Fixed some potential sources of crash, several code clean-ups.
+- Fixed a few potential sources of crash, several code clean-ups.
 - Minor compilation fixes against ancient software versions.
 - Merged an updated gp32 driver (it is still an untested driver...)
 
