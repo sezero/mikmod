@@ -245,8 +245,8 @@ static int probe_umx   (const struct upkg_hdr *hdr,
 	_mm_read_UBYTES(buf, 64, modreader);
 
 	get_fci(&buf[idx], &idx);	/* skip class_index */
-	if (hdr->file_version >= 60) idx += 4; /* skip int32 package_index */
 	get_fci(&buf[idx], &idx);	/* skip super_index */
+	if (hdr->file_version >= 60) idx += 4; /* skip int32 package_index */
 	get_fci(&buf[idx], &idx);	/* skip object_name */
 	idx += 4;			/* skip int32 object_flags */
 
