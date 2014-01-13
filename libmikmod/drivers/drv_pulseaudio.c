@@ -44,23 +44,19 @@ static ULONG pabufsize;
 
 static void PULSEAUDIO_CommandLine(const CHAR *cmdline)
 {
-	CHAR *ptr = MD_GetAtom("server", cmdline, 0);
-	if (!ptr) server = NULL;
-	else {
-		if (server) MikMod_free(server);
-		if (! *(server = ptr)) {
-			MikMod_free(server);
-			server = NULL;
-		}
+	MikMod_free(server);
+	MikMod_free(sink);
+
+	server = MD_GetAtom("server", cmdline, 0);
+	if (server && !*server) {
+		MikMod_free(server);
+		server = NULL;
 	}
-	ptr = MD_GetAtom("sink", cmdline, 0);
-	if (!ptr) sink = NULL;
-	else {
-		if (sink) MikMod_free(sink);
-		if (! *(sink = ptr)) {
-			MikMod_free(sink);
-			sink = NULL;
-		}
+
+	sink = MD_GetAtom("sink", cmdline, 0);
+	if (sink && !*sink) {
+		MikMod_free(sink);
+		sink = NULL;
 	}
 }
 
