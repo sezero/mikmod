@@ -367,8 +367,7 @@ NAS_cmd_line (const CHAR *s)
   CHAR *p;
 
   if ((p = MD_GetAtom ("audioserver", s, 0))) {
-    if (audioserver != NULL)
-      MikMod_free (audioserver);
+    MikMod_free (audioserver);
     audioserver = p;
   }
 

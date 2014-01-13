@@ -75,7 +75,7 @@ static void AF_CommandLine(const CHAR *cmdline)
 	CHAR *machine=MD_GetAtom("machine",cmdline,0);
 
 	if(machine) {
-		if(soundbox) MikMod_free(soundbox);
+		MikMod_free(soundbox);
 		soundbox=machine;
 	}
 }

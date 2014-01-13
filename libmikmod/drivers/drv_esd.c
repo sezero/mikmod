@@ -206,7 +206,7 @@ static void ESD_CommandLine(const CHAR *cmdline)
 	CHAR *ptr=MD_GetAtom("machine",cmdline,0);
 
 	if (ptr) {
-		if (espeaker) MikMod_free(espeaker);
+		MikMod_free(espeaker);
 		espeaker=ptr;
 	}
 }
