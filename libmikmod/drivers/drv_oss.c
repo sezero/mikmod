@@ -56,11 +56,12 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
-#ifdef HAVE_MACHINE_SOUNDCARD_H
-#include <machine/soundcard.h>
-#endif
 #ifdef HAVE_SYS_SOUNDCARD_H
-#include <sys/soundcard.h>
+#include <sys/soundcard.h> /* Linux and newer BSD versions - OSS standart */
+#elif defined(HAVE_MACHINE_SOUNDCARD_H)
+#include <machine/soundcard.h> /*  Some old BSD versions */
+#elif defined(HAVE_SOUNDCARD_H)
+#include <soundcard.h> /* Some old BSD versions and also newer OpenBSD versions */
 #endif
 
 /* Compatibility with old versions of OSS

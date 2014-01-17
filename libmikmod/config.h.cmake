@@ -160,6 +160,9 @@
 /* Define to 1 if you have the `memcmp' function. */
 #cmakedefine HAVE_MEMCMP 1
 
+/* Define to 1 if you have the <soundcard.h> header file. */
+#cmakedefine HAVE_SOUNDCARD_H 1
+
 /* Define to 1 if you have the `strcasecmp' function. */
 #cmakedefine HAVE_STRCASECMP 1
 

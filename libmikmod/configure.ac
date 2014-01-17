@@ -989,33 +989,32 @@ fi
 
 if test $libmikmod_driver_oss = yes && test $libmikmod_mingw = no && test $libmikmod_darwin = no
 then
-	# under Linux, /dev/sndstat is deprecated, never check for OSS as the
-	# headers are always found.
-	if test $libmikmod_linux = no && test "$cross_compiling" != yes
+	AC_CHECK_HEADERS(sys/soundcard.h machine/soundcard.h soundcard.h)
+	AC_MSG_CHECKING([whether OSS code compiles])
+	AC_TRY_COMPILE([#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+#ifdef HAVE_SYS_SOUNDCARD_H
+# include <sys/soundcard.h>
+#elif defined(HAVE_MACHINE_SOUNDCARD_H)
+# include <machine/soundcard.h>
+#elif defined(HAVE_SOUNDCARD_H)
+# include <soundcard.h>
+#else
+error No OSS header present.
+#endif],
+			[int i=SNDCTL_DSP_RESET;],
+			libmikmod_driver_oss=yes,
+			libmikmod_driver_oss=no)
+
+	if test $libmikmod_driver_oss = yes
 	then
-		AC_CACHE_CHECK([for OSS (/dev/sndstat)],libmikmod_cv_oss_dev_sndstat,
-		if test -c /dev/sndstat
-		then
-			libmikmod_cv_oss_dev_sndstat=yes
-		else
-			libmikmod_cv_oss_dev_sndstat=no
-		fi)
+		libmikmod_driverlist="oss $libmikmod_driverlist"
+		AC_MSG_RESULT(yes)
+		AC_DEFINE([DRV_OSS], 1, [Define if the Open Sound System driver is compiled])
 	else
-		libmikmod_cv_oss_dev_sndstat=yes
+		AC_MSG_RESULT(no)
 	fi
-	if test $libmikmod_cv_oss_dev_sndstat = yes
-	then
-		AC_CHECK_HEADERS(machine/soundcard.h)
-		AC_CHECK_HEADERS(sys/soundcard.h)
-		if test $ac_cv_header_machine_soundcard_h = yes || \
-		   test $ac_cv_header_sys_soundcard_h = yes
-		then
-			libmikmod_driverlist="oss $libmikmod_driverlist"
-			AC_DEFINE([DRV_OSS], 1, [Define if the Open Sound System driver is compiled])
-		fi
-	fi
-else
-	libmikmod_driver_oss=no
 fi
 
 if test $libmikmod_darwin = yes

@@ -587,8 +587,23 @@ ELSE()
 ENDIF(ENABLE_AF)
 
 IF (ENABLE_OSS)
-  CHECK_MULTI_INCLUDE_FILES("machine/soundcard.h" "sys/soundcard.h")
-  IF ("${HAVE_MACHINE_SOUNDCARD_H}" OR "${HAVE_SYS_SOUNDCARD_H}")
+  CHECK_MULTI_INCLUDE_FILES("sys/soundcard.h" "machine/soundcard.h" "soundcard.h")
+  IF(HAVE_SYS_SOUNDCARD_H)
+    CHECK_C_SOURCE_COMPILES("#include <sys/ioctl.h>
+                             #include <sys/soundcard.h>
+                             int main() {return SNDCTL_DSP_RESET;}" HAVE_OSS)
+  ELSEIF(HAVE_MACHINE_SOUNDCARD_H)
+    CHECK_C_SOURCE_COMPILES("#include <sys/ioctl.h>
+                             #include <machine/soundcard.h>
+                             int main() {return SNDCTL_DSP_RESET;}" HAVE_OSS)
+  ELSEIF(HAVE_SOUNDCARD_H)
+    CHECK_C_SOURCE_COMPILES("#include <sys/ioctl.h>
+                             #include <soundcard.h>
+                             int main() {return SNDCTL_DSP_RESET;}" HAVE_OSS)
+  ELSE()
+    SET (HAVE_OSS)
+  ENDIF()
+  IF(HAVE_OSS)
     SET (DRV_OSS 1)
   ELSE()
     SET (ENABLE_OSS 0)
