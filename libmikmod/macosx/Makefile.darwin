@@ -15,6 +15,7 @@ RANLIB=$(CROSS)-ranlib
 LIPO=$(CROSS)-lipo
 endif
 
+ARFLAGS = cr
 CPPFLAGS=-DMIKMOD_BUILD
 LDLIBS=
 
@@ -79,10 +80,9 @@ LIBSTATIC=libmikmod.a
 
 LIBS=$(LIBSHARED)
 
-DRIVER_OBJ=drv_osx.o drv_pipe.o
-
-OBJ=$(DRIVER_OBJ) \
-    drv_openal.o drv_sdl.o drv_nos.o drv_stdout.o drv_raw.o drv_aiff.o drv_wav.o \
+OBJ=drv_osx.o drv_openal.o drv_sdl.o \
+    drv_raw.o drv_aiff.o drv_wav.o \
+    drv_nos.o drv_pipe.o drv_stdout.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
@@ -133,148 +133,102 @@ $(LIBSHARED): $(OBJ)
 	$(CC) -dynamiclib -o $(LIBSHARED) $(OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(LIBSTATIC): $(OBJ)
-	$(AR) rc $@ $(OBJ)
+	$(AR) $(ARFLAGS) $@ $(OBJ)
 	$(RANLIB) $@
 
-drv_osx.o:       ../drivers/drv_osx.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+HEADER_DEPS=../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_osx.o: ../drivers/drv_osx.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_osx.c -o drv_osx.o
-drv_openal.o:    ../drivers/drv_openal.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_openal.o: ../drivers/drv_openal.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_openal.c -o drv_openal.o
-drv_sdl.o:    ../drivers/drv_sdl.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_sdl.o: ../drivers/drv_sdl.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_sdl.c -o drv_sdl.o
-drv_nos.o:      ../drivers/drv_nos.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_nos.o: ../drivers/drv_nos.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_nos.c -o drv_nos.o
-drv_raw.o:      ../drivers/drv_raw.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_raw.o: ../drivers/drv_raw.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_raw.c -o drv_raw.o
-drv_stdout.o:   ../drivers/drv_stdout.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_stdout.o: ../drivers/drv_stdout.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_stdout.c -o drv_stdout.o
-drv_aiff.o:      ../drivers/drv_aiff.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_aiff.o: ../drivers/drv_aiff.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_aiff.c -o drv_aiff.o
-drv_wav.o:      ../drivers/drv_wav.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_wav.o: ../drivers/drv_wav.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_wav.c -o drv_wav.o
-drv_pipe.o:       ../drivers/drv_pipe.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+drv_pipe.o: ../drivers/drv_pipe.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_pipe.c -o drv_pipe.o
-load_669.o:     ../loaders/load_669.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_669.o: ../loaders/load_669.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_669.c -o load_669.o
-load_amf.o:     ../loaders/load_amf.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_amf.o: ../loaders/load_amf.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_amf.c -o load_amf.o
-load_asy.o:     ../loaders/load_asy.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_asy.o: ../loaders/load_asy.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_asy.c -o load_asy.o
-load_dsm.o:     ../loaders/load_dsm.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_dsm.o: ../loaders/load_dsm.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_dsm.c -o load_dsm.o
-load_far.o:     ../loaders/load_far.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_far.o: ../loaders/load_far.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_far.c -o load_far.o
-load_gdm.o:     ../loaders/load_gdm.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_gdm.o: ../loaders/load_gdm.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_gdm.c -o load_gdm.o
-load_gt2.o:     ../loaders/load_gt2.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_gt2.o: ../loaders/load_gt2.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_gt2.c -o load_gt2.o
-load_it.o:      ../loaders/load_it.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_it.o: ../loaders/load_it.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_it.c -o load_it.o
-load_imf.o:     ../loaders/load_imf.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_imf.o: ../loaders/load_imf.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_imf.c -o load_imf.o
-load_m15.o:     ../loaders/load_m15.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_m15.o: ../loaders/load_m15.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_m15.c -o load_m15.o
-load_med.o:     ../loaders/load_med.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_med.o: ../loaders/load_med.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_med.c -o load_med.o
-load_mod.o:     ../loaders/load_mod.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_mod.o: ../loaders/load_mod.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_mod.c -o load_mod.o
-load_mtm.o:     ../loaders/load_mtm.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_mtm.o: ../loaders/load_mtm.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_mtm.c -o load_mtm.o
-load_okt.o:     ../loaders/load_okt.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_okt.o: ../loaders/load_okt.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_okt.c -o load_okt.o
-load_s3m.o:     ../loaders/load_s3m.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_s3m.o: ../loaders/load_s3m.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_s3m.c -o load_s3m.o
-load_stm.o:     ../loaders/load_stm.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_stm.o: ../loaders/load_stm.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_stm.c -o load_stm.o
-load_stx.o:     ../loaders/load_stx.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_stx.o: ../loaders/load_stx.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_stx.c -o load_stx.o
-load_ult.o:     ../loaders/load_ult.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_ult.o: ../loaders/load_ult.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_ult.c -o load_ult.o
-load_umx.o:     ../loaders/load_umx.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_umx.o: ../loaders/load_umx.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_umx.c -o load_umx.o
-load_uni.o:     ../loaders/load_uni.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_uni.o: ../loaders/load_uni.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_uni.c -o load_uni.o
-load_xm.o:      ../loaders/load_xm.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+load_xm.o: ../loaders/load_xm.c $(HEADER_DEPS)
 	$(COMPILE) ../loaders/load_xm.c -o load_xm.o
-mmalloc.o:      ../mmio/mmalloc.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mmalloc.o: ../mmio/mmalloc.c $(HEADER_DEPS)
 	$(COMPILE) ../mmio/mmalloc.c -o mmalloc.o
-mmerror.o:      ../mmio/mmerror.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mmerror.o: ../mmio/mmerror.c $(HEADER_DEPS)
 	$(COMPILE) ../mmio/mmerror.c -o mmerror.o
-mmio.o:         ../mmio/mmio.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mmio.o: ../mmio/mmio.c $(HEADER_DEPS)
 	$(COMPILE) ../mmio/mmio.c -o mmio.o
-mdriver.o:      ../playercode/mdriver.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mdriver.o: ../playercode/mdriver.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mdriver.c -o mdriver.o
-mdreg.o:        ../playercode/mdreg.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mdreg.o: ../playercode/mdreg.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mdreg.c -o mdreg.o
-mdulaw.o:        ../playercode/mdulaw.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mdulaw.o: ../playercode/mdulaw.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mdulaw.c -o mdulaw.o
-mloader.o:      ../playercode/mloader.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mloader.o: ../playercode/mloader.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mloader.c -o mloader.o
-mlreg.o:        ../playercode/mlreg.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mlreg.o: ../playercode/mlreg.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mlreg.c -o mlreg.o
-mlutil.o:       ../playercode/mlutil.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mlutil.o: ../playercode/mlutil.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mlutil.c -o mlutil.o
-mplayer.o:      ../playercode/mplayer.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mplayer.o: ../playercode/mplayer.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mplayer.c -o mplayer.o
-munitrk.o:      ../playercode/munitrk.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+munitrk.o: ../playercode/munitrk.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/munitrk.c -o munitrk.o
-mwav.o:         ../playercode/mwav.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+mwav.o: ../playercode/mwav.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mwav.c -o mwav.o
-npertab.o:      ../playercode/npertab.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+npertab.o: ../playercode/npertab.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/npertab.c -o npertab.o
-sloader.o:      ../playercode/sloader.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+sloader.o: ../playercode/sloader.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/sloader.c -o sloader.o
-virtch.o:       ../playercode/virtch.c ../playercode/virtch_common.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+virtch.o: ../playercode/virtch.c ../playercode/virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/virtch.c -o virtch.o
-virtch2.o:      ../playercode/virtch2.c ../playercode/virtch_common.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+virtch2.o: ../playercode/virtch2.c ../playercode/virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/virtch2.c -o virtch2.o
-virtch_common.o:        ../playercode/virtch_common.c \
-	                ../macosx/mikmod_build.h ../include/mikmod_internals.h
+virtch_common.o: ../playercode/virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/virtch_common.c -o virtch_common.o
 

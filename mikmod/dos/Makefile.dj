@@ -2,13 +2,20 @@
 # Makefile for building MikMod under DOS/DJGPP
 #
 # This is a Makefile designed explicitly for GNU Make.
+# Edit include/config.h, if necessary.
 #------------------------------------------------------------------------------#
 
 # Set to 1 for debug build
 DEBUG = 0
 
 # The tools
-CC = gcc
+ifeq ($(CROSS),)
+CC=gcc
+AS=as
+else
+CC=$(CROSS)-gcc
+AS=$(CROSS)-as
+endif
 CFLAGS = $(COPT) -DHAVE_CONFIG_H $(INCLUDE)
 INCLUDE = -I. -I../src
 LD = $(CC)
@@ -18,7 +25,7 @@ ifeq ($(DEBUG),1)
 COPT = -g -Wall
 LDOPT = -g
 else
-COPT = -s -O3 -Wall -fomit-frame-pointer -ffast-math
+COPT = -O2 -Wall -fomit-frame-pointer -ffast-math
 LDOPT = -s
 endif
 

@@ -1,7 +1,8 @@
 /* config.h.in.  Generated manually for DJGPP.  */
 
-/* Define if you have the ANSI C header files.  */
-#define STDC_HEADERS
+/* djgpp-v2.04 does provide snprintf and vsnprintf !!! */
+/* Define if you have the snprintf function.  */
+/*#define HAVE_SNPRINTF*/
 
 /* Define if your system supports binary pipes (i.e. Unix) */
 /*#define DRV_PIPE*/
@@ -25,11 +26,11 @@
 /* Define if you want a debug version of the library */
 #undef MIKMOD_DEBUG
 
+/* Define if you have the ANSI C header files.  */
+#define STDC_HEADERS
+
 /* Define if you have the setenv function.  */
 #define HAVE_SETENV
-
-/* Define if you have the snprintf function.  */
-#undef HAVE_SNPRINTF
 
 /* Define if you have the srandom function.  */
 #define HAVE_SRANDOM

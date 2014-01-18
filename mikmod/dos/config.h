@@ -3,7 +3,7 @@
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).  */
 #define HAVE_MIKMOD_FREE 1
 
-/* djgpp-v2.04 does provides [v]snprintf functions! */
+/* djgpp-v2.04 does provide snprintf and vsnprintf !!! */
 /* Define to 1 if you have the `snprintf' function. */
 /* #define HAVE_SNPRINTF 1 */
 /* Define to 1 if you have the `vsnprintf' function. */
