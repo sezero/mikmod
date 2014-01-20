@@ -71,19 +71,6 @@ Once you're in the player, if you haven't choosed terse mode (a la
 MikMod 2), pressing the H key will give you an help screen with the list
 of the keys you can use. I hope it's understandable.
 
-If you used the playlist features of the previous MikMod versions, your
-old playlist won't work anymore since the playlist format has changed.
-Now the playlist files must have an .mpl extension. To convert your old
-playlists into the new format, get an OS/2 port of the Unix 'awk' command
-(several exist, including an official IBM version found on DevCon...) and use
-the 'convert_playlist' awk script:
-
-  ./convert_playlist < my_old_playlist > my_new_playlist.mpl
-
-I know I'm getting lazy and could have written a REXX script for this, but
-it's kinda like reinventing the wheel and I prefer work on the real code.
-Hope you won't mind (-:
-
 
 >> THANKS
 ---------

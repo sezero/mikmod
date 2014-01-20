@@ -108,14 +108,6 @@ This feature also works when MikMod is in interactive mode (with the
 curses interface), but is less useful then, since you have full player
 control...
 
-If you used the playlist features of the previous MikMod versions, your
-old playlist won't work anymore since the playlist format has changed.
-Now the playlist files must have an .mpl extension. To convert your old
-playlists into the new format, use the
-'convert_playlist' awk script:
-
-  ./convert_playlist < my_old_playlist > my_new_playlist.mpl
-
 
 >> Y2K COMPLIANCE
 -----------------
