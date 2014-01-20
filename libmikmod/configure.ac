@@ -360,13 +360,6 @@ AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 
-if test $libmikmod_mingw = no && test $libmikmod_darwin = no; then
-# possibly needed for NAS support, but the result isn't used:
-# instead of $ac_x_includes and $ac_x_libraries, /usr/X11R6/include
-# and /usr/X11R6/lib are tested and used.  to be looked into..
-	AC_PATH_X
-fi
-
 # Check if makeinfo support html output. If it doesn't, pretend it's missing
 # rather than failing rebuilding the documentation.
 AC_CACHE_CHECK([if makeinfo supports html output],libmikmod_cv_makeinfo_html,
@@ -539,19 +532,27 @@ fi
 if test $libmikmod_driver_nas = yes && test $libmikmod_mingw = no && test $libmikmod_darwin = no
 then
 	libmikmod_driver_nas=no
-
-	AC_CHECK_HEADERS(audio/audiolib.h)
-	if test $ac_cv_header_audio_audiolib_h = yes
-	then
-		AC_CHECK_LIB(audio,AuCreateFlow,libmikmod_driver_nas=yes)
-	fi
-	if test $libmikmod_driver_nas = no
-	then
-		if test -r /usr/X11R6/include/audio/audiolib.h; then
-			libmikmod_driver_nas=yes
-			CFLAGS="$CFLAGS -I/usr/X11R6/include"
-			LIBRARY_LIB="$LIBRARY_LIB -L/usr/X11R6/lib" # note: -laudio is added later
+	AC_PATH_X
+	AC_CHECK_HEADERS(audio/audiolib.h,AC_CHECK_LIB(audio,AuCreateFlow,libmikmod_driver_nas=yes))
+	if test $libmikmod_driver_nas = no; then
+	    if test -n "$ac_x_includes" || test -n "$ac_x_libraries"; then
+		ac_save_CFLAGS=$CFLAGS
+		ac_save_LDFLAGS=$LDFLAGS
+		test -n "$ac_x_includes" && CFLAGS="$CFLAGS -I$ac_x_includes"
+		test -n "$ac_x_libraries" && LDFLAGS="$LDFLAGS -L$ac_x_libraries"
+		LDFLAGS="$LDFLAGS -laudio"
+		AC_MSG_CHECKING([X11 locations for NAS])
+		AC_TRY_LINK([#include <audio/audiolib.h>],
+				[AuFlowID f=AuCreateFlow(0,0);],
+				[libmikmod_driver_nas=yes])
+		CFLAGS=$ac_save_CFLAGS
+		LDFLAGS=$ac_save_LDFLAGS
+		AC_MSG_RESULT([$libmikmod_driver_nas])
+		if test $libmikmod_driver_nas = yes; then
+			test -n "$ac_x_includes" && CFLAGS="$CFLAGS -I$ac_x_includes"
+			test -n "$ac_x_libraries" && LIBRARY_LIB="$LIBRARY_LIB -L$ac_x_libraries"
 		fi
+	    fi
 	fi
 else
 	libmikmod_driver_nas=no
