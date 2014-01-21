@@ -1,4 +1,14 @@
-Summary of changes between MikMod 3.2.4 and MikMod 3.2.5 ():
+Summary of changes between MikMod 3.2.5 and MikMod 3.2.6:
+==================================================================
+
+MikMod 3.2.6 was released on XX/XXX/XXXX.
+
+- Several makefile clean-ups.
+- Removed ancient convert_playlist script which used to supposed
+  to convert pre-ancient mikmod playlists.
+
+
+Summary of changes between MikMod 3.2.4 and MikMod 3.2.5:
 ==================================================================
 
 MikMod 3.2.5 was released on 10-Jan-2014.
@@ -11,7 +21,7 @@ MikMod 3.2.5 was released on 10-Jan-2014.
 - Several code clean-ups.
 
 
-Summary of changes between MikMod 3.2.3 and MikMod 3.2.4 ():
+Summary of changes between MikMod 3.2.3 and MikMod 3.2.4:
 ==================================================================
 
 MikMod 3.2.4 was released on 14/Oct/2013.
@@ -25,7 +35,7 @@ This is a minor bug fix/maintenance release.
 - Fixed some compiler warnings, minor cleanups.
 
 
-Summary of changes between MikMod 3.2.2 and MikMod 3.2.3 ():
+Summary of changes between MikMod 3.2.2 and MikMod 3.2.3:
 ==================================================================
 
 MikMod 3.2.3 was released on 05/Oct/2013.

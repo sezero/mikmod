@@ -1,5 +1,23 @@
-Summary of changes between libmikmod 3.3.4 and libmikmod 3.3.5 ():
-==========================================================================
+Summary of changes between libmikmod 3.3.5 and libmikmod 3.3.6:
+========================================================================
+
+libmikmod v3.3.6 was released on XX-XXX-XXXX.
+
+- UMX loader: Minor corrections to the container parse code with
+  relation to upkg file format. (for correctness' sake only...)
+- PulseAudio driver: Simplified its command line parser procedure,
+  so that it always sets server and sink to some value, NULL or
+  otherwise, and fix a very minor memory leak on some occasions.
+- Configury, OSS driver: Removed useless check for /dev/sndstat
+  presence, added <soundcard.h> check to cover all our bases for
+  less common setups.
+- Configury, NAS driver: Use the configury detected X header and
+  library locations when necessary, not just hardcoded /usr/X11R6/.
+- Several configury and makefile clean-ups.
+
+
+Summary of changes between libmikmod 3.3.4 and libmikmod 3.3.5:
+========================================================================
 
 libmikmod v3.3.5 was released on 10-Jan-2014.
 This is a minor bugfix / maintenance release.
@@ -18,8 +36,8 @@ This is a minor bugfix / maintenance release.
 - Merged an updated gp32 driver (it is still an untested driver...)
 
 
-Summary of changes between libmikmod 3.3.3 and libmikmod 3.3.4 ():
-==========================================================================
+Summary of changes between libmikmod 3.3.3 and libmikmod 3.3.4:
+========================================================================
 
 libmikmod 3.3.4 was released on 08-Dec-2013.
 
@@ -40,8 +58,8 @@ libmikmod 3.3.4 was released on 08-Dec-2013.
 - The library is compilable using C++ compilers.
 
 
-Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3 ():
-==========================================================================
+Summary of changes between libmikmod 3.3.2 and libmikmod 3.3.3:
+========================================================================
 
 libmikmod 3.3.3 was released on 15-Oct-2013.
 This is a bug fix/maintenance release, with a new umx loader as the
@@ -71,8 +89,8 @@ new feature.
   previous release. (cosmetic change.)
 
 
-Summary of changes between libmikmod 3.2.0 and libmikmod 3.3.2 ():
-==========================================================================
+Summary of changes between libmikmod 3.2.0 and libmikmod 3.3.2:
+========================================================================
 
 libmikmod 3.3.2 was released on 05-Oct-2013.
 
@@ -259,26 +277,25 @@ BUGFIXES
   - devfs support for Linux OSS
 
 - Makefile for lcc-win32. To compile libmikmod with lcc-win32 a rather new
-    version is needed. I currently use version 3.7 compiled on Jan 20 2002.
-    A version half a year old did not work.
-    To compile
-      - check that you have the lcc bin directory in the PATH
-        (and no other compiler bin dirs),
-      - change to libmikmod-3.1.11/win32,
-      - check Makefile.lcc for any needed changes, and
-      - use make -f Makefile.lcc.
+  version is needed. I currently use version 3.7 compiled on Jan 20 2002.
+  A version half a year old did not work. To compile
+  - check that you have the lcc bin directory in the PATH
+    (and no other compiler bin dirs),
+  - change to libmikmod-3.1.11/win32,
+  - check Makefile.lcc for any needed changes, and
+  - use make -f Makefile.lcc.
 
-  - Different fixes for the direct sound driver:
-    - Pausing did only work for half of the buffer.
-    - Restarting the player did not work as the output thread was removed
-      in DS_PlayStop().
-    - Removed busy waiting for end of thread.
-    - Sound output is started immediately on the first call to DS_Update()
-      to be consistent with other non threaded drivers.
-    - Different small clean ups.
+- Different fixes for the direct sound driver:
+  - Pausing did only work for half of the buffer.
+  - Restarting the player did not work as the output thread was removed
+    in DS_PlayStop().
+  - Removed busy waiting for end of thread.
+  - Sound output is started immediately on the first call to DS_Update()
+    to be consistent with other non threaded drivers.
+  - Different small clean ups.
 
-  - In MikMod_Reset() the raw output driver driver did not use the
-    filename set via the cmdline.
+- In MikMod_Reset() the raw output driver driver did not use the
+  filename set via the cmdline.
 
 
 Summary of changes between libmikmod 3.1.9 and libmikmod 3.1.10 (Arlanc):

@@ -1,4 +1,4 @@
-.TH LIBMIKMOD 1 "Version @VERSION@, March 2004"
+.TH LIBMIKMOD 1 "Version @VERSION@, 21 January 2014"
 
 .SH NAME
 libmikmod-config - script to get information about the installed version of
@@ -55,5 +55,3 @@ A full list of people having worked on libmikmod can be found in the libmikmod
 source package.
 
 This man page was inspired by the gtk-config man page written by Owen Taylor.
-
-The k in ``Januark'' is not a typo. It's a genuine Y2K bug.
