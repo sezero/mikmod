@@ -11,7 +11,6 @@ LIBMIKMOD_VERSION=$LIBMIKMOD_MAJOR_VERSION.$LIBMIKMOD_MINOR_VERSION.$LIBMIKMOD_M
 AC_CONFIG_AUX_DIR([autotools])
 AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
 AC_CONFIG_SRCDIR([include/mikmod.h.in])
-AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([posix])
 AM_MAINTAINER_MODE
@@ -1176,7 +1175,7 @@ AC_SUBST(LIBMIKMOD_VERSION)
 
 AC_SUBST(LIB_LDADD)
 
-AC_OUTPUT(
+AC_CONFIG_FILES([
 libmikmod-config
 libmikmod.pc
 libmikmod.spec
@@ -1208,7 +1207,9 @@ dos/src/Makefile
 win32/Makefile
 win32/mikmod.h:include/mikmod.h.in
 win32/mikmod_build.h:include/mikmod.h.in
-examples/Makefile)
+examples/Makefile])
+AC_CONFIG_HEADERS([config.h])
+AC_OUTPUT
 
 chmod +x libmikmod-config
 cat macintosh/_libmikmodversion.r | tr '\n' '\r' > macintosh/libmikmodversion.r

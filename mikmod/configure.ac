@@ -6,7 +6,6 @@ AC_INIT([mikmod],[3.2.6])
 AC_CONFIG_AUX_DIR([autotools])
 AM_INIT_AUTOMAKE([1.7 foreign])
 AC_CONFIG_SRCDIR([src/mikmod.c])
-AM_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
 
@@ -224,8 +223,10 @@ dnl =================
 AC_SUBST(EXTRA_OBJ)
 AC_SUBST(PLAYER_LIB)
 
-AC_OUTPUT(Makefile
+AC_CONFIG_FILES([Makefile
 src/Makefile
 dos/Makefile
 os2/Makefile
-win32/Makefile)
+win32/Makefile])
+AC_CONFIG_HEADERS([config.h])
+AC_OUTPUT
