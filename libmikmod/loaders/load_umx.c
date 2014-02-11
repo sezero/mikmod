@@ -41,6 +41,7 @@
 #include "config.h"
 #endif
 
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -49,12 +50,19 @@
 
 /*========== upkg defs */
 
+typedef SLONG fci_t;		/* FCompactIndex */
+
 #define UPKG_HDR_TAG	0x9e2a83c1
-#pragma pack(1)
+
+struct _genhist {	/* for upkg versions >= 68 */
+	SLONG export_count;
+	SLONG name_count;
+};
+
 struct upkg_hdr {
 	ULONG tag;	/* UPKG_HDR_TAG */
-	SLONG file_version;	/* 61 for original unreal */
-	SLONG pkg_flags;	/* bitflags - none needed */
+	SLONG file_version;
+	ULONG pkg_flags;
 	SLONG name_count;	/* number of names in name table (>= 0) */
 	SLONG name_offset;		/* offset to name table  (>= 0) */
 	SLONG export_count;	/* num. exports in export table  (>= 0) */
@@ -66,18 +74,16 @@ struct upkg_hdr {
 	 * only with versions < 68. */
 	SLONG heritage_count;
 	SLONG heritage_offset;
-#if 0
 	/* with versions >= 68:  a GUID, a dword for generation count
 	 * and export_count and name_count dwords for each generation: */
 	ULONG guid[4];
 	SLONG generation_count;
-	struct _genhist {
-		SLONG export_count;
-		SLONG name_count;
-	} genhist[0/* generation_count */];
-#endif
+#define UPKG_HDR_SIZE 64			/* 64 bytes up until here */
+	/*struct _genhist *gen;*/
 };
-#pragma pack()
+/* compile time assert for upkg_hdr size */
+/*typedef int _check_hdrsize[2 * (offsetof(struct upkg_hdr, gen) == UPKG_HDR_SIZE) - 1];*/
+typedef int _check_hdrsize[2 * (sizeof(struct upkg_hdr) == UPKG_HDR_SIZE) - 1];
 
 /*========== Supported content types */
 
@@ -93,10 +99,13 @@ static const char *mustype[] = {
 
 /*========== UPKG parsing */
 
-/* decode an FCompactIndex. original documentation by Tim Sweeney
- * was at http://unreal.epicgames.com/Packages.htm
+/* decode an FCompactIndex.
+ * original documentation by Tim Sweeney was at
+ * http://unreal.epicgames.com/Packages.htm
+ * also see Unreal Wiki:
+ * http://wiki.beyondunreal.com/Legacy:Package_File_Format/Data_Details
  */
-static SLONG get_fci (const char *in, int *pos)
+static fci_t get_fci (const char *in, int *pos)
 {
 	SLONG a;
 	int size;
@@ -283,7 +292,7 @@ static SLONG probe_header (void *header)
 	/* byte swap the header - all members are 32 bit LE values */
 	p = (unsigned char *) header;
 	swp = (ULONG *) header;
-	for (i = 0; i < (int)sizeof(struct upkg_hdr)/4; i++, p += 4) {
+	for (i = 0; i < UPKG_HDR_SIZE/4; i++, p += 4) {
 		swp[i] = p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 	}
 
@@ -319,9 +328,9 @@ static SLONG probe_header (void *header)
 
 static int process_upkg (SLONG *ofs, SLONG *objsize)
 {
-	char header[64];
+	char header[UPKG_HDR_SIZE];
 
-	if (!_mm_read_UBYTES(header, 64, modreader))
+	if (!_mm_read_UBYTES(header, UPKG_HDR_SIZE, modreader))
 		return -1;
 	if (probe_header(header) < 0)
 		return -1;
