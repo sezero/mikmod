@@ -39,7 +39,7 @@
 #  include "mgetopt.h"
 #endif
 #include <ctype.h>
-#ifndef WIN32
+#ifndef _WIN32
 #  include <signal.h>
 #endif
 #include <stdarg.h>
@@ -259,7 +259,7 @@ static void exit_player(int exitcode, const char *message, ...)
 	exit(exitcode);
 }
 
-#ifndef WIN32
+#ifndef _WIN32
 /* signal handlers */
 static RETSIGTYPE GotoNext(int signum)
 {
@@ -598,7 +598,7 @@ static BOOL player_handle_key(MWINDOW *win, int ch)
 			status.quit = 1;
 			break;
 		case CTRL_L:
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 		case KEY_CLEAR:
 #endif
 			win_panel_repaint_force();
@@ -1063,7 +1063,7 @@ int main(int argc, char *argv[])
 	Player_SetConfig(&config);
 	use_threads = MP_Init();
 
-#ifndef WIN32
+#ifndef _WIN32
 	signal(SIGTERM, ExitGracefully);
 	signal(SIGINT, ExitGracefully);
 #if defined(__linux)

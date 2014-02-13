@@ -436,7 +436,7 @@ static BOOL menu_handle_key(MWINDOW * win, int ch)
 	  case KEY_UP:
 		menu_do_repaint(win, -1);
 		break;
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	  case KEY_ESC:
 #endif
 	  case KEY_LEFT:

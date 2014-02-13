@@ -29,7 +29,7 @@
 #ifndef MUTILITIES_H
 #define MUTILITIES_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #elif defined(__OS2__)||defined(__EMX__)
 #include <os2.h>
@@ -55,7 +55,7 @@
 #define PATH_SEP '/'
 #define PATH_SEP_STR "/"
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 
 #define PATH_SEP_SYS '\\'
 #define PATH_SEP_SYS_STR "\\"
@@ -96,7 +96,7 @@ extern char storage[STORAGELEN+2];
 
 #define BTST(v, m) ((v) & (m) ? 1 : 0)
 
-#ifdef WIN32
+#ifdef _WIN32
 #define stat              _stat
 #ifndef S_ISDIR
 #define S_ISDIR(st_mode)  ((st_mode & _S_IFDIR) == _S_IFDIR)
@@ -109,19 +109,19 @@ extern char storage[STORAGELEN+2];
 #endif
 #endif
 
-#if defined(__EMX__)||defined(WIN32)
+#if defined(__EMX__)||defined(_WIN32)
 #undef S_ISBLK /* MinGW sys/stat.h does define S_ISBLK */
 #define S_ISBLK(st_mode)  0
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #undef S_ISLNK /* djgpp-v2.04 does define S_ISLNK (and has lstat, too..) */
 #define lstat             stat
 #define S_ISSOCK(st_mode) 0
 #define S_ISLNK(st_mode)  0
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||(defined(WIN32)&&!defined(__MINGW32__))
+#if defined(__OS2__)||defined(__EMX__)||(defined(_WIN32)&&!defined(__MINGW32__))
 
 /* FIXME , untested under OS2 */
 
@@ -149,7 +149,7 @@ int get_tmp_file (const char *tmpl, char **name_used);
 
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 char *get_tmp_name(void);
 #endif
 
@@ -164,12 +164,12 @@ char *get_cfg_name(const char *name);
 /* Return precise time in milliseconds */
 unsigned long Time1000(void);
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #define filecmp strcasecmp
 #else
 #define filecmp strcmp
 #endif
-#if defined(__OS2__)||defined(__EMX__)||(defined(WIN32)&&!defined(__MINGW32__))
+#if defined(__OS2__)||defined(__EMX__)||(defined(_WIN32)&&!defined(__MINGW32__))
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
 

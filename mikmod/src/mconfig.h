@@ -26,8 +26,8 @@
 
 ==============================================================================*/
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef MCONFIG_H
+#define MCONFIG_H
 
 #include <mikmod.h>
 
@@ -39,7 +39,7 @@
 
 /*========== Color and attribute definitions */
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #define A_REVERSE			0x70
 #define A_NORMAL			0x07
 #define A_BOLD				0x0f

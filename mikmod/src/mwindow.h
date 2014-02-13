@@ -29,7 +29,7 @@
 #ifndef MWINDOW_H
 #define MWINDOW_H
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 #  ifdef HAVE_NCURSES_H
 #    include <ncurses.h>
 #  else

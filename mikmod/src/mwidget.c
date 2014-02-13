@@ -1290,7 +1290,7 @@ static BOOL dialog_handle_key(MWINDOW *win, int ch)
 	int ret, i;
 
 	/* Handle keys common for all widgets here */
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	if (ch == KEY_ESC) {
 		dialog_close(d);
 		return 1;

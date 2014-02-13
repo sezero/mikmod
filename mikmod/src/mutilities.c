@@ -43,12 +43,12 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 #include <pwd.h>
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(WIN32)
+#if defined(_WIN32)
 #include <time.h>
 #else
 #include <sys/time.h>
@@ -59,7 +59,7 @@
 #include "marchive.h"
 #include "mutilities.h"
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 
 void path_conv(char *file)
 {
@@ -137,7 +137,7 @@ BOOL path_relative(const char *path)
 	if (!path)
 		return 1;
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	if (*path && (path[1] == ':'))
 		return 0;
 #endif
@@ -168,7 +168,7 @@ static int m_mkstemp (char *tmpl)
 	XXXXXX = &tmpl[len - 6];
 
 	/* Get some more or less random data.  */
-#ifdef WIN32
+#ifdef _WIN32
 	value = Time1000();
 	value = ((value % 1000) ^ (value / 1000)) + counter++;
 #else
@@ -228,7 +228,7 @@ int get_tmp_file (const char *tmpl, char **name_used)
 		if (!tmpdir) tmpdir = P_tmpdir;
 #endif
 		if (!tmpdir) {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 			tmpdir = "C:\\";
 #else
 			tmpdir = "/tmp";
@@ -259,7 +259,7 @@ int get_tmp_file (const char *tmpl, char **name_used)
 	return retval;
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
 char *get_tmp_name(void)
@@ -268,7 +268,7 @@ char *get_tmp_name(void)
 #if defined(__OS2__) && defined(__WATCOMC__)
 	tmp_file = str_sprintf2("%s" PATH_SEP_STR "%s", getenv("TEMP"),
 							"!MikMod.tmp");
-#elif defined(WIN32)
+#elif defined(_WIN32)
 	if (!(tmp_file = _tempnam(NULL, ".mod")))
 		if (!(tmp_file = _tempnam(getenv("HOME"), ".mod")))
 			return NULL;
@@ -289,7 +289,7 @@ char *get_cfg_name(const char *name)
 	const char *home = getenv("HOME");
 	char *p;
 	if (!home) {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 		home = "C:";
 #else
 		struct passwd *pw = getpwuid(getuid());
@@ -323,7 +323,7 @@ int mik_snprintf(char *buffer, size_t n, const char *format, ...)
 
 unsigned long Time1000(void)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	static __int64 Freq = 0;
 	static __int64 LastCount = 0;
 	static __int64 LastRest = 0;
@@ -365,7 +365,7 @@ unsigned long Time1000(void)
 #endif
 }
 
-#if defined(__OS2__)||defined(__EMX__)||(defined(WIN32)&&!defined(__MINGW32__))
+#if defined(__OS2__)||defined(__EMX__)||(defined(_WIN32)&&!defined(__MINGW32__))
 /* FIXME , untested under OS2 */
 DIR* opendir (const char* dirName)
 {
@@ -382,7 +382,7 @@ DIR* opendir (const char* dirName)
 		dir->name[strlen(dir->name)-1] != PATH_SEP)
 		strcat (dir->name,PATH_SEP_SYS_STR);
 
-#ifdef WIN32
+#ifdef _WIN32
 	strcat (dir->name, "*");
 	dir->handle = INVALID_HANDLE_VALUE;
 #elif defined(__OS2__)||defined(__EMX__)
@@ -394,7 +394,7 @@ DIR* opendir (const char* dirName)
 	return dir;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 struct dirent *readdir (DIR* dir)
 {
 	WIN32_FIND_DATA fileBuffer;

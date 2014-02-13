@@ -52,7 +52,7 @@
 
 static int mikmod_random(int limit)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	return rand() % limit;
 #else
 	return random() % limit;
@@ -94,7 +94,7 @@ void PL_InitList(PLAYLIST * pl)
 	pl->current = -1;
 	pl->curr_deleted = 0;
 	pl->add_pos = -1;
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	srand(time(NULL));
 #else
 	{
@@ -390,7 +390,7 @@ char *PL_GetFilename(void)
 {
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)
 	return get_cfg_name("mikmodpl.cfg");
-#elif defined(WIN32)
+#elif defined(_WIN32)
 	return get_cfg_name("mikmod_playlist.mpl");
 #else
 	return get_cfg_name(".mikmod_playlist");

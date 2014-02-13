@@ -282,7 +282,7 @@ static char tarbzip2ext[] = ".TAR.BZ2 .TBZ .TBZ2";
 
 static ARCHIVE archiver_def[] = {
 	/* location, marker, list, filenames column, extract, skippat, skipstart, skipend */
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 	{  0,  pksignat, "unzip -vqq \"%a\"",
 				 58, "unzip -pqq \"%a\" \"%f\"", NULL, 0, 0},
 	{ 20, zoosignat, "zoo lq \"%a\"",
@@ -332,7 +332,7 @@ static ARCHIVE archiver_def[] = {
 
 char *CF_GetFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	return get_cfg_name("mikmod.cfg");
 #else
 	return get_cfg_name(".mikmodrc");
@@ -341,7 +341,7 @@ char *CF_GetFilename(void)
 
 char *CF_GetDefaultFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	return NULL;
 #else
 	return str_sprintf2("%s" PATH_SEP_STR "%s", PACKAGE_DATA_DIR, "mikmodrc");

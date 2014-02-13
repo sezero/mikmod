@@ -75,7 +75,7 @@ static MP_DATA playdata;
 #define CHAR_AMPLITUDE1		'='
 #define CHAR_AMPLITUDE0		'-'
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #define CHAR_SAMPLE_KICK3	'*'
 #define CHAR_SAMPLE_KICK2	'\x07'
 #define CHAR_SAMPLE_KICK1	'\xf9'
@@ -577,7 +577,7 @@ static void display_help(MWINDOW *win, int diff)
 {
 /* *INDENT-OFF* */
 	static const char helptext[] =
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 		"Keys help             (depending on your terminal and your curses library,\n"
 		"=========                      some of these keys might not be recognized)\n"
 #else
@@ -1290,7 +1290,7 @@ static void set_window_title(const char *content)
 	/* TODO: Can we do something similar for OS2? */
 
 	/* Win32 console application set title */
-#if defined(WIN32)
+#if defined(_WIN32)
 	SNPRINTF(storage,STORAGELEN,"%s (%s)", mikversion, content);
 	SetConsoleTitle(storage);
 #endif
@@ -1299,7 +1299,7 @@ static void set_window_title(const char *content)
 	 *
 	 * Written using the 'Xterm-Title mini-howto' 
 	 */
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 	char *env_term;
 	static int last_config=0;
 

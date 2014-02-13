@@ -39,7 +39,7 @@ int usleep_new(unsigned long);
 
 #if defined(__OS2__)||defined(__EMX__)
 #define SLEEP(n)  DosSleep(n)
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #define SLEEP(n)  Sleep(n*10)
 #elif !defined(HAVE_USLEEP)
 #define SLEEP(n)  usleep_new(n*1000)
@@ -106,7 +106,7 @@ typedef enum {
 		while (modevar==MTH_QUITTING) SLEEP(1); \
 	}
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 
 #include <windows.h>
 #include <process.h>

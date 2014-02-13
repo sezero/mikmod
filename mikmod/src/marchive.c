@@ -51,7 +51,7 @@
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 #include <pwd.h>
 #include <signal.h>
 #ifdef HAVE_SYS_WAIT_H
@@ -105,7 +105,7 @@ static const CHAR *prefixmodulepatterns[] = {
 	NULL
 };
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 /* Drop all root privileges we might have. */
 BOOL DropPrivileges(void)
 {
@@ -251,7 +251,7 @@ static BOOL filename2short (const char *l, char *s, int len_s)
 	}
 }
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 
 static BOOL filename2short (const char *l, char *s, int len_s)
 {
@@ -420,10 +420,10 @@ static int MA_truncate (int fd, const char *startpat, int start, int end, char *
 	return dest;
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 
 static int rd_err, rd_outbak=-1, rd_errbak;
-#ifdef WIN32
+#ifdef _WIN32
 static char *rd_file = NULL;
 #endif
 
@@ -433,7 +433,7 @@ static void start_redirect (void)
 	fflush(stdout);
 	fflush(stderr);
 
-#ifdef WIN32
+#ifdef _WIN32
 	/* "nul" seems not to work, use a temp file instead */
 	rd_err = get_tmp_file(NULL, &rd_file);
 #else
@@ -460,7 +460,7 @@ static void stop_redirect (void)
 		close(rd_errbak);
 		rd_outbak = -1;
 
-#ifdef WIN32
+#ifdef _WIN32
 		if (rd_file) {
 			unlink (path_conv_sys(rd_file));
 			free (rd_file);
@@ -493,7 +493,7 @@ int MA_dearchive(const CHAR *arc, const CHAR *file, CHAR **extracted)
 		if (MA_identify(arc, config.archiver[t].location, config.archiver[t].marker)) {
 			/* display "extracting" message, as this may take some time... */
 			display_extractbanner();
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 			/* extracting, the non-Unix way */
 
 			tmp_file = get_tmp_name();
@@ -676,14 +676,14 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 			char *string = (char *) malloc (PATH_MAX + 2 + offset);
 			char *command;
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 /* Archive display, the non-Unix way */
 			FILE *file;
 
 			command = get_command (config.archiver[archive].list,
 								   path_conv_sys(filename), NULL, NULL);
 			start_redirect();
-#if defined(__WATCOMC__)||(defined(WIN32)&&!defined(LCC))
+#if defined(__WATCOMC__)||(defined(_WIN32)&&!defined(__LCC__))
 			file = _popen (command, "r");
 #else
 			file = popen (command, "r");
@@ -705,7 +705,7 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 					PL_Add(pl, string + t, filename, 0, 0);
 				fgets(string, PATH_MAX + offset + 1, file);
 			}
-#if defined(__WATCOMC__)||defined(WIN32)
+#if defined(__WATCOMC__)||defined(_WIN32)
 			_pclose(file);
 #else
 			pclose(file);

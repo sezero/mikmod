@@ -35,7 +35,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -44,7 +44,7 @@
 #endif
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #if defined(__OS2__)||defined(__EMX__)
 #define INCL_VIO
 #endif
@@ -77,7 +77,7 @@
 
 #else
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #define BOX_UL		'\xda'
 #define BOX_UR		'\xbf'
 #define BOX_LL		'\xc0'
@@ -131,7 +131,7 @@ static TIMEOUT *timeouts = NULL;
 #elif defined(__DJGPP__)
 #include "dosvideo.inc"
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #include "winvideo.inc"
 
 #else /* unix, ncurses */
@@ -586,7 +586,7 @@ void win_init_status(int height)
 
 	if (height != root_y2) {
 		root_y2 = height < 0 ? 0 : (height > 2 ? 2 : height);
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 		status_message[0] = '\0';
 #else
 		status_message[0] = '\n';
@@ -718,7 +718,7 @@ void win_print(MWINDOW *win, int x, int y, const char *str)
 {
 	int len = strlen(str);
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	if (len > 1 && str[len - 1] == '\n' && str[len - 2] == '\r')
 		len--;
 #endif
@@ -732,7 +732,7 @@ void win_print(MWINDOW *win, int x, int y, const char *str)
 	if (len + x > win->width)
 		len = win->width - x;
 	if (len > 0 && (str[len - 1] == '\n' || str[len - 1] == '\r'))
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 		if (win->x + win->width < winx)
 #endif
 		{
@@ -844,7 +844,7 @@ void win_attrset(ATTRS attrs)
 	if (theme && !win_quiet) {
 		int theme_attr = theme->attrs[attrs];
 		act_color = theme_attr;
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 		if (theme->color) {
 			int pair;
 			if (theme_attr == ((COLOR_CNT-1) << COLOR_BSHIFT) + ((COLOR_CNT-1) << COLOR_FSHIFT))
@@ -865,7 +865,7 @@ ATTRS win_get_theme_color (ATTRS attrs)
 {
 	if (theme) {
 		int theme_attr = theme->attrs[attrs];
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 		if (theme->color)
 			if (theme_attr == ((COLOR_CNT-1) << COLOR_BSHIFT) + ((COLOR_CNT-1) << COLOR_FSHIFT))
 				theme_attr = ((COLOR_CNT-1) << COLOR_BSHIFT) + ((COLOR_CNT-2) << COLOR_FSHIFT);
@@ -881,7 +881,7 @@ void win_set_color(ATTRS attrs)
 	if (win_quiet) return;
 
 	act_color = attrs;
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 	if (win_has_colors()) {
 		int pair;
 		if (attrs == ((COLOR_CNT-1) << COLOR_BSHIFT) + ((COLOR_CNT-1) << COLOR_FSHIFT))
@@ -944,7 +944,7 @@ BOOL win_handle_key(int ch)
 		win_change_panel(DISPLAY_INST);
 		break;
 	  case KEY_F(4):
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	  case KEY_SF(9):			/* shift-F9 */
 #else
 	  case KEY_F(19):			/* shift-F9 on some curses implementations */
@@ -1064,7 +1064,7 @@ BOOL win_main_iteration(void)
 		ch = win_getch();
 	if (ch) {
 		win_handle_key(ch);
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 /*		flushinp(); */
 #endif
 		last_ch = win_getch();

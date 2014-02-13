@@ -41,11 +41,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if !defined(__OS2__) && !defined(__EMX__) && !(defined(WIN32)&&!defined(__MINGW32__))
+#if !defined(__OS2__) && !defined(__EMX__) && !(defined(_WIN32)&&!defined(__MINGW32__))
 #include <dirent.h>
 #endif
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #include <direct.h>
 #endif
 
@@ -329,7 +329,7 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 	int cnt = 0, max = 0, i;
 
 	if (
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 		!strcmp (path,"/proc/") ||
 		!strcmp (path,"/dev/") ||
 #endif
@@ -826,7 +826,7 @@ static FREQ_DATA *freq_data_init (const char *path)
 	char *pos;
 
 	data->path[0] = '\0';
-#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(_WIN32)
 	if (*path!=PATH_SEP && *(path+1)!=':')
 #else
 	if (*path != PATH_SEP)
@@ -880,7 +880,7 @@ void freq_open (const char *title, const char *path, int actline,
 		path_first = strdup (freq_data->path);
 
 		/* error on initial path -> try root directory */
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 		strcpy (freq_data->path,"c:"PATH_SEP_STR);
 #else
 		strcpy (freq_data->path,PATH_SEP_STR);
@@ -943,7 +943,7 @@ int list_scan_dir (char *path, BOOL quiet)
 	int added = 0;
 	char dir[PATH_MAX<<1]="", *pos;
 
-#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(WIN32)
+#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(_WIN32)
 	if (*path!=PATH_SEP && *(path+1)!=':')
 #else
 	if (*path != PATH_SEP)
