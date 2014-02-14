@@ -3172,6 +3172,10 @@ might be able to use the hardware capabilities of some sound cards.
 This driver is only available under OS/2 version 3 and higher (Warp), and uses
 the ``Direct Audio Real-Time'' interface.@*
 This driver only supports software mixing.
+@item drv_dc
+This driver is only for the Dreamcast platform, and outputs a stream to the
+AICA SPU of a Dreamcast.@*
+This driver only supports software mixing. This driver is not tested yet.
 @item drv_ds
 This driver is only available under WIN32, and uses the ``DirectSound'' api.@*
 This driver only supports software mixing.
