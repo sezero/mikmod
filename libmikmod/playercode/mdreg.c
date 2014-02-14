@@ -101,6 +101,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_OSX
 	_mm_registerdriver(&drv_osx);
 #endif
+#ifdef DRV_DC
+	_mm_registerdriver(&drv_dc);
+#endif
 #ifdef DRV_GP32
 	_mm_registerdriver(&drv_gp32);
 #endif

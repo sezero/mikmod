@@ -14,6 +14,7 @@ libmikmod v3.3.6 was released on XX-XXX-XXXX.
 - Configury, NAS driver: Use the configury detected X header and
   library locations when necessary, not just hardcoded /usr/X11R6/.
 - Several configury and makefile clean-ups.
+- Added Dreamcast driver from the old 3.2.0b2 dreamcast.es port.
 
 
 Summary of changes between libmikmod 3.3.4 and libmikmod 3.3.5:
