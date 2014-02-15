@@ -22,7 +22,6 @@ With a fallback to:
     cd build
     cmake ..             # Non-interactive application.
 
-This will build and install the libmikmod shared and static libraries.
 For installing under windows, consult the CMake documentation for
 generating a Visual C, MinGW, etc. compatible makefile or project.
 
