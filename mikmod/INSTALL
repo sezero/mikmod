@@ -22,6 +22,8 @@ With a fallback to:
     cd build
     cmake ..             # Non-interactive application.
 
+You need libmikmod compiled and installed on your system.
+
 For installing under windows, consult the CMake documentation for
 generating a Visual C, MinGW, etc. compatible makefile or project.
 
