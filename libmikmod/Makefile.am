@@ -31,6 +31,7 @@ libmikmod_la_SOURCES = \
 		drivers/drv_aix.c \
 		drivers/drv_alsa.c \
 		drivers/drv_dart.c \
+		drivers/drv_dc.c \
 		drivers/drv_ds.c \
 		drivers/drv_esd.c \
 		drivers/drv_gp32.c \

@@ -4,6 +4,7 @@ EXTRA_DIST = CMakeLists.txt \
              drv_aix.c    \
              drv_alsa.c   \
              drv_dart.c   \
+             drv_dc.c     \
              drv_ds.c     \
              drv_esd.c    \
              drv_gp32.c   \
