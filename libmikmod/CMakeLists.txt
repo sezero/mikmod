@@ -41,13 +41,13 @@ SET(CPACK_PACKAGE_VERSION_PATCH ${LIBMIKMOD_MICRO_VERSION})
 SET(CPACK_PACKAGE_NAME "libmikmod")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libmikmod - a module file playing and sound library")
 SET(CPACK_PACKAGE_VENDOR "Shlomi Fish")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.LESSER")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING.LESSER")
 
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_DESCRIPTION_SUMMARY} ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
-SET (base_with_ver "libmikmod-[0-9]+\\\\.[0-9]+\\\\.[0-9]+")
+SET(base_with_ver "libmikmod-[0-9]+\\\\.[0-9]+\\\\.[0-9]+")
 SET(CPACK_SOURCE_IGNORE_FILES
     "/_CPack_Packages/"
     "/CMakeFiles/"
@@ -292,13 +292,13 @@ ENDIF()
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 # to find mikmod_internals.h:
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_SOURCE_DIR})
+INCLUDE_DIRECTORIES(BEFORE "${CMAKE_SOURCE_DIR}/include")
 
 # to find config.h and mikmod[_build].h:
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-FILE (MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/include")
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR})
+FILE (MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
+INCLUDE_DIRECTORIES(BEFORE "${CMAKE_BINARY_DIR}/include")
 
 CHECK_MULTI_INCLUDE_FILES(
     "dlfcn.h" "fcntl.h" "limits.h" "malloc.h" "memory.h" "strings.h" "sys/ioctl.h" "unistd.h" "windows.h"
@@ -794,24 +794,24 @@ ELSE(UNIX)
 ENDIF(UNIX)
 LIST (APPEND EXTRA_LIBS ${MATH_LIB})
 
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/macintosh/mikmod.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/macintosh/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/mikmod.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/win32/mikmod.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_CURRENT_BINARY_DIR}/win32/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/macosx/Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/Info.plist")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/macosx/InfoPlist.strings.in" "${CMAKE_CURRENT_BINARY_DIR}/macosx/InfoPlist.strings")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/config.h.cmake" "${CMAKE_BINARY_DIR}/config.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/include/mikmod.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/include/mikmod_build.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macintosh/mikmod.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macintosh/mikmod_build.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macosx/mikmod.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macosx/mikmod_build.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/win32/mikmod.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/win32/mikmod_build.h")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/macosx/Info.plist.in" "${CMAKE_BINARY_DIR}/macosx/Info.plist")
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/macosx/InfoPlist.strings.in" "${CMAKE_BINARY_DIR}/macosx/InfoPlist.strings")
 
 SET(prefix ${CMAKE_INSTALL_PREFIX})
 SET(exec_prefix "\${prefix}")
 SET(libdir "\${exec_prefix}/lib${LIB_SUFFIX}")
 SET(includedir "\${prefix}/include")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod-config.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config" @ONLY)
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libmikmod.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc" @ONLY)
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/libmikmod-config.in" "${CMAKE_BINARY_DIR}/libmikmod-config" @ONLY)
+CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/libmikmod.pc.in" "${CMAKE_BINARY_DIR}/libmikmod.pc" @ONLY)
 
 FOREACH (TGT ${LIBMIKMOD_LIBS})
     TARGET_LINK_LIBRARIES ("${TGT}"
@@ -826,21 +826,21 @@ INSTALL(
 )
 
 INSTALL(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/libmikmod-config"
+    FILES "${CMAKE_BINARY_DIR}/libmikmod-config"
     PERMISSIONS GROUP_EXECUTE GROUP_READ OWNER_EXECUTE OWNER_READ OWNER_WRITE WORLD_EXECUTE WORLD_READ
     DESTINATION "bin"
 )
 
 INSTALL(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/include/mikmod.h"
+        "${CMAKE_BINARY_DIR}/include/mikmod.h"
     DESTINATION
         "include"
 )
 
 INSTALL(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/libmikmod.pc"
+        "${CMAKE_BINARY_DIR}/libmikmod.pc"
     DESTINATION
         "lib${LIB_SUFFIX}/pkgconfig"
 )
