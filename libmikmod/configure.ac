@@ -926,6 +926,16 @@ fi
 if test $libmikmod_driver_oss = yes && test $libmikmod_mingw = no && test $libmikmod_darwin = no
 then
 	AC_CHECK_HEADERS([sys/soundcard.h machine/soundcard.h soundcard.h])
+
+	# NetBSD and OpenBSD use ossaudio emulation layer,
+	# otherwise no link library is needed.
+	oss_library=""
+	case $host_os in
+	netbsd*|openbsd*)
+		AC_CHECK_LIB([ossaudio],[_oss_ioctl],[oss_library="-lossaudio"])
+		;;
+	esac
+
 	AC_MSG_CHECKING([whether OSS code compiles])
 	AC_TRY_COMPILE([#ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
@@ -946,6 +956,9 @@ error No OSS header present.
 	if test $libmikmod_driver_oss = yes; then
 		libmikmod_driverlist="oss $libmikmod_driverlist"
 		AC_DEFINE([DRV_OSS], 1, [Define if the Open Sound System driver is compiled])
+		if test -n "$oss_library"; then
+			LIBRARY_LIB="$oss_library $LIBRARY_LIB"
+		fi
 	fi
 fi
 
