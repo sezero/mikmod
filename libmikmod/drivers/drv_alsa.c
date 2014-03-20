@@ -135,7 +135,8 @@ static int ALSA_Link(void)
 	if (libasound) return 0;
 
 	/* load libasound.so */
-	libasound = dlopen("libasound.so",RTLD_LAZY|RTLD_GLOBAL);
+	libasound = dlopen("libasound.so.2",RTLD_LAZY|RTLD_GLOBAL);
+	if (!libasound) libasound = dlopen("libasound.so",RTLD_LAZY|RTLD_GLOBAL);
 	if (!libasound) return 1;
 
 	if (!(alsa_pcm_subformat_mask_malloc = (int (*)(snd_pcm_subformat_mask_t **))

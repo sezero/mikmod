@@ -5,6 +5,7 @@ libmikmod v3.3.6 was released on XX-XXX-XXXX.
 
 - UMX loader: Minor corrections to the container parse code with
   relation to upkg file format. (for correctness' sake only...)
+- ALSA and ESD drivers: Fixed a dlopen() issue.
 - PulseAudio driver: Simplified its command line parser procedure,
   so that it always sets server and sink to some value, NULL or
   otherwise, and fix a very minor memory leak on some occasions.

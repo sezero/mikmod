@@ -94,7 +94,8 @@ static int ESD_Link(void)
 	if (libesd) return 0;
 
 	/* load libesd.so */
-	libesd=dlopen("libesd.so",RTLD_LAZY|RTLD_GLOBAL);
+	libesd=dlopen("libesd.so.0",RTLD_LAZY|RTLD_GLOBAL);
+	if (!libesd) libesd=dlopen("libesd.so",RTLD_LAZY|RTLD_GLOBAL);
 	if (!libesd) return 1;
 
 	/* resolve function references */
