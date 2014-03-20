@@ -291,7 +291,13 @@ static int Ultra_Link(void)
 		return 0;
 
 	/* load libgus.so */
-	libgus = dlopen("libgus.so", RTLD_LAZY | RTLD_GLOBAL);
+#if LIBGUS_VERSION_MAJOR < 0x0004
+	libgus = dlopen("libgus.so.3", RTLD_LAZY | RTLD_GLOBAL);
+#else
+	libgus = dlopen("libgus.so.4", RTLD_LAZY | RTLD_GLOBAL);
+#endif
+	if (!libgus) /* then this won't succeed either, but whatever.. */
+		libgus = dlopen("libgus.so", RTLD_LAZY | RTLD_GLOBAL);
 	if (!libgus)
 		return 1;
 
