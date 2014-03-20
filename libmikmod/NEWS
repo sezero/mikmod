@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.3.5 and libmikmod 3.3.6:
 ========================================================================
 
-libmikmod v3.3.6 was released on XX-XXX-XXXX.
+libmikmod v3.3.6 was released on 20-Mar-2014.
 
 - UMX loader: Minor corrections to the container parse code with
   relation to upkg file format. (for correctness' sake only...)
