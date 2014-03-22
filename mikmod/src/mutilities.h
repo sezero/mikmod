@@ -39,18 +39,23 @@
 
 /*========== Constants */
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
 #ifndef PATH_MAX
-#ifdef _POSIX_PATH_MAX
-#define PATH_MAX _POSIX_PATH_MAX
+#ifdef MAXPATHLEN
+#define PATH_MAX MAXPATHLEN
 #elif defined(_MAX_PATH)
 #define PATH_MAX _MAX_PATH
+#elif defined(_POSIX_PATH_MAX)
+#define PATH_MAX _POSIX_PATH_MAX
 #else
 #define PATH_MAX 256
 #endif
-#endif
+#endif /* PATH_MAX */
 
 #define PATH_SEP '/'
 #define PATH_SEP_STR "/"

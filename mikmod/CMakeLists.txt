@@ -72,10 +72,10 @@ IF(UNIX OR APPLE)
 ENDIF()
 
 CHECK_MULTI_INCLUDE_FILES(
-    "ncurses.h"
+    "ncurses.h" "termios.h"
     "fcntl.h" "fnmatch.h" "inttypes.h" "limits.h" "memory.h" "sched.h"
-    "sys/ioctl.h" "sys/wait.h" "sys/time.h" "sys/types.h" "sys/stat.h"
-    "stdint.h" "stdlib.h" "string.h" "strings.h" "termios.h" "unistd.h"
+    "sys/ioctl.h" "sys/param.h" "sys/wait.h" "sys/time.h" "sys/types.h"
+    "sys/stat.h" "stdint.h" "stdlib.h" "string.h" "strings.h" "unistd.h"
     "pthread.h"
 )
 

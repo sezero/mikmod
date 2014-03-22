@@ -92,7 +92,7 @@ dnl ========================
 
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/time.h unistd.h)
+AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(fnmatch.h)
 AC_CHECK_HEADERS(ncurses.h)
 AC_CHECK_HEADERS(sched.h)

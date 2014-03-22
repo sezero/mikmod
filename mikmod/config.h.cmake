@@ -71,6 +71,9 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #cmakedefine HAVE_SYS_IOCTL_H
 
+/* Define to 1 if you have the <sys/param.h> header file. */
+#cmakedefine HAVE_SYS_PARAM_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H
 
