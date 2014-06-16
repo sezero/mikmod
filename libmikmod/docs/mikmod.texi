@@ -3196,6 +3196,9 @@ This driver only supports software mixing.
 This driver is only available under OS/2 version 3 and higher (Warp), and OS/2
 2.x with MMPM/2.@*
 This driver only supports software mixing.
+@item drv_osles
+This driver is only available under Android and uses OpenSL ES.@*
+This driver only supports software mixing.
 @item drv_oss
 This driver is available under any Unix with the Open Sound System drivers
 installed. Linux and FreeBSD also come with the OSS/Lite driver (the
