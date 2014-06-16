@@ -66,9 +66,9 @@ extern "C" {
  *  ========== Library version
  */
 
-#define LIBMIKMOD_VERSION_MAJOR @LIBMIKMOD_MAJOR_VERSION@L
-#define LIBMIKMOD_VERSION_MINOR @LIBMIKMOD_MINOR_VERSION@L
-#define LIBMIKMOD_REVISION      @LIBMIKMOD_MICRO_VERSION@L
+#define LIBMIKMOD_VERSION_MAJOR 3L
+#define LIBMIKMOD_VERSION_MINOR 3L
+#define LIBMIKMOD_REVISION      6L
 
 #define LIBMIKMOD_VERSION \
     ((LIBMIKMOD_VERSION_MAJOR<<16)| \
@@ -106,7 +106,7 @@ MIKMODAPI extern long MikMod_GetVersion(void);
 typedef char CHAR;
 #endif
 
-@DOES_NOT_HAVE_SIGNED@
+
 
 #if defined (_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(__powerpc64__)
 /* 64 bit architectures */
@@ -758,6 +758,7 @@ MIKMODAPI extern MDRIVER* md_driver;   /* Current driver in use. */
 /* Known drivers list */
 
 MIKMODAPI extern struct MDRIVER drv_nos;    /* no sound */
+#if 0 /* only OpenSL ES driver for android is enabled, commenting out others */
 MIKMODAPI extern struct MDRIVER drv_pipe;   /* piped output */
 MIKMODAPI extern struct MDRIVER drv_raw;    /* raw file disk writer [music.raw] */
 MIKMODAPI extern struct MDRIVER drv_stdout; /* output to stdout */
@@ -796,7 +797,7 @@ MIKMODAPI extern struct MDRIVER drv_gp32;   /* GP32 Sound driver */
 
 MIKMODAPI extern struct MDRIVER drv_wss;    /* DOS WSS driver */
 MIKMODAPI extern struct MDRIVER drv_sb;     /* DOS S/B driver */
-
+#endif
 MIKMODAPI extern struct MDRIVER drv_osles;  /* OpenSL ES driver for android */
 
 /*========== Virtual channel mixer interface (for user-supplied drivers only) */

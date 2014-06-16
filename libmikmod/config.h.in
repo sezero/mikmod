@@ -46,6 +46,9 @@
 /* Define if the OS/2 MCI driver is compiled */
 #undef DRV_OS2
 
+/* Define this if you want the OpenSL ES driver for Android */
+#undef DRV_OSLES
+
 /* Define if the Open Sound System driver is compiled */
 #undef DRV_OSS
 

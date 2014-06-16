@@ -797,6 +797,8 @@ MIKMODAPI extern struct MDRIVER drv_gp32;   /* GP32 Sound driver */
 MIKMODAPI extern struct MDRIVER drv_wss;    /* DOS WSS driver */
 MIKMODAPI extern struct MDRIVER drv_sb;     /* DOS S/B driver */
 
+MIKMODAPI extern struct MDRIVER drv_osles;  /* OpenSL ES driver for android */
+
 /*========== Virtual channel mixer interface (for user-supplied drivers only) */
 
 MIKMODAPI extern int   VC_Init(void);

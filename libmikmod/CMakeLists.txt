@@ -337,6 +337,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_nas.c
     drivers/drv_nos.c
     drivers/drv_openal.c
+    drivers/drv_osles.c
     drivers/drv_oss.c
     drivers/drv_osx.c
     drivers/drv_pipe.c

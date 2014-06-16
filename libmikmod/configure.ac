@@ -85,6 +85,8 @@ libmikmod_driver_wav=yes
 libmikmod_driver_raw=yes
 libmikmod_driver_stdout=yes
 libmikmod_driver_pipe=yes
+# ANDROID / DRV_OSLES for is not configury-integrated..
+libmikmod_driver_osles=no
 
 libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
@@ -969,6 +971,12 @@ then
 		AC_DEFINE([DRV_OSX], 1, [Define this if you want the MacOS X CoreAudio driver])
 		LIBRARY_LIB="-framework CoreAudio $LIBRARY_LIB"
 	fi
+fi
+
+if test $libmikmod_driver_osles = yes
+then
+	AC_DEFINE([DRV_OSLES], 1, [Define this if you want the OpenSL ES driver for Android])
+	LIBRARY_LIB="-lOpenSLES $LIBRARY_LIB"
 fi
 
 if test $libmikmod_darwin = yes

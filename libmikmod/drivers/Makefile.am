@@ -14,6 +14,7 @@ EXTRA_DIST = CMakeLists.txt \
              drv_nos.c    \
              drv_openal.c \
              drv_os2.c    \
+             drv_osles.c  \
              drv_oss.c    \
              drv_osx.c    \
              drv_pipe.c   \

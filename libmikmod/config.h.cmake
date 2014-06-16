@@ -26,6 +26,8 @@
 #cmakedefine DRV_NAS 1
 /* Define if the OpenAL driver is compiled */
 #cmakedefine DRV_OPENAL 1
+/* Define this if you want the OpenSL ES driver for Android */
+#cmakedefine DRV_OSLES 1
 /* Define if the Open Sound System driver is compiled */
 #cmakedefine DRV_OSS 1
 /* Define if the Linux SAM9407 driver is compiled */

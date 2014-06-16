@@ -107,6 +107,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_GP32
 	_mm_registerdriver(&drv_gp32);
 #endif
+#ifdef DRV_OSLES
+	_mm_registerdriver(&drv_osles);/* OpenSL ES driver for android */
+#endif
 
 	/* dos drivers */
 #ifdef DRV_WSS

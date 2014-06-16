@@ -100,6 +100,14 @@ Contributors on the Windows side
 * Paul Spark <sparkynz74@gmail.com>
   created the SDL windows driver and made changes to build with MSVC++ 6.
 
+Contributors on the Android side
+--------------------------------
+
+* Radovan Cervenka <radovan.cervenka@gmail.com>
+  provided the Android building artifacts and ported the old OpenSL ES
+  driver from the old http://github.com/0xD34D/libmikmod-android project
+  to libmikmod-3.
+
 Contributors on the Dos side
 ----------------------------
 
