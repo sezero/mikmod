@@ -166,4 +166,4 @@
 #define PACKAGE "libmikmod"
 
 /* Version number of package */
-#define VERSION "3.3.6"
+#define VERSION "3.3.7"
