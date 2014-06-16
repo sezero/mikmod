@@ -2,6 +2,8 @@ Building: To compile the Android version, the Android NDK must be
 installed on your machine. If so, type the 'ndk-build' command in
 command line. The compiled shared Android libraries for ARM and
 ARMv7-A architectures are placed to the generated libs directory.
+If necessary, edit config.h and jni/Android.mk to modify compiler
+flags and customize the build.
 
 The compiled libraries do not provide a JNI interface for Java
 applications, because the primary intention is (just) to use

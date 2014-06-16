@@ -85,7 +85,7 @@ libmikmod_driver_wav=yes
 libmikmod_driver_raw=yes
 libmikmod_driver_stdout=yes
 libmikmod_driver_pipe=yes
-# ANDROID / DRV_OSLES for is not configury-integrated..
+# ANDROID and DRV_OSLES for is not configury-integrated..
 libmikmod_driver_osles=no
 
 libmikmod_dynload=yes
@@ -973,9 +973,10 @@ then
 	fi
 fi
 
+#OpenSL ES driver (e.g. Android)
 if test $libmikmod_driver_osles = yes
 then
-	AC_DEFINE([DRV_OSLES], 1, [Define this if you want the OpenSL ES driver for Android])
+	AC_DEFINE([DRV_OSLES], 1, [Define if the OpenSL ES driver is compiled])
 	LIBRARY_LIB="-lOpenSLES $LIBRARY_LIB"
 fi
 

@@ -18,15 +18,14 @@
 	02111-1307, USA.
 */
 
-/* Driver for output to OpenSL ES  --  Adapted from the
- * libmikmod-android project https://github.com/0xD34D/libmikmod-android
+/* Driver for output to OpenSL ES (for Android native code)
+ * Adapted from the libmikmod-android project @ https://github.com/0xD34D/libmikmod-android
  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <assert.h>
 #include "mikmod_internals.h"
 
 #ifdef DRV_OSLES
@@ -37,6 +36,14 @@
 
 #define NUMBUFFERS	2	/* number of buffers */
 #define BUFFERSIZE	120	/* buffer size in milliseconds */
+
+#ifndef SL_BYTEORDER_NATIVE
+#if defined(SL_BYTEORDER_NATIVEBIGENDIAN) || defined(WORDS_BIGENDIAN)
+#define SL_BYTEORDER_NATIVE		SL_BYTEORDER_BIGENDIAN
+#else
+#define SL_BYTEORDER_NATIVE		SL_BYTEORDER_LITTLEENDIAN
+#endif
+#endif
 
 /* engine interfaces */
 static SLObjectItf engineObject = NULL;
@@ -49,29 +56,30 @@ static SLEnvironmentalReverbItf outputMixEnvironmentalReverb = NULL;
 /* buffer queue player interfaces */
 static SLObjectItf bqPlayerObject = NULL;
 static SLPlayItf bqPlayerPlay;
-static SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
 static SLEffectSendItf bqPlayerEffectSend;
+/* Android-specific buffer queue: */
+static SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
 
 /* aux effect on the output mix, used by the buffer queue player */
 static const SLEnvironmentalReverbSettings reverbSettings =
 			SL_I3DL2_ENVIRONMENT_PRESET_DEFAULT;
 
 static signed char*	buffer[NUMBUFFERS];	/* pointers to buffers */
-static short		buffersout;		/* number of buffers playing/about to be played */
-static short		nextbuffer;		/* next buffer to be mixed */
+static int		buffersout;		/* number of buffers playing/about to be played */
+static int		nextbuffer;		/* next buffer to be mixed */
 static unsigned long	buffersize;		/* buffer size in bytes */
 
 
 /* this callback handler is called every time a buffer finishes playing */
 static void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 {
-	assert(bq == bqPlayerBufferQueue);
-	assert(NULL == context);
+	if (context != NULL || bq != bqPlayerBufferQueue)
+		return;/* NOT supposed to happen, but... */
 	--buffersout;
 }
 
 /* create buffer queue audio player */
-static void createBufferQueueAudioPlayer(void)
+static SLresult createBufferQueueAudioPlayer(void)
 {
 	SLuint32 sample_rate = md_mixfreq * 1000;/*SL_SAMPLINGRATE_44_1;*/
 	SLresult result;
@@ -83,7 +91,7 @@ static void createBufferQueueAudioPlayer(void)
 	SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
 	SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, channels, sample_rate,
 			SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-			SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
+			SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_NATIVE};
 	SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
 	/* configure audio sink */
@@ -93,33 +101,35 @@ static void createBufferQueueAudioPlayer(void)
 	/* create audio player */
 	result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc, &audioSnk,
 						    2, ids, req);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
 
 	/* realize the player */
 	result = (*bqPlayerObject)->Realize(bqPlayerObject, SL_BOOLEAN_FALSE);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
 
 	/* get the play interface */
 	result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_PLAY, &bqPlayerPlay);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
 
 	/* get the buffer queue interface */
 	result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_BUFFERQUEUE,
 						 &bqPlayerBufferQueue);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
 
 	/* register callback on the buffer queue */
 	result = (*bqPlayerBufferQueue)->RegisterCallback(bqPlayerBufferQueue, bqPlayerCallback, NULL);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
 
 	/* get the effect send interface */
 	result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_EFFECTSEND,
 						 &bqPlayerEffectSend);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
 
 	/* set the player's state to playing */
 	result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING);
-	assert(SL_RESULT_SUCCESS == result);
+	if (SL_RESULT_SUCCESS != result) return result;
+
+	return SL_RESULT_SUCCESS;
 }
 
 static BOOL OSLES_IsPresent(void)
@@ -129,7 +139,7 @@ static BOOL OSLES_IsPresent(void)
 
 static int OSLES_Init(void)
 {
-	short samplesize;
+	int samplesize;
 	int n;
 	SLresult result;
 	const SLInterfaceID ids[1] = {SL_IID_ENVIRONMENTALREVERB};
@@ -141,28 +151,23 @@ static int OSLES_Init(void)
 
 	/* create engine */
 	result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
-	if(SL_RESULT_SUCCESS != result)
-		return 1;
+	if (SL_RESULT_SUCCESS != result) goto _fail;
 
 	/* realize the engine */
 	result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
-	if (SL_RESULT_SUCCESS != result)
-		return 1;
+	if (SL_RESULT_SUCCESS != result) goto _fail;
 
 	/* get the engine interface, which is needed in order to create other objects */
 	result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
-	if (SL_RESULT_SUCCESS != result)
-		return 1;
+	if (SL_RESULT_SUCCESS != result) goto _fail;
 
 	/* create output mix, with environmental reverb specified as a non-required interface */
 	result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, ids, req);
-	if (SL_RESULT_SUCCESS != result)
-		return 1;
+	if (SL_RESULT_SUCCESS != result) goto _fail;
 
 	/* realize the output mix */
 	result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
-	if (SL_RESULT_SUCCESS != result)
-		return 1;
+	if (SL_RESULT_SUCCESS != result) goto _fail;
 
 #if 0
 	/* get the environmental reverb interface
@@ -177,9 +182,10 @@ static int OSLES_Init(void)
 						outputMixEnvironmentalReverb, &reverbSettings);
 	}
 #endif
-	createBufferQueueAudioPlayer();
-	buffersize = md_mixfreq * samplesize * BUFFERSIZE / 1000;
+	result = createBufferQueueAudioPlayer();
+	if (SL_RESULT_SUCCESS != result) goto _fail;
 
+	buffersize = md_mixfreq * samplesize * BUFFERSIZE / 1000;
 	for (n = 0; n < NUMBUFFERS; n++) {
 		buffer[n] = MikMod_malloc(buffersize);
 		if (!buffer[n]) {
@@ -192,13 +198,14 @@ static int OSLES_Init(void)
 	buffersout = nextbuffer = 0;
 
 	return VC_Init();
+
+_fail:	_mm_errno = MMERR_OPENING_AUDIO;
+	return 1;
 }
 
 static void OSLES_Exit(void)
 {
 	int n;
-
-	VC_Exit();
 
 	/* destroy buffer queue audio player object, and invalidate all associated interfaces */
 	if (bqPlayerObject != NULL) {
@@ -227,6 +234,8 @@ static void OSLES_Exit(void)
 		engineEngine = NULL;
 	}
 
+	VC_Exit();
+
 	for (n = 0; n < NUMBUFFERS; n++) {
 		MikMod_free(buffer[n]);
 		buffer[n] = NULL;
@@ -235,12 +244,12 @@ static void OSLES_Exit(void)
 
 static void OSLES_Update(void)
 {
-	ULONG done = 1;
+	ULONG done;
+	SLresult result;
 
 	while (buffersout < NUMBUFFERS) {
 		done = VC_WriteBytes(buffer[nextbuffer], buffersize);
 		if (!done) break;
-		SLresult result;
 		/* enqueue another buffer */
 		result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, buffer[nextbuffer], done);
 		if(SL_RESULT_SUCCESS != result)

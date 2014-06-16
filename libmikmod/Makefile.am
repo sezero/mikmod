@@ -1,12 +1,15 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = drivers include loaders mmio playercode posix \
-          dlapi dos macintosh macosx os2 win32 docs examples
+	  dlapi dos macintosh macosx os2 win32 docs examples
 
 bin_SCRIPTS = libmikmod-config
 
+# autotools discourages adding directories to EXTRA_DIST,
+# but I'm doing it nonetheless to include the our custom
+# cmake scripts and the Android build files..
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     config.h.cmake CMakeLists.txt cmake
+	     config.h.cmake CMakeLists.txt cmake android
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
