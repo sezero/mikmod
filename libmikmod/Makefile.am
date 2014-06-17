@@ -6,7 +6,8 @@ bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     config.h.cmake CMakeLists.txt cmake android dc psp
+	     config.h.cmake CMakeLists.txt \
+	     cmake android dc gp32 psp
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
@@ -100,4 +101,3 @@ libmikmod_la_SOURCES = \
 
 libmikmod_la_LDFLAGS = -no-undefined -version-info @MIKMOD_LT_CURRENT@:@MIKMOD_LT_REVISION@:@MIKMOD_LT_AGE@
 libmikmod_la_LIBADD = @LTLIBOBJS@ @LIBRARY_LIB@
-
