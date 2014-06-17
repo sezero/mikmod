@@ -7,7 +7,7 @@ AS = arm-elf-as
 AR = arm-elf-ar
 RANLIB = arm-elf-ranlib
 
-INCLUDES=-I../../lib.src/include -I../include -I../gp32
+INCLUDES=-I../../lib.src/include -I../gp32 -I../include
 CPPFLAGS=-DMIKMOD_BUILD -DDRV_GP32
 CFLAGS  =-O2 -Wall -DLITTLE_ENDIAN -DGP32 -mtune=arm9tdmi
 

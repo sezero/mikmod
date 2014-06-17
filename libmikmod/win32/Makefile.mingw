@@ -67,7 +67,7 @@ CFLAGS+=-ffast-math
 LDFLAGS=
 LDLIBS+=-lm
 
-COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I../win32
+COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../win32 -I../include
 
 .SUFFIXES:
 .SUFFIXES: .o .c
