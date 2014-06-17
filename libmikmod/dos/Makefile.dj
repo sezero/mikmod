@@ -12,7 +12,7 @@
 # - depend: rebuild dependencies (at the end of this makefile)
 #    You should have makedep tool from Crystal Space project installed.
 #------------------------------------------------------------------------------#
-# Edit include/config.h to disable/enable certain drivers, etc, if necessary.
+# Edit config.h to disable/enable certain drivers, etc, if necessary.
 #------------------------------------------------------------------------------#
 
 # Set to 1 for debug build
@@ -31,7 +31,7 @@ AR=$(CROSS)-ar
 RANLIB=$(CROSS)-ranlib
 endif
 CFLAGS = -DMIKMOD_BUILD -DHAVE_CONFIG_H $(INCLUDE)
-INCLUDE = -I../dos/include -I../include
+INCLUDE = -I../dos -I../drivers/dos -I../include
 ARFLAGS = cr
 
 ifeq ($(DEBUG),1)
@@ -41,14 +41,14 @@ CFLAGS += -O2 -Wall -fomit-frame-pointer -ffast-math
 endif
 
 # Directory layout
-SRCPATH = ../dos/src ../loaders ../mmio ../playercode
+SRCPATH = ../drivers/dos ../loaders ../mmio ../playercode
 OUT = out
 
 # MikMod drivers
-# stdout and pipe drivers are disabled: edit include/config.h to enable them.
+# stdout and pipe drivers are disabled: edit config.h to enable them.
 DRIVERS = drv_ultra drv_sb drv_wss drv_wav drv_aiff drv_raw drv_stdout drv_pipe drv_nos
 
-vpath %.c $(SRCPATH) ../drivers src
+vpath %.c $(SRCPATH) ../drivers
 
 # Build rules
 $(OUT)/%.o: %.c
@@ -79,51 +79,57 @@ libmikmod.a: $(OBJ)
 
 # DO NOT DELETE this line - makedep depends on it
 
-out/load_669.o: include/config.h ../include/mikmod_internals.h
-out/load_amf.o: include/config.h ../include/mikmod_internals.h
-out/load_asy.o: include/config.h ../include/mikmod_internals.h
-out/load_dsm.o: include/config.h ../include/mikmod_internals.h
-out/load_far.o: include/config.h ../include/mikmod_internals.h
-out/load_gdm.o: include/config.h ../include/mikmod_internals.h
-out/load_imf.o: include/config.h ../include/mikmod_internals.h
-out/load_it.o: include/config.h ../include/mikmod_internals.h
-out/load_m15.o: include/config.h ../include/mikmod_internals.h
-out/load_med.o: include/config.h ../include/mikmod_internals.h
-out/load_mod.o: include/config.h ../include/mikmod_internals.h
-out/load_mtm.o: include/config.h ../include/mikmod_internals.h
-out/load_s3m.o: include/config.h ../include/mikmod_internals.h
-out/load_stm.o: include/config.h ../include/mikmod_internals.h
-out/load_stx.o: include/config.h ../include/mikmod_internals.h
-out/load_ult.o: include/config.h ../include/mikmod_internals.h
-out/load_umx.o: include/config.h ../include/mikmod_internals.h
-out/load_uni.o: include/config.h ../include/mikmod_internals.h
-out/load_xm.o: include/config.h ../include/mikmod_internals.h
-out/mdreg.o: include/config.h ../include/mikmod_internals.h
-out/mdriver.o: include/config.h ../include/mikmod_internals.h
-out/mloader.o: include/config.h ../include/mikmod_internals.h
-out/mlreg.o: include/config.h ../include/mikmod_internals.h
-out/mlutil.o: include/config.h ../include/mikmod_internals.h
-out/mmalloc.o: include/config.h ../include/mikmod_internals.h
-out/mmerror.o: include/config.h ../include/mikmod_internals.h
-out/mmio.o: include/config.h ../include/mikmod_internals.h
-out/mplayer.o: include/config.h ../include/mikmod_internals.h
-out/munitrk.o: include/config.h ../include/mikmod_internals.h
-out/mwav.o: include/config.h ../include/mikmod_internals.h
-out/npertab.o: include/config.h ../include/mikmod_internals.h
-out/sloader.o: include/config.h ../include/mikmod_internals.h
-out/drv_ultra.o: include/config.h ../include/mikmod_internals.h
-out/drv_sb.o: include/config.h ../include/mikmod_internals.h include/dossb.h \
-  include/dosdma.h include/dosirq.h
-out/drv_wss.o: include/config.h ../include/mikmod_internals.h \
-  include/doswss.h include/dosdma.h include/dosirq.h
-out/drv_wav.o: include/config.h ../include/mikmod_internals.h
-out/drv_aiff.o: include/config.h ../include/mikmod_internals.h
-out/drv_raw.o: include/config.h ../include/mikmod_internals.h
-out/drv_stdout.o: include/config.h ../include/mikmod_internals.h
-out/drv_pipe.o: include/config.h ../include/mikmod_internals.h
-out/drv_nos.o: include/config.h ../include/mikmod_internals.h
-out/dosgus.o: include/dosgus.h include/dosdma.h include/dosirq.h
-out/dossb.o: include/dossb.h include/dosdma.h include/dosirq.h
-out/doswss.o: include/doswss.h include/dosdma.h include/dosirq.h
-out/dosdma.o: include/dosdma.h
-out/dosirq.o: include/dosirq.h
+out/load_669.o: config.h ../include/mikmod_internals.h
+out/load_amf.o: config.h ../include/mikmod_internals.h
+out/load_asy.o: config.h ../include/mikmod_internals.h
+out/load_dsm.o: config.h ../include/mikmod_internals.h
+out/load_far.o: config.h ../include/mikmod_internals.h
+out/load_gdm.o: config.h ../include/mikmod_internals.h
+out/load_imf.o: config.h ../include/mikmod_internals.h
+out/load_it.o: config.h ../include/mikmod_internals.h
+out/load_m15.o: config.h ../include/mikmod_internals.h
+out/load_med.o: config.h ../include/mikmod_internals.h
+out/load_mod.o: config.h ../include/mikmod_internals.h
+out/load_mtm.o: config.h ../include/mikmod_internals.h
+out/load_s3m.o: config.h ../include/mikmod_internals.h
+out/load_stm.o: config.h ../include/mikmod_internals.h
+out/load_stx.o: config.h ../include/mikmod_internals.h
+out/load_ult.o: config.h ../include/mikmod_internals.h
+out/load_umx.o: config.h ../include/mikmod_internals.h
+out/load_uni.o: config.h ../include/mikmod_internals.h
+out/load_xm.o: config.h ../include/mikmod_internals.h
+out/mdreg.o: config.h ../include/mikmod_internals.h
+out/mdriver.o: config.h ../include/mikmod_internals.h
+out/mloader.o: config.h ../include/mikmod_internals.h
+out/mlreg.o: config.h ../include/mikmod_internals.h
+out/mlutil.o: config.h ../include/mikmod_internals.h
+out/mmalloc.o: config.h ../include/mikmod_internals.h
+out/mmerror.o: config.h ../include/mikmod_internals.h
+out/mmio.o: config.h ../include/mikmod_internals.h
+out/mplayer.o: config.h ../include/mikmod_internals.h
+out/munitrk.o: config.h ../include/mikmod_internals.h
+out/mwav.o: config.h ../include/mikmod_internals.h
+out/npertab.o: config.h ../include/mikmod_internals.h
+out/sloader.o: config.h ../include/mikmod_internals.h
+out/drv_ultra.o: config.h ../include/mikmod_internals.h \
+  ../drivers/dos/libgus.h
+out/drv_sb.o: config.h ../include/mikmod_internals.h \
+  ../drivers/dos/dossb.h \
+  ../drivers/dos/dosdma.h ../drivers/dos/dosirq.h
+out/drv_wss.o: config.h ../include/mikmod_internals.h \
+  ../drivers/dos/doswss.h \
+  ../drivers/dos/dosdma.h ../drivers/dos/dosirq.h
+out/drv_wav.o: config.h ../include/mikmod_internals.h
+out/drv_aiff.o: config.h ../include/mikmod_internals.h
+out/drv_raw.o: config.h ../include/mikmod_internals.h
+out/drv_stdout.o: config.h ../include/mikmod_internals.h
+out/drv_pipe.o: config.h ../include/mikmod_internals.h
+out/drv_nos.o: config.h ../include/mikmod_internals.h
+out/dosgus.o: ../drivers/dos/dosgus.h ../drivers/dos/libgus.h \
+  ../drivers/dos/dosdma.h ../drivers/dos/dosirq.h
+out/dossb.o: ../drivers/dos/dossb.h ../drivers/dos/dosdma.h \
+  ../drivers/dos/dosirq.h
+out/doswss.o: ../drivers/dos/doswss.h ../drivers/dos/dosdma.h \
+  ../drivers/dos/dosirq.h
+out/dosdma.o: ../drivers/dos/dosdma.h
+out/dosirq.o: ../drivers/dos/dosirq.h

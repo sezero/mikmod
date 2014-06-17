@@ -85,7 +85,7 @@ libmikmod_driver_wav=yes
 libmikmod_driver_raw=yes
 libmikmod_driver_stdout=yes
 libmikmod_driver_pipe=yes
-# ANDROID and DRV_OSLES for is not configury-integrated..
+# ANDROID and DRV_OSLES are not configury-integrated
 libmikmod_driver_osles=no
 
 libmikmod_dynload=yes
@@ -1204,6 +1204,7 @@ docs/Makefile
 docs/libmikmod-config.1
 dlapi/Makefile
 drivers/Makefile
+drivers/dos/Makefile
 include/Makefile
 loaders/Makefile
 mmio/Makefile
@@ -1212,9 +1213,6 @@ posix/Makefile
 macintosh/Makefile
 macosx/Makefile
 os2/Makefile
-dos/Makefile
-dos/include/Makefile
-dos/src/Makefile
 win32/Makefile
 examples/Makefile])
 AC_CONFIG_HEADERS([config.h])
