@@ -3207,6 +3207,9 @@ This driver only supports software mixing.
 @item drv_osx
 This driver is available under MacOS X and Darwin, and uses the ``CoreAudio'' interface.@*
 This driver only supports software mixing.
+@item drv_psp
+This driver is only for the Playstation Portable platform, and is not tested yet.@*
+This driver only supports software mixing.
 @item drv_sam9407
 This driver is only available under Linux, and requires the Linux sam9407
 driver to be compiled for your current kernel.@*

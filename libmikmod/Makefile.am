@@ -4,12 +4,9 @@ SUBDIRS = drivers include loaders mmio playercode posix \
 
 bin_SCRIPTS = libmikmod-config
 
-# autotools discourages adding directories to EXTRA_DIST,
-# but I'm doing it nonetheless to include the our custom
-# cmake scripts and the Android build files..
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     config.h.cmake CMakeLists.txt cmake android
+	     config.h.cmake CMakeLists.txt cmake android psp
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
@@ -49,6 +46,7 @@ libmikmod_la_SOURCES = \
 		drivers/drv_osx.c \
 		drivers/drv_pulseaudio.c \
 		drivers/drv_pipe.c \
+		drivers/drv_psp.c \
 		drivers/drv_raw.c \
 		drivers/drv_sam9407.c \
 		drivers/drv_sb.c \

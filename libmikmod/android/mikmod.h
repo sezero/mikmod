@@ -792,12 +792,13 @@ MIKMODAPI extern struct MDRIVER drv_mac;    /* Macintosh Sound Manager driver */
 MIKMODAPI extern struct MDRIVER drv_osx;    /* MacOS X CoreAudio Driver */
 
 MIKMODAPI extern struct MDRIVER drv_dc;     /* Dreamcast driver */
-
 MIKMODAPI extern struct MDRIVER drv_gp32;   /* GP32 Sound driver */
+MIKMODAPI extern struct MDRIVER drv_psp;    /* PlayStation Portable driver */
 
 MIKMODAPI extern struct MDRIVER drv_wss;    /* DOS WSS driver */
 MIKMODAPI extern struct MDRIVER drv_sb;     /* DOS S/B driver */
 #endif
+
 MIKMODAPI extern struct MDRIVER drv_osles;  /* OpenSL ES driver for android */
 
 /*========== Virtual channel mixer interface (for user-supplied drivers only) */
