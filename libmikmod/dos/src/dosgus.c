@@ -41,7 +41,7 @@
 #include <string.h>
 
 #include "dosgus.h"
-#include "mikmod_build.h" /* for MikMod_malloc() & co */
+#include "mikmod.h" /* for MikMod_malloc() & co */
 
 /********************************************* Private variables/routines *****/
 

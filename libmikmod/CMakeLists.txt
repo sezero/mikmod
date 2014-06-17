@@ -60,8 +60,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "\\\\.so(\\\\.[0-9]+)*$"
     "/\\\\.svn/"
     "\\\\.(pdf|fo)$"
-    "/t/t/.*\\\\.exe$"
-    "/t/Presets"
     "/CMakeCache\\\\.txt$"
     "/CTestTestfile\\\\.cmake$"
     "/cmake_install\\\\.cmake$"
@@ -71,9 +69,9 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/libmikmod-config$"
     "^config\\\\.h$"
     "/install_manifest\\\\.txt$"
-    "/t/card-test-(parse|render)\\\\.c$"
+    "/t/"
     "/Testing/"
-    "ids-whitelist\\\\.txt"
+    "run-tests\\\\.pl"
     "/_Inline/"
     "/(B|build|BUILD)/"
     "/autom4te.cache/"
@@ -295,10 +293,8 @@ TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_SOURCE_DIR})
 INCLUDE_DIRECTORIES(BEFORE "${CMAKE_SOURCE_DIR}/include")
 
-# to find config.h and mikmod[_build].h:
+# to find config.h:
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR})
-FILE (MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_BINARY_DIR}/include")
 
 CHECK_MULTI_INCLUDE_FILES(
     "dlfcn.h" "fcntl.h" "limits.h" "malloc.h" "memory.h" "strings.h" "sys/ioctl.h" "unistd.h" "windows.h"
@@ -820,16 +816,6 @@ ENDIF(UNIX)
 LIST (APPEND EXTRA_LIBS ${MATH_LIB})
 
 CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/config.h.cmake" "${CMAKE_BINARY_DIR}/config.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/include/mikmod.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/include/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macintosh/mikmod.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macintosh/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macosx/mikmod.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/macosx/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/win32/mikmod.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/include/mikmod.h.in" "${CMAKE_BINARY_DIR}/win32/mikmod_build.h")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/macosx/Info.plist.in" "${CMAKE_BINARY_DIR}/macosx/Info.plist")
-CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/macosx/InfoPlist.strings.in" "${CMAKE_BINARY_DIR}/macosx/InfoPlist.strings")
 
 SET(prefix ${CMAKE_INSTALL_PREFIX})
 SET(exec_prefix "\${prefix}")
@@ -858,7 +844,7 @@ INSTALL(
 
 INSTALL(
     FILES
-        "${CMAKE_BINARY_DIR}/include/mikmod.h"
+        "${CMAKE_SOURCE_DIR}/include/mikmod.h"
     DESTINATION
         "include"
 )

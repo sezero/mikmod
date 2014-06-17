@@ -21,7 +21,7 @@ CFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_MALLOC_H -DHAVE_UNISTD_H -DHAVE_SN
 CFLAGS+=-O2 -Wall
 CFLAGS+=-G0 -fno-strict-aliasing
 #CFLAGS+=-g
-CFLAGS+=-I../include -I.. -I../psp
+CFLAGS+=-I../include -I../psp
 
 TARGET_LIB=libmikmod.a
 

@@ -1,4 +1,4 @@
-# libmikmod Makefile for targetting Darwin (Mac OS X)
+# libmikmod Makefile for targetting Darwin (i.e. Mac OS X)
 # Edit the compiler/linker flags, etc. to meet your needs
 
 ifeq ($(CROSS),)
@@ -68,7 +68,7 @@ LDFLAGS+=-Wl,-compatibility_version,4 -Wl,-current_version,6.0
 #CPPFLAGS+=-DHAVE_POSIX_MEMALIGN
 #LDFLAGS+=-mmacosx-version-min=10.6 -Wl,-lbundle1.o
 
-COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I.. -I../macosx
+COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I../macosx
 
 .SUFFIXES:
 .SUFFIXES: .o .c
@@ -136,7 +136,7 @@ $(LIBSTATIC): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $(OBJ)
 	$(RANLIB) $@
 
-HEADER_DEPS=../macosx/mikmod_build.h ../include/mikmod_internals.h
+HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h
 drv_osx.o: ../drivers/drv_osx.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_osx.c -o drv_osx.o
 drv_openal.o: ../drivers/drv_openal.c $(HEADER_DEPS)

@@ -17,7 +17,6 @@
 		A491831605D9581C00665C37 /* drv_pipe.c in Sources */ = {isa = PBXBuildFile; fileRef = A491831405D9581C00665C37 /* drv_pipe.c */; };
 		A4E3AF2805D43FCC000F1B47 /* mikmod.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE7C017CB3EC0103A810 /* mikmod.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4E3AF2905D43FCC000F1B47 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE7E017CB4010103A810 /* config.h */; settings = {ATTRIBUTES = (); }; };
-		A4E3AF2A05D43FCC000F1B47 /* mikmod_build.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE80017CB4370103A810 /* mikmod_build.h */; settings = {ATTRIBUTES = (); }; };
 		A4E3AF2B05D43FCC000F1B47 /* mikmod_internals.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE31017CB3390103A810 /* mikmod_internals.h */; settings = {ATTRIBUTES = (); }; };
 		A4E3AF2F05D43FCC000F1B47 /* drv_nos.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE29017CB3100103A810 /* drv_nos.c */; };
 		A4E3AF3005D43FCC000F1B47 /* drv_osx.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE27017CB2EF0103A810 /* drv_osx.c */; };
@@ -63,7 +62,6 @@
 		A4E3AF5F05D43FCC000F1B47 /* mikmod_internals.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE31017CB3390103A810 /* mikmod_internals.h */; };
 		A4E3AF6005D43FCC000F1B47 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE7E017CB4010103A810 /* config.h */; };
 		A4E3AF6105D43FCC000F1B47 /* mikmod.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5F5DE7C017CB3EC0103A810 /* mikmod.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A4E3AF6205D43FCC000F1B47 /* mikmod_build.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE80017CB4370103A810 /* mikmod_build.h */; };
 		A4E3AF6405D43FCC000F1B47 /* drv_nos.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE29017CB3100103A810 /* drv_nos.c */; };
 		A4E3AF6505D43FCC000F1B47 /* drv_osx.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE27017CB2EF0103A810 /* drv_osx.c */; };
 		A4E3AF6605D43FCC000F1B47 /* drv_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE2B017CB32A0103A810 /* drv_raw.c */; };
@@ -173,9 +171,8 @@
 		F5F5DE76017CB3D10103A810 /* mmalloc.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmalloc.c; path = ../mmio/mmalloc.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE77017CB3D10103A810 /* mmerror.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmerror.c; path = ../mmio/mmerror.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE78017CB3D10103A810 /* mmio.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmio.c; path = ../mmio/mmio.c; sourceTree = SOURCE_ROOT; };
-		F5F5DE7C017CB3EC0103A810 /* mikmod.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = mikmod.h; sourceTree = SOURCE_ROOT; };
+		F5F5DE7C017CB3EC0103A810 /* mikmod.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = ../include/mikmod.h; sourceTree = SOURCE_ROOT; };
 		F5F5DE7E017CB4010103A810 /* config.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		F5F5DE80017CB4370103A810 /* mikmod_build.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = mikmod_build.h; sourceTree = SOURCE_ROOT; };
 		F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		F5F9982201D1638A01046A14 /* drv_openal.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = drv_openal.c; path = ../drivers/drv_openal.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -245,7 +242,6 @@
 				F5F5DE21017CB2BC0103A810 /* drivers */,
 				F5F5DE22017CB2BC0103A810 /* include */,
 				F5F5DE23017CB2BC0103A810 /* loaders */,
-				F5F5DE24017CB2BC0103A810 /* macosx */,
 				F5F5DE25017CB2BC0103A810 /* mmio */,
 			);
 			name = Library;
@@ -302,14 +298,6 @@
 			name = loaders;
 			sourceTree = "<group>";
 		};
-		F5F5DE24017CB2BC0103A810 /* macosx */ = {
-			isa = PBXGroup;
-			children = (
-				F5F5DE80017CB4370103A810 /* mikmod_build.h */,
-			);
-			name = macosx;
-			sourceTree = "<group>";
-		};
 		F5F5DE25017CB2BC0103A810 /* mmio */ = {
 			isa = PBXGroup;
 			children = (
@@ -350,7 +338,6 @@
 			files = (
 				A4E3AF2805D43FCC000F1B47 /* mikmod.h in Headers */,
 				A4E3AF2905D43FCC000F1B47 /* config.h in Headers */,
-				A4E3AF2A05D43FCC000F1B47 /* mikmod_build.h in Headers */,
 				A4E3AF2B05D43FCC000F1B47 /* mikmod_internals.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -362,7 +349,6 @@
 				A4E3AF5F05D43FCC000F1B47 /* mikmod_internals.h in Headers */,
 				A48FA2DC05EB80940073A1B4 /* mikmod.h in Headers */,
 				A4E3AF6005D43FCC000F1B47 /* config.h in Headers */,
-				A4E3AF6205D43FCC000F1B47 /* mikmod_build.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

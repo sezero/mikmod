@@ -307,5 +307,8 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
 
+/* Define to empty if compiler does not understand the `signed' keyword. */
+#undef signed
+
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t

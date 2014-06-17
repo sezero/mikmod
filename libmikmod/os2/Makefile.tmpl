@@ -31,7 +31,7 @@ clean: FORCE
 	FOR %F IN ( $(LIBNAME) $(DLLNAME) $(OBJ) ) DO IF EXIST %F ERASE %F
 
 distclean: clean
-	FOR %F IN ( $(DEFNAME) ..\include\mikmod.h ..\include\mikmod_build.h Makefile ) DO IF EXIST %F ERASE %F
+	FOR %F IN ( $(DEFNAME) Makefile ) DO IF EXIST %F ERASE %F
 
 $(DLLNAME): $(OBJ) $(DEFNAME)
 	$(CC) $(CFLAGS) -Zso -Zsys -o $(DLLNAME) $(DEFNAME) $(OBJ) $(LIBS)
@@ -40,7 +40,7 @@ $(DLLNAME): $(OBJ) $(DEFNAME)
 $(LIBNAME): $(OBJ)
 	$(AR) $(ARFLAGS) $(LIBNAME) $(OBJ)
 
-HEADER_DEPS=../include/mikmod_build.h ../include/mikmod_internals.h
+HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h
 drv_dart.o: ../drivers/drv_dart.c $(HEADER_DEPS)
 	$(COMPILE) @ORULE@ ../drivers/drv_dart.c
 drv_nos.o: ../drivers/drv_nos.c $(HEADER_DEPS)

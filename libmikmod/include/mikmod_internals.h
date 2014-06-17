@@ -45,7 +45,7 @@ extern "C" {
 #endif
 #endif /* MIKMOD_UNIX */
 
-#include <mikmod_build.h>
+#include "mikmod.h"
 
 /*========== More type definitions */
 

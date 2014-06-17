@@ -6,7 +6,7 @@ bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     config.h.cmake CMakeLists.txt cmake android psp
+	     config.h.cmake CMakeLists.txt cmake android dc psp
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
@@ -20,7 +20,7 @@ ACLOCAL_AMFLAGS = -I m4
 # regardless of static build or shared library build..
 AM_CFLAGS = -DMIKMOD_BUILD=1
 
-AM_CPPFLAGS = -I@top_builddir@/include -I@top_srcdir@/include
+AM_CPPFLAGS = -I@top_srcdir@/include
 
 lib_LTLIBRARIES = libmikmod.la
 

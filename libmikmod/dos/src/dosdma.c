@@ -24,7 +24,7 @@
 #include <dpmi.h>
 #include <sys/nearptr.h>
 #include <malloc.h>
-#include "mikmod_build.h" /* for MikMod_malloc() & co */
+#include "mikmod.h" /* for MikMod_malloc() & co */
 
 /* BUG WARNING:  there is an error in DJGPP libraries <= 2.01:
  * src/libc/dpmi/api/d0102.s loads the selector and allocsize

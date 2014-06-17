@@ -289,16 +289,6 @@ main:
 	convert="yes"
 	CALL sed
 
-	filein ="..\include\mikmod.h.in"
-	fileout="..\include\mikmod.h"
-	convert="no"
-	CALL sed
-
-	filein ="..\include\mikmod.h.in"
-	fileout="..\include\mikmod_build.h"
-	convert="no"
-	CALL sed
-
 	filein =defname".in"
 	fileout=defname
 	convert="no"

@@ -1,3 +1,5 @@
+- libmikmod for Android:
+
 Building: To compile the Android version, the Android NDK must be
 installed on your machine. If so, type the 'ndk-build' command in
 command line. The compiled shared Android libraries for ARM and

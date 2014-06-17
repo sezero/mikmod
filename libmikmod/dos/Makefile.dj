@@ -48,13 +48,6 @@ OUT = out
 # stdout and pipe drivers are disabled: edit include/config.h to enable them.
 DRIVERS = drv_ultra drv_sb drv_wss drv_wav drv_aiff drv_raw drv_stdout drv_pipe drv_nos
 
-# SED script to update configuration files
-SED_CONFIG = \
-  -e s/@LIBMIKMOD_MAJOR_VERSION@/$(LIBMIKMOD_MAJOR_VERSION)/ \
-  -e s/@LIBMIKMOD_MINOR_VERSION@/$(LIBMIKMOD_MINOR_VERSION)/ \
-  -e s/@LIBMIKMOD_MICRO_VERSION@/$(LIBMIKMOD_MICRO_VERSION)/ \
-  -e s/@DOES_NOT_HAVE_SIGNED@//
-
 vpath %.c $(SRCPATH) ../drivers src
 
 # Build rules
@@ -66,7 +59,7 @@ SRC = $(wildcard $(addsuffix /*.c,$(SRCPATH))) \
 OBJ = $(addprefix $(OUT)/,$(notdir $(SRC:.c=.o)))
 
 # The build targets
-TARGETS = $(OUT) include/mikmod.h include/mikmod_build.h libmikmod.a
+TARGETS = $(OUT) libmikmod.a
 
 all: $(TARGETS)
 
@@ -83,13 +76,6 @@ libmikmod.a: $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
 	$(RANLIB) $@
 
-version.mak: ../configure.ac
-	grep "LIBMIKMOD_.*_VERSION=" $< >$@
-
-include/mikmod.h include/mikmod_build.h: ../include/mikmod.h.in
-	sed $(SED_CONFIG) $< >$@
-
--include version.mak
 
 # DO NOT DELETE this line - makedep depends on it
 

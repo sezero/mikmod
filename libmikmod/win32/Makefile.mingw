@@ -67,7 +67,7 @@ CFLAGS+=-ffast-math
 LDFLAGS=
 LDLIBS+=-lm
 
-COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I.. -I../win32
+COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../include -I../win32
 
 .SUFFIXES:
 .SUFFIXES: .o .c
@@ -139,7 +139,7 @@ $(LIBSTATIC): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $(OBJ)
 	$(RANLIB) $@
 
-HEADER_DEPS=../win32/mikmod_build.h ../include/mikmod_internals.h
+HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h
 drv_ds.o: ../drivers/drv_ds.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_ds.c -o drv_ds.o
 drv_nos.o: ../drivers/drv_nos.c $(HEADER_DEPS)

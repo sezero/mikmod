@@ -33,7 +33,6 @@ LibStubPPC		= "libmikmodPPC.lib"
 LibNameFat		= "libmikmod"
 StubNameFat		= "libmikmodStub"
 
-Header          = "mikmod.h"
 Export          = "libmikmod.exp"
 
 #------------------------------------------------------------------------------
@@ -234,11 +233,8 @@ LibObjectsPPC	=	¶
                     # Avoid building 68K by default, due to missing long-longs:
 All				    Ä PPC
 
-68K				    Ä {LibStatic68K} {LibShared68K} {LibStub68K} {Header}
-PPC				    Ä {LibStaticPPC} {LibSharedPPC} {LibStubPPC} {Header}
-
-{Header}		    Ä
-	Duplicate -y 'mikmod_build.h' {Header}
+68K				    Ä {LibStatic68K} {LibShared68K} {LibStub68K}
+PPC				    Ä {LibStaticPPC} {LibSharedPPC} {LibStubPPC}
 
 {LibStatic68K}		ÄÄ {LibObjects68K}
 	Echo "# Building 680X0 static library"

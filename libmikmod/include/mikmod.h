@@ -1,5 +1,5 @@
 /*  MikMod sound library
-    (c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS
+    (c) 1998-2014 Miodrag Vallat and others - see the AUTHORS file
     for complete list.
 
     This library is free software; you can redistribute it and/or modify
@@ -105,7 +105,6 @@ MIKMODAPI extern long MikMod_GetVersion(void);
 #else
 typedef char CHAR;
 #endif
-
 
 
 #if defined (_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(__powerpc64__)

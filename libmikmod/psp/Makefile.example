@@ -1,13 +1,12 @@
 PSPSDK = $(shell psp-config --pspsdk-path)
 PSPDIR = $(shell psp-config --psp-prefix)
 
-MY_DIR = ../psp
-
-INCDIR = $(MY_DIR)
+INCDIR = ../include
 CFLAGS = -G0 -Wall -O2 -fno-strict-aliasing
+
 # -lpspaudio needed for psp audio driver
 # -lm needed for aiff file writer driver (if it was compiled)
-LIBS   = -L$(MY_DIR) -lmikmod -lpspaudio -lm
+LIBS   = -lmikmod -lpspaudio -lm
 
 OBJS            = example.o
 TARGET          = libmikmodtest

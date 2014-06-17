@@ -292,7 +292,7 @@ SOURCE=..\mikmod.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\mikmod_build.h
+SOURCE=..\..\include\mikmod.h
 # End Source File
 # Begin Source File
 

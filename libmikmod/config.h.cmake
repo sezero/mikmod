@@ -232,6 +232,9 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const
 
+/* Define to empty if compiler does not understand the `signed' keyword. */
+#cmakedefine signed
+
 /* Define to `int' if <sys/types.h> does not define. */
 #cmakedefine pid_t
 

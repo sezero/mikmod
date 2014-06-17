@@ -10,7 +10,7 @@ LIBMIKMOD_VERSION=$LIBMIKMOD_MAJOR_VERSION.$LIBMIKMOD_MINOR_VERSION.$LIBMIKMOD_M
 
 AC_CONFIG_AUX_DIR([autotools])
 AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
-AC_CONFIG_SRCDIR([include/mikmod.h.in])
+AC_CONFIG_SRCDIR([include/mikmod_internals.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([posix])
 AM_MAINTAINER_MODE
@@ -387,10 +387,8 @@ AC_CACHE_CHECK([if compiler understands the signed keyword],[libmikmod_cv_gcc_si
 	AC_LANG_C
 	AC_TRY_COMPILE(,[signed int t = 0;],[libmikmod_cv_gcc_signed=yes],[libmikmod_cv_gcc_signed=no])
 	AC_LANG_RESTORE)
-if test $libmikmod_cv_gcc_signed = yes; then
-	DOES_NOT_HAVE_SIGNED=""
-else
-	DOES_NOT_HAVE_SIGNED="#define signed"
+if test $libmikmod_cv_gcc_signed = no; then
+	AC_DEFINE(signed,,[Define to empty if compiler does not understand the `signed' keyword.])
 fi
 
 AC_TYPE_PID_T
@@ -1207,34 +1205,22 @@ docs/libmikmod-config.1
 dlapi/Makefile
 drivers/Makefile
 include/Makefile
-include/mikmod.h
-include/mikmod_build.h:include/mikmod.h.in
 loaders/Makefile
 mmio/Makefile
 playercode/Makefile
 posix/Makefile
 macintosh/Makefile
-macintosh/mikmod.h:include/mikmod.h.in
-macintosh/mikmod_build.h:include/mikmod.h.in
-macintosh/_libmikmodversion.r
 macosx/Makefile
-macosx/mikmod.h:include/mikmod.h.in
-macosx/mikmod_build.h:include/mikmod.h.in
-macosx/Info.plist
-macosx/InfoPlist.strings
 os2/Makefile
 dos/Makefile
 dos/include/Makefile
 dos/src/Makefile
 win32/Makefile
-win32/mikmod.h:include/mikmod.h.in
-win32/mikmod_build.h:include/mikmod.h.in
 examples/Makefile])
 AC_CONFIG_HEADERS([config.h])
 AC_OUTPUT
 
 chmod +x libmikmod-config
-cat macintosh/_libmikmodversion.r | tr '\n' '\r' > macintosh/libmikmodversion.r
 
 # ====================
 # Print configuration.
