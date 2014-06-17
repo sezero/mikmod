@@ -8,6 +8,8 @@ MIKMOD_PATH := $(LOCAL_PATH)/..
 LOCAL_C_INCLUDES := $(LOCAL_PATH) $(MIKMOD_PATH)/include
 LOCAL_LDLIBS += -lOpenSLES
 LOCAL_CFLAGS := -DMIKMOD_BUILD -DHAVE_CONFIG_H -Wall
+# enable visibility attributes:
+LOCAL_CFLAGS += -fvisibility=hidden -DSYM_VISIBILITY
 LOCAL_CFLAGS += -O2
 #LOCAL_CFLAGS += -Os
 
