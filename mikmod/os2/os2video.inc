@@ -132,7 +132,7 @@ void win_clrtoeol(MWINDOW *win, int x,int y)
 	}
 }
 
-static int kbhit(void)
+static int _mik_kbhit(void)
 {
 	KBDKEYINFO k;
 	if (KbdPeek(&k, 0))
@@ -144,7 +144,7 @@ static int kbhit(void)
 static int win_getch(void)
 {
 	int c = 0;
-	if (kbhit()) {
+	if (_mik_kbhit()) {
 		c = getch();
 		if ((!c) || (c == 0xe0))
 			c = 0x100 | getch();
