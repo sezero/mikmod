@@ -33,6 +33,9 @@
 #include <windows.h>
 #elif defined(__OS2__)||defined(__EMX__)
 #include <os2.h>
+#if !defined(HAVE_CONFIG_H)
+#define RETSIGTYPE	void
+#endif
 #endif
 
 #include <mikmod.h>	/* for BOOL */
