@@ -57,6 +57,3 @@
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H		1
 
-/* Define if TIOCGWINSZ requires sys/ioctl.h  */
-#undef GWINSZ_IN_SYS_IOCTL
-
