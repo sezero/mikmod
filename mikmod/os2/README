@@ -19,35 +19,27 @@ I hope you've installed REXX support during the system installation. If you
 didn't, you lose. Run 'selective install' from the system setup folder, install
 REXX support, check it works, and come back here.
 
-This MikMod version can build with either libmikmod 3.1.7/8 (shared library
-version 2), or an older version, but all the configuration functions are not
-available for older versions.
-
 The first thing you need is to get and compile the libmikmod sound library,
 which is not bundled with MikMod anymore !
 If you don't know where to get libmikmod, look at the "contact and download
 info" section later in this document.
 
-Oh, I almost forgot: you need long filenames to compile MikMod, so you'll
-have to compile it on an HPFS drive, or an ext2fs drive, or a network drive
-where you can use decent-size filenames.
+You need long filenames to compile MikMod, so you'll have to compile it
+on an HPFS drive, or an ext2fs drive, or a network drive where you can
+use decent-size filenames.
 
 Currently, MikMod can be build under OS/2 only with the emx compiler
-or the Watcom compiler.
+or the Watcom compiler. Edit the makefiles in case you need to customize
+the build options and/or want to learn any details.
 
-In this directory, run 
+For EMX, run:
+    make -f Makefile.emx
 
-  configure
+For Watcom, run:
+    wmake -f Makefile.wat
 
-The configure script will ask you which compiler to use.
-
-After the configuration has finished and the Makefiles are created, just
-run
-
-  make
-
-and you'll get your MikMod binary in the src directory. Just copy the
-file ``..\src\mikmod.exe'' somewhere in your PATH, and enjoy !
+and you'll get your MikMod binary in this directory. Just copy the
+file 'mikmod.exe' somewhere in your PATH, and enjoy !
 
 If the build fails, I'd like to hear from you to correct the problem.
 
@@ -55,7 +47,7 @@ If the build fails, I'd like to hear from you to correct the problem.
 >> USING MIKMOD
 ---------------
 
-Run MikMod with the ``--help'' parameter to get the available options.
+Run MikMod with the '--help' parameter to get the available options.
 Program documentation is available as an Unix man page (..\src\mikmod.1) which
 you can read if you've got a port of the 'man' tool.
 
@@ -67,9 +59,8 @@ the HOME environment variable. If you don't have the HOME environment variable,
 the file will be created in C:\, which is probably not what you want and should
 encourage you to have the HOME environment variable set.
 
-Once you're in the player, if you haven't choosed terse mode (a la
-MikMod 2), pressing the H key will give you an help screen with the list
-of the keys you can use. I hope it's understandable.
+Once you're in the player, pressing the H key will give you an help screen with
+the list of the keys you can use. I hope it's understandable.
 
 
 >> THANKS
@@ -92,7 +83,7 @@ either version 2 of the licence, or (at your option) any later version.
 >> CONTACT AND DOWNLOAD INFO
 ----------------------------
 
-MikMod and libmikmod home page is located at SourceForge:
+MikMod/libmikmod home page is located at SourceForge:
 
     http://mikmod.sourceforge.net/
     http://sourceforge.net/projects/mikmod/

@@ -1,6 +1,5 @@
 #------------------------------------------------------------------------------#
 # Makefile for building MikMod player under GCC/EMX
-#
 # This is a Makefile designed explicitly for GNU Make.
 #
 # Targets:
@@ -13,23 +12,15 @@
 # Use CMD.EXE for launching commands
 SHELL=$(COMSPEC)
 
-# Set to 1 for debug build
-DEBUG = 0
-
 # The tools
 CC = gcc -c
-CFLAGS = -Zmt -DHAVE_CONFIG_H $(INCLUDE)
+CFLAGS = -O2 -Wall -funroll-loops -ffast-math -fno-strength-reduce -Zomf -Zmt
+CPPFLAGS = -DHAVE_CONFIG_H
 INCLUDE = -I. -I../src
 LD = gcc
-LDFLAGS = -lmikmod
-
-ifeq ($(DEBUG),1)
-CFLAGS += -g -Wall
-LDFLAGS += -g
-else
-CFLAGS += -s -O3 -Wall -fomit-frame-pointer -ffast-math
-LDFLAGS += -s -Zmt -Zcrtdll
-endif
+LDFLAGS = -s -Zomf -Zmt -Zcrtdll -L. -lmikmod
+# if linking against static libmikmod.a, mmpm2 is needed too (for drv_os2 and drv_dart.)
+#LDFLAGS+= -lmmpm2
 
 # Output directory
 OUT = out
@@ -39,7 +30,7 @@ OBJ = $(addprefix $(OUT)/,$(notdir $(SRC:.c=.o)))
 
 # Build rules
 $(OUT)/%.o: ../src/%.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDE) -o $@ $<
 
 all: $(OUT) mikmod.exe
 
@@ -57,23 +48,44 @@ mikmod.exe: $(OBJ)
 
 # DO NOT DELETE this line - makedep uses it as a separator line
 
-$(OUT)/display.o: config.h ../src/display.h ../src/player.h \
-  ../src/mutilities.h ../src/mwindow.h ../src/mmenu.h ../src/mdialog.h \
-  ../src/mconfedit.h
+$(OUT)/display.o: config.h ../src/display.h ../src/player.h ../src/mconfig.h \
+  ../src/rcfile.h ../src/mlist.h ../src/mutilities.h ../src/mwindow.h \
+  ../src/mconfedit.h ../src/mmenu.h ../src/keys.h ../src/mplayer.h \
+  ../src/mlistedit.h
+$(OUT)/marchive.o: config.h ../src/mlist.h ../src/marchive.h ../src/mconfig.h \
+  ../src/rcfile.h ../src/mutilities.h ../src/display.h
+$(OUT)/mconfedit.o: config.h ../src/rcfile.h ../src/mconfig.h \
+  ../src/mconfedit.h ../src/mmenu.h ../src/mwindow.h ../src/mlist.h \
+  ../src/mdialog.h ../src/mwidget.h ../src/mutilities.h
+$(OUT)/mconfig.o: config.h ../src/player.h ../src/mconfig.h ../src/rcfile.h \
+  ../src/mwindow.h ../src/mlist.h ../src/mutilities.h
+$(OUT)/mdialog.o: config.h ../src/mwidget.h ../src/mwindow.h ../src/mconfig.h \
+  ../src/rcfile.h ../src/mdialog.h ../src/display.h ../src/mutilities.h
+$(OUT)/mikmod.o: config.h ../src/mgetopt.h ../src/player.h ../src/mutilities.h \
+  ../src/display.h ../src/rcfile.h ../src/mconfig.h ../src/mlist.h \
+  ../src/mlistedit.h ../src/mmenu.h ../src/mwindow.h ../src/marchive.h \
+  ../src/mdialog.h ../src/mwidget.h ../src/mplayer.h ../src/keys.h
+$(OUT)/mlist.o: config.h ../src/mlist.h ../src/marchive.h ../src/mutilities.h
+$(OUT)/mlistedit.o: config.h ../src/mlistedit.h ../src/mmenu.h \
+  ../src/mwindow.h ../src/mconfig.h ../src/rcfile.h ../src/mlist.h \
+  ../src/player.h ../src/mdialog.h ../src/mwidget.h ../src/mconfedit.h \
+  ../src/marchive.h ../src/keys.h ../src/display.h ../src/mutilities.h
+$(OUT)/mmenu.o: config.h ../src/display.h ../src/mmenu.h ../src/mwindow.h \
+  ../src/mconfig.h ../src/rcfile.h ../src/mdialog.h ../src/mwidget.h \
+  ../src/keys.h ../src/mutilities.h
+$(OUT)/mplayer.o: config.h ../src/mplayer.h ../src/mthreads.h ../src/mconfig.h \
+  ../src/rcfile.h ../src/mutilities.h
+$(OUT)/mutilities.o: config.h ../src/player.h ../src/mlist.h ../src/marchive.h \
+  ../src/mutilities.h
+$(OUT)/mwidget.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
+  ../src/mconfig.h ../src/rcfile.h ../src/mwidget.h ../src/keys.h \
+  ../src/mutilities.h
+$(OUT)/mwindow.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
+  ../src/mconfig.h ../src/rcfile.h ../src/mutilities.h ../src/keys.h \
+  ../src/mthreads.h os2video.inc
+$(OUT)/rcfile.o: config.h ../src/rcfile.h ../src/mutilities.h
+
 $(OUT)/mgetopt.o: ../src/mgetopt.h
 $(OUT)/mgetopt1.o: ../src/mgetopt.h
-$(OUT)/marchive.o: config.h ../src/player.h ../src/mutilities.h
-$(OUT)/mconfedit.o: config.h ../src/player.h ../src/mconfedit.h \
-  ../src/mmenu.h ../src/mwindow.h
-$(OUT)/mconfig.o: config.h ../src/player.h ../src/mutilities.h
-$(OUT)/mdialog.o: config.h ../src/mwidget.h ../src/mwindow.h ../src/mdialog.h
-$(OUT)/mikmod.o: config.h ../src/mgetopt.h ../src/player.h ../src/mwindow.h \
-  ../src/mdialog.h
-$(OUT)/mlist.o: config.h ../src/player.h ../src/mutilities.h
-$(OUT)/mmenu.o: config.h ../src/display.h ../src/player.h ../src/mmenu.h \
-  ../src/mwindow.h ../src/mdialog.h
-$(OUT)/mutilities.o: config.h ../src/player.h ../src/mutilities.h
-$(OUT)/mwidget.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
-  ../src/mwidget.h
-$(OUT)/mwindow.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
-  os2video.inc
+$(OUT)/mfnmatch.o: ../src/mfnmatch.h
+$(OUT)/musleep.o: config.h
