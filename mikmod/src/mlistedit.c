@@ -79,7 +79,7 @@ typedef BOOL (*handleFreqFunc) (int button, char *file, void *data);
 /* Function, which is called for every new directory during
    directory scanning in scan_dir(). scan_dir() is canceled if
    the function returns 1. */
-typedef int (*handleScandirFunc) (char *path, int added, int removed, void *data);
+typedef BOOL (*handleScandirFunc) (char *path, int added, int removed, void *data);
 
 typedef enum {
 	FREQ_ADD,
