@@ -1209,12 +1209,7 @@ include/Makefile
 loaders/Makefile
 mmio/Makefile
 playercode/Makefile
-posix/Makefile
-macintosh/Makefile
-macosx/Makefile
-os2/Makefile
-win32/Makefile
-examples/Makefile])
+posix/Makefile])
 AC_CONFIG_HEADERS([config.h])
 AC_OUTPUT
 

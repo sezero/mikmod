@@ -1,13 +1,15 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = drivers include loaders mmio playercode posix \
-	  dlapi macintosh macosx os2 win32 docs examples
+	  dlapi docs
 
 bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     config.h.cmake CMakeLists.txt \
-	     cmake android dos dc gp32 psp
+	     android macosx win32 \
+	     dos dc gp32 macintosh os2 psp \
+	     examples \
+	     config.h.cmake CMakeLists.txt cmake
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4

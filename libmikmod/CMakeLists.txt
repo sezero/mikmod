@@ -164,18 +164,18 @@ SET (ENABLE_STATIC 1 CACHE BOOL "Whether to build the static library (which take
 ### under a prefix the executables will find the libraries.
 ### See:  http://www.cmake.org/Wiki/CMake_RPATH_handling
 IF (ENABLE_RPATH)
-    # use, i.e. don't skip the full RPATH for the build tree
+  # use, i.e. don't skip the full RPATH for the build tree
     SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
-    # when building, don't use the install RPATH already
-    # (but later on when installing)
+  # when building, don't use the install RPATH already
+  # (but later on when installing)
     SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
-    # the RPATH to be used when installing
+  # the RPATH to be used when installing
     SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
 
-    # add the automatically determined parts of the RPATH
-    # which point to directories outside the build tree to the install RPATH
+  # add the automatically determined parts of the RPATH
+  # which point to directories outside the build tree to the install RPATH
     SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ELSE(ENABLE_RPATH)
 #   SET (CMAKE_SKIP_RPATH YES)
@@ -195,11 +195,9 @@ ADD_SUBDIRECTORY ("docs")
 ADD_SUBDIRECTORY ("drivers")
 ADD_SUBDIRECTORY ("include")
 ADD_SUBDIRECTORY ("loaders")
-ADD_SUBDIRECTORY ("macosx")
 ADD_SUBDIRECTORY ("mmio")
 ADD_SUBDIRECTORY ("playercode")
 ADD_SUBDIRECTORY ("posix")
-ADD_SUBDIRECTORY ("win32")
 
 SET(COMPILER_FLAGS_TO_CHECK
     "-Wall" "-Werror=implicit-function-declaration"
