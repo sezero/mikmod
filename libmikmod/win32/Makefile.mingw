@@ -121,9 +121,6 @@ static-sse2: CPPFLAGS+=-DMIKMOD_SIMD
 static-sse2: static
 
 dll: $(DLLNAME) $(LIBNAME)
-dll: $(DLLNAME) $(LIBNAME)
-
-static: $(LIBSTATIC)
 static: $(LIBSTATIC)
 
 $(DLLNAME): CPPFLAGS+=$(CPPFLAGS_DLL)
@@ -236,4 +233,3 @@ virtch2.o: ../playercode/virtch2.c ../playercode/virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/virtch2.c -o virtch2.o
 virtch_common.o: ../playercode/virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/virtch_common.c -o virtch_common.o
-
