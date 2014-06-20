@@ -870,7 +870,7 @@ int main(int argc, char *argv[])
 	opterr = 0;
 	while ((t = getopt_long_only(argc, argv,
 								 "d:o:f:r:v:y:p:iFlaxctsSqn::N:Vh",
-								 options, NULL)) != ERR) {
+								 options, NULL)) != -1) {
 		switch (t) {
 		  case 'd':				/* -d --driver */
 #if LIBMIKMOD_VERSION >= 0x030107
