@@ -5,9 +5,11 @@
 ifeq ($(CROSS),)
 CC=gcc
 AS=as
+LIPO=lipo
 else
 CC=$(CROSS)-gcc
 AS=$(CROSS)-as
+LIPO=$(CROSS)-lipo
 endif
 LINKER=$(CC)
 
