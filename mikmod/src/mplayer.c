@@ -30,6 +30,11 @@
 #include "config.h"
 #endif
 
+#if defined(__OS2__)||defined(__EMX__)
+#define INCL_DOS
+#include <os2.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif

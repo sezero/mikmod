@@ -47,6 +47,9 @@
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #if defined(__OS2__)||defined(__EMX__)
 #define INCL_VIO
+#define INCL_DOS
+#define INCL_KBD
+#define INCL_DOSPROCESS
 #endif
 #include <conio.h>
 #endif
