@@ -42,9 +42,10 @@ mikmod, run "make install" as the superuser.
 
 To cross-compile, you will need to use the --host option of configury.
 For example:
+ $ ./configure --host=powerpc-apple-darwin9  # for Mac OS X (powerpc)
  $ ./configure --host=i686-pc-mingw32        # for Windows (win32)
  $ ./configure --host=x86_64-w64-mingw32     # for Windows (win64)
 
-We also provide standalone makefiles for Windows, and DJGPP (DOS)
-which you can use for both compiling on the relevant native system,
-or for cross-compiling.
+We also provide standalone makefiles for Windows, Mac OS X, DJGPP (DOS)
+which you can use for both compiling on the relevant native system, or
+for cross-compiling.
