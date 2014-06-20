@@ -365,8 +365,7 @@ unsigned long Time1000(void)
 #endif
 }
 
-#if defined(__OS2__)||defined(__EMX__)||(defined(_WIN32)&&!defined(__MINGW32__))
-/* FIXME , untested under OS2 */
+#if defined(_WIN32)&&!defined(__MINGW32__)
 DIR* opendir (const char* dirName)
 {
 	struct stat statbuf;
@@ -382,19 +381,13 @@ DIR* opendir (const char* dirName)
 		dir->name[strlen(dir->name)-1] != PATH_SEP)
 		strcat (dir->name,PATH_SEP_SYS_STR);
 
-#ifdef _WIN32
 	strcat (dir->name, "*");
 	dir->handle = INVALID_HANDLE_VALUE;
-#elif defined(__OS2__)||defined(__EMX__)
-	strcat (dir->name, "*.*");
-	dir->handle = (unsigned long*) HDIR_CREATE;
-#endif
 	dir->filecnt = 0;
 
 	return dir;
 }
 
-#ifdef _WIN32
 struct dirent *readdir (DIR* dir)
 {
 	WIN32_FIND_DATA fileBuffer;
@@ -421,44 +414,7 @@ int closedir (DIR* dir)
 	free (dir);
 	return 0;
 }
-
-#elif defined(__OS2__)||defined(__EMX__)
-
-struct dirent *readdir (DIR* dir)
-{
-	FILEFINDBUF3 fileBuffer = {0};
-	ULONG fileCnt = 1;
-
-	if (dir->filecnt == 0) {
-		if (DosFindFirst(dir->name, (PHDIR) &dir->handle,
-						 FILE_SYSTEM | FILE_HIDDEN | FILE_DIRECTORY,
-						 (PVOID) &fileBuffer,
-						 sizeof(FILEFINDBUF3),
-						 &fileCnt,
-						 FIL_STANDARD))
-			return NULL;
-	} else if (DosFindNext((HDIR) dir->handle,
-						   (PVOID) &fileBuffer,
-						   sizeof(FILEFINDBUF3),
-						   &fileCnt))
-		return NULL;
-
-	strcpy (dir->d_name, fileBuffer.achName);
-	dir->filecnt++;
-
-	return dir;
-}
-
-int closedir (DIR* dir)
-{
-	if (dir->handle != (unsigned long*) HDIR_CREATE)
-		DosFindClose ((HDIR) dir->handle);
-	free (dir);
-	return 0;
-}
-#endif
-
-#endif
+#endif /* dirent _WIN32 */
 
 #if LIBMIKMOD_VERSION < 0x030200
 static char *skip_number(char *str)

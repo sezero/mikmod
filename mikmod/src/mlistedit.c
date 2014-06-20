@@ -41,12 +41,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if !defined(__OS2__) && !defined(__EMX__) && !(defined(_WIN32)&&!defined(__MINGW32__))
+#if defined(__MINGW32__) || defined(__EMX__) || defined(__DJGPP__)
 #include <dirent.h>
-#endif
-
-#if defined(_WIN32)
+#elif defined(__OS2__) /* Watcom */
 #include <direct.h>
+#elif defined(_WIN32) /* MSVC, etc. */
+#include <direct.h>
+#else
+#include <dirent.h>
 #endif
 
 #include <mikmod.h>

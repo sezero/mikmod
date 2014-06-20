@@ -129,10 +129,7 @@ extern char storage[STORAGELEN+2];
 #define S_ISLNK(st_mode)  0
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||(defined(_WIN32)&&!defined(__MINGW32__))
-
-/* FIXME , untested under OS2 */
-
+#if defined(_WIN32)&&!defined(__MINGW32__)
 typedef struct dirent {
 	char name[PATH_MAX+1];
 	unsigned long* handle;
@@ -143,8 +140,7 @@ typedef struct dirent {
 DIR* opendir (const char* dirName);
 struct dirent *readdir (DIR* dir);
 int closedir (DIR* dir);
-
-#endif
+#endif /* dirent _WIN32 */
 
 /* allocate memory for a formated string and do a sprintf */
 char *str_sprintf2(const char *fmt, const char *arg1, const char *arg2);
