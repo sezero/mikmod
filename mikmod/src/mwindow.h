@@ -35,10 +35,9 @@
 #  else
 #    include <curses.h>
 #  endif
+#  define MIK_CURSES_ERROR ERR
 #else
-#  if !defined(ERR) || ((ERR) != -1)
-#    define ERR (-1)
-#  endif
+#  define MIK_CURSES_ERROR (-1)
 #endif
 
 #include <mikmod.h>

@@ -193,7 +193,7 @@ void win_refresh(void)
 
 void win_cursor_set(BOOL visible)
 {
-	if (cursor_old != ERR) {
+	if (cursor_old != MIK_CURSES_ERROR) {
 		if (visible)
 			curs_set(cursor_old);
 		else
@@ -326,7 +326,7 @@ static int win_getch(void)
 	int c = getch();
 	win_check_resize();
 /*	if (c>0) fprintf (stderr," %d ",c);*/
-	return c == ERR ? 0 : c;
+	return c == MIK_CURSES_ERROR ? 0 : c;
 }
 
 #endif /* #ifdef unix */
