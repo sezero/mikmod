@@ -51,6 +51,12 @@ extern "C" {
 # else
 #   define MIKMODAPI __declspec(dllimport)                      /* using libmikmod dll for windows */
 # endif
+#elif defined(__OS2__) && defined(__WATCOMC__)
+# if defined(MIKMOD_BUILD) && defined(__SW_BD)          /* building libmikmod as a dll for os/2 */
+#   define MIKMODAPI __declspec(dllexport)
+# else
+#   define MIKMODAPI                                    /* using dll or static libmikmod for os/2 */
+# endif
 /* SYM_VISIBILITY should be defined if both the compiler
  * and the target support the visibility attributes. the
  * configury does that automatically. for the standalone
