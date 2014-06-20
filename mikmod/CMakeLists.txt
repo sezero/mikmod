@@ -162,6 +162,3 @@ install(
 )
 
 add_subdirectory(src)
-add_subdirectory(dos)
-add_subdirectory(os2)
-add_subdirectory(win32)

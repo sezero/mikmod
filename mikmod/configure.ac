@@ -224,9 +224,6 @@ AC_SUBST(EXTRA_OBJ)
 AC_SUBST(PLAYER_LIB)
 
 AC_CONFIG_FILES([Makefile
-src/Makefile
-dos/Makefile
-os2/Makefile
-win32/Makefile])
+src/Makefile])
 AC_CONFIG_HEADERS([config.h])
 AC_OUTPUT

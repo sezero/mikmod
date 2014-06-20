@@ -77,7 +77,7 @@ mutilities.o: ../src/mutilities.c config.h ../src/mgetopt.h ../src/player.h ../s
 mwidget.o: ../src/mwidget.c config.h ../src/display.h ../src/player.h ../src/mwindow.h ../src/mconfig.h \
 	../src/rcfile.h ../src/mwidget.h ../src/keys.h ../src/mutilities.h
 mwindow.o: ../src/mwindow.c config.h ../src/display.h ../src/player.h ../src/mwindow.h ../src/mconfig.h \
-	../src/rcfile.h ../src/mutilities.h ../src/keys.h ../src/mthreads.h dosvideo.inc
+	../src/rcfile.h ../src/mutilities.h ../src/keys.h ../src/mthreads.h ../src/dosvideo.inc
 rcfile.o: ../src/rcfile.c config.h ../src/rcfile.h
 mgetopt.o: ../src/mgetopt.h
 mgetopt1.o: ../src/mgetopt.h

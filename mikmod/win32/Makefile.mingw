@@ -105,7 +105,7 @@ mwidget.o: ../src/mwidget.c ../src/display.h ../src/player.h ../src/mwindow.h \
 
 mwindow.o: ../src/mwindow.c ../src/display.h ../src/player.h ../src/mwindow.h \
 	../src/mconfig.h ../src/rcfile.h ../src/mutilities.h ../src/keys.h \
-	../src/mthreads.h winvideo.inc config.h
+	../src/mthreads.h ../src/winvideo.inc config.h
 	$(COMPILE)
 
 rcfile.o: ../src/rcfile.c ../src/rcfile.h ../src/mutilities.h config.h
