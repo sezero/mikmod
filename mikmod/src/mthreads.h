@@ -82,6 +82,7 @@ typedef enum {
 		pthread_join (_mm_thread_##name, NULL); \
 	}
 #elif defined(__OS2__)||defined(__EMX__)
+#include <process.h>
 
 #define DECLARE_MUTEX(name) \
 	extern HMTX _mm_mutex_##name
@@ -93,14 +94,16 @@ typedef enum {
 	if (_mm_mutex_##name) \
 		DosRequestMutexSem(_mm_mutex_##name, SEM_INDEFINITE_WAIT)
 #define MUTEX_UNLOCK(name) \
-   	if (_mm_mutex_##name)  \
+	if (_mm_mutex_##name)  \
 		DosReleaseMutexSem(_mm_mutex_##name)
 
 #define DEFINE_THREAD(name,modevar) \
 	int modevar = MTH_NORUN
 /* FIXME */
+/*#define THREAD_START(name,fkt,arg) \
+	(_beginthread(_mm_mutex_##name, NULL, 4096, arg) != 0)*/
 #define THREAD_START(name,fkt,arg) \
-	(_beginthread(_mm_mutex_##name, NULL, 4096, arg) != 0)
+	(_beginthread(fkt, NULL, 4096, arg) != 0)
 #define THREAD_JOIN(name,modevar) \
 	{	modevar = MTH_QUITTING; \
 		while (modevar==MTH_QUITTING) SLEEP(1); \
