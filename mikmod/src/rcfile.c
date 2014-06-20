@@ -259,7 +259,7 @@ static OPTIONS *get_begin (const char *label)
    Change 'value' only if label is present in config-file and
    associated value is valid.
    Return: value changed ? */
-BOOL rc_read_bool (const char *label, int *value)
+BOOL rc_read_bool (const char *label, BOOL *value)
 {
 	char *arg = get_argument (label);
 	if (arg) {

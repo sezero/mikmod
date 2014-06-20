@@ -50,7 +50,7 @@ BOOL rc_write_struct_end (const char *description);
    Change 'value' only if label is present in config-file and
    associated value is valid.
    Return: value changed ? */
-BOOL rc_read_bool (const char *label, int *value);
+BOOL rc_read_bool (const char *label, BOOL *value);
 BOOL rc_read_bit (const char *label, int *value, int mask);
 BOOL rc_read_int (const char *label, int *value, int min, int max);
 BOOL rc_read_float (const char *label, float *value, float min, float max);
