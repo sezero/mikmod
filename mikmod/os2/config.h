@@ -33,6 +33,12 @@
 /* Define if you have the usleep function.  */
 #define HAVE_USLEEP	1
 
+/* Define if you have the vprintf function.  */
+#define HAVE_VPRINTF	1
+
+/* Define if you have the vsnprintf function.  */
+#define HAVE_VSNPRINTF	1
+
 /* Define if you have the <fcntl.h> header file.  */
 #define HAVE_FCNTL_H	1
 
@@ -52,4 +58,5 @@
 #define HAVE_UNISTD_H		1
 
 /* Define if TIOCGWINSZ requires sys/ioctl.h  */
-#define GWINSZ_IN_SYS_IOCTL
+#undef GWINSZ_IN_SYS_IOCTL
+
