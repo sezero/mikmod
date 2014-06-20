@@ -6,6 +6,7 @@ MikMod 3.2.6 was released on XX/XXX/XXXX.
 - Several makefile clean-ups.
 - Removed ancient convert_playlist script which used to supposed
   to convert pre-ancient mikmod playlists.
+- Build system configuration and packaging simplifications.
 
 
 Summary of changes between MikMod 3.2.4 and MikMod 3.2.5:
