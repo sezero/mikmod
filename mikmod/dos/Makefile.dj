@@ -2,7 +2,7 @@
 # Makefile for building MikMod under DOS/DJGPP
 #
 # This is a Makefile designed explicitly for GNU Make.
-# Edit include/config.h, if necessary.
+# NOTE:  Edit config.h, if necessary.
 #------------------------------------------------------------------------------#
 
 # Set to 1 for debug build
