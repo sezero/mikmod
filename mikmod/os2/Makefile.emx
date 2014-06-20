@@ -82,7 +82,7 @@ $(OUT)/mwidget.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
   ../src/mutilities.h
 $(OUT)/mwindow.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
   ../src/mconfig.h ../src/rcfile.h ../src/mutilities.h ../src/keys.h \
-  ../src/mthreads.h os2video.inc
+  ../src/mthreads.h ../src/os2video.inc
 $(OUT)/rcfile.o: config.h ../src/rcfile.h ../src/mutilities.h
 
 $(OUT)/mgetopt.o: ../src/mgetopt.h

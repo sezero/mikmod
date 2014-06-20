@@ -17,7 +17,7 @@ CFLAGS+= -5s
 .SUFFIXES:
 .SUFFIXES: .obj .c
 
-AOUT= mikmod.exe
+AOUT=mikmod.exe
 COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
 
 OBJ = display.obj marchive.obj mconfedit.obj mconfig.obj mdialog.obj mikmod.obj mlist.obj mlistedit.obj &
@@ -26,7 +26,7 @@ EXTRA_OBJ = mgetopt.obj mgetopt1.obj mfnmatch.obj
 
 all: $(AOUT)
 
-$(AOUT):	$(OBJ) $(EXTRA_OBJ)
+$(AOUT): $(OBJ) $(EXTRA_OBJ)
 	wlink N $(AOUT) SYS OS2V2 LIBR {$(LIBS)} F {$(OBJ)} F {$(EXTRA_OBJ)}
 
 clean: FORCE
@@ -79,7 +79,7 @@ mwidget.obj: ../src/mwidget.c ../src/display.h ../src/player.h ../src/mwindow.h 
 	$(COMPILE) -fo=$^@ ../src/mwidget.c
 mwindow.obj: ../src/mwindow.c ../src/display.h ../src/player.h ../src/mwindow.h &
 		../src/mconfig.h ../src/rcfile.h ../src/mutilities.h ../src/keys.h &
-		../src/mthreads.h os2video.inc
+		../src/mthreads.h ../src/os2video.inc
 	$(COMPILE) -fo=$^@ ../src/mwindow.c
 rcfile.obj: ../src/rcfile.c ../src/rcfile.h ../src/mutilities.h
 	$(COMPILE) -fo=$^@ ../src/rcfile.c
