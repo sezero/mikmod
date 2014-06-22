@@ -3,10 +3,13 @@ Summary of changes between MikMod 3.2.5 and MikMod 3.2.6:
 
 MikMod 3.2.6 was released on XX/XXX/XXXX.
 
+- Fix curses linkage on some setups. (add -ltinfo if necessary.)
 - Several makefile clean-ups.
 - Removed ancient convert_playlist script which used to supposed
   to convert pre-ancient mikmod playlists.
-- Build system configuration and packaging simplifications.
+- Build system configuration and packaging simplifications. Cmake
+  updates and improvements.
+- Fix some os/2 bit rot. (hopefully. for nostalgia...)
 
 
 Summary of changes between MikMod 3.2.4 and MikMod 3.2.5:
