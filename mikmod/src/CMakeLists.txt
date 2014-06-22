@@ -20,20 +20,20 @@ SET(mikmod_SRCS
 
 IF (NOT HAVE_USLEEP)
     LIST (APPEND mikmod_SRCS "musleep.c")
-ENDIF (NOT HAVE_USLEEP)
+ENDIF()
 IF (NOT HAVE_FNMATCH)
     LIST (APPEND mikmod_SRCS "mfnmatch.c")
-ENDIF (NOT HAVE_FNMATCH)
+ENDIF()
 IF (NOT HAVE_GETOPT_LONG_ONLY)
     LIST (APPEND mikmod_SRCS "mgetopt.c")
     LIST (APPEND mikmod_SRCS "mgetopt1.c")
-ENDIF (NOT HAVE_GETOPT_LONG_ONLY)
+ENDIF()
 
 include_directories(${MIKMOD_INCLUDE_DIR})
 
 add_executable(mikmod ${mikmod_SRCS})
 
-target_link_libraries(mikmod "ncurses" "pthread" ${MIKMOD_LIBRARIES})
+target_link_libraries(mikmod ${MIKMOD_LIBRARIES} ${EXTRA_LIBS})
 
 install(TARGETS mikmod DESTINATION bin)
 

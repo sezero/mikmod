@@ -8,6 +8,9 @@
 /* Define to 1 if `TIOCGWINSZ' requires <sys/ioctl.h>. */
 #cmakedefine GWINSZ_IN_SYS_IOCTL
 
+/* Define to 1 if you have the <curses.h> header file. */
+#cmakedefine HAVE_CURSES_H
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine HAVE_FCNTL_H
 

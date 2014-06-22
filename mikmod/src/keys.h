@@ -61,7 +61,7 @@
 
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
-#else
+#elif defined HAVE_CURSES_H
 #include <curses.h>
 #endif
 

@@ -56,6 +56,21 @@ INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
 include(mik_macros)
 
+CHECK_MULTI_INCLUDE_FILES(
+    "ncurses.h" "curses.h" "termios.h"
+    "fcntl.h" "fnmatch.h" "inttypes.h" "limits.h" "memory.h" "sched.h"
+    "sys/ioctl.h" "sys/param.h" "sys/wait.h" "sys/time.h" "sys/types.h"
+    "sys/stat.h" "stdint.h" "stdlib.h" "string.h" "strings.h" "unistd.h"
+    "pthread.h"
+)
+CHECK_SYMBOL_EXISTS(TIOCGWINSZ "sys/ioctl.h" GWINSZ_IN_SYS_IOCTL)
+CHECK_SYMBOL_EXISTS(usleep unistd.h HAVE_USLEEP_PROTO)
+IF (NOT HAVE_USLEEP_PROTO)
+    CHECK_SYMBOL_EXISTS(usleep "sys/unistd.h" HAVE_USLEEP_PROTO)
+ENDIF()
+
+SET(EXTRA_LIBS )
+
 find_path(MIKMOD_INCLUDE_DIR mikmod.h)
 find_library(MIKMOD_LIBRARIES mikmod)
 IF (MIKMOD_LIBRARIES STREQUAL "MIKMOD_LIBRARIES-NOTFOUND")
@@ -69,25 +84,64 @@ IF(UNIX OR APPLE)
   IF(NOT CURSES_FOUND)
     MESSAGE(FATAL_ERROR "Curses not found.")
   ENDIF()
+
+  IF(HAVE_NCURSES_H)
+     SET(CURSES_HDR "ncurses.h")
+  ELSEIF(HAVE_CURSES_H)
+     SET(CURSES_HDR "curses.h")
+  ELSE()
+      MESSAGE(FATAL_ERROR "Neither ncurses.h nor curses.h found.")
+  ENDIF()
+
+  SET(CMAKE_REQUIRED_LIBRARIES ${CURSES_LIBRARY})
+  CHECK_FUNCTION_EXISTS (resizeterm HAVE_NCURSES_RESIZETERM)
+  CHECK_C_SOURCE_COMPILES(
+   "#include <${CURSES_HDR}>
+     int main(void) {
+#ifdef ACS_ULCORNER
+     return ACS_ULCORNER;
+#endif
+     return 0; }"
+     CURSES_LINKSOK
+  )
+  IF(CURSES_LINKSOK)
+    LIST (APPEND EXTRA_LIBS ${CURSES_LIBRARY})
+  ELSE()
+    find_library(TINFO_LIBRARY tinfo)
+    IF(TINFO_LIBRARY STREQUAL "TINFO_LIBRARY-NOTFOUND")
+      MESSAGE(FATAL_ERROR "libtinfo needed for ncurses, but not found.")
+    ELSE()
+      MESSAGE(STATUS "Found libtinfo: ${TINFO_LIBRARY}")
+      SET(CMAKE_REQUIRED_LIBRARIES ${CURSES_LIBRARY} ${TINFO_LIBRARY})
+      CHECK_C_SOURCE_COMPILES(
+       "#include <${CURSES_HDR}>
+         int main(void) {
+#ifdef ACS_ULCORNER
+         return ACS_ULCORNER;
+#endif
+         return 0; }"
+         TINFO_LINKSOK
+      )
+      IF(TINFO_LINKSOK)
+        LIST (APPEND EXTRA_LIBS ${CURSES_LIBRARY})
+        LIST (APPEND EXTRA_LIBS ${TINFO_LIBRARY})
+      ELSE()
+        MESSAGE(FATAL_ERROR "failed linking to ncurses library.")
+      ENDIF()
+    ENDIF()
+  ENDIF()
 ENDIF()
 
-CHECK_MULTI_INCLUDE_FILES(
-    "ncurses.h" "termios.h"
-    "fcntl.h" "fnmatch.h" "inttypes.h" "limits.h" "memory.h" "sched.h"
-    "sys/ioctl.h" "sys/param.h" "sys/wait.h" "sys/time.h" "sys/types.h"
-    "sys/stat.h" "stdint.h" "stdlib.h" "string.h" "strings.h" "unistd.h"
-    "pthread.h"
-)
-
-CHECK_SYMBOL_EXISTS(TIOCGWINSZ "sys/ioctl.h" GWINSZ_IN_SYS_IOCTL)
-CHECK_SYMBOL_EXISTS(usleep unistd.h HAVE_USLEEP_PROTO)
-IF (NOT HAVE_USLEEP_PROTO)
-    CHECK_SYMBOL_EXISTS(usleep "sys/unistd.h" HAVE_USLEEP_PROTO)
-ENDIF()
-
-IF(HAVE_PTHREAD_H)
+SET(HAVE_PTHREAD)
+IF (NOT WIN32)
+ INCLUDE(FindThreads)
+ IF (CMAKE_USE_PTHREADS_INIT)
     SET (HAVE_PTHREAD 1)
-ENDIF(HAVE_PTHREAD_H)
+    IF (CMAKE_THREAD_LIBS_INIT)
+        LIST (APPEND EXTRA_LIBS ${CMAKE_THREAD_LIBS_INIT})
+    ENDIF()
+ ENDIF()
+ENDIF()
 
 CHECK_MULTI_FUNCTIONS_EXISTS(
     "getopt_long_only"
@@ -99,10 +153,6 @@ CHECK_MULTI_FUNCTIONS_EXISTS(
     vprintf
 )
 
-IF (HAVE_USLEEP)
-    SET (HAVE_USLEEP_PROTO 1)
-ENDIF (HAVE_USLEEP)
-
 CHECK_C_SOURCE_COMPILES(
  "#include <sys/types.h>
   #include <signal.h>
@@ -111,13 +161,10 @@ CHECK_C_SOURCE_COMPILES(
 )
 if(RETSIGTYPE_INT)
   set(RETSIGTYPE int)
-else(RETSIGTYPE_INT)
+else()
   set(RETSIGTYPE void)
-endif(RETSIGTYPE_INT)
+endif()
 MESSAGE(STATUS "Return type of signal handlers: ${RETSIGTYPE}")
-
-SET(CMAKE_REQUIRED_LIBRARIES "ncurses")
-CHECK_FUNCTION_EXISTS (resizeterm HAVE_NCURSES_RESIZETERM)
 
 SET(CMAKE_REQUIRED_INCLUDES ${MIKMOD_INCLUDE_DIR})
 SET(CMAKE_REQUIRED_LIBRARIES ${MIKMOD_LIBRARIES})

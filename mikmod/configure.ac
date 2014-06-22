@@ -39,6 +39,54 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
+dnl =================================
+dnl Use -Wall warning level with gcc.
+dnl =================================
+
+if test $ac_cv_prog_gcc = yes ; then
+	CFLAGS="$CFLAGS -Wall"
+fi
+
+dnl ==============================================================
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl ==============================================================
+
+AC_C_CONST
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+
+dnl ========================
+dnl Checks for header files.
+dnl ========================
+
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_HEADER_TIME
+AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
+AC_CHECK_HEADERS(fnmatch.h)
+AC_CHECK_HEADERS(sched.h)
+AC_CHECK_HEADERS(ncurses.h curses.h)
+AC_CHECK_HEADERS(termios.h)
+
+AC_HEADER_TIOCGWINSZ
+
+dnl Checks for bogus Linux old libc5 sched.h
+case "$host_os" in
+    linux*)
+	AC_MSG_CHECKING([whether sched.h is correct])
+	AC_TRY_COMPILE([#include <sched.h>], [sched_yield();],
+		broken_sched=no, broken_sched=yes)
+	if test "$broken_sched" = "yes"
+	then
+		AC_DEFINE(BROKEN_SCHED, 1,
+			  [Define if your copy of <sched.h> has a _P instead of __P (old Linux libc5).])
+		AC_MSG_RESULT(no)
+	else
+		AC_MSG_RESULT(yes)
+	fi
+	;;
+esac
+
 dnl =====================
 dnl Checks for libraries.
 dnl =====================
@@ -59,11 +107,60 @@ AC_CHECK_LIB(mikmod, MikMod_free, AC_DEFINE(HAVE_MIKMOD_FREE, 1,
 LDFLAGS="$ac_save_LDFLAGS"
 
 dnl ncurses
-AC_CHECK_LIB(ncurses, initscr, libcurses=ncurses, libcurses=curses)
+case $host_os in
+    mingw*|emx*|*djgpp)
+	need_curses=no  ;;
+    *)
+	need_curses=yes ;;
+esac
+
+if test "$need_curses" = "yes" ; then
+	AC_CHECK_LIB([ncurses], [initscr], [libcurses=ncurses],
+			AC_CHECK_LIB([curses], [initscr], [libcurses=curses],
+				AC_MSG_ERROR([--- ERROR: No curses library found.])))
+	AC_CHECK_LIB([tinfo], [tgetflag], [have_tinfo=yes], [have_tinfo=no])
+
 dnl resizeterm is an optional part of ncurses
-AC_CHECK_LIB($libcurses, resizeterm, AC_DEFINE(HAVE_NCURSES_RESIZETERM, 1,
+	AC_CHECK_LIB($libcurses, resizeterm, AC_DEFINE(HAVE_NCURSES_RESIZETERM, 1,
 		[Define if your libncurses defines resizeterm (not found in <4.2).]))
-AC_HEADER_TIOCGWINSZ
+
+	ac_save_LDFLAGS=$LDFLAGS
+	LDFLAGS="$LDFLAGS -l$libcurses"
+	AC_MSG_CHECKING([whether curses links without libtinfo])
+	AC_TRY_LINK([#ifdef HAVE_NCURSES_H
+#include <ncurses.h>
+#elif defined(HAVE_CURSES_H)
+#include <curses.h>
+#endif],
+[#ifdef ACS_ULCORNER
+return ACS_ULCORNER;
+#endif],
+		[need_tinfo=no], [need_tinfo=yes]
+	)
+	if test "$need_tinfo" = "yes" ; then
+		AC_MSG_RESULT(no)
+		if test "$have_tinfo" = "no" ; then
+			AC_MSG_ERROR([--- ERROR: libtinfo needed for ncurses, but not found.])
+		else
+			AC_MSG_CHECKING([whether ncurses links with libtinfo])
+			LDFLAGS="$LDFLAGS -ltinfo"
+			AC_TRY_LINK([#ifdef HAVE_NCURSES_H
+#include <ncurses.h>
+#elif defined(HAVE_CURSES_H)
+#include <curses.h>
+#endif],
+[#ifdef ACS_ULCORNER
+return ACS_ULCORNER;
+#endif],
+				AC_MSG_RESULT(yes),
+				AC_MSG_ERROR([--- ERROR: failed linking to ncurses library.])
+			)
+		fi
+	else
+		AC_MSG_RESULT(yes)
+	fi
+	LDFLAGS="$ac_save_LDFLAGS"
+fi
 
 dnl POSIX.4 threads
 dnl ---------------
@@ -72,57 +169,14 @@ case "$host_os" in
     mingw*) mikmod_threads=no ;;
 esac
 if test "$mikmod_threads" = "yes"; then
-        mikmod_threads=no
-        dnl AC_CHECK_HEADERS(pthread.h) unreliable
-        AC_CHECK_LIB(
-                pthread,
-                pthread_create,
-                mikmod_threads=-lpthread,
-                AC_CHECK_LIB(
-                        c_r,
-                        pthread_attr_init,
-                        mikmod_threads=-lc_r
-                )
-        )
+	mikmod_threads=no
+	dnl AC_CHECK_HEADERS(pthread.h) unreliable
+	AC_CHECK_LIB([pthread], [pthread_create],
+			[mikmod_threads=-lpthread],
+			AC_CHECK_LIB([c_r], [pthread_attr_init],
+					[mikmod_threads=-lc_r])
+		)
 fi
-
-dnl ========================
-dnl Checks for header files.
-dnl ========================
-
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
-AC_CHECK_HEADERS(fnmatch.h)
-AC_CHECK_HEADERS(ncurses.h)
-AC_CHECK_HEADERS(sched.h)
-AC_CHECK_HEADERS(termios.h)
-
-dnl Checks for bogus Linux old libc5 sched.h
-case "$host_os" in
-    linux*)
-	AC_MSG_CHECKING([whether sched.h is correct])
-	AC_TRY_COMPILE([#include <sched.h>], [sched_yield();],
-		broken_sched=no, broken_sched=yes)
-	if test "$broken_sched" = "yes"
-	then
-		AC_DEFINE(BROKEN_SCHED, 1,
-			  [Define if your copy of <sched.h> has a _P instead of __P (old Linux libc5)].)
-		AC_MSG_RESULT(no)
-	else
-		AC_MSG_RESULT(yes)
-	fi
-	;;
-esac
-
-dnl ==============================================================
-dnl Checks for typedefs, structures, and compiler characteristics.
-dnl ==============================================================
-
-AC_C_CONST
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
-AC_HEADER_TIME
 
 dnl =============================
 dnl Checks for library functions.
@@ -145,14 +199,6 @@ AC_EGREP_HEADER(srandom, math.h, AC_DEFINE(SRANDOM_IN_MATH_H, 1,
 		 in math.h instead of stdlib.h.]))
 
 dnl =================================
-dnl Use -Wall warning level with gcc.
-dnl =================================
-
-if test $ac_cv_prog_gcc = yes ; then
-	CFLAGS="$CFLAGS -Wall"
-fi
-
-dnl =================================
 dnl Set PACKAGE_DATA_DIR in config.h.
 dnl =================================
 
@@ -169,12 +215,11 @@ case $host in
     ;;
 esac
 
-if test "$mikmod_threads" != "no"
-then
-        AC_DEFINE(HAVE_PTHREAD, 1, [Define if your system provides POSIX.4 threads.])
-        CFLAGS="$CFLAGS -D_REENTRANT"
-        PLAYER_LIB="$mikmod_threads $PLAYER_LIB"
-        REENTRANT="-D_REENTRANT"
+if test "$mikmod_threads" != "no"; then
+	AC_DEFINE(HAVE_PTHREAD, 1, [Define if your system provides POSIX.4 threads.])
+	CFLAGS="$CFLAGS -D_REENTRANT"
+	PLAYER_LIB="$mikmod_threads $PLAYER_LIB"
+	REENTRANT="-D_REENTRANT"
 fi
 
 dnl ===================
@@ -186,11 +231,10 @@ dnl implementation on this system
 
 case $host in
     *-*-solaris*)
-	if test "$mikmod_threads" != "no"
-	then
-	    have_usleep=no
+	if test "$mikmod_threads" != "no"; then
+		have_usleep=no
 	else
-	    AC_CHECK_FUNCS(usleep, have_usleep=yes)
+		AC_CHECK_FUNCS(usleep, have_usleep=yes)
 	fi
 	AC_DEFINE(SOLARIS, 1, [Define if your system is SOLARIS.])
 	;;
@@ -199,22 +243,25 @@ case $host in
 	;;
 esac
 
-if test "$have_getopt_long_only" != "yes"
-then
+if test "$have_getopt_long_only" != "yes"; then
 	EXTRA_OBJ="mgetopt.o mgetopt1.o $EXTRA_OBJ"
 fi
 
 dnl Yet another kluge to get the result of AC_FUNC_FNMATCH.
-if test "$ac_cv_func_fnmatch_works" != "yes"
-then
+if test "$ac_cv_func_fnmatch_works" != "yes"; then
 	EXTRA_OBJ="mfnmatch.o $EXTRA_OBJ"
 fi
-if test "$have_usleep" != "yes"
-then
+
+if test "$have_usleep" != "yes"; then
 	EXTRA_OBJ="musleep.o $EXTRA_OBJ"
 fi
 
-PLAYER_LIB="$PLAYER_LIB -l$libcurses"
+if test "$need_curses" = "yes"; then
+	PLAYER_LIB="$PLAYER_LIB -l$libcurses"
+	if test "$need_tinfo" = "yes"; then
+		PLAYER_LIB="$PLAYER_LIB -ltinfo"
+	fi
+fi
 
 dnl =================
 dnl Create Makefiles.

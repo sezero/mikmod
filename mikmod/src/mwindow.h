@@ -32,7 +32,7 @@
 #if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 #  ifdef HAVE_NCURSES_H
 #    include <ncurses.h>
-#  else
+#  elif defined HAVE_CURSES_H
 #    include <curses.h>
 #  endif
 #  define MIK_CURSES_ERROR ERR
