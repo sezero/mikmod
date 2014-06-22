@@ -1,1 +1,3 @@
-EXTRA_DIST = mikmod.h mikmod_internals.h CMakeLists.txt
+include_HEADERS = mikmod.h
+
+EXTRA_DIST = mikmod_internals.h CMakeLists.txt
