@@ -27,12 +27,12 @@ OBJ=drv_gp32.o drv_nos.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 #   mdulaw.o
 
-clean:
-	rm -f $(LIBS) *.o
-
 libmikmod.a: $(OBJ)
 	$(AR) $(ARFLAGS) $@ $(OBJ)
 	$(RANLIB) $@
+
+clean:
+	rm -f $(LIBS) *.o
 
 HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h
 drv_gp32.o: ../drivers/drv_gp32.c $(HEADER_DEPS)
