@@ -1,6 +1,6 @@
 /* mmloader.c
- * Example on how to implement a MREADER that reads from
- * memory for libmikmod.
+ * Example on how to implement a MREADER that reads from memory
+ * for libmikmod.
  * (C) 2004, Raphael Assenat (raph@raphnet.net)
  *
  * This example is distributed in the hope that it will be useful,
@@ -10,30 +10,31 @@
  */
 
 #include <limits.h>
+#include <stdlib.h>
 #include <mikmod.h>
-#include "mmloader.h"
+#include "myloader.h"
 
-static BOOL _mm_MemReader_Eof(MREADER* reader);
-static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size);
-static int _mm_MemReader_Get(MREADER* reader);
-static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
-static long _mm_MemReader_Tell(MREADER* reader);
+static BOOL My_MemReader_Eof(MREADER* reader);
+static BOOL My_MemReader_Read(MREADER* reader,void* ptr,size_t size);
+static int  My_MemReader_Get(MREADER* reader);
+static int  My_MemReader_Seek(MREADER* reader,long offset,int whence);
+static long My_MemReader_Tell(MREADER* reader);
 
 void my_delete_mem_reader(MREADER* reader)
 {
-	if (reader) MikMod_free(reader);
+	if (reader) free(reader);
 }
 
 MREADER *my_new_mem_reader(const void *buffer, int len)
 {
-	MY_MEMREADER* reader=(MY_MEMREADER*)MikMod_malloc(sizeof(MY_MEMREADER));
+	MY_MEMREADER* reader = (MY_MEMREADER*) malloc(sizeof(MY_MEMREADER));
 	if (reader)
 	{
-		reader->core.Eof =&_mm_MemReader_Eof;
-		reader->core.Read=&_mm_MemReader_Read;
-		reader->core.Get =&_mm_MemReader_Get;
-		reader->core.Seek=&_mm_MemReader_Seek;
-		reader->core.Tell=&_mm_MemReader_Tell;
+		reader->core.Eof = &My_MemReader_Eof;
+		reader->core.Read= &My_MemReader_Read;
+		reader->core.Get = &My_MemReader_Get;
+		reader->core.Seek= &My_MemReader_Seek;
+		reader->core.Tell= &My_MemReader_Tell;
 		reader->buffer = buffer;
 		reader->len = len;
 		reader->pos = 0;
@@ -41,7 +42,7 @@ MREADER *my_new_mem_reader(const void *buffer, int len)
 	return (MREADER*)reader;
 }
 
-static BOOL _mm_MemReader_Eof(MREADER* reader)
+static BOOL My_MemReader_Eof(MREADER* reader)
 {
 	MY_MEMREADER* mr = (MY_MEMREADER*) reader;
 	if (!mr) return 1;
@@ -49,7 +50,7 @@ static BOOL _mm_MemReader_Eof(MREADER* reader)
 	return 0;
 }
 
-static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
+static BOOL My_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 {
 	unsigned char *d;
 	const unsigned char *s;
@@ -84,7 +85,7 @@ static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 	return ret;
 }
 
-static int _mm_MemReader_Get(MREADER* reader)
+static int My_MemReader_Get(MREADER* reader)
 {
 	MY_MEMREADER* mr;
 	int c;
@@ -97,7 +98,7 @@ static int _mm_MemReader_Get(MREADER* reader)
 	return c;
 }
 
-static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
+static int My_MemReader_Seek(MREADER* reader,long offset,int whence)
 {
 	MY_MEMREADER* mr;
 
@@ -125,7 +126,7 @@ static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 	return 0;
 }
 
-static long _mm_MemReader_Tell(MREADER* reader)
+static long My_MemReader_Tell(MREADER* reader)
 {
 	if (reader) {
 		return ((MY_MEMREADER*)reader)->pos - reader->iobase;

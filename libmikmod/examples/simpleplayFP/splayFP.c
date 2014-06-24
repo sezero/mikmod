@@ -1,6 +1,5 @@
 /* splayFP.c
- * An example on how to use libmikmod to play
- * a module from a FILE*
+ * An example on how to use libmikmod to play a module from a FILE*
  *
  * (C) 2004, Raphael Assenat (raph@raphnet.net)
  *
@@ -10,6 +9,7 @@
  *
  */
 
+#include <stdio.h>
 #include <mikmod.h>
 #if !defined(_WIN32)
 #include <unistd.h>  /* for usleep() */
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	MODULE *module;
 	FILE *fptr;
 
-	if (argc<2) {
+	if (argc < 2) {
 		fprintf(stderr, "Usage: ./splayFP file\n");
 		return 1;
 	}
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 
 	/* open the file */
 	fptr = fopen(argv[1], "rb");
-	if (fptr==NULL) {
+	if (fptr == NULL) {
 		perror("fopen");
 		MikMod_Exit();
 		return 1;

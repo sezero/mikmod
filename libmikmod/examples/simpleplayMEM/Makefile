@@ -1,24 +1,25 @@
 CC=gcc
 LD=$(CC)
 
-CFLAGS=-Wall -g `libmikmod-config --cflags`
-LDFLAGS=`libmikmod-config --libs`
+LIBMIKMOD_CONFIG=libmikmod-config
+LIBMIKMOD_CFLAGS=$(shell $(LIBMIKMOD_CONFIG) --cflags)
+LIBMIKMOD_LIBS  =$(shell $(LIBMIKMOD_CONFIG) --libs)
+
+CFLAGS=-Wall -g $(LIBMIKMOD_CFLAGS)
+LDFLAGS=$(LIBMIKMOD_LIBS)
 
 PROG=splayMEM
 
-OBJS=$(patsubst %.c,%.o,$(wildcard *.c))
+OBJS=myloader.o splayMEM.o
 
 .PHONY : clean install
 
 all: $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o $(PROG)
+	$(LD) $(OBJS) $(LDFLAGS) -o $(PROG)
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $<
 
 clean:
 	rm -f *.o $(PROG)
-
-install:
-	@echo "Install not done yet. Sorry"
 

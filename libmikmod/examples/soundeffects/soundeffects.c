@@ -1,6 +1,5 @@
 /* soundeffects.c
- * An example on how to use libmikmod to play
- * sound effects.
+ * An example on how to use libmikmod to play sound effects.
  *
  * (C) 2004, Raphael Assenat (raph@raphnet.net)
  *
@@ -9,6 +8,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  */
+
+#include <stdlib.h>
 #include <stdio.h>
 #include <mikmod.h>
 
@@ -21,11 +22,9 @@
 
 SAMPLE *Load(const char *fn)
 {
-    char *file_data;
-    long sysFileGetLength;
+    char *data_buf;
+    long data_len;
     FILE *fptr;
-
-/*  return Sample_Load(fn);*/
 
     /* open the file */
     fptr = fopen(fn, "rb");
@@ -36,25 +35,25 @@ SAMPLE *Load(const char *fn)
 
     /* calculate the file size */
     fseek(fptr, 0, SEEK_END);
-    sysFileGetLength = ftell(fptr);
+    data_len = ftell(fptr);
     fseek(fptr, 0, SEEK_SET);
 
     /* allocate a buffer and load the file into it */
-    file_data = (char *) MikMod_malloc(sysFileGetLength);
-    if (file_data == NULL) {
-        perror("MikMod_malloc");
+    data_buf = (char *) malloc(data_len);
+    if (data_buf == NULL) {
+        perror("malloc");
         fclose(fptr);
         return 0;
     }
-    if (fread(file_data, sysFileGetLength, 1, fptr) != 1) {
+    if (fread(data_buf, data_len, 1, fptr) != 1) {
         perror("fread");
         fclose(fptr);
-        MikMod_free(file_data);
+        free(data_buf);
         return 0;
     }
     fclose(fptr);
 
-    return Sample_LoadMem(file_data, sysFileGetLength);
+    return Sample_LoadMem(data_buf, data_len);
 }
 
 int main(void)

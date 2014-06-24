@@ -1,5 +1,5 @@
-#ifndef mmloader_h
-#define mmloader_h
+#ifndef myloader_h
+#define myloader_h
 
 typedef struct _MY_MEMREADER {
 	MREADER core;

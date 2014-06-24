@@ -8,14 +8,14 @@ LIBMIKMOD_LIBS  =$(shell $(LIBMIKMOD_CONFIG) --libs)
 CFLAGS=-Wall -g $(LIBMIKMOD_CFLAGS)
 LDFLAGS=$(LIBMIKMOD_LIBS)
 
-PROG=splayFP
+PROG=soundeffects
 
-OBJS=splayFP.o
+OBJS=soundeffects.o
 
 .PHONY : clean install
 
 all: $(OBJS)
-	$(LD) $(OBJS) $(LDFLAGS) -o $(PROG)
+	$(LD) $(LDFLAGS) $(OBJS) -o $(PROG)
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $<

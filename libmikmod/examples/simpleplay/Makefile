@@ -1,12 +1,16 @@
 CC=gcc
 LD=$(CC)
 
-CFLAGS=-Wall -g `libmikmod-config --cflags`
-LDFLAGS=`libmikmod-config --libs`
+LIBMIKMOD_CONFIG=libmikmod-config
+LIBMIKMOD_CFLAGS=$(shell $(LIBMIKMOD_CONFIG) --cflags)
+LIBMIKMOD_LIBS  =$(shell $(LIBMIKMOD_CONFIG) --libs)
+
+CFLAGS=-Wall -g $(LIBMIKMOD_CFLAGS)
+LDFLAGS=$(LIBMIKMOD_LIBS)
 
 PROG=splay
 
-OBJS=$(patsubst %.c,%.o,$(wildcard *.c))
+OBJS=splay.o
 
 .PHONY : clean install
 
@@ -18,7 +22,4 @@ all: $(OBJS)
 
 clean:
 	rm -f *.o $(PROG)
-
-install:
-	@echo "Install not done yet. Sorry"
 
