@@ -42,13 +42,17 @@
 #ifndef GP32
 #define GP32 1
 #endif
+
+#include <stddef.h>
+#define size_t size_t
+
 #include <gp32.h>
 #include "mikmod_internals.h"
 
 #define GP32_buffersize 2048
 #define GP32_ringsize (GP32_buffersize*2)
 
-static unsigned char *GP32_buffer = NULL;
+static SBYTE *GP32_buffer = NULL;
 
 static BOOL GP32_IsThere(void) {
 	return 1;
@@ -58,7 +62,7 @@ static int GP32_Init(void) {
 	md_mode = DMODE_STEREO | DMODE_16BITS | DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
 	md_mixfreq = 44100;
 	gp_initSound(44100, 16, GP32_ringsize); /* 44k sound, 16bpp, 2x4k buffers */
-	GP32_buffer = (unsigned char*) MikMod_malloc(GP32_buffersize); /* Half of the 8k ringbuffer */
+	GP32_buffer = (SBYTE *) MikMod_malloc(GP32_buffersize); /* Half of the 8k ringbuffer */
 	if (!GP32_buffer) return 1;
 	gp_clearRingbuffer();
 	return VC_Init();
