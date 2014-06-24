@@ -21,16 +21,6 @@ If you have all proper tools installed, just type
 
 	make -f Makefile.dj
 
-There is a catch if you have some PC-like GREP (i.e. Borland GREP) somewhere on
-your path before actual GNU grep... you can check this by just typing "grep".
-GNU grep should output:
-
-	Usage: grep [OPTION]... PATTERN [FILE]...
-	Try `grep --help' for more information.
-
-If you see something other, place your djgpp/bin path earlier in PATH list.
-After this the build process should complete painlessly.
-
 To make your library ready to use, copy the files 'libmikmod.a' and
 'include/mikmod.h' to your '%DJGPP%/lib' and '%DJGPP%/include' directories
 respectively.
