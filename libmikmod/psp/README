@@ -9,6 +9,8 @@ and the example code here are adapted from the ps2dev.org svn versions.
 BUILDING libmikmod for PSP:
 
 You need pspsdk installed, and psp-config must be on your $PATH.
+See http://sourceforge.net/projects/minpspw/
+as well as http://sourceforge.net/projects/devkitpro/ for toolchains.
 Run 'make -f Makefile.psp' to build the library.
 
 
