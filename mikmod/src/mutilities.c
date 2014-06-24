@@ -365,7 +365,7 @@ unsigned long Time1000(void)
 #endif
 }
 
-#if defined(_WIN32)&&!defined(__MINGW32__)
+#if defined(_WIN32)&&!defined(__MINGW32__)&&!defined(__WATCOMC__)
 DIR* opendir (const char* dirName)
 {
 	struct stat statbuf;

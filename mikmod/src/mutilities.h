@@ -129,7 +129,7 @@ extern char storage[STORAGELEN+2];
 #define S_ISLNK(st_mode)  0
 #endif
 
-#if defined(_WIN32)&&!defined(__MINGW32__)
+#if defined(_WIN32)&&!defined(__MINGW32__)&&!defined(__WATCOMC__)
 typedef struct dirent {
 	char name[PATH_MAX+1];
 	unsigned long* handle;
