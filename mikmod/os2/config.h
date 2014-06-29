@@ -9,6 +9,9 @@
 /* Define if your system has a working fnmatch function.  */
 #define HAVE_FNMATCH	1
 
+/* Define to 1 if you have the <sys/param.h> header file. */
+#define HAVE_SYS_PARAM_H 1
+
 /* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
 #define HAVE_SYS_WAIT_H	1
 
