@@ -44,9 +44,8 @@ the HOME environment variable. If you don't have the HOME environment variable,
 the file will be created in C:\, which is probably not what you want and should
 encourage you to have the HOME environment variable set.
 
-Once you're in the player, if you haven't choosed terse mode (a la
-MikMod 2), pressing the H key will give you an help screen with the list
-of the keys you can use. I hope it's understandable.
+Once you're in the player, pressing the H key will give you an help screen with
+the list of the keys you can use. I hope it's understandable.
 
 
 >> THANKS
