@@ -9,9 +9,6 @@
 /* Define to 1 if you have the `vsnprintf' function. */
 /* #define HAVE_VSNPRINTF 1 */
 
-/* Define if you don't have vprintf but do have _doprnt.  */
-#define HAVE_DOPRNT	1
-
 /* Define if your system has a working fnmatch function.  */
 #define HAVE_FNMATCH	1
 
@@ -23,6 +20,9 @@
 
 /* Define as the return type of signal handlers (int or void).  */
 #define RETSIGTYPE	void
+
+/* Define if you have the mkstemp function.  */
+#define HAVE_MKSTEMP	1
 
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #define TIME_WITH_SYS_TIME	1
