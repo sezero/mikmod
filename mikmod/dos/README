@@ -2,8 +2,7 @@
 
 
 This is MikMod, version 3.2.6, a module player for DOS.
-DOS support is new in this version, your comments and critics are welcome.
-
+Comments & feedback are welcome.
 
 
 >> BUILDING MIKMOD
@@ -11,7 +10,7 @@ DOS support is new in this version, your comments and critics are welcome.
 
 - If you're not building libmikmod for DOS, then you're lost in the sources.
   Go up one directory, and read the main README file.
-  
+
 This port has been designed to work only with DJGPP compiler. However, it
 should not be too complex to make it compile with any other compiler. If you
 manage to make libmikmod compile and work with another compiler, we'd like to
@@ -19,13 +18,13 @@ hear from you. You'll likely have to write an appropiate makefile, or build
 things manually ...
 
 You should have pre-built libmikmod.a either in %DJGPP%/lib or in $(MIKMOD)
-(see Makefile) directory. Refer to the libmikmod source package for
-instructions on how to build libmikmod under DOS.
-  
+(see Makefile) directory. Refer to the libmikmod source for instructions on
+how to build libmikmod under DOS.
+
 If you have all proper tools installed, just type
-  
-      make -fMakefile.dj
-	  
+
+    make -f Makefile.dj
+
 You should end up with a MIKMOD.EXE binary in the current directory.
 
 
@@ -39,10 +38,7 @@ you can read if you've got a port of the 'man' tool.
 Also, after you've run MikMod for the first time, you might want to
 customize your mikmod.cfg file, either from the configuration panel or by
 editing the file yourself, so you won't need to supply the same options to
-MikMod all the time. This file will be created in the directory pointed to by
-the HOME environment variable. If you don't have the HOME environment variable,
-the file will be created in C:\, which is probably not what you want and should
-encourage you to have the HOME environment variable set.
+MikMod all the time. This file will be created in  in C:\
 
 Once you're in the player, pressing the H key will give you an help screen with
 the list of the keys you can use. I hope it's understandable.
@@ -89,6 +85,6 @@ debugging and improving it.
 
 -- Miodrag ("Miod") Vallat, 10/19/1999
    miodrag@mikmod.darkorb.net
-   
+
    Andrew Zabolotny
    bit@eltech.ru
