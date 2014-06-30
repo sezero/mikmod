@@ -95,19 +95,28 @@ static const char *get_homedir (void)
 #else /* unix */
 static const char *get_homedir (void)
 {
-	const char *home = getenv("HOME");
+	static const char *home = NULL;
+	static char d[PATH_MAX];
 	if (!home) {
 		struct passwd *pw = getpwuid(getuid());
+		memset(d, 0, sizeof(d));
 		if (pw && pw->pw_dir) {
-			static char d[PATH_MAX];
-			strcpy (d, pw->pw_dir);
+			strncpy(d, pw->pw_dir, sizeof(d));
+			d[sizeof(d) - 1] = 0;
 			home = d;
 		}
+		else if ((home = getenv("HOME")) != NULL) {
+			strncpy(d, home, sizeof(d));
+			d[sizeof(d) - 1] = 0;
+			home = d;
+		}
+		else {
+			home = ""; /* fubar'ed.. */
+		}
 	}
-	if (!home) return ""; /* fubar'ed.. */
 	return home;
 }
-#endif
+#endif /* get_homedir */
 
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 
