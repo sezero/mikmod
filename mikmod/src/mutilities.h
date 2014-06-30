@@ -49,8 +49,10 @@
 #include <limits.h>
 #endif
 #ifndef PATH_MAX
-#if defined(MAXPATHLEN)  /* <sys/param.h> */
+#if defined(MAXPATHLEN) /* <sys/param.h> */
 #define PATH_MAX MAXPATHLEN
+#elif defined(_WIN32) && defined(_MAX_PATH)
+#define PATH_MAX _MAX_PATH
 #elif defined(_WIN32) && defined(MAX_PATH)
 #define PATH_MAX MAX_PATH
 #elif defined(__OS2__) && defined(CCHMAXPATH)
