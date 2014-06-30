@@ -59,6 +59,56 @@
 #include "marchive.h"
 #include "mutilities.h"
 
+#if defined(__DJGPP__)
+static const char *get_homedir (void)
+{
+	return "C:"; /* good enough for msdos */
+}
+#elif defined(__OS2__)||defined(__EMX__)
+static const char *get_homedir (void)
+{
+	const char *home = getenv("HOME");
+	if (!home || !*home) return "C:";
+	return home;
+}
+#elif defined(_WIN32)
+static const char *get_homedir (void)
+{
+	const char *home;
+# ifndef _WIN64
+	static int is_w9x = -1;
+	if (is_w9x < 0) {
+		OSVERSIONINFO v;
+		v.dwOSVersionInfoSize = sizeof(v);
+		if (!GetVersionEx(&v) || v.dwMajorVersion < 4 ||
+			v.dwPlatformId < VER_PLATFORM_WIN32_NT) {
+			is_w9x = 1;
+		}
+		else	is_w9x = 0;
+	}
+	if (is_w9x) return "C:";
+# endif
+	home = getenv("USERPROFILE");
+	if (!home || !*home) return "C:";
+	return home;
+}
+#else /* unix */
+static const char *get_homedir (void)
+{
+	const char *home = getenv("HOME");
+	if (!home) {
+		struct passwd *pw = getpwuid(getuid());
+		if (pw && pw->pw_dir) {
+			static char d[PATH_MAX];
+			strcpy (d, pw->pw_dir);
+			home = d;
+		}
+	}
+	if (!home) return ""; /* fubar'ed.. */
+	return home;
+}
+#endif
+
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 
 void path_conv(char *file)
@@ -227,17 +277,14 @@ int get_tmp_file (const char *tmpl, char **name_used)
 #ifdef P_tmpdir
 		if (!tmpdir) tmpdir = P_tmpdir;
 #endif
-		if (!tmpdir) {
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
-			tmpdir = "C:\\";
+		if (!tmpdir) tmpdir = "C:\\";
 #else
-			tmpdir = "/tmp";
+		if (!tmpdir) tmpdir = "/tmp";
 #endif
-		}
-		if (tmpdir [strlen (tmpdir) - 1] == PATH_SEP_SYS)
+		if (*tmpdir && tmpdir[strlen(tmpdir) - 1] == PATH_SEP_SYS)
 			tmpsep = "";
-		else
-			tmpsep = PATH_SEP_SYS_STR;
+		else	tmpsep = PATH_SEP_SYS_STR;
 	}
 	if (tmpl == NULL) tmpl = "mmXXXXXX";
 
@@ -270,11 +317,11 @@ char *get_tmp_name(void)
 							"!MikMod.tmp");
 #elif defined(_WIN32)
 	if (!(tmp_file = _tempnam(NULL, ".mod")))
-		if (!(tmp_file = _tempnam(getenv("HOME"), ".mod")))
+		if (!(tmp_file = _tempnam(get_homedir(), ".mod")))
 			return NULL;
 #else
 	if (!(tmp_file = tempnam(NULL, ".mod")))
-		if (!(tmp_file = tempnam(getenv("HOME"), ".mod")))
+		if (!(tmp_file = tempnam(get_homedir(), ".mod")))
 			return NULL;
 #endif
 	path_conv(tmp_file);
@@ -286,21 +333,7 @@ char *get_tmp_name(void)
    'name': filename without the path */
 char *get_cfg_name(const char *name)
 {
-	const char *home = getenv("HOME");
-	char *p;
-	if (!home) {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
-		home = "C:";
-#else
-		struct passwd *pw = getpwuid(getuid());
-
-		if (pw)
-			home = pw->pw_dir;
-		else
-			return NULL;
-#endif
-	}
-	p = str_sprintf2("%s" PATH_SEP_STR "%s", home, name);
+	char *p = str_sprintf2("%s" PATH_SEP_STR "%s", get_homedir(), name);
 	path_conv (p);
 	return p;
 }
