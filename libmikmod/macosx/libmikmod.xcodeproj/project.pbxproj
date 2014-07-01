@@ -154,7 +154,7 @@
 		F5F5DE41017CB3950103A810 /* load_ult.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = load_ult.c; path = ../loaders/load_ult.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE42017CB3950103A810 /* load_uni.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = load_uni.c; path = ../loaders/load_uni.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE43017CB3950103A810 /* load_xm.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = load_xm.c; path = ../loaders/load_xm.c; sourceTree = SOURCE_ROOT; };
-		F5F5DE5A017CB3B80103A810 /* mdreg.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mdreg.c; path = /Users/stephane/Dev/libmikmod/playercode/mdreg.c; sourceTree = "<absolute>"; };
+		F5F5DE5A017CB3B80103A810 /* mdreg.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mdreg.c; path = ../playercode/mdreg.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5B017CB3B80103A810 /* mdriver.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mdriver.c; path = ../playercode/mdriver.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5C017CB3B80103A810 /* load_umx.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = load_umx.c; path = ../loaders/load_umx.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE5D017CB3B80103A810 /* mloader.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mloader.c; path = ../playercode/mloader.c; sourceTree = SOURCE_ROOT; };
