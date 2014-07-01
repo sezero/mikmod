@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63FCEC8019637671007CF2F3 /* drv_openal.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F9982201D1638A01046A14 /* drv_openal.c */; };
+		63FCEC81196376C3007CF2F3 /* load_gt2.c in Sources */ = {isa = PBXBuildFile; fileRef = F4E367F907EDC8E8000D2C4B /* load_gt2.c */; };
 		A48F9F0005EB7BAC0073A1B4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A48F9EFF05EB7BAC0073A1B4 /* Info.plist */; };
 		A48F9F1605EB7C0F0073A1B4 /* drv_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = A48F9F1505EB7C0F0073A1B4 /* drv_aiff.c */; };
 		A48F9F1705EB7C0F0073A1B4 /* drv_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = A48F9F1505EB7C0F0073A1B4 /* drv_aiff.c */; };
@@ -171,7 +173,7 @@
 		F5F5DE76017CB3D10103A810 /* mmalloc.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmalloc.c; path = ../mmio/mmalloc.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE77017CB3D10103A810 /* mmerror.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmerror.c; path = ../mmio/mmerror.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE78017CB3D10103A810 /* mmio.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmio.c; path = ../mmio/mmio.c; sourceTree = SOURCE_ROOT; };
-		F5F5DE7C017CB3EC0103A810 /* mikmod.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = ../include/mikmod.h; sourceTree = SOURCE_ROOT; };
+		F5F5DE7C017CB3EC0103A810 /* mikmod.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; name = mikmod.h; path = ../include/mikmod.h; sourceTree = SOURCE_ROOT; };
 		F5F5DE7E017CB4010103A810 /* config.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		F5F9982201D1638A01046A14 /* drv_openal.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = drv_openal.c; path = ../drivers/drv_openal.c; sourceTree = SOURCE_ROOT; };
@@ -355,9 +357,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		A4E3AF2605D43FCC000F1B47 /* CoreAudio Framework */ = {
+		A4E3AF2605D43FCC000F1B47 /* libMikMod Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F4979A1508AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "CoreAudio Framework" */;
+			buildConfigurationList = F4979A1508AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "libMikMod Framework" */;
 			buildPhases = (
 				A4E3AF2705D43FCC000F1B47 /* Headers */,
 				A4E3AF2C05D43FCC000F1B47 /* Resources */,
@@ -369,15 +371,15 @@
 			);
 			dependencies = (
 			);
-			name = "CoreAudio Framework";
+			name = "libMikMod Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = libmikmod;
 			productReference = A4E3AF5C05D43FCC000F1B47 /* mikmod.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		A4E3AF5D05D43FCC000F1B47 /* CoreAudio Static Library */ = {
+		A4E3AF5D05D43FCC000F1B47 /* libMikMod Static Library */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F4979A1908AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "CoreAudio Static Library" */;
+			buildConfigurationList = F4979A1908AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "libMikMod Static Library" */;
 			buildPhases = (
 				A48FA2D405EB80710073A1B4 /* CopyFiles */,
 				A4E3AF5E05D43FCC000F1B47 /* Headers */,
@@ -389,7 +391,7 @@
 			);
 			dependencies = (
 			);
-			name = "CoreAudio Static Library";
+			name = "libMikMod Static Library";
 			productInstallPath = /usr/local/lib;
 			productName = "Static Library";
 			productReference = A4E3AF9005D43FCC000F1B47 /* libmikmod.a */;
@@ -408,8 +410,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A4E3AF2605D43FCC000F1B47 /* CoreAudio Framework */,
-				A4E3AF5D05D43FCC000F1B47 /* CoreAudio Static Library */,
+				A4E3AF2605D43FCC000F1B47 /* libMikMod Framework */,
+				A4E3AF5D05D43FCC000F1B47 /* libMikMod Static Library */,
 			);
 		};
 /* End PBXProject section */
@@ -501,6 +503,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4E3AF6405D43FCC000F1B47 /* drv_nos.c in Sources */,
+				63FCEC8019637671007CF2F3 /* drv_openal.c in Sources */,
 				A4E3AF6505D43FCC000F1B47 /* drv_osx.c in Sources */,
 				A4E3AF6605D43FCC000F1B47 /* drv_raw.c in Sources */,
 				A4E3AF6705D43FCC000F1B47 /* drv_stdout.c in Sources */,
@@ -513,14 +516,15 @@
 				A4E3AF6B05D43FCC000F1B47 /* load_dsm.c in Sources */,
 				A4E3AF6C05D43FCC000F1B47 /* load_far.c in Sources */,
 				A4E3AF6D05D43FCC000F1B47 /* load_gdm.c in Sources */,
+				63FCEC81196376C3007CF2F3 /* load_gt2.c in Sources */,
 				A4E3AF6E05D43FCC000F1B47 /* load_imf.c in Sources */,
 				A4E3AF6F05D43FCC000F1B47 /* load_it.c in Sources */,
 				A4E3AF7005D43FCC000F1B47 /* load_m15.c in Sources */,
 				A4E3AF7105D43FCC000F1B47 /* load_med.c in Sources */,
 				A4E3AF7205D43FCC000F1B47 /* load_mod.c in Sources */,
 				A4E3AF7305D43FCC000F1B47 /* load_mtm.c in Sources */,
-				A4E3AF7405D43FCC000F1B47 /* load_s3m.c in Sources */,
 				A4E3AF7505D43FCC000F1B47 /* load_okt.c in Sources */,
+				A4E3AF7405D43FCC000F1B47 /* load_s3m.c in Sources */,
 				A4E3AF7605D43FCC000F1B47 /* load_stm.c in Sources */,
 				A4E3AF7705D43FCC000F1B47 /* load_stx.c in Sources */,
 				A4E3AF7805D43FCC000F1B47 /* load_ult.c in Sources */,
@@ -564,7 +568,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "MIKMOD_BUILD HAVE_CONFIG_H";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MIKMOD_BUILD,
+					HAVE_CONFIG_H,
+				);
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -600,8 +607,7 @@
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MIKMOD_BUILD,
-					HAVE_FCNTL_H,
-					DRV_OSX,
+					HAVE_CONFIG_H,
 				);
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Info.plist;
@@ -632,7 +638,10 @@
 				FRAMEWORK_VERSION = A;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = "MIKMOD_BUILD HAVE_CONFIG_H";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MIKMOD_BUILD,
+					HAVE_CONFIG_H,
+				);
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -662,7 +671,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "MIKMOD_BUILD HAVE_CONFIG_H";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MIKMOD_BUILD,
+					HAVE_CONFIG_H,
+				);
 				HEADER_SEARCH_PATHS = ../include;
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = (
@@ -722,7 +734,10 @@
 				DYLIB_CURRENT_VERSION = 6;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = "MIKMOD_BUILD HAVE_CONFIG_H";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MIKMOD_BUILD,
+					HAVE_CONFIG_H,
+				);
 				HEADER_SEARCH_PATHS = ../include;
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = (
@@ -746,6 +761,7 @@
 					ppc,
 					i386,
 				);
+				GCC_VERSION = 4.0;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Development;
@@ -757,6 +773,7 @@
 					ppc,
 					i386,
 				);
+				GCC_VERSION = 4.0;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Deployment;
@@ -768,6 +785,7 @@
 					ppc,
 					i386,
 				);
+				GCC_VERSION = 4.0;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
@@ -775,7 +793,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F4979A1508AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "CoreAudio Framework" */ = {
+		F4979A1508AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "libMikMod Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4979A1608AFF5D0001ABEC2 /* Development */,
@@ -785,7 +803,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F4979A1908AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "CoreAudio Static Library" */ = {
+		F4979A1908AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "libMikMod Static Library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F4979A1A08AFF5D0001ABEC2 /* Development */,
