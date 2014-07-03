@@ -553,7 +553,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		F4979A1608AFF5D0001ABEC2 /* Development */ = {
+		F4979A1608AFF5D0001ABEC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -577,10 +577,8 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-seg1addr",
-					0xD0000000,
-				);
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
 				PRODUCT_NAME = mikmod;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -588,9 +586,9 @@
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F4979A1708AFF5D0001ABEC2 /* Deployment */ = {
+		F4979A1708AFF5D0001ABEC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -614,10 +612,8 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-seg1addr",
-					0xD0000000,
-				);
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
 				PRODUCT_NAME = mikmod;
 				REZ_PREPROCESSOR_DEFINITIONS = "";
 				SECTORDER_FLAGS = "";
@@ -626,40 +622,9 @@
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
-		F4979A1808AFF5D0001ABEC2 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 6;
-				EXPORTED_SYMBOLS_FILE = libmikmod.export;
-				FRAMEWORK_SEARCH_PATHS = "";
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MIKMOD_BUILD,
-					HAVE_CONFIG_H,
-				);
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-seg1addr",
-					0xD0000000,
-				);
-				PRODUCT_NAME = mikmod;
-				SECTORDER_FLAGS = "";
-				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Default;
-		};
-		F4979A1A08AFF5D0001ABEC2 /* Development */ = {
+		F4979A1A08AFF5D0001ABEC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -690,9 +655,9 @@
 				WARNING_CFLAGS = "-Wall";
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F4979A1B08AFF5D0001ABEC2 /* Deployment */ = {
+		F4979A1B08AFF5D0001ABEC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -706,8 +671,7 @@
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MIKMOD_BUILD,
-					HAVE_FCNTL_H,
-					DRV_OSX,
+					HAVE_CONFIG_H,
 				);
 				HEADER_SEARCH_PATHS = ../include;
 				LIBRARY_STYLE = STATIC;
@@ -725,36 +689,9 @@
 				WARNING_CFLAGS = "-Wall";
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
-		F4979A1C08AFF5D0001ABEC2 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 4;
-				DYLIB_CURRENT_VERSION = 6;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MIKMOD_BUILD,
-					HAVE_CONFIG_H,
-				);
-				HEADER_SEARCH_PATHS = ../include;
-				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = (
-					"-ffast-math",
-					"-fpeephole",
-				);
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = mikmod;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wall";
-			};
-			name = Default;
-		};
-		F4979A1E08AFF5D0001ABEC2 /* Development */ = {
+		F4979A1E08AFF5D0001ABEC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -764,9 +701,9 @@
 				GCC_VERSION = 4.0;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F4979A1F08AFF5D0001ABEC2 /* Deployment */ = {
+		F4979A1F08AFF5D0001ABEC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -776,19 +713,7 @@
 				GCC_VERSION = 4.0;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Deployment;
-		};
-		F4979A2008AFF5D0001ABEC2 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				GCC_VERSION = 4.0;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-			};
-			name = Default;
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -796,32 +721,29 @@
 		F4979A1508AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "libMikMod Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F4979A1608AFF5D0001ABEC2 /* Development */,
-				F4979A1708AFF5D0001ABEC2 /* Deployment */,
-				F4979A1808AFF5D0001ABEC2 /* Default */,
+				F4979A1608AFF5D0001ABEC2 /* Debug */,
+				F4979A1708AFF5D0001ABEC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 		F4979A1908AFF5D0001ABEC2 /* Build configuration list for PBXNativeTarget "libMikMod Static Library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F4979A1A08AFF5D0001ABEC2 /* Development */,
-				F4979A1B08AFF5D0001ABEC2 /* Deployment */,
-				F4979A1C08AFF5D0001ABEC2 /* Default */,
+				F4979A1A08AFF5D0001ABEC2 /* Debug */,
+				F4979A1B08AFF5D0001ABEC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 		F4979A1D08AFF5D0001ABEC2 /* Build configuration list for PBXProject "libmikmod" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F4979A1E08AFF5D0001ABEC2 /* Development */,
-				F4979A1F08AFF5D0001ABEC2 /* Deployment */,
-				F4979A2008AFF5D0001ABEC2 /* Default */,
+				F4979A1E08AFF5D0001ABEC2 /* Debug */,
+				F4979A1F08AFF5D0001ABEC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
