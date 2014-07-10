@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 	module = Player_Load(argv[1], 64, 0);
 	if (module) {
 		/* start module */
-		printf("Playing %s (%d chn)", module->songname, module->numchn);
+		printf("Playing %s (%d chn)\n", module->songname, module->numchn);
 		Player_Start(module);
 
 		while (Player_Active()) {
