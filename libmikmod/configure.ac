@@ -98,6 +98,8 @@ libmikmod_sse2=no
 
 libmikmod_unix=default
 
+libmikmod_docs=yes
+
 # =========================
 # Configure script options.
 # =========================
@@ -350,6 +352,13 @@ elif test "$enableval" = "no" ;then
   libmikmod_unix=0
 fi])
 
+AC_ARG_ENABLE([doc], [AS_HELP_STRING([--enable-doc],[Build and install the documentation [default=yes]])],
+[if test "$enableval" = "yes" ;then
+  libmikmod_docs=yes
+elif test "$enableval" = "no" ;then
+  libmikmod_docs=no
+fi])
+
 # ===================
 # Check for programs.
 # ===================
@@ -361,20 +370,6 @@ AC_PROG_MAKE_SET
 #LT_INIT([win32-dll])
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
-
-# Check if makeinfo support html output. If it doesn't, pretend it's missing
-# rather than failing rebuilding the documentation.
-AC_CACHE_CHECK([if makeinfo supports html output],[libmikmod_cv_makeinfo_html],
-		if (makeinfo --help 2>&1 | grep html > /dev/null) 2>/dev/null ; then
-			libmikmod_cv_makeinfo_html=yes
-		else
-			libmikmod_cv_makeinfo_html=no
-		fi)
-if test $libmikmod_cv_makeinfo_html = no ; then
-	MAKEINFO="$missing_dir/missing makeinfo"
-else
-	MAKEINFO="$MAKEINFO --no-split"
-fi
 
 # =============================================================
 # Check for typedefs, structures, and compiler characteristics.
@@ -1182,6 +1177,8 @@ fi
 # =================
 # Create Makefiles.
 # =================
+
+AM_CONDITIONAL([BUILD_DOCS], [test "$libmikmod_docs" = yes])
 
 AC_SUBST(REENTRANT)
 

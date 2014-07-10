@@ -1,6 +1,10 @@
 AUTOMAKE_OPTIONS = foreign
+
+if BUILD_DOCS
+   MAYBE_DOCS = docs
+endif
 SUBDIRS = drivers include loaders mmio playercode posix \
-	  dlapi docs
+	  dlapi $(MAYBE_DOCS)
 
 bin_SCRIPTS = libmikmod-config
 
