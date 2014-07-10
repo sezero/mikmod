@@ -289,7 +289,7 @@ else
   libmikmod_driver_os2=no
 fi])
 
-AC_ARG_ENABLE([dart], [AS_HELP_STRING([--enable-dart],[OS/2 (Warp 4) only: include OS/2 direct audio (DART) [default=no]])],
+AC_ARG_ENABLE([dart], [AS_HELP_STRING([--enable-dart],[OS/2 (Warp 4) only: include OS/2 direct audio (DART) [guessed]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_driver_dart=yes
