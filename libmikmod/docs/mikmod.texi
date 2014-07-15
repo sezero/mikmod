@@ -3160,6 +3160,10 @@ Depending on your Unix flavor, you'll end with one or more drivers from this
 list:
 
 @table @code
+@item drv_ahi
+This driver is only available under AmigaOS variants like MorphOS
+and AROS, and it outputs to native Amiga AHI device.@*
+This driver only supports software mixing.
 @item drv_aix
 This driver is only available under AIX, and access its audio device.@*
 This driver only supports software mixing.
