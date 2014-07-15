@@ -15,7 +15,7 @@ OBJS=splay.o
 .PHONY : clean install
 
 all: $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o $(PROG)
+	$(LD) $(OBJS) $(LDFLAGS) -o $(PROG)
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $<
