@@ -803,6 +803,7 @@ MIKMODAPI extern struct MDRIVER drv_ultra;  /* Linux Ultrasound driver */
 MIKMODAPI extern struct MDRIVER drv_sam9407;/* Linux sam9407 driver */
 
 MIKMODAPI extern struct MDRIVER drv_AF;     /* Dec Alpha AudioFile */
+MIKMODAPI extern struct MDRIVER drv_ahi;    /* Amiga AHI */
 MIKMODAPI extern struct MDRIVER drv_aix;    /* AIX audio device */
 MIKMODAPI extern struct MDRIVER drv_alsa;   /* Advanced Linux Sound Architecture (ALSA) */
 MIKMODAPI extern struct MDRIVER drv_esd;    /* Enlightened sound daemon (EsounD) */

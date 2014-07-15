@@ -60,6 +60,7 @@ esac
 # ==============================================================
 
 libmikmod_driver_af=no
+libmikmod_driver_ahi=yes
 libmikmod_driver_aix=no
 libmikmod_driver_alsa=yes
 libmikmod_driver_pulseaudio=yes
@@ -120,6 +121,14 @@ else
   libmikmod_driver_alsa=no
 fi])
 
+AC_ARG_ENABLE([ahi], [AS_HELP_STRING([--enable-ahi],[Amiga only: include AHI driver [guessed]])],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_ahi=yes
+else
+  libmikmod_driver_ahi=no
+fi])
+
 AC_ARG_ENABLE([pulseaudio], [AS_HELP_STRING([--enable-pulseaudio],[include PulseAudio driver [guessed]])],
 [if test "$enableval" = "yes"
 then
@@ -145,7 +154,7 @@ else
 fi])
 
 case $host_os in
-  mingw*|emx*|*djgpp)
+  mingw*|emx*|*djgpp|amigaos*|aros*|morphos*)
      # windows, dos, os2 don't need sdl, stdout, or pipe.
      # so default to disabled, but still user-selectable.
      libmikmod_driver_pipe=no
@@ -519,6 +528,13 @@ else
 	libmikmod_driver_alsa=no
 fi
 
+# Amiga audio
+# ---------------------
+case $host_os in
+ amigaos*|aros*|morphos*) ;;
+ *) libmikmod_driver_ahi=no ;;
+esac
+
 # pulseaudio
 # ----------
 if test $libmikmod_driver_pulseaudio = yes
@@ -853,6 +869,12 @@ if test $libmikmod_driver_aix = yes
 then
 	libmikmod_driverlist="aix $libmikmod_driverlist"
 	AC_DEFINE([DRV_AIX], 1, [Define if the AIX audio driver is compiled])
+fi
+
+if test $libmikmod_driver_ahi = yes
+then
+	libmikmod_driverlist="ahi $libmikmod_driverlist"
+	AC_DEFINE([DRV_AHI], 1, [Define if the Amiga AHI driver is compiled])
 fi
 
 if test $libmikmod_driver_alsa = yes

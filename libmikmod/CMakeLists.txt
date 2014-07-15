@@ -317,6 +317,7 @@ ADD_DEFINITIONS("-DMIKMOD_BUILD")
 SET (MIKMOD_LIB_MODULES
     drivers/drv_AF.c
     drivers/drv_aiff.c
+    drivers/drv_ahi.c
     drivers/drv_aix.c
     drivers/drv_alsa.c
     drivers/drv_dart.c
@@ -385,8 +386,8 @@ SET (MIKMOD_LIB_MODULES
 )
 
 REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
-                          posix
-                          memcmp strcasecmp strdup strstr)
+    posix
+    memcmp strcasecmp strdup strstr)
 
 SET (LIBMIKMOD_LIBS)
 

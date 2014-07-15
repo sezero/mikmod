@@ -35,6 +35,7 @@ libmikmod_la_SOURCES = \
 		dlapi/dl_hpux.c   \
 		drivers/drv_AF.c \
 		drivers/drv_aiff.c \
+		drivers/drv_ahi.c \
 		drivers/drv_aix.c \
 		drivers/drv_alsa.c \
 		drivers/drv_dart.c \

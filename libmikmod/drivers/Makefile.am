@@ -2,6 +2,7 @@ SUBDIRS = dos
 EXTRA_DIST = CMakeLists.txt \
 	     drv_AF.c     \
 	     drv_aiff.c   \
+	     drv_ahi.c    \
 	     drv_aix.c    \
 	     drv_alsa.c   \
 	     drv_dart.c   \
@@ -33,4 +34,3 @@ EXTRA_DIST = CMakeLists.txt \
 	     drv_win.c    \
 	     drv_wss.c    \
 	     drv_xaudio2.c
-

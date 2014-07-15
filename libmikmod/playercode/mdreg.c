@@ -62,6 +62,9 @@ static void _mm_registeralldrivers(void)
 #endif
 
 	/* Register OS-specific hardware drivers - software mixing */
+#ifdef DRV_AHI
+	_mm_registerdriver(&drv_ahi);
+#endif
 #ifdef DRV_AIX
 	_mm_registerdriver(&drv_aix);
 #endif

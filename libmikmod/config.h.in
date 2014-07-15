@@ -13,6 +13,9 @@
 /* Define if the DEC AudioFile server driver is compiled */
 #undef DRV_AF
 
+/* Define if the Amiga AHI driver is compiled */
+#undef DRV_AHI
+
 /* Define if you want an .aiff file writer driver */
 #undef DRV_AIFF
 
