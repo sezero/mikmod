@@ -100,11 +100,11 @@ AM_PATH_LIBMIKMOD(3.1.5, , AC_MSG_ERROR([
 # way of detecting MikMod_free() is a configury check at compile time
 # or a dlsym() check at runtime, and the bad thing is 3.2.0beta1/2 were
 # (still are?) in distros..
-ac_save_LDFLAGS=$LDFLAGS
-LDFLAGS="$LDFLAGS $LIBMIKMOD_LIBS"
+ac_save_LIBS=$LIBS
+LIBS="$LIBS $LIBMIKMOD_LIBS"
 AC_CHECK_LIB(mikmod, MikMod_free, AC_DEFINE(HAVE_MIKMOD_FREE, 1,
 		[Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).]))
-LDFLAGS="$ac_save_LDFLAGS"
+LIBS="$ac_save_LIBS"
 
 dnl ncurses
 case $host_os in
@@ -124,8 +124,8 @@ dnl resizeterm is an optional part of ncurses
 	AC_CHECK_LIB($libcurses, resizeterm, AC_DEFINE(HAVE_NCURSES_RESIZETERM, 1,
 		[Define if your libncurses defines resizeterm (not found in <4.2).]))
 
-	ac_save_LDFLAGS=$LDFLAGS
-	LDFLAGS="$LDFLAGS -l$libcurses"
+	ac_save_LIBS=$LIBS
+	LIBS="$LIBS -l$libcurses"
 	AC_MSG_CHECKING([whether curses links without libtinfo])
 	AC_TRY_LINK([#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
@@ -143,7 +143,7 @@ return ACS_ULCORNER;
 			AC_MSG_ERROR([--- ERROR: libtinfo needed for ncurses, but not found.])
 		else
 			AC_MSG_CHECKING([whether ncurses links with libtinfo])
-			LDFLAGS="$LDFLAGS -ltinfo"
+			LIBS="$LIBS -ltinfo"
 			AC_TRY_LINK([#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
 #elif defined(HAVE_CURSES_H)
@@ -159,7 +159,7 @@ return ACS_ULCORNER;
 	else
 		AC_MSG_RESULT(yes)
 	fi
-	LDFLAGS="$ac_save_LDFLAGS"
+	LIBS="$ac_save_LIBS"
 fi
 
 dnl POSIX.4 threads

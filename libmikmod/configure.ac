@@ -566,15 +566,17 @@ then
 	    if test -n "$ac_x_includes" || test -n "$ac_x_libraries"; then
 		ac_save_CFLAGS=$CFLAGS
 		ac_save_LDFLAGS=$LDFLAGS
+		ac_save_LIBS=$LIBS
 		test -n "$ac_x_includes" && CFLAGS="$CFLAGS -I$ac_x_includes"
 		test -n "$ac_x_libraries" && LDFLAGS="$LDFLAGS -L$ac_x_libraries"
-		LDFLAGS="$LDFLAGS -laudio"
+		LIBS="$LIBS -laudio"
 		AC_MSG_CHECKING([X11 locations for NAS])
 		AC_TRY_LINK([#include <audio/audiolib.h>],
 				[AuFlowID f=AuCreateFlow(0,0);],
 				[libmikmod_driver_nas=yes])
 		CFLAGS=$ac_save_CFLAGS
 		LDFLAGS=$ac_save_LDFLAGS
+		LIBS=$ac_save_LIBS
 		AC_MSG_RESULT([$libmikmod_driver_nas])
 		if test $libmikmod_driver_nas = yes; then
 			test -n "$ac_x_includes" && CFLAGS="$CFLAGS -I$ac_x_includes"
@@ -1237,9 +1239,7 @@ chmod +x libmikmod-config
 # Print configuration.
 # ====================
 
-libmikmod_driverlist=`echo $libmikmod_driverlist|sed -e 's,  , ,g'`
-if test $libmikmod_dynload != no
-then
+if test $libmikmod_dynload != no; then
 	libmikmod_dynload="yes, ${libmikmod_dynload} style"
 fi
 
