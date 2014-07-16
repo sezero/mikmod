@@ -262,7 +262,7 @@ static int m_mkstemp (char *tmpl)
 			/* Any other error will apply also to other names we might
 			   try, and there are 2^32 or so of them, so give up now. */
 			return -1;
-    }
+	}
 
 	/* We got out of the loop because we ran out of combinations to try.  */
 	return -1;

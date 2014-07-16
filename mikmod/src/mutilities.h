@@ -31,11 +31,20 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#elif defined(__OS2__)||defined(__EMX__)
-#include <os2.h>
-#if !defined(HAVE_CONFIG_H)
-#define RETSIGTYPE	void
 #endif
+
+#if defined(__OS2__)||defined(__EMX__)
+#include <os2.h>
+#ifndef HAVE_CONFIG_H
+#define RETSIGTYPE void
+#endif
+#endif
+
+#if defined(__MORPHOS__) || defined(__AROS__) || defined(AMIGAOS)	|| \
+    defined(__amigaos__) || defined(__amigados__)			|| \
+    defined(AMIGA) || defined(_AMIGA) || defined(__AMIGA__)
+#include <exec/types.h>
+#define _mikmod_amiga 1
 #endif
 
 #include <mikmod.h>	/* for BOOL */
@@ -48,6 +57,7 @@
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
+
 #ifndef PATH_MAX
 #if defined(MAXPATHLEN) /* <sys/param.h> */
 #define PATH_MAX MAXPATHLEN
