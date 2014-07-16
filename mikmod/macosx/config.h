@@ -33,8 +33,8 @@
 /* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1
 
-/* Define to 1 if you have the <ncurses.h> header file. */
-#define HAVE_NCURSES_H 1
+/* Define to 1 if you have the <curses.h> header file. */
+#define HAVE_CURSES_H 1
 
 /* Define if your libncurses defines resizeterm (not found in <4.2). */
 #define HAVE_NCURSES_RESIZETERM 1
