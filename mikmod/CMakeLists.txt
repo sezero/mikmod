@@ -57,7 +57,7 @@ INCLUDE(CheckCSourceCompiles)
 include(mik_macros)
 
 CHECK_MULTI_INCLUDE_FILES(
-    "ncurses.h" "curses.h" "termios.h"
+    "ncurses.h" "curses.h" "ncurses/curses.h" "termios.h"
     "fcntl.h" "fnmatch.h" "inttypes.h" "limits.h" "memory.h" "sched.h"
     "sys/ioctl.h" "sys/param.h" "sys/wait.h" "sys/time.h" "sys/types.h"
     "sys/stat.h" "stdint.h" "stdlib.h" "string.h" "strings.h" "unistd.h"
@@ -89,6 +89,8 @@ IF(UNIX OR APPLE)
      SET(CURSES_HDR "ncurses.h")
   ELSEIF(HAVE_CURSES_H)
      SET(CURSES_HDR "curses.h")
+  ELSEIF(HAVE_NCURSES_CURSES_H)
+     SET(CURSES_HDR "ncurses/curses.h")
   ELSE()
       MESSAGE(FATAL_ERROR "Neither ncurses.h nor curses.h found.")
   ENDIF()

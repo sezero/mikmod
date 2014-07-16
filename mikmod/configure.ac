@@ -65,7 +65,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(fnmatch.h)
 AC_CHECK_HEADERS(sched.h)
-AC_CHECK_HEADERS(ncurses.h curses.h)
+AC_CHECK_HEADERS(ncurses.h curses.h ncurses/curses.h)
 AC_CHECK_HEADERS(termios.h)
 
 AC_HEADER_TIOCGWINSZ
@@ -131,6 +131,8 @@ dnl resizeterm is an optional part of ncurses
 #include <ncurses.h>
 #elif defined(HAVE_CURSES_H)
 #include <curses.h>
+#elif defined(HAVE_NCURSES_CURSES_H)
+#include <ncurses/curses.h>
 #endif],
 [#ifdef ACS_ULCORNER
 return ACS_ULCORNER;

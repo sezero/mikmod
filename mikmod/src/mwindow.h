@@ -1,5 +1,5 @@
 /*  MikMod module player
-	(c) 1998 - 2000 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998-2014 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,8 @@
 #    include <ncurses.h>
 #  elif defined HAVE_CURSES_H
 #    include <curses.h>
+#  elif defined HAVE_NCURSES_CURSES_H
+#    include <ncurses/curses.h>
 #  endif
 #  define MIK_CURSES_ERROR ERR
 #else

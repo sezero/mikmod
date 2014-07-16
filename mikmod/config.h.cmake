@@ -38,6 +38,9 @@
 /* Define to 1 if you have the `mkstemp' function. */
 #cmakedefine HAVE_MKSTEMP
 
+/* Define to 1 if you have the <ncurses/curses.h> header file. */
+#cmakedefine HAVE_NCURSES_CURSES_H
+
 /* Define to 1 if you have the <ncurses.h> header file. */
 #cmakedefine HAVE_NCURSES_H
 
