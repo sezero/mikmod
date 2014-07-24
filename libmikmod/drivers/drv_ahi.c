@@ -43,6 +43,7 @@ static struct MsgPort *AHImp = NULL;
 static struct AHIRequest *AHIReq[2] = { NULL, NULL };
 static int active = 0;
 static SBYTE *AHIBuf[2] = { NULL, NULL };
+static BOOL signed8 = 0;
 
 static void closeLibs(void) { /* close ahi */
 	if (AHIReq[1]) {
@@ -99,7 +100,9 @@ static int AHI_Init(void) {
 					AHIReq[0]->ahir_Std.io_Data = NULL;
 					AHIReq[0]->ahir_Std.io_Offset = 0;
 					AHIReq[0]->ahir_Frequency = md_mixfreq; /* get freq from libmikmod */
-					AHIReq[0]->ahir_Type = (md_mode & DMODE_STEREO) ? AHIST_S16S : AHIST_M16S; /* workout mode to set */
+					AHIReq[0]->ahir_Type = (md_mode & DMODE_16BITS)?
+								((md_mode & DMODE_STEREO)? AHIST_S16S : AHIST_M16S) :
+								((md_mode & DMODE_STEREO)? AHIST_S8S  : AHIST_M8S );
 					AHIReq[0]->ahir_Volume = 0x10000;
 					AHIReq[0]->ahir_Position = 0x8000;
 
@@ -107,6 +110,7 @@ static int AHI_Init(void) {
 
 					if ((AHIBuf[0] = AllocVec(BUFFERSIZE, MEMF_PUBLIC | MEMF_CLEAR))) {
 						if ((AHIBuf[1] = AllocVec(BUFFERSIZE, MEMF_PUBLIC | MEMF_CLEAR))) {
+							signed8 = (md_mode & DMODE_16BITS)? 0 : 1;
 							return 0;
 						}
 					}
@@ -116,6 +120,7 @@ static int AHI_Init(void) {
 	}
 
 	closeLibs();
+	_mm_errno = MMERR_OPENING_AUDIO;
 	return 1;
 }
 
@@ -133,6 +138,11 @@ static void AHI_Update(void) {
 	}
 
 	numBytes = VC_WriteBytes(AHIBuf[active], BUFFERSIZE);
+	if (signed8) { /* convert u8 data to s8 */
+		ULONG i = 0;
+		for (; i < numBytes; ++i)
+			AHIBuf[active][i] -= 128;
+	}
 
 	AHIReq[active]->ahir_Std.io_Data = AHIBuf[active];
 	AHIReq[active]->ahir_Std.io_Length = numBytes;
