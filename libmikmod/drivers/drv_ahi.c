@@ -111,7 +111,7 @@ static int AHI_Init(void) {
 					if ((AHIBuf[0] = AllocVec(BUFFERSIZE, MEMF_PUBLIC | MEMF_CLEAR))) {
 						if ((AHIBuf[1] = AllocVec(BUFFERSIZE, MEMF_PUBLIC | MEMF_CLEAR))) {
 							signed8 = (md_mode & DMODE_16BITS)? 0 : 1;
-							return 0;
+							return VC_Init();
 						}
 					}
 				}
