@@ -165,7 +165,7 @@ int get_tmp_file (const char *tmpl, char **name_used);
 
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 char *get_tmp_name(void);
 #endif
 

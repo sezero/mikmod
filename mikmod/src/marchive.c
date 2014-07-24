@@ -105,7 +105,7 @@ static const CHAR *prefixmodulepatterns[] = {
 	NULL
 };
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)&&!defined(_mikmod_amiga)
 /* Drop all root privileges we might have. */
 BOOL DropPrivileges(void)
 {
@@ -420,7 +420,7 @@ static int MA_truncate (int fd, const char *startpat, int start, int end, char *
 	return dest;
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 
 static int rd_err, rd_outbak=-1, rd_errbak;
 #ifdef _WIN32
@@ -493,7 +493,7 @@ int MA_dearchive(const CHAR *arc, const CHAR *file, CHAR **extracted)
 		if (MA_identify(arc, config.archiver[t].location, config.archiver[t].marker)) {
 			/* display "extracting" message, as this may take some time... */
 			display_extractbanner();
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 			/* extracting, the non-Unix way */
 
 			tmp_file = get_tmp_name();
@@ -676,7 +676,7 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 			char *string = (char *) malloc (PATH_MAX + 2 + offset);
 			char *command;
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 /* Archive display, the non-Unix way */
 			FILE *file;
 

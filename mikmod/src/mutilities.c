@@ -64,6 +64,11 @@ static const char *get_homedir (void)
 {
 	return "C:"; /* good enough for msdos */
 }
+#elif defined(_mikmod_amiga)
+static const char *get_homedir (void)
+{
+	return "PROGDIR:"; /* good enough ??? */
+}
 #elif defined(__OS2__)||defined(__EMX__)
 static const char *get_homedir (void)
 {
@@ -199,6 +204,8 @@ BOOL path_relative(const char *path)
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 	if (*path && (path[1] == ':'))
 		return 0;
+#elif defined(_mikmod_amiga)
+	if (strchr(path, ':')) return 0;
 #endif
 
 	return (*path != PATH_SEP);
@@ -280,6 +287,9 @@ int get_tmp_file (const char *tmpl, char **name_used)
 	int retval;
 
 	if (!tmpdir) {
+#if defined(_mikmod_amiga)
+		tmpdir = "T:";
+#else /* ! amiga: */
 		tmpdir = getenv ("TMPDIR");
 		if (!tmpdir) tmpdir = getenv ("TMP");
 		if (!tmpdir) tmpdir = getenv ("TEMP");
@@ -294,6 +304,7 @@ int get_tmp_file (const char *tmpl, char **name_used)
 		if (*tmpdir && tmpdir[strlen(tmpdir) - 1] == PATH_SEP_SYS)
 			tmpsep = "";
 		else	tmpsep = PATH_SEP_SYS_STR;
+#endif /* !amiga */
 	}
 	if (tmpl == NULL) tmpl = "mmXXXXXX";
 
@@ -315,7 +326,7 @@ int get_tmp_file (const char *tmpl, char **name_used)
 	return retval;
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
 char *get_tmp_name(void)
@@ -342,7 +353,11 @@ char *get_tmp_name(void)
    'name': filename without the path */
 char *get_cfg_name(const char *name)
 {
+#if defined(_mikmod_amiga)
+	char *p = str_sprintf ("PROGDIR:%s", name);
+#else
 	char *p = str_sprintf2("%s" PATH_SEP_STR "%s", get_homedir(), name);
+#endif
 	path_conv (p);
 	return p;
 }
