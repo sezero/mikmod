@@ -47,6 +47,12 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#if !defined(S_IREAD) && defined(S_IRUSR)
+#define S_IREAD  S_IRUSR
+#endif
+#if !defined(S_IWRITE) && defined(S_IWUSR)
+#define S_IWRITE S_IWUSR
+#endif
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
