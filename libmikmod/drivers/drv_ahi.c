@@ -94,7 +94,7 @@ static int AHI_Init(void) {
 		if ((AHIReq[0] = (struct AHIRequest *)CreateIORequest(AHImp, sizeof(struct AHIRequest)))) {
 			AHIReq[0]->ahir_Version = 4;
 			if ((AHIReq[1] = AllocVec(sizeof(struct AHIRequest), MEMF_PUBLIC))) {
-				if (!OpenDevice(AHINAME, AHI_NO_UNIT, (struct IORequest *)AHIReq[0], 0)) {
+				if (!OpenDevice(AHINAME, AHI_DEFAULT_UNIT, (struct IORequest *)AHIReq[0], 0)) {
 					/*AHIReq[0]->ahir_Std.io_Message.mn_Node.ln_Pri = 0;*/
 					AHIReq[0]->ahir_Std.io_Command = CMD_WRITE;
 					AHIReq[0]->ahir_Std.io_Data = NULL;
