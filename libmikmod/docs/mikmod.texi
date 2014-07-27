@@ -3161,7 +3161,7 @@ list:
 
 @table @code
 @item drv_ahi
-This driver is only available under AmigaOS variants like MorphOS
+This driver is only available under AmigaOS and its variants like MorphOS
 and AROS, and it outputs to native Amiga AHI device.@*
 This driver only supports software mixing.
 @item drv_aix
