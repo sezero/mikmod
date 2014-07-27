@@ -341,7 +341,7 @@ char *CF_GetFilename(void)
 
 char *CF_GetDefaultFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 	return NULL;
 #else
 	return str_sprintf2("%s" PATH_SEP_STR "%s", PACKAGE_DATA_DIR, "mikmodrc");

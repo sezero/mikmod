@@ -845,8 +845,8 @@ int main(int argc, char *argv[])
 #endif
 
 	/* Find program name without path component */
-	PRG_NAME = (strrchr(argv[0], PATH_SEP)) ?
-		strrchr(argv[0], PATH_SEP) + 1 : argv[0];
+	pos = FIND_LAST_DIRSEP(argv[0]);
+	PRG_NAME = (pos)? pos + 1 : argv[0];
 
 	for (t = 0; t < argc; t++)
 		if ((!strcmp(argv[t], "-norc")) || (!strcmp(argv[t], "--norc"))) {

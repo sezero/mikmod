@@ -72,6 +72,8 @@
 #endif
 #endif /* PATH_MAX */
 
+#include <string.h>
+
 #define PATH_SEP '/'
 #define PATH_SEP_STR "/"
 
@@ -91,6 +93,24 @@ char *path_conv_sys2(const char *file);
 #define path_conv_sys(file) (file)
 #define path_conv_sys2(file) (file)
 
+#endif
+
+#ifdef _mikmod_amiga
+#define IS_PATH_SEP(c) ((c) == PATH_SEP || (c) == ':')
+static inline char *FIND_FIRST_DIRSEP(const char *_the_path) {
+    char *p = strchr(_the_path, ':');
+    if (p != NULL) return p;
+    return strchr(_the_path, PATH_SEP);
+}
+static inline char *FIND_LAST_DIRSEP (const char *_the_path) {
+    char *p = strrchr(_the_path, PATH_SEP);
+    if (p != NULL) return p;
+    return strchr(_the_path, ':');
+}
+#else
+#define IS_PATH_SEP(c) ((c) == PATH_SEP)
+#define FIND_FIRST_DIRSEP(p) strchr((p), PATH_SEP)
+#define FIND_LAST_DIRSEP(p) strrchr((p), PATH_SEP)
 #endif
 
 /*========== Types */

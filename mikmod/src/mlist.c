@@ -74,8 +74,8 @@ BOOL PL_isPlaylistFilename(const CHAR *filename)
 	if (!fnmatch("*.mpl", filename, 0))
 		return 1;
 	if ((cfg_name = PL_GetFilename())) {
-		const char *p1 = strrchr (cfg_name,PATH_SEP);
-		const char *p2 = strrchr (filename,PATH_SEP);
+		const char *p1 = FIND_LAST_DIRSEP(cfg_name);
+		const char *p2 = FIND_LAST_DIRSEP(filename);
 		if (!p1) p1 = cfg_name;
 		if (!p2) p2 = filename;
 		if (!filecmp(p1, p2)) {
@@ -94,7 +94,7 @@ void PL_InitList(PLAYLIST * pl)
 	pl->current = -1;
 	pl->curr_deleted = 0;
 	pl->add_pos = -1;
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 	srand(time(NULL));
 #else
 	{
@@ -303,7 +303,7 @@ BOOL PL_Load(PLAYLIST * pl, const CHAR *filename)
 		return 0;				/* file is not a playlist */
 	}
 
-	slash = strrchr(filename, PATH_SEP);
+	slash = FIND_LAST_DIRSEP(filename);
 	while (fgets(line, LINE_LEN, file)) {
 		if (*line != '"') continue;			/* line == '"file" "arc" time played' */
 

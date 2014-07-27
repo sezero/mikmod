@@ -132,12 +132,12 @@ static int searchlist_search_cmp (char *key, char **member)
 /* compare function for qsort on the directory list */
 static int dirlist_cmp (char **small, char **big)
 {
-	if ((*small)[strlen(*small)-1] == PATH_SEP) {
-		if ((*big)[strlen(*big)-1] == PATH_SEP)
+	if (IS_PATH_SEP((*small)[strlen(*small)-1])) {
+		if (IS_PATH_SEP((*big)[strlen(*big)-1]))
 			return(filecmp(*small+2,*big+2));
 		else
 			return -1;
-	} else if ((*big)[strlen(*big)-1] == PATH_SEP)
+	} else if (IS_PATH_SEP((*big)[strlen(*big)-1]))
 		return 1;
 	return(filecmp(*small+2,*big+2));
 }
@@ -145,12 +145,12 @@ static int dirlist_cmp (char **small, char **big)
 /* compare function for bearch on the directory list */
 static int dirlist_search_cmp (char *key, char **member)
 {
-	if (key[strlen(key)-1] == PATH_SEP) {
-		if ((*member)[strlen(*member)-1] == PATH_SEP)
+	if (IS_PATH_SEP(key[strlen(key)-1])) {
+		if (IS_PATH_SEP((*member)[strlen(*member)-1]))
 			return(filecmp(key,*member+2));
 		else
 			return -1;
-	} else if ((*member)[strlen(*member)-1] == PATH_SEP)
+	} else if (IS_PATH_SEP((*member)[strlen(*member)-1]))
 		return 1;
 	return(filecmp(key,*member+2));
 }
@@ -166,7 +166,7 @@ static void freq_set_marks (char **entries, int cnt, const char *path, FREQ_DATA
 	fstart = file+strlen(file);
 	for (i=0; i<cnt; i++) {
 		strcpy (fstart,entries[i]+2);
-		if (fstart[strlen(fstart)] != PATH_SEP &&
+		if (!IS_PATH_SEP(fstart[strlen(fstart)]) &&
 			data->cnt_list > 0 &&
 			bsearch (file,data->searchlist,data->cnt_list,
 					 sizeof(char*),(int(*)())searchlist_search_cmp))
@@ -331,7 +331,7 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 	int cnt = 0, max = 0, i;
 
 	if (
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)&&!defined(_mikmod_amiga)
 		!strcmp (path,"/proc/") ||
 		!strcmp (path,"/dev/") ||
 #endif
@@ -424,6 +424,20 @@ static void freq_readdir (const char *path, char ***entries, int *cnt, FREQ_DATA
 	*cnt = 0;
 	if (dir) {
 		max = *cnt = 0;
+#ifdef _mikmod_amiga
+		if (pathend != file && pathend[-1] != ':') {
+			/* on AmigaOS variants, we won't get a ".." parentdir entry --
+			   add a fake one here. */
+			max += ENT_BLOCK;
+			*entries = (char **) realloc (*entries, sizeof(char*) * max);
+			strcpy (pathend,".."PATH_SEP_STR);
+			path_conv (pathend);
+			help = (char *) malloc (sizeof(char) * (strlen(pathend) + 3));
+			strcpy (help,"  ");
+			strcat (help,pathend);
+			(*entries)[(*cnt)++] = help;
+		}
+#endif
 		while ((entry = readdir (dir))) {
 			if (*cnt >= max) {
 				max += ENT_BLOCK;
@@ -489,9 +503,9 @@ static void freq_changedir (const char *path, FREQ_DATA *data)
 			if (!filecmp (data->path, path)) {
 				*last = ch;
 				end = last;
-				while (*end && *end != PATH_SEP)
+				while (*end && !IS_PATH_SEP(*end))
 					end++;
-				if (*end == PATH_SEP) {
+				if (IS_PATH_SEP(*end)) {
 					*(end+1) = '\0';
 					pos=(char**) bsearch(last, entries, cnt, sizeof(char*),
 								 (int(*)())dirlist_search_cmp);
@@ -593,11 +607,11 @@ static BOOL path_update (char *dest, char *path, char *file)
 	if (!strcmp (file,".."PATH_SEP_STR)) {
 		strcpy (dest, path);
 		end = dest+strlen(dest)-2;
-		while (end>dest && *end != PATH_SEP)
+		while (end>dest && !IS_PATH_SEP(*end))
 			*end-- = '\0';
 	} else if (!strcmp (file,"."PATH_SEP_STR)) {
 		strcpy (dest, path);
-	} else if (file[strlen(file)-1] == PATH_SEP) {
+	} else if (IS_PATH_SEP(file[strlen(file)-1])) {
 		strcpy (dest, path);
 		strcat (dest, file);
 	} else
@@ -753,7 +767,7 @@ static BOOL cb_freq_cd_do (WIDGET *w,int button, void *input, void *data)
 		path_conv((char *)input);
 		pos = (char*)input + strlen((char*)input);
 		/* Check if path ends with '/' */
-		if (*(pos-1) != PATH_SEP) {
+		if (!IS_PATH_SEP(*(pos-1))) {
 			*pos = PATH_SEP;
 			*(pos+1) = '\0';
 		}
@@ -828,24 +842,19 @@ static FREQ_DATA *freq_data_init (const char *path)
 	char *pos;
 
 	data->path[0] = '\0';
-#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(_WIN32)
-	if (*path!=PATH_SEP && *(path+1)!=':')
-#else
-	if (*path != PATH_SEP)
-#endif
-	{
+	if (path_relative(path)) {
 		getcwd (data->path,PATH_MAX);
 		path_conv (data->path);
-		if (data->path[strlen(data->path)-1] != PATH_SEP)
+		if (!IS_PATH_SEP(data->path[strlen(data->path)-1]))
 			strcat (data->path, PATH_SEP_STR);
 	}
 	strcat (data->path,path);
 	if (stat(path_conv_sys(data->path), &statbuf) || !S_ISDIR(statbuf.st_mode))
-		if ((pos = strrchr (data->path,PATH_SEP)))
+		if ((pos = FIND_LAST_DIRSEP(data->path)) != NULL)
 			*(pos+1) = '\0';
 
 	pos = data->path+strlen(data->path);
-	if (*(pos-1) != PATH_SEP) {
+	if (!IS_PATH_SEP(*(pos-1))) {
 		*pos = PATH_SEP;
 		*(pos+1) = '\0';
 	}
@@ -884,6 +893,8 @@ void freq_open (const char *title, const char *path, int actline,
 		/* error on initial path -> try root directory */
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 		strcpy (freq_data->path,"c:"PATH_SEP_STR);
+#elif defined _mikmod_amiga
+		strcpy (freq_data->path,"SYS:"); /* or use ":" instead??? */
 #else
 		strcpy (freq_data->path,PATH_SEP_STR);
 #endif
@@ -948,17 +959,17 @@ int list_scan_dir (char *path, BOOL quiet)
 #if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(_WIN32)
 	if (*path!=PATH_SEP && *(path+1)!=':')
 #else
-	if (*path != PATH_SEP)
+	if (!IS_PATH_SEP(*path))
 #endif
 	{
 		getcwd (dir,PATH_MAX);
 		path_conv (dir);
-		if (dir[strlen(dir)-1] != PATH_SEP)
+		if (!IS_PATH_SEP(dir[strlen(dir)-1]))
 			strcat (dir, PATH_SEP_STR);
 	}
 	strcat (dir,path);
 	pos = dir+strlen(dir);
-	if (*(pos-1) != PATH_SEP) {
+	if (!IS_PATH_SEP(*(pos-1))) {
 		*pos = PATH_SEP;
 		*(pos+1) = '\0';
 	}
@@ -995,7 +1006,7 @@ static BOOL cb_delete_entry(WIDGET *w, int button, void *input, void *entry)
 /* split a filename into the name and the last extension */
 static void split_name(char *file, char **name, char **ext)
 {
-	*name = strrchr(file, PATH_SEP);
+	*name = FIND_LAST_DIRSEP(file);
 	if (!*name)
 		*name = file;
 	*ext = strrchr(*name, '.');
@@ -1039,7 +1050,7 @@ static int cb_cmp_sort(PLAYENTRY * small, PLAYENTRY * big)
 		ext_s = small->archive;
 		if (!ext_s)
 			ext_s = small->file;
-		name_s = strrchr(ext_s, PATH_SEP);
+		name_s = FIND_LAST_DIRSEP(ext_s);
 		if (name_s) {
 			ch_s = *name_s;
 			*name_s = '\0';
@@ -1047,7 +1058,7 @@ static int cb_cmp_sort(PLAYENTRY * small, PLAYENTRY * big)
 		ext_b = big->archive;
 		if (!ext_b)
 			ext_b = big->file;
-		name_b = strrchr(ext_b, PATH_SEP);
+		name_b = FIND_LAST_DIRSEP(ext_b);
 		if (name_b) {
 			ch_b = *name_b;
 			*name_b = '\0';
@@ -1139,7 +1150,7 @@ static void cb_handle_menu(MMENU * menu)
 				break;
 
 			if (cur->archive) {
-				name = strrchr(cur->file, PATH_SEP);
+				name = FIND_LAST_DIRSEP(cur->file);
 				if (name)
 					name++;
 				else

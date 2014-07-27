@@ -806,8 +806,7 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 			CHAR *spare;
 
 			dot = strrchr(filename, '.');
-			slash = strrchr(filename, PATH_SEP);
-
+			slash = FIND_LAST_DIRSEP(filename);
 			if (!slash)
 				slash = filename;
 			else

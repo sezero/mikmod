@@ -360,14 +360,14 @@ static void display_file(void)
 		CHAR *archive = entry->archive, *file;
 
 		if (archive && !config.fullpaths) {
-			archive = strrchr(entry->archive, PATH_SEP);
+			archive = FIND_LAST_DIRSEP(entry->archive);
 			if (archive)
 				archive++;
 			else
 				archive = entry->archive;
 		}
 
-		file = strrchr(entry->file, PATH_SEP);
+		file = FIND_LAST_DIRSEP(entry->file);
 		if (file && !config.fullpaths)
 			file++;
 		else
@@ -945,7 +945,7 @@ static void display_playentry(MWINDOW *win, PLAYENTRY *pos, PLAYENTRY *cur,
 				 (int)((pos->time / 60) % 60), (int)(pos->time % 60));
 		timelen = strlen(time);
 	}
-	name = strrchr(pos->file, PATH_SEP);
+	name = FIND_LAST_DIRSEP(pos->file);
 	if (name && !config.fullpaths)
 		name++;
 	else
@@ -1262,7 +1262,7 @@ static void display_title(void)
 			file = entry->file;
 
 			if (!config.fullpaths) {
-					file = strrchr(entry->file, PATH_SEP);
+					file = FIND_LAST_DIRSEP(entry->file);
 					if (file) {
 						file++;
 					} else {
