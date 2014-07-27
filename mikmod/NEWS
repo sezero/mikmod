@@ -8,6 +8,8 @@ MikMod 3.2.6 was released on XX/XXX/XXXX.
   for its config and playlist.
 - The dos version doesn't check %HOME% anymore and simply uses C:
   for its config and playlist.
+- Support for AmigaOS and its variants like MorphOS, AROS. (thanks
+  to Szilard Biro for lots of help.)
 - Build system configuration and packaging simplifications, tidy-ups.
 - Configury: fix link tests for older binutils.
 - Cmake updates and improvements. Several makefile clean-ups.
