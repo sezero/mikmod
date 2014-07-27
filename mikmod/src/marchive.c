@@ -98,6 +98,9 @@ static const CHAR *modulepatterns[] = {
 	"*.[Ss][Tt][Mm]",
 	"*.[Ss][Tt][Xx]",
 	"*.[Uu][Ll][Tt]",
+#if LIBMIKMOD_VERSION >= 0x030303
+	"*.[Uu][Mm][Xx]",			/* unreal umx container */
+#endif
 	"*.[Uu][Nn][Ii]",
 	"*.[Xx][Mm]",
 	NULL
