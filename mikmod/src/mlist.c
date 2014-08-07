@@ -388,7 +388,7 @@ BOOL PL_Save(PLAYLIST * pl, const CHAR *filename)
 
 char *PL_GetFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_mikmod_amiga)
 	return get_cfg_name("mikmodpl.cfg");
 #elif defined(_WIN32)
 	return get_cfg_name("mikmod_playlist.mpl");

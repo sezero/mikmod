@@ -332,7 +332,7 @@ static ARCHIVE archiver_def[] = {
 
 char *CF_GetFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 	return get_cfg_name("mikmod.cfg");
 #else
 	return get_cfg_name(".mikmodrc");
