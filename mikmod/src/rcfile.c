@@ -174,7 +174,7 @@ BOOL rc_write_string (const char *label, const char *arg, const char *descriptio
 				return 0;
 			while (*arg) {
 				if (*arg<32 || (unsigned char)*arg>127)
-					fprintf (fp, "\\x%02x",*(unsigned char*)arg);
+					fprintf (fp, "\\x%02x",*(const unsigned char*)arg);
 				else if (*arg == '"')
 					fputs ("\\\"", fp);
 				else
