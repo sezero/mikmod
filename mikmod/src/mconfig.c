@@ -282,7 +282,26 @@ static char tarbzip2ext[] = ".TAR.BZ2 .TBZ .TBZ2";
 
 static ARCHIVE archiver_def[] = {
 	/* location, marker, list, filenames column, extract, skippat, skipstart, skipend */
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#ifdef _mikmod_amiga
+	{  0,  pksignat, "unzip -vqq \"%a\" > \"%d\"",
+				 58, "unzip -pqq \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{ 20, zoosignat, "zoo lq \"%a\" > \"%d\"",
+				 47, "zoo xpq \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{  0, rarsignat, "unrar v -c- \"%a\" > \"%d\"",
+				  1, "unrar p -inul \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{  2,  lhsignat, "lha vvq \"%a\" > \"%d\"",
+				 -1, "lha pq \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{  2,  lzsignat, "lha vvq \"%a\" > \"%d\"",
+				 -1, "lha pq \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{257, tarsignat, "tar -tf \"%a\" > \"%d\"",
+				  0, "tar -xOf \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{ -1,  targzext, "tar -tzf \"%a\" > \"%d\"",
+				  0, "tar -xOzf \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{ -1, tarbzip2ext, "tar --use-compress-program=bzip2 -tf \"%a\" > \"%d\"",
+				    0, "tar --use-compress-program=bzip2 -xOf \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
+	{  0,    gzsignat, NULL, 0, "gzip -dqc \"%a\" > \"%d\"", NULL, 0, 0},
+	{  0, bzip2signat, NULL, 0, "bzip2 -dqc \"%a\" > \"%d\"", NULL, 0, 0}
+#elif !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 	{  0,  pksignat, "unzip -vqq \"%a\"",
 				 58, "unzip -pqq \"%a\" \"%f\"", NULL, 0, 0},
 	{ 20, zoosignat, "zoo lq \"%a\"",

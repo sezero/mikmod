@@ -429,7 +429,12 @@ static int MA_truncate (int fd, const char *startpat, int start, int end, char *
 	return dest;
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#ifdef _mikmod_amiga
+#define start_redirect() do {} while (0)
+#define stop_redirect() do {} while (0)
+#endif
+
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 
 static int rd_err, rd_outbak=-1, rd_errbak;
 #ifdef _WIN32
@@ -688,11 +693,18 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 /* Archive display, the non-Unix way */
 			FILE *file;
+			char *dest = NULL;
 
+#ifdef _mikmod_amiga
+			dest = get_tmp_name();
+#endif
 			command = get_command (config.archiver[archive].list,
-								   path_conv_sys(filename), NULL, NULL);
+								   path_conv_sys(filename), NULL, dest);
 			start_redirect();
-#if defined(__WATCOMC__)||(defined(_WIN32)&&!defined(__LCC__))
+#ifdef _mikmod_amiga
+			system(command);
+			file = fopen(dest, "r");
+#elif defined(__WATCOMC__)||(defined(_WIN32)&&!defined(__LCC__))
 			file = _popen (command, "r");
 #else
 			file = popen (command, "r");
@@ -714,7 +726,11 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 					PL_Add(pl, string + t, filename, 0, 0);
 				fgets(string, PATH_MAX + offset + 1, file);
 			}
-#if defined(__WATCOMC__)||defined(_WIN32)
+#ifdef _mikmod_amiga
+			fclose(file);
+			unlink(dest);
+			free(dest);
+#elif defined(__WATCOMC__)||defined(_WIN32)
 			_pclose(file);
 #else
 			pclose(file);
