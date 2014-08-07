@@ -648,7 +648,7 @@ BOOL MA_TestName (const char *filename, BOOL plist, BOOL deep)
 /* Examines file 'filename' to add modules to the playlist 'pl' */
 void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 {
-	int t, archive = 0;
+	int t, archive = -1;
 	struct stat statbuf;
 
 	if (stat(path_conv_sys(filename), &statbuf))
@@ -673,11 +673,11 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 	for (t = 0; t<config.cnt_archiver; t++)
 		if (MA_identify (filename, config.archiver[t].location,
 						 config.archiver[t].marker)) {
-			archive = t + 1;
+			archive = t;
 			break;
 		}
 
-	if (archive--) {
+	if (archive >= 0) {
 		if (config.archiver[archive].list && *config.archiver[archive].list) {
 			/* multi-file archive, need to invoke list function */
 			BOOL endspace = config.archiver[archive].nameoffset < 0;
