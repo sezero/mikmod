@@ -585,7 +585,7 @@ int MA_dearchive(const CHAR *arc, const CHAR *file, CHAR **extracted)
 
 	if (tmp_fd >= 0) {
 		lseek (tmp_fd, 0, SEEK_SET);
-		if (config.archiver[t].skippat ||
+		if ((config.archiver[t].skippat && config.archiver[t].skippat[0]) ||
 			config.archiver[t].skipstart>0 || config.archiver[t].skipend>0) {
 			char *f;
 
