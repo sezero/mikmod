@@ -229,7 +229,7 @@ static	SBYTE PanbrelloTable[256]={
 /* returns a random value between 0 and ceil-1, ceil must be a power of two */
 static int getrandom(int ceilval)
 {
-#ifdef HAVE_SRANDOM
+#if defined(HAVE_SRANDOM) && !defined(_MIKMOD_AMIGA)
 	return random()&(ceilval-1);
 #else
 	return (rand()*ceilval)/(RAND_MAX+1.0);
