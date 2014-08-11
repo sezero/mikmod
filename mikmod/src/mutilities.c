@@ -59,6 +59,11 @@
 #include "marchive.h"
 #include "mutilities.h"
 
+#ifdef _mikmod_amiga
+#include <proto/exec.h>
+#include <proto/dos.h>
+#endif
+
 #if defined(__DJGPP__)
 static const char *get_homedir (void)
 {
@@ -67,7 +72,24 @@ static const char *get_homedir (void)
 #elif defined(_mikmod_amiga)
 static const char *get_homedir (void)
 {
-	return "PROGDIR:"; /* good enough ??? */
+	static char homdir[PATH_MAX];
+	static char *home = NULL;
+	if (!home) {
+		BPTR lock = GetProgramDir();
+		if (!lock || !NameFromLock(lock, homdir, PATH_MAX))
+			strcpy(homdir, "SYS:");
+		if (!homdir[0]) /* possible?? */
+			strcpy(homdir, "SYS:");
+		else {
+			home = homdir + strlen(homdir);
+			if (!IS_PATH_SEP(home[-1])) {
+				home[0] = PATH_SEP;
+				home[1] = 0;
+			}
+		}
+		home = homdir;
+	}
+	return home;
 }
 #elif defined(__OS2__)||defined(__EMX__)
 static const char *get_homedir (void)
@@ -358,7 +380,7 @@ char *get_tmp_name(void)
 char *get_cfg_name(const char *name)
 {
 #if defined(_mikmod_amiga)
-	char *p = str_sprintf ("PROGDIR:%s", name);
+	char *p = str_sprintf2("%s%s", get_homedir(), name);
 #else
 	char *p = str_sprintf2("%s" PATH_SEP_STR "%s", get_homedir(), name);
 #endif
