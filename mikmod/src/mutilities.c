@@ -339,6 +339,10 @@ char *get_tmp_name(void)
 	if (!(tmp_file = _tempnam(NULL, ".mod")))
 		if (!(tmp_file = _tempnam(get_homedir(), ".mod")))
 			return NULL;
+#elif defined(_mikmod_amiga)
+	char s[16];
+	sprintf(s,"%d", rand());
+	tmp_file = str_sprintf("T:%s.mik", s);
 #else
 	if (!(tmp_file = tempnam(NULL, ".mod")))
 		if (!(tmp_file = tempnam(get_homedir(), ".mod")))

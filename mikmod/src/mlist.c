@@ -52,7 +52,7 @@
 
 static int mikmod_random(int limit)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 	return rand() % limit;
 #else
 	return random() % limit;
