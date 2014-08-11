@@ -168,7 +168,7 @@ dnl POSIX.4 threads
 dnl ---------------
 case "$host_os" in
   # mikmod_threads variable is for pthreads only
-    mingw*) mikmod_threads=no ;;
+    mingw*|amigaos*|aros*|morphos*) mikmod_threads=no ;;
 esac
 if test "$mikmod_threads" = "yes"; then
 	mikmod_threads=no

@@ -43,6 +43,7 @@ libmikmod_netbsd=no
 libmikmod_openbsd=no
 libmikmod_os2=no
 libmikmod_djgpp=no
+libmikmod_amiga=no
 
 case $host_os in
 	mingw*) libmikmod_mingw=yes ;;
@@ -53,6 +54,8 @@ case $host_os in
 	openbsd*) libmikmod_openbsd=yes ;;
 	emx*) libmikmod_os2=yes;;
 	*djgpp) libmikmod_djgpp=yes ;;
+	amigaos*|aros*|morphos*)
+		libmikmod_amiga=yes ;;
 esac
 
 # ==============================================================
@@ -484,7 +487,7 @@ fi
 
 # POSIX.4 threads
 # ---------------
-if test $libmikmod_mingw = yes ; then
+if test $libmikmod_mingw = yes || test $libmikmod_amiga = yes ; then
 	dnl libmikmod_threads variable is for pthreads only
 	libmikmod_threads=no
 fi
@@ -1184,12 +1187,12 @@ __attribute__((visibility("default"))) void foo(void) {}],
 		[libmikmod_cv_gcc_visibility=no])
 	AC_LANG_RESTORE)
 # we want symbol -fvisibility for elf targets, however it works
-# with darwin/macho too.  other than that, windows, dos and os2
+# with darwin/macho too.  other than that, windows, dos, os/2, amiga
 # do not need it:  for any such targets, the -Werror switch is
 # supposed to fail the above check. (I'm adding the manual test
 # below nonetheless, just in case.)
 case $host_os in
-   mingw*|cygwin*|emx*|*djgpp)
+   mingw*|cygwin*|emx*|*djgpp|amigaos*|aros*|morphos*)
 	libmikmod_cv_gcc_visibility=no
 	;;
 esac
