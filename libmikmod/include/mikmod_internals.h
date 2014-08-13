@@ -50,7 +50,8 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if !defined(_WIN32) && (defined(_LP64) || defined(__arch64__) || defined(__alpha) || defined(__x64_64) || defined(__powerpc64__))
+#if !defined(_WIN32) && \
+   (defined(_LP64) || defined(__LP64__) || defined(__arch64__) || defined(__alpha) || defined(__x64_64) || defined(__powerpc64__))
 typedef long            SLONGLONG;
 #define NATIVE_64BIT_INT
 #elif defined(_WIN64) /* win64 is LLP64, not LP64  */
@@ -66,6 +67,7 @@ typedef SInt64          SLONGLONG;
 #else
 typedef long long       SLONGLONG;
 #endif
+typedef int __s64_typetest [(sizeof(SLONGLONG)==8) * 2 - 1];
 
 /* pointer-sized signed int (ssize_t/intptr_t) : */
 #if defined(_WIN64) /* win64 is LLP64, not LP64  */
@@ -74,6 +76,7 @@ typedef long long       SINTPTR_T;
 /* long should be pointer-sized for all others : */
 typedef long            SINTPTR_T;
 #endif
+typedef int __iptr_typetest [(sizeof(SINTPTR_T)==sizeof(void*)) * 2 - 1];
 
 /*========== Error handling */
 
