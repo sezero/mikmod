@@ -105,6 +105,10 @@ FORCESAMPLES = no
 #     be computed, and don't work with every driver.
 FAKEVOLUMEBARS = yes
 
+# WINDOWTITLE = Yes|No, set the term/window title to song name
+#     (or filename if song has no title), default: Yes
+WINDOWTITLE = yes
+
 # THEME = "name", name of the theme to use, default: <defaultColor>
 THEME = "<defaultColor>"
 
