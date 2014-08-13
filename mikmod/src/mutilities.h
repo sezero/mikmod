@@ -1,5 +1,5 @@
 /*  MikMod module player
-	(c) 1998 - 2000 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998 - 2014 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This program is free software; you can redistribute it and/or modify
@@ -19,8 +19,6 @@
 */
 
 /*==============================================================================
-
-  $Id: mutilities.h,v 1.1.1.1 2004/01/16 02:07:34 raph Exp $
 
   Some utility functions
 
@@ -200,7 +198,7 @@ char *get_cfg_name(const char *name);
 /* Return precise time in milliseconds */
 unsigned long Time1000(void);
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
 #define filecmp strcasecmp
 #else
 #define filecmp strcmp
