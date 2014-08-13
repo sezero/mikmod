@@ -723,8 +723,8 @@ BOOL CF_Save(CONFIG * cfg)
 #endif
 	rc_write_bool("WINDOWTITLE", cfg->window_title,
 	              "WINDOWTITLE = Yes|No, set the term/window title to song name\n"
-				  "    (or filename it no title), default: Yes\n");
-	
+				  "    (or filename if song has no title), default: Yes\n");
+
 	rc_write_string ("THEME",cfg->themes[cfg->theme].name,
 					 "THEME = \"name\", name of the theme to use, default: <defaultColor>");
 	if (cfg->cnt_themes>THEME_COUNT) {
