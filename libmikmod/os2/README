@@ -18,11 +18,11 @@ I hope you've installed REXX support during the system installation. If
 you didn't, you lose. Run 'selective install' from the system setup
 folder, install REXX support, check it works, and come back here.
 
-Currently, libmikmod can be build under OS/2 only with the emx compiler
-or the Watcom compiler. Borland C lacks a 64-bit integer type and can't
-be used.  You'll need the MMPM/2 toolkit (included in all the Warp
-toolkits) to compile the MMPM/2 driver. The Warp 4 toolkit is required
-if you want to build the DART driver, too.
+Currently, libmikmod can be build under OS/2 only with the Watcom compiler
+(tested with OpenWatcom 1.9) or with the EMX compiler (not tested). You'll
+need the MMPM/2 toolkit (included in all the Warp toolkits) to compile the
+MMPM/2 driver. The Warp4 toolkit is required if you want to build the DART
+driver, too.
 
 You need long filenames to compile libmikmod, so you'll have to compile it
 on an HPFS drive, or an ext2fs drive, or a network drive where you can

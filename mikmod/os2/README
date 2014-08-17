@@ -28,9 +28,9 @@ You need long filenames to compile MikMod, so you'll have to compile it
 on an HPFS drive, or an ext2fs drive, or a network drive where you can
 use decent-size filenames.
 
-Currently, MikMod can be build under OS/2 only with the emx compiler
-or the Watcom compiler. Edit the makefiles in case you need to customize
-the build options and/or want to learn any details.
+Currently, MikMod can be build under OS/2 only with the Watcom compiler (tested
+with OpenWatcom 1.9), or with the EMX compiler (not tested). Edit the makefiles
+if you need to customize the build options and/or want to learn any details.
 
 For EMX, run:
     make -f Makefile.emx

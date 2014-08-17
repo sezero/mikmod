@@ -10,7 +10,7 @@ libmikmod v3.3.7 was released on XX-XXX-XXXX.
 - Build system configuration and packaging simplifications, tidy-ups.
 - New PSP driver. (untested. suggested by Jon Daniel, based on older
   ports from pspdev.)
-- Fix some OS/2 bit rot (hopefully. for nostalgia...)
+- Fix some OS/2 bit rot. (for nostalgia...)
 
 
 Summary of changes between libmikmod 3.3.5 and libmikmod 3.3.6:

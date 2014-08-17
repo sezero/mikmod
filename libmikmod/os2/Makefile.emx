@@ -63,6 +63,9 @@ help:
 clean: FORCE
 	FOR %F IN ( $(LIBNAME) $(DLLNAME) $(OBJ) ) DO IF EXIST %F ERASE %F
 
+dll: $(DLLNAME) $(LIBNAME)
+static: $(LIBSTATIC)
+
 $(DLLNAME): CFLAGS+=-Zdll
 $(LIBNAME): $(DLLNAME)
 $(DLLNAME): $(OBJ) $(DEFNAME)
