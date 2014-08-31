@@ -1,7 +1,7 @@
 Summary of changes between MikMod 3.2.5 and MikMod 3.2.6:
 ==================================================================
 
-MikMod 3.2.6 was released on XX/XXX/XXXX.
+MikMod 3.2.6 was released on 31-Aug-2014.
 
 - Fix curses linkage on some setups. (add -ltinfo if necessary.)
 - Windows version now relies on %USERPROFILE% instead of %HOME%
@@ -13,6 +13,7 @@ MikMod 3.2.6 was released on XX/XXX/XXXX.
 - Build system configuration and packaging simplifications, tidy-ups.
 - Configury: fix link tests for older binutils.
 - Cmake updates and improvements. Several makefile clean-ups.
+- Several portability tweaks.
 - Fix some OS/2 bit rot. (for nostalgia...)
 - Removed ancient convert_playlist script which used to supposed
   to convert pre-ancient mikmod playlists. Documentation updates.

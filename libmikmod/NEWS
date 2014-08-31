@@ -1,13 +1,14 @@
 Summary of changes between libmikmod 3.3.6 and libmikmod 3.3.7:
 ========================================================================
 
-libmikmod v3.3.7 was released on XX-XXX-XXXX.
+libmikmod v3.3.7 was released on 31-Aug-2014.
 
 - Android support, thanks to Radovan Cervenka, with the OpenSL ES
   driver adapted from the old libmikmod-android project.
 - Support for AmigaOS and its variants like MorphOS, AROS, and a new
   AHI driver thanks to Szilárd Biró.
 - Build system configuration and packaging simplifications, tidy-ups.
+- Several portability tweaks.
 - New PSP driver. (untested. suggested by Jon Daniel, based on older
   ports from pspdev.)
 - Fix some OS/2 bit rot. (for nostalgia...)
