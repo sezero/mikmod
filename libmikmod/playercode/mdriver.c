@@ -1,6 +1,6 @@
 /*	MikMod sound library
-	(c) 1998, 1999, 2000, 2001 Miodrag Vallat and others - see file AUTHORS
-	for complete list.
+	(c) 1998-2014 Miodrag Vallat and others - see file AUTHORS
+	for a complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
@@ -19,8 +19,6 @@
 */
 
 /*==============================================================================
-
-  $Id$
 
   These routines are used to access the available soundcard drivers.
 
@@ -588,8 +586,8 @@ void MikMod_Exit_internal(void)
 	md_numchn = md_sfxchn = md_sngchn = 0;
 	md_driver = &drv_nos;
 
-	if(sfxinfo) MikMod_free(sfxinfo);
-	if(md_sample) MikMod_free(md_sample);
+	MikMod_free(sfxinfo);
+	MikMod_free(md_sample);
 	md_sample  = NULL;
 	sfxinfo    = NULL;
 
@@ -668,8 +666,8 @@ int MikMod_SetNumVoices_internal(int music, int sfx)
 		resume = 1;
 	}
 
-	if(sfxinfo) MikMod_free(sfxinfo);
-	if(md_sample) MikMod_free(md_sample);
+	MikMod_free(sfxinfo);
+	MikMod_free(md_sample);
 	md_sample  = NULL;
 	sfxinfo    = NULL;
 
