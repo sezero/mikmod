@@ -27,6 +27,7 @@ EXTRA_DIST = CMakeLists.txt \
 	     drv_sb.c     \
 	     drv_sdl.c    \
 	     drv_sgi.c    \
+	     drv_sndio.c  \
 	     drv_stdout.c \
 	     drv_sun.c    \
 	     drv_ultra.c  \

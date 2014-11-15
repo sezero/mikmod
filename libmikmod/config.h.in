@@ -76,6 +76,9 @@
 /* Define if the SGI audio driver is compiled */
 #undef DRV_SGI
 
+/* Define if the OpenBSD sndio driver is compiled */
+#undef DRV_SNDIO
+
 /* Define if you want support for output to stdout */
 #undef DRV_STDOUT
 

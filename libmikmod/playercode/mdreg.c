@@ -74,6 +74,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_HP
 	_mm_registerdriver(&drv_hp);
 #endif
+#ifdef DRV_SNDIO
+	_mm_registerdriver(&drv_sndio);
+#endif
 #ifdef DRV_OSS
 	_mm_registerdriver(&drv_oss);
 #endif

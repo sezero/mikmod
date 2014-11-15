@@ -269,6 +269,14 @@ static const char *_mm_errmsg[MMERR_MAX+1] =
 	_mmerr_invalid, _mmerr_invalid, _mmerr_invalid,
 #endif
 
+/* Sndio errors */
+#ifdef DRV_SNDIO
+	"Could not set SNDIO output params",
+	"Unsupported SNDIO output params",
+#else
+	_mmerr_invalid, _mmerr_invalid,
+#endif
+
 /* Invalid error */
 
 	_mmerr_invalid

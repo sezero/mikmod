@@ -60,6 +60,7 @@ libmikmod_la_SOURCES = \
 		drivers/drv_sb.c \
 		drivers/drv_sdl.c \
 		drivers/drv_sgi.c \
+		drivers/drv_sndio.c \
 		drivers/drv_stdout.c \
 		drivers/drv_sun.c \
 		drivers/drv_ultra.c \
@@ -108,3 +109,4 @@ libmikmod_la_SOURCES = \
 
 libmikmod_la_LDFLAGS = -no-undefined -version-info @MIKMOD_LT_CURRENT@:@MIKMOD_LT_REVISION@:@MIKMOD_LT_AGE@
 libmikmod_la_LIBADD = @LTLIBOBJS@ @LIBRARY_LIB@
+

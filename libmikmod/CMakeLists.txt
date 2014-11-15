@@ -97,6 +97,12 @@ SET (ENABLE_ESD 0)
 SET (ENABLE_NAS 0)
 ENDIF()
 
+IF(CMAKE_SYSTEM_NAME MATCHES "OpenBSD.*")
+SET (ENABLE_SNDIO 1 CACHE BOOL "Include the OpenBSD sndio driver")
+ELSE()
+SET (ENABLE_SNDIO 0)
+ENDIF()
+
 IF(CMAKE_SYSTEM_NAME MATCHES "kNetBSD.*|NetBSD.*|kOpenBSD.*|OpenBSD.*|Solaris.*")
 SET (ENABLE_SUNAUDIO 1 CACHE BOOL "Include the SunAudio (or compatibles) driver")
 ELSE()
@@ -339,6 +345,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_sam9407.c
     drivers/drv_sdl.c
     drivers/drv_sgi.c
+    drivers/drv_sndio.c
     drivers/drv_stdout.c
     drivers/drv_sun.c
     drivers/drv_ultra.c
@@ -646,6 +653,26 @@ IF (ENABLE_ALSA)
 ELSE()
   SET (DRV_ALSA)
 ENDIF(ENABLE_ALSA)
+
+IF (ENABLE_SNDIO)
+  CHECK_INCLUDE_FILE("sndio.h" HAVE_SNDIO_H)
+  find_library(SNDIO_LIBRARIES sndio)
+  IF(NOT (SNDIO_LIBRARIES STREQUAL "SNDIO_LIBRARIES-NOTFOUND"))
+    SET(OLD_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES}")
+    SET(CMAKE_REQUIRED_LIBRARIES "sndio")
+    CHECK_FUNCTION_EXISTS(sio_open SNDIO_LIBS_OK)
+    SET(CMAKE_REQUIRED_LIBRARIES "${OLD_REQUIRED_LIBRARIES}")
+  ENDIF()
+  IF((NOT SNDIO_LIBS_OK) OR (NOT HAVE_SNDIO_H))
+    SET (ENABLE_SNDIO 0)
+    SET (DRV_SNDIO)
+    MESSAGE(WARNING "OpenBSD sndio support is disabled.")
+  ELSE()
+    SET (DRV_SNDIO 1)
+  ENDIF()
+ELSE()
+  SET (DRV_SNDIO)
+ENDIF (ENABLE_SNDIO)
 
 IF (ENABLE_SUNAUDIO)
   CHECK_MULTI_INCLUDE_FILES("sys/audioio.h" "sun/audioio.h")

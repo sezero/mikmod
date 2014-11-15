@@ -75,6 +75,7 @@ libmikmod_driver_openal=no
 libmikmod_driver_oss=yes
 libmikmod_driver_sam9407=no
 libmikmod_driver_sgi=no
+libmikmod_driver_sndio=no
 libmikmod_driver_sun=no
 libmikmod_driver_osx=yes
 libmikmod_driver_mac=no
@@ -798,6 +799,14 @@ case $host_os in
 	;;
 	netbsd*|openbsd*)
 		AC_CHECK_HEADERS([sys/audioio.h])
+		AC_CHECK_HEADERS([sndio.h])
+		if test $libmikmod_openbsd = yes && test $ac_cv_header_sndio_h = yes; then
+			AC_CHECK_LIB([sndio],[sio_open],[libmikmod_driver_sndio=yes])
+			if test $libmikmod_driver_sndio = yes; then
+				LIBRARY_LIB="-lsndio $LIBRARY_LIB"
+				libmikmod_driverlist="sndio $libmikmod_driverlist"
+			fi
+		fi
 		if test $ac_cv_header_sys_audioio_h = yes; then
 			libmikmod_driver_sun=yes
 			if test $libmikmod_netbsd = yes; then
@@ -1020,6 +1029,11 @@ then
 	libmikmod_driverlist="sgi $libmikmod_driverlist"
 	AC_DEFINE([DRV_SGI], 1, [Define if the SGI audio driver is compiled])
 	LIBRARY_LIB="-laudio $LIBRARY_LIB"
+fi
+
+if test $libmikmod_driver_sndio = yes
+then
+	AC_DEFINE([DRV_SNDIO], 1, [Define if the OpenBSD sndio driver is compiled])
 fi
 
 if test $libmikmod_driver_sun = yes

@@ -36,6 +36,8 @@
 #cmakedefine DRV_SDL 1
 /* Define if the SGI audio driver is compiled */
 #cmakedefine DRV_SGI 1
+/* Define if the OpenBSD sndio driver is compiled */
+#cmakedefine DRV_SNDIO 1
 /* Define if the Sun audio driver or compatible (NetBSD, OpenBSD)
    is compiled */
 #cmakedefine DRV_SUN 1
@@ -65,7 +67,6 @@
 
 /* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
 #cmakedefine MIKMOD_UNIX 1
-
 
 /* ========== Build environment information */
 
