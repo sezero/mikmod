@@ -1,3 +1,11 @@
+Summary of changes between libmikmod 3.3.7 and libmikmod 3.3.8:
+========================================================================
+
+libmikmod v3.3.8 was released on XX-XXX-XXXX.
+
+- Support for OpenBSD sndio.
+
+
 Summary of changes between libmikmod 3.3.6 and libmikmod 3.3.7:
 ========================================================================
 

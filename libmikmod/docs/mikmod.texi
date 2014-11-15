@@ -3228,6 +3228,9 @@ This driver only supports software mixing.
 @item drv_sgi
 This driver is only available under IRIX, and uses the SGI audio library.@*
 This driver only supports software mixing.
+@item drv_sndio
+This driver is only available under OpenBSD and uses the ``sndio'' interface.@*
+This driver only supports software mixing.
 @item drv_sun
 This driver is only available under Unices which implement SunOS-like audio
 device interfaces, that is, SunOS, Solaris, NetBSD and OpenBSD.@*
