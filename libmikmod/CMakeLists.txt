@@ -116,7 +116,7 @@ SET (ENABLE_AIX 0)
 ENDIF()
 
 IF(CMAKE_SYSTEM_NAME MATCHES "HP-UX.*")
-SET (ENABLE_AIX 1 CACHE BOOL "Include the HP-UX audio driver")
+SET (ENABLE_HPUX 1 CACHE BOOL "Include the HP-UX audio driver")
 ELSE()
 SET (ENABLE_HPUX 0)
 ENDIF()
@@ -878,3 +878,4 @@ INSTALL(
     DESTINATION
         "lib${LIB_SUFFIX}/pkgconfig"
 )
+
