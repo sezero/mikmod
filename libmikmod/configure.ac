@@ -797,22 +797,20 @@ case $host_os in
 			libmikmod_driver_hp=yes
 		fi
 	;;
-	netbsd*|openbsd*)
+	netbsd*)
 		AC_CHECK_HEADERS([sys/audioio.h])
+		if test $ac_cv_header_sys_audioio_h = yes; then
+			libmikmod_driver_sun=yes
+			libmikmod_driverlist="sunaudio $libmikmod_driverlist"
+		fi
+	;;
+	openbsd*)
 		AC_CHECK_HEADERS([sndio.h])
-		if test $libmikmod_openbsd = yes && test $ac_cv_header_sndio_h = yes; then
+		if test $ac_cv_header_sndio_h = yes; then
 			AC_CHECK_LIB([sndio],[sio_open],[libmikmod_driver_sndio=yes])
 			if test $libmikmod_driver_sndio = yes; then
 				LIBRARY_LIB="-lsndio $LIBRARY_LIB"
 				libmikmod_driverlist="sndio $libmikmod_driverlist"
-			fi
-		fi
-		if test $ac_cv_header_sys_audioio_h = yes; then
-			libmikmod_driver_sun=yes
-			if test $libmikmod_netbsd = yes; then
-				libmikmod_driverlist="netbsd $libmikmod_driverlist"
-			else
-				libmikmod_driverlist="openbsd $libmikmod_driverlist"
 			fi
 		fi
 	;;
@@ -820,7 +818,7 @@ case $host_os in
 		AC_CHECK_HEADERS([sun/audioio.h sys/audioio.h])
 		if test $ac_cv_header_sun_audioio_h = yes || test $ac_cv_header_sys_audioio_h = yes; then
 			libmikmod_driver_sun=yes
-			libmikmod_driverlist="sun $libmikmod_driverlist"
+			libmikmod_driverlist="sunaudio $libmikmod_driverlist"
 			if test "$cross_compiling" != yes ; then
 			   case `uname -r` in
 				4*) AC_DEFINE([SUNOS], 1, [Define if your system is SunOS 4.x]) ;;
