@@ -98,7 +98,7 @@ static int Sndio_Init(void)
 	par.pchan = (md_mode & DMODE_STEREO) ? 2 : 1;
 	par.rate = md_mixfreq;
 	par.le = SIO_LE_NATIVE;
-	par.sig = par.bits == 8 ? 0 : 1;
+	par.sig = (par.bits == 8) ? 0 : 1;
 	par.appbufsz = 4 * fragsize / SIO_BPS(par.bits) / par.pchan;
 
 	if (!sio_setpar(hdl, &par) || !sio_getpar(hdl, &par)) {
@@ -140,17 +140,13 @@ static void Sndio_Exit(void)
 
 static void Sndio_Update(void)
 {
-	int done;
-
-	done = VC_WriteBytes((char *)audiobuffer, fragsize);
+	ULONG done = VC_WriteBytes(audiobuffer, fragsize);
 	sio_write(hdl, audiobuffer, done);
 }
 
 static void Sndio_Pause(void)
 {
-	int done;
-
-	done = VC_SilenceBytes((char *)audiobuffer, fragsize);
+	ULONG done = VC_SilenceBytes(audiobuffer, fragsize);
 	sio_write(hdl, audiobuffer, done);
 }
 
@@ -158,7 +154,6 @@ static int Sndio_PlayStart(void)
 {
 	if (!sio_start(hdl))
 		return 1;
-
 	return VC_PlayStart();
 }
 
