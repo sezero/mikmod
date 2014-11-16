@@ -12,6 +12,8 @@
 #cmakedefine DRV_RAW 1
 /* Define if the DEC AudioFile server driver is compiled */
 #cmakedefine DRV_AF 1
+/* Define if the Amiga AHI driver is compiled */
+#cmakedefine DRV_AHI 1
 /* Define if the AIX audio driver is compiled */
 #cmakedefine DRV_AIX 1
 /* Define if the Linux ALSA driver is compiled */
@@ -110,6 +112,9 @@
 /* Define to 1 if you have the <audio/audiolib.h> header file. */
 #cmakedefine HAVE_AUDIO_AUDIOLIB_H 1
 
+/* Define to 1 if you have the <devices/ahi.h> header file. */
+#cmakedefine HAVE_DEVICES_AHI_H 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H 1
 
@@ -202,6 +207,9 @@
 
 /* Define to 1 if you have the <sys/sam9407.h> header file. */
 #cmakedefine HAVE_SYS_SAM9407_H 1
+
+/* Define to 1 if you have the <sndio.h> header file. */
+#cmakedefine HAVE_SNDIO_H 1
 
 /* Define to 1 if you have the <sys/soundcard.h> header file. */
 #cmakedefine HAVE_SYS_SOUNDCARD_H 1
