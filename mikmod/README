@@ -2,7 +2,7 @@
 
 
 This is MikMod, version 3.2.6, a module player for Unix.
-As usual with each new version, there's a lot of bugfixes and improvements.
+As usual with each new version, there's a lot of bug fixes and improvements.
 Check out the file 'NEWS' for more information.
 
 
@@ -10,17 +10,24 @@ Check out the file 'NEWS' for more information.
 ------------------
 
 This MikMod version can build with any libmikmod version starting from 3.1.5,
-but building with 3.2.x is recommanded, since all the features and
-configuration functions are not available for older versions.
+but building with 3.2.0 or newer (preferably 3.3.6 or newer) is recommended
+because some of the features and configuration functions are not available
+for older versions.
 
-- If you're building MikMod under DOS, please refer to the 'README' file
-  located in the 'dos' subdirectory.
+- If you want to build MikMod for Windows, refer to the 'README' file under
+  the 'win32' subdirectory.
 
-- If you're building MikMod under OS/2, please refer to the 'README' file
-  located in the 'os2' subdirectory.
+- If you want to build MikMod for Mac OS X, refer to the 'README' file under
+  the 'macosx' subdirectory.
 
-- If you want to build MikMod under Windows, please refer to the 'README' file
-  located in the 'win32' subdirectory.
+- If you're building MikMod for DOS, refer to the 'README' file under the
+  'dos' subdirectory.
+
+- If you're building MikMod for OS/2, refer to the 'README' file under the
+  'os2' subdirectory.
+
+- If you're building MikMod for AmigaOS, or its variants like MorphOS or
+  AROS, the configury method as explained below should work fine.
 
 The first thing you need is to get and compile the libmikmod sound library,
 which is not bundled with MikMod anymore !

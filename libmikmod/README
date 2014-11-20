@@ -8,26 +8,42 @@ and other systems. Check out the file 'NEWS' for more history information.
 >> BUILDING LIBMIKMOD
 ---------------------
 
-- If you're building libmikmod under MacOS, please refer to the 'README'
-  file located in the 'macintosh' subdirectory.
+- If you're building libmikmod for Windows, refer to the 'README' file
+  located in the 'win32' subdirectory.
 
-- If you're building libmikmod under OS/2, please refer to the 'README'
-  file located in the 'os2' subdirectory.
+- If you're building libmikmod for Mac OS X, refer to the 'README' file
+  located in the 'macosx' subdirectory.
 
-- If you're building libmikmod under Windows, please refer to the
-  'README' file located in the 'win32' subdirectory.
+- If you're building libmikmod for Android, refer to the 'README' file
+  located in the 'android' subdirectory.
+
+- If you're building libmikmod for DOS, refer to the 'README' file
+  located in the 'dos' subdirectory.
+
+- If you're building libmikmod for OS/2, refer to the 'README' file
+  located in the 'os2' subdirectory.
+
+- If you're building libmikmod for AmigaOS, or its variants like MorphOS
+  or AROS, the configury method as explained below should work fine.
+
+- If you're building libmikmod for MacOS, refer to the 'README' file
+  located in the 'macintosh' subdirectory.
+
+- If you're building libmikmod for dreamcast, gp32 or psp platforms,
+  refer to the corresponding 'README' files located under the 'dc',
+  'gp32' or 'psp' subdirectory.
 
 - If you're building libmikmod under any other system which is not a
-  Unix flavour, then be warned that this your platform is not supported
-  and that libmikmod will probably not build out of the box; don't
-  hesitate to drop me a note, and I'll see what I can do for this situation.
+  Unix flavour, then be warned that your platform is probably not
+  supported and that libmikmod will probably not build out of the box.
+  Drop us a note and we'll see what we can do for this situation.
 
 So you're on a good old Unix workstation, aren't you ?
 
-You'll need an ANSI C compiler to build libmikmod. If your system does not
-come with an ANSI C compiler, you might want to try the GUN C compiler, gcc.
-If you're building on a 32 bit architecture, your compiler must provide a
-64 bit integer type (usually 'long long').
+You'll need an ANSI C compiler to build libmikmod.  If your system does
+not come with an ANSI C compiler, you might try the GNU C compiler, gcc.
+If you're building on a 32 bit architecture, your compiler must provide
+a 64 bit integer type (usually 'long long').
 
 To prevent clobbering the sources, I recommend building libmikmod in an
 alternate directory, for example 'build':
@@ -169,11 +185,12 @@ different parameters, for example: somevalue=1,someothervalue=2
   file=     Output file name. Default is music.raw for the raw driver
             and music.wav for the wav driver.
 
+- OpenBSD sndio ("sndio") [OpenBSD only]
+  buffer=   logarithmic fragment size, in the range 7-17. Default is 12.
+
 - Sun/Solaris/NetBSD/OpenBSD audio ("audio")
   [SunOS, Solaris, NetBSD, OpenBSD only]
   buffer=   logarithmic fragment size, in the range 7-17. Default is 12.
-            Replaces the MM_FRAGSIZE environment variable, which is now
-            deprecated.
   headphone on SunOS/Solaris only, redirects the output to the headphone
             port.
   speaker   on SunOS/Solaris only, redirects the output to the speaker.
@@ -183,8 +200,8 @@ different parameters, for example: somevalue=1,someothervalue=2
 
 - NoSound ("nosound"), Standard output ("stdout"), Ultrasound ("ultra"),
   Windows Multimedia ("winmm"), Windows XAudio2 ("xaudio2"),
-  Linux ALSA ("alsa")
-  These driver have no options.
+  Amiga AHI ("ahi"), Linux ALSA ("alsa")
+  These drivers have no options.
 
 
 >> ALSA DRIVER SPECIFIC INFORMATION (Linux specific)
@@ -202,26 +219,13 @@ ALSA versions 0.9.x and earlier are not supported any more.
 >> ENLIGHTENED SOUND DAEMON SPECIFIC INFORMATION (Unix specific)
 ------------------------------------------------
 
-The Enlightened Sound Daemon (EsounD) is still experimental and may
-change a lot until it reaches the 1.0 release. Thus, this libmikmod
-version might not work with future versions of EsounD.
+The Enlightened Sound Daemon (EsounD) development has long been stopped,
+but libmikmod still supports it.  libmikmod should work with any esound
+version starting from 0.2.18, although the latest 0.2.41 is recommended:
+  http://ftp.gnome.org/pub/gnome/sources/esound/0.2/
 
 You can find more information on EsounD on the web:
   http://www.tux.org/~ricdude/EsounD.html
-However, this page is getting very out of date. Recent EsounD work can
-be found on the GNOME project:
-  http://www.gnome.org/applist/view.php3?name=esound
-which not kept up-to-date either...
-
-The version of the libmikmod EsounD driver coincides with the latest
-EsounD release available when this version of libmikmod was released;
-for the 3.1.10 release, this is EsounD v0.2.23, but libmikmod should
-work with any version starting from 0.2.6, although the latest version
-is recommended.
-
-Please note that between 0.2.8 and 0.2.12 the server port and the
-protocol have changed, thus clients compiled with libesd from 0.2.8 can
-not communicate with 0.2.12 (and later) esd, and vice versa.
 
 If the esd daemon dies, libmikmod will try to reconnect every 5 seconds
 and every new module, if a module ends. So, you can safely restart esd
@@ -296,7 +300,7 @@ The above mentioned systems use the same interface to the audio device.
 The libmikmod driver for this interface is the Sun driver. It was coded
 by Valtteri Vuorikoski <vuori@sci.fi> and updated to libmikmod 3 by Tor
 Norbye <tor@cs.stanford.edu>, and has been modified to work under NetBSD
-and OpenBSD by the current maintainer.
+and OpenBSD by Miodrag Vallat.
 
 This driver works with old sound hardware using 8 KHz mono ulaw, and
 with modern hardware using pcm mono or stereo at any frequency. If your
