@@ -4,6 +4,7 @@ Summary of changes between libmikmod 3.3.7 and libmikmod 3.3.8:
 libmikmod v3.3.8 was released on XX-XXX-XXXX.
 
 - Support for OpenBSD sndio.
+- Fixed a possible undefined behavior in the XM loader.
 - Updated configury. The aix, hpux, bsd/sunaudio and sgi audio drivers
   are now configurable and not built unconditionally.
 

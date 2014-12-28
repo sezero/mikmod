@@ -709,7 +709,7 @@ static BOOL XM_Load(BOOL curious)
 	of.initspeed = mh->tempo;
 	of.inittempo = mh->bpm;
 	strncpy(tracker,mh->trackername,20);tracker[20]=0;
-	for(t=20;(tracker[t]<=' ')&&(t>=0);t--) tracker[t]=0;
+	for(t=20;(t>=0)&&(tracker[t]<=' ');t--) tracker[t]=0;
 
 	/* some modules have the tracker name empty */
 	if (!tracker[0])
