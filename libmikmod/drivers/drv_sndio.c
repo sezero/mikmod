@@ -136,6 +136,7 @@ static void Sndio_Exit(void)
 	}
 	VC_Exit();
 	MikMod_free(audiobuffer);
+	audiobuffer = NULL;
 }
 
 static void Sndio_Update(void)
