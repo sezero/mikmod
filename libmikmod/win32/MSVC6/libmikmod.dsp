@@ -288,10 +288,6 @@ SOURCE=..\..\playercode\virtch_common.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\mikmod.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\mikmod.h
 # End Source File
 # Begin Source File
