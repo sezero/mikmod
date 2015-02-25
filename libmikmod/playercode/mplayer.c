@@ -843,6 +843,9 @@ static int DoPTEffectB(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 		mod->sngpos=dat;
 		mod->posjmp=2;
 		mod->patpos=0;
+		/* cancel the FT2 pattern loop (E60) bug.
+		 * also see DoEEffects() below for it. */
+		if (flags & UF_FT2QUIRKS) mod->patbrk=0;
 	}
 
 	return 0;
@@ -950,8 +953,13 @@ static void DoEEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod,
 				} else
 					mod->patpos=a->pat_reppos;
 			} else a->pat_reppos=POS_NONE;
-		} else
+		} else {
 			a->pat_reppos=mod->patpos-1; /* set reppos - can be (-1) */
+			/* emulate the FT2 pattern loop (E60) bug:
+			 * http://milkytracker.org/docs/MilkyTracker.html#fxE6x
+			 * roadblas.xm plays correctly with this. */
+			if (flags & UF_FT2QUIRKS) mod->patbrk=mod->patpos;
+		}
 		break;
 	case 0x7: /* set tremolo waveform */
 		a->wavecontrol&=0x0f;
