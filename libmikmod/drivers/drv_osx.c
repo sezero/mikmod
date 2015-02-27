@@ -122,16 +122,11 @@
 			}
 
 #define FILL_BUFFER(_buffer,_size)								\
-			if (Player_Paused()) {							\
-				MUTEX_LOCK (vars);						\
+			MUTEX_LOCK (vars);							\
+			if (Player_Paused_internal())						\
 				VC_SilenceBytes ((SBYTE*) (_buffer), (ULONG) (_size));		\
-				MUTEX_UNLOCK (vars);						\
-			}									\
-			else {									\
-				MUTEX_LOCK (vars);						\
-				VC_WriteBytes ((SBYTE*) (_buffer), (ULONG) ((_size)));		\
-				MUTEX_UNLOCK (vars);						\
-			}
+			else	VC_WriteBytes ((SBYTE*) (_buffer), (ULONG) (_size));		\
+			MUTEX_UNLOCK (vars);
 
 /* GLOBALS */
 #if USE_FILL_THREAD
