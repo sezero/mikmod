@@ -292,13 +292,13 @@ static void OS2_Exit(void)
 		DosCloseEventSem(Play);
 		Play = NULLHANDLE;
 	}
-	VC_Exit();
 	if (DeviceID) {
 		mciGenericParms.hwndCallback = (HWND) NULL;
 		mciSendCommand(DeviceID, MCI_CLOSE, MCI_WAIT,
 					   (PVOID) & mciGenericParms, 0);
 		DeviceID = 0;
 	}
+	VC_Exit();
 	MikMod_free(AudioBuffer);
 	AudioBuffer = NULL;
 }

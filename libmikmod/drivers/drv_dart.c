@@ -217,7 +217,6 @@ static void Dart_Exit(void)
 {
 	MCI_GENERIC_PARMS GenericParms;
 
-	VC_Exit();
 	if (MixBuffers[0].pBuffer) {
 		mciSendCommand(DeviceID, MCI_BUFFER, MCI_WAIT | MCI_DEALLOCATE_MEMORY,
 					   &BufferParms, 0);
@@ -227,6 +226,7 @@ static void Dart_Exit(void)
 		mciSendCommand(DeviceID, MCI_CLOSE, MCI_WAIT, (PVOID) &GenericParms, 0);
 		DeviceID = 0;
 	}
+	VC_Exit();
 }
 
 static int Dart_PlayStart(void)
