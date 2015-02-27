@@ -57,9 +57,8 @@ MIKMODAPI MDRIVER *md_driver	= NULL;
 MIKMODAPI UWORD md_device	= 0;	/* autodetect */
 MIKMODAPI UWORD md_mixfreq	= 44100;
 MIKMODAPI UWORD md_mode		= DMODE_STEREO | DMODE_16BITS |
-						 DMODE_SURROUND |
-						 DMODE_SOFT_MUSIC |
-						 DMODE_SOFT_SNDFX;
+				  DMODE_SURROUND |
+				  DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
 MIKMODAPI UBYTE md_pansep	= 128;	/* 128 == 100% (full left/right) */
 MIKMODAPI UBYTE md_reverb	= 0;	/* no reverb */
 MIKMODAPI UBYTE md_volume	= 128;	/* global sound volume (0-128) */
@@ -69,7 +68,7 @@ MIKMODAPI UBYTE md_sndfxvolume	= 128;	/* volume of sound effects */
 /* INTERNAL GLOBALS */
 UWORD md_bpm = 125;	/* tempo */
 
-/* Do not modify the numchn variables yourself!  use MD_SetVoices() */
+/* Do not modify the numchn variables yourself!  use MikMod_SetNumVoices() */
 UBYTE md_numchn  = 0, md_sngchn = 0, md_sfxchn = 0;
 UBYTE md_hardchn = 0, md_softchn= 0;
 
@@ -635,7 +634,7 @@ static int _mm_reset(const CHAR *cmdline)
 		}
 	}
 
-	if (wasplaying) md_driver->PlayStart();
+	if (wasplaying) return md_driver->PlayStart();
 	return 0;
 }
 
@@ -969,4 +968,4 @@ int MD_DropPrivileges(void)
 
 #endif
 
-/* ex:set ts=4: */
+/* ex:set ts=8: */
