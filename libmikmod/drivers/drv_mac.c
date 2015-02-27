@@ -27,7 +27,6 @@
 ==============================================================================*/
 
 /*
-
 	Written by Anders F Bjoerklund <afb@algonet.se>
 
 	Based on free code by:
@@ -51,7 +50,6 @@
 	- playback was wrong speed when running under CarbonLib
 	  (due to Deferred Tasks having lame latencies there)
 	- proper playing of partially filled buffers too
-
 */
 
 #ifdef HAVE_CONFIG_H
@@ -78,15 +76,13 @@
 
 #endif
 
-
 #ifndef TARGET_API_MAC_CARBON
 #define TARGET_API_MAC_CARBON	TARGET_CARBON
 #endif
 
 #ifndef TARGET_CPU_68K
-#define TARGET_CPU_68K			GENERATING68K
+#define TARGET_CPU_68K	GENERATING68K
 #endif
-
 
 #if TARGET_API_MAC_CARBON
 #define USE_SNDDOUBLEBUFFER		0
@@ -121,19 +117,14 @@ static volatile Boolean			deferredTaskFired = true;
 static volatile Boolean			deferredTaskDone = true;
 #endif
 
-#endif /*USE_SNDDOUBLEBUFFER*/
-
+#endif /* USE_SNDDOUBLEBUFFER */
 
 #define FILL_BUFFER(_buffer_data,_buffer_size,_bytes) \
-	if (Player_Paused()) { /* <afb> note that Player_Paused locks "vars" too ! */  \
-		MUTEX_LOCK(vars); \
-			_bytes=VC_SilenceBytes((SBYTE*)_buffer_data,(ULONG)_buffer_size); \
-		MUTEX_UNLOCK(vars); \
-	} else { \
-		MUTEX_LOCK(vars); \
-			_bytes=VC_WriteBytes((SBYTE*)_buffer_data,(ULONG)_buffer_size); \
-		MUTEX_UNLOCK(vars); \
-	}
+	MUTEX_LOCK(vars); \
+	if (Player_Paused_internal()) \
+		_bytes=VC_SilenceBytes((SBYTE*)_buffer_data,(ULONG)_buffer_size); \
+	else	_bytes=VC_WriteBytes((SBYTE*)_buffer_data,(ULONG)_buffer_size); \
+	MUTEX_UNLOCK(vars);
 
 
 #if USE_SNDDOUBLEBUFFER
@@ -145,12 +136,11 @@ static pascal void MyDoubleBackProc(SndChannelPtr channel,SndDoubleBufferPtr dou
 #pragma unused(channel)
 #endif
 	long written;
-
 #if TARGET_CPU_68K
 	long oldA5=SetA5(doubleBuffer->dbUserInfo[0]);
 #endif
 
-	FILL_BUFFER( doubleBuffer->dbSoundData, SOUND_BUFFER_SIZE, written )
+	FILL_BUFFER(doubleBuffer->dbSoundData, SOUND_BUFFER_SIZE, written)
 
 	if (doubleHeader.dbhNumChannels==2) written>>=1;
 	if (doubleHeader.dbhSampleSize==16) written>>=1;
@@ -163,7 +153,7 @@ static pascal void MyDoubleBackProc(SndChannelPtr channel,SndDoubleBufferPtr dou
 #endif
 }
 
-#else
+#else /* USE_SNDDOUBLEBUFFER */
 
 #if USE_DEFERREDTASKS
 /* DeferredTask, called at almost-interrupt time (not for 68K - doesn't set A5) */
@@ -173,14 +163,14 @@ static pascal void DeferredTaskCallback(long param)
 
 	deferredTaskFired = true;
 
-	FILL_BUFFER( param, SOUND_BUFFER_SIZE, written )
+	FILL_BUFFER(param, SOUND_BUFFER_SIZE, written)
 
 	deferredTaskDone = true;
 }
 #endif /* USE_DEFERREDTASKS */
 
 /* SoundCallback, called at interrupt time (not for 68K - doesn't set A5)  */
-static pascal void SoundCallback(SndChannelPtr channel, SndCommand *command )
+static pascal void SoundCallback(SndChannelPtr channel, SndCommand *command)
 {
 #ifndef GCC
 #pragma unused(channel,command)
@@ -191,7 +181,7 @@ static pascal void SoundCallback(SndChannelPtr channel, SndCommand *command )
 	/* Install current buffer */
 	sndHeader.samplePtr = currentBuffer;
 	sndHeader.numFrames = currentFrames;
-	SndDoImmediate( soundChannel, &buffer );
+	SndDoImmediate(soundChannel, &buffer);
 
 #if USE_DEFERREDTASKS
 	/* Setup deferred task to fill next buffer */
@@ -211,7 +201,7 @@ static pascal void SoundCallback(SndChannelPtr channel, SndCommand *command )
 		long	bytes;
 
 		currentBuffer = (currentBuffer == sndBuffer1) ? sndBuffer2 : sndBuffer1;
-		FILL_BUFFER( currentBuffer, SOUND_BUFFER_SIZE, bytes )
+		FILL_BUFFER(currentBuffer, SOUND_BUFFER_SIZE, bytes)
 
 		if (sndHeader.numChannels == 2) bytes >>= 1;
 		if (sndHeader.sampleSize == 16) bytes >>= 1;
@@ -221,10 +211,10 @@ static pascal void SoundCallback(SndChannelPtr channel, SndCommand *command )
 #endif /* USE_DEFERREDTASKS */
 
 	/* Queue next callback */
-	SndDoCommand( soundChannel, &callback, true );
+	SndDoCommand(soundChannel, &callback, true);
 }
 
-#endif
+#endif /* USE_SNDDOUBLEBUFFER */
 
 static BOOL MAC_IsThere(void)
 {
@@ -240,16 +230,15 @@ static BOOL MAC_IsThere(void)
 static int MAC_Init(void)
 {
 	OSErr err,iErr;
+#if USE_SNDDOUBLEBUFFER
+	int i;
+	SndDoubleBufferPtr doubleBuffer;
+#endif
 	long rate,maxrate,maxbits;
 	long gestaltAnswer;
 	NumVersion nVers;
 	Boolean Stereo,StereoMixing,Audio16;
 	Boolean NewSoundManager,NewSoundManager31;
-
-#if USE_SNDDOUBLEBUFFER
-	SndDoubleBufferPtr doubleBuffer;
-	int i;
-#endif
 
 	NewSoundManager31=NewSoundManager=false;
 
@@ -350,12 +339,12 @@ static int MAC_Init(void)
 		doubleHeader.dbhBufferPtr[i]=doubleBuffer;
 	}
 
-#else
-	if( sndCallBack == NULL )
+#else /* USE_SNDDOUBLEBUFFER */
+	if(sndCallBack == NULL)
 		sndCallBack = NewSndCallBackUPP(SoundCallback); /* <AWE> was "NewSndCallBackProc()" */
 
 	err=SndNewChannel(&soundChannel,sampledSynth,
-			  (md_mode&DMODE_STEREO)?initStereo:initMono, sndCallBack );
+			  (md_mode&DMODE_STEREO)?initStereo:initMono, sndCallBack);
 	if(err!=noErr) {
 		_mm_errno=MMERR_OPENING_AUDIO;
 		return 1;
@@ -370,7 +359,7 @@ static int MAC_Init(void)
 	currentBuffer = sndBuffer1;
 
 	/* Setup sound header */
-	memset( &sndHeader, 0, sizeof(sndHeader) );
+	memset(&sndHeader, 0, sizeof(sndHeader));
 	sndHeader.numChannels = (md_mode&DMODE_STEREO)? 2: 1;
 	sndHeader.sampleRate = rate;
 	sndHeader.encode = extSH;
@@ -389,7 +378,7 @@ static int MAC_Init(void)
 	deferredTaskFired = true;
 #endif /* USE_DEFERREDTASKS */
 
-#endif
+#endif /* USE_SNDDOUBLEBUFFER */
 
 	return VC_Init();
 }
@@ -417,8 +406,8 @@ static void MAC_Exit(void)
 		doubleHeader.dbhBufferPtr[i]=NULL;
 	}
 
-#else
-	if ( sndCallBack != NULL)
+#else /* USE_SNDDOUBLEBUFFER */
+	if (sndCallBack != NULL)
 	{
 		DisposeSndCallBackUPP(sndCallBack);
 		sndCallBack = NULL;
@@ -434,10 +423,9 @@ static void MAC_Exit(void)
 	while (!deferredTaskDone)
 		;
 #endif
-
-	DisposePtr( temp1 );
-	DisposePtr( temp2 );
-#endif
+	DisposePtr(temp1);
+	DisposePtr(temp2);
+#endif /* USE_SNDDOUBLEBUFFER */
 
 	VC_Exit();
 }
@@ -456,15 +444,15 @@ static int MAC_PlayStart(void)
 		return 1;
 	}
 
-#else
+#else /* USE_SNDDOUBLEBUFFER */
 	SndCommand callback = { callBackCmd, 0, 0 };
 
-	err=SndDoCommand( soundChannel, &callback, true );
+	err=SndDoCommand(soundChannel, &callback, true);
 	if(err!=noErr) {
 		_mm_errno=MMERR_MAC_START;
 		return 1;
 	}
-#endif
+#endif /* USE_SNDDOUBLEBUFFER */
 
 	return VC_PlayStart();
 }
