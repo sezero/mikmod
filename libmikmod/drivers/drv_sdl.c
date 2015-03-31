@@ -41,18 +41,25 @@
 #include "SDL.h"
 #endif
 
-static SDL_AudioSpec g_AudioSpec;
-static BOOL g_Playing = 0;
+#define NUMSAMPLES 256 /* a fair default for md_mixfreq <= 11025 Hz */
+static SDL_AudioSpec spec;
+static int enabled = 0;
 
 static void SDLSoundCallback(void *userdata, Uint8 *stream, int len)
 {
+    if (!enabled) return;
+    if (enabled < 0) {
+        if (++enabled == 0)
+            enabled = 1;
+        return;
+    }
+
     MUTEX_LOCK(vars);
-    if (Player_Paused_internal() || !g_Playing) {
+    if (Player_Paused_internal()) {
         VC_SilenceBytes((SBYTE *) stream, (ULONG)len);
     }
     else
     {
-        /* PDS: len bytes of samples: _not_ the number of samples */
         int got = (int) VC_WriteBytes((SBYTE *) stream, (ULONG)len);
         if (got < len) {	/* fill the rest with silence, then */
             VC_SilenceBytes((SBYTE *) &stream[got], (ULONG)(len-got));
@@ -63,29 +70,28 @@ static void SDLSoundCallback(void *userdata, Uint8 *stream, int len)
 
 static BOOL SetupSDLAudio(void)
 {
-    g_AudioSpec.freq     = md_mixfreq;
-    g_AudioSpec.format   =
-#if (SDL_MAJOR_VERSION >= 2)
-                           (md_mode & DMODE_FLOAT)  ? AUDIO_F32SYS :
-#endif
-                           (md_mode & DMODE_16BITS) ? AUDIO_S16SYS : AUDIO_U8;
-    g_AudioSpec.channels = (md_mode & DMODE_STEREO) ? 2 : 1;
-    g_AudioSpec.samples = 2048; /* a fair default */
-    if (g_AudioSpec.freq > 44100) g_AudioSpec.samples = 4096; /* 48-96 kHz? */
-    g_AudioSpec.userdata = NULL;
-    g_AudioSpec.callback = SDLSoundCallback;
+    SDL_AudioSpec wanted;
 
-    if (SDL_OpenAudio(&g_AudioSpec, NULL) < 0) {
+    wanted.freq     = md_mixfreq;
+    wanted.format   =
+#if (SDL_MAJOR_VERSION >= 2)
+                      (md_mode & DMODE_FLOAT) ? AUDIO_F32SYS :
+#endif
+                      (md_mode & DMODE_16BITS)? AUDIO_S16SYS : AUDIO_U8;
+    wanted.channels = (md_mode & DMODE_STEREO)? 2 : 1;
+    wanted.samples  = (md_mixfreq <= 11025)? (NUMSAMPLES    ) :
+                      (md_mixfreq <= 22050)? (NUMSAMPLES * 2) :
+                      (md_mixfreq <= 44100)? (NUMSAMPLES * 4) :
+                                             (NUMSAMPLES * 8);
+    wanted.userdata = NULL;
+    wanted.callback = SDLSoundCallback;
+
+    if (SDL_OpenAudio(&wanted, &spec) < 0) {
         _mm_errno=MMERR_OPENING_AUDIO;
         return 0;
     }
 
     return 1;
-}
-
-static void SDLDrv_CommandLine(const CHAR *cmdline)
-{
-    /* no options */
 }
 
 static BOOL SDLDrv_IsPresent(void)
@@ -115,30 +121,26 @@ static int SDLDrv_Init(void)
     }
 
     md_mode |= DMODE_SOFT_MUSIC;
+    if (VC_Init())
+        return 1;
 
-    SDL_PauseAudio(0);
-    return VC_Init();
+    enabled = -2; /* delay the callback 2 frames */
+    return 0;
 }
 
 static void SDLDrv_Exit(void)
 {
-    g_Playing = 0;
-    SDL_PauseAudio(1);
+    SDL_LockAudio();
+    enabled = 0;
+    SDL_UnlockAudio();
     SDL_CloseAudio();
     VC_Exit();
 }
 
 static int SDLDrv_Reset(void)
 {
-    SDL_PauseAudio(1);
-    SDL_CloseAudio();
-    VC_Exit();
-
-    if (!SetupSDLAudio())
-        return 1;
-
-    SDL_PauseAudio(0);
-    return VC_Init();
+    SDLDrv_Exit();
+    return SDLDrv_Init();
 }
 
 static void SDLDrv_Update( void )
@@ -148,26 +150,27 @@ static void SDLDrv_Update( void )
 
 static void SDLDrv_PlayStop(void)
 {
-    g_Playing = 0;
+    SDL_PauseAudio(1);
     VC_PlayStop();
 }
 
 static int SDLDrv_PlayStart(void)
 {
-    g_Playing = 1;
-    return VC_PlayStart();
+    if (VC_PlayStart())
+        return 1;
+    SDL_PauseAudio(0);
+    return 0;
 }
 
 MIKMODAPI struct MDRIVER drv_sdl =
 {
     NULL,
     "SDL",
-    "SDL Driver v1.2",
-    0,
-    255,
+    "SDL Driver v1.3",
+    0,255,
     "sdl",
     NULL,
-    SDLDrv_CommandLine,
+    NULL,
     SDLDrv_IsPresent,
     VC_SampleLoad,
     VC_SampleUnload,
