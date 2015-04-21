@@ -544,7 +544,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 
 		if(MikMod_SetNumVoices_internal(maxchan,-1)) {
 			_mm_iobase_revert(modreader);
-			Player_Free(mf);
+			Player_Free_internal(mf);
 			return NULL;
 		}
 	}
@@ -556,7 +556,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	if(Player_Init(mf)) {
 		_mm_iobase_revert(modreader);
 		Player_Free_internal(mf);
-		mf=NULL;
+		return NULL;
 	}
 	_mm_iobase_revert(modreader);
 	return mf;
