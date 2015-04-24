@@ -19,13 +19,22 @@
 
 /* amiga Powerpack PP20 decompression support
  *
- * Based on public domain versions by Olivier Lapicque <olivierl@jps.net>
- * from the libmodplug library (sezero's fork of libmodplug at github:
- * http://github.com/sezero/libmodplug/tree/sezero), with some extra bits
- * from ppdepack by Stuart Caie <kyzer@4u.net> as it exists in the libxmp
- * library of Claudio Matsuoka.
+ * Code from Heikki Orsila's amigadepack 0.02
+ * based on code by Stuart Caie <kyzer@4u.net>
+ * This software is in the Public Domain
  *
- * Rewritten for libmikmod by O. Sezer <sezero@users.sourceforge.net>
+ * Modified for xmp by Claudio Matsuoka, 08/2007
+ * - merged mld's checks from the old depack sources. Original credits:
+ *   - corrupt file and data detection
+ *     (thanks to Don Adan and Dirk Stoecker for help and infos)
+ *   - implemeted "efficiency" checks
+ *   - further detection based on code by Georg Hoermann
+ *
+ * Modified for xmp by Claudio Matsuoka, 05/2013
+ * - decryption code removed
+ *
+ * Modified for libmikmod by O. Sezer, Apr. 2015, with a few extra bits
+ * from the libmodplug library by Olivier Lapicque.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -48,99 +57,95 @@
 extern int fprintf(FILE *, const char *, ...);
 #endif
 
-typedef struct _PPBITBUFFER
+#define PP_READ_BITS(nbits, var) do {                          \
+  bit_cnt = (nbits);                                           \
+  while (bits_left < bit_cnt) {                                \
+    if (buf_src < src) return 0; /* out of source bits */      \
+    bit_buffer |= (*--buf_src << bits_left);                   \
+    bits_left += 8;                                            \
+  }                                                            \
+  (var) = 0;                                                   \
+  bits_left -= bit_cnt;                                        \
+  while (bit_cnt--) {                                          \
+    (var) = ((var) << 1) | (bit_buffer & 1);                   \
+    bit_buffer >>= 1;                                          \
+  }                                                            \
+} while(0)
+
+#define PP_BYTE_OUT(byte) do {                                 \
+  if (out <= dest) return 0; /* output overflow */             \
+  *--out = (byte);                                             \
+  written++;                                                   \
+} while (0)
+
+static BOOL ppDecrunch(const UBYTE *src, UBYTE *dest,
+                       const UBYTE *offset_lens,
+                       ULONG src_len, ULONG dest_len,
+                       UBYTE skip_bits)
 {
-	ULONG bitcount;
-	ULONG bitbuffer;
-	const UBYTE *pStart;
-	const UBYTE *pSrc;
-} PPBITBUFFER;
+  ULONG bit_buffer, x, todo, offbits, offset, written;
+  const UBYTE *buf_src;
+  UBYTE *out, *dest_end, bits_left, bit_cnt;
 
+  /* set up input and output pointers */
+  buf_src = src + src_len;
+  out = dest_end = dest + dest_len;
 
-static ULONG PP20_GetBits(PPBITBUFFER* b, ULONG n)
-{
-	ULONG result = 0;
-	ULONG i;
+  written = 0;
+  bit_buffer = 0;
+  bits_left = 0;
 
-	for (i=0; i<n; i++)
-	{
-		if (!b->bitcount)
-		{
-			b->bitcount = 8;
-			if (b->pSrc != b->pStart) b->pSrc--;
-			b->bitbuffer = *b->pSrc;
-		}
-		result = (result<<1) | (b->bitbuffer&1);
-		b->bitbuffer >>= 1;
-		b->bitcount--;
-	}
-	return result;
-}
+  /* skip the first few bits */
+  PP_READ_BITS(skip_bits, x);
 
+  /* while there are input bits left */
+  while (written < dest_len) {
+    PP_READ_BITS(1, x);
+    if (x == 0) {
+      /* 1bit==0: literal, then match. 1bit==1: just match */
+      todo = 1; do { PP_READ_BITS(2, x); todo += x; } while (x == 3);
+      while (todo--) { PP_READ_BITS(8, x); PP_BYTE_OUT(x); }
 
-static BOOL PP20_DoUnpack(const UBYTE *pSrc, ULONG nSrcLen, UBYTE *pDst, ULONG nDstLen)
-{
-	PPBITBUFFER BitBuffer;
-	ULONG nBytesLeft;
+      /* should we end decoding on a literal, break out of the main loop */
+      if (written == dest_len) break;
+    }
 
-	BitBuffer.pStart = pSrc + 4;
-	BitBuffer.pSrc = pSrc + nSrcLen - 4;
-	BitBuffer.bitbuffer = 0;
-	BitBuffer.bitcount = 0;
-	PP20_GetBits(&BitBuffer, pSrc[nSrcLen-1]);
-	nBytesLeft = nDstLen;
-	while (nBytesLeft > 0)
-	{
-		if (!PP20_GetBits(&BitBuffer, 1))
-		{
-			ULONG n = 1, i;
-			while (n < nBytesLeft)
-			{
-				ULONG code = PP20_GetBits(&BitBuffer, 2);
-				n += code;
-				if (code != 3) break;
-			}
-			for (i=0; i<n; i++)
-			{
-				pDst[--nBytesLeft] = (UBYTE)PP20_GetBits(&BitBuffer, 8);
-			}
-			if (!nBytesLeft) break;
-		}
-		{
-			ULONG n = PP20_GetBits(&BitBuffer, 2)+1;
-			ULONG nbits;
-			ULONG nofs, i;
-			if (n < 1 || n-1 >= nSrcLen) return 0; /* can this ever happen? */
-			nbits = pSrc[n-1];
-			if (n==4)
-			{
-				nofs = PP20_GetBits(&BitBuffer, (PP20_GetBits(&BitBuffer, 1)) ? nbits : 7 );
-				while (n < nBytesLeft)
-				{
-					ULONG code = PP20_GetBits(&BitBuffer, 3);
-					n += code;
-					if (code != 7) break;
-				}
-			} else
-			{
-				nofs = PP20_GetBits(&BitBuffer, nbits);
-			}
-			for (i=0; i<=n; i++)
-			{
-				pDst[nBytesLeft-1] = (nBytesLeft+nofs < nDstLen) ? pDst[nBytesLeft+nofs] : 0;
-				if (!--nBytesLeft) break;
-			}
-		}
-	}
-	return 1;
+    /* match: read 2 bits for initial offset bitlength / match length */
+    PP_READ_BITS(2, x);
+    offbits = offset_lens[x];
+    todo = x+2;
+    if (x == 3) {
+      PP_READ_BITS(1, x);
+      if (x==0) offbits = 7;
+      PP_READ_BITS(offbits, offset);
+      do { PP_READ_BITS(3, x); todo += x; } while (x == 7);
+    }
+    else {
+      PP_READ_BITS(offbits, offset);
+    }
+    if ((out + offset) >= dest_end) return 0; /* match overflow */
+    while (todo--) { x = out[offset]; PP_BYTE_OUT(x); }
+  }
+
+  /* all output bytes written without error */
+  return 1;
+  /* return (src == buf_src) ? 1 : 0; */
 }
 
 BOOL PP20_Unpack(MREADER* reader, void** out, int* outlen)
 {
 	ULONG srclen, destlen;
 	UBYTE *destbuf, *srcbuf;
-	UBYTE tmp[4];
+	UBYTE tmp[4], skip;
 	BOOL ret;
+
+	/* PP FORMAT:
+	 *      1 longword identifier           'PP20' or 'PX20'
+	 *     [1 word checksum (if 'PX20')     $ssss]
+	 *      1 longword efficiency           $eeeeeeee
+	 *      X longwords crunched file       $cccccccc,$cccccccc,...
+	 *      1 longword decrunch info        'decrlen' << 8 | '8 bits other info'
+	 */
 
 	_mm_fseek(reader,0,SEEK_END);
 	srclen = _mm_ftell(reader);
@@ -157,6 +162,7 @@ BOOL PP20_Unpack(MREADER* reader, void** out, int* outlen)
 	destlen = tmp[0] << 16;
 	destlen |= tmp[1] << 8;
 	destlen |= tmp[2];
+	skip = tmp[3];
 
 	_mm_fseek(reader,4,SEEK_SET);
 	_mm_read_UBYTES(tmp,4,reader);
@@ -181,14 +187,14 @@ BOOL PP20_Unpack(MREADER* reader, void** out, int* outlen)
 	if ((destbuf = (UBYTE*)MikMod_malloc(destlen)) == NULL)
 		return 0;
 
+	srclen -= 12;
 	if ((srcbuf = (UBYTE*)MikMod_malloc(srclen)) == NULL) {
 		MikMod_free(destbuf);
 		return 0;
 	}
-	_mm_fseek(reader,4,SEEK_SET);
-	_mm_read_UBYTES(srcbuf,srclen-4,reader);
+	_mm_read_UBYTES(srcbuf,srclen,reader);
 
-	ret = PP20_DoUnpack(srcbuf, srclen-4, destbuf, destlen);
+	ret = ppDecrunch(srcbuf, destbuf, tmp, srclen, destlen, skip);
 	MikMod_free(srcbuf);
 
 	if (!ret) {
