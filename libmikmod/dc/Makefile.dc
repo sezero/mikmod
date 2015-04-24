@@ -39,6 +39,9 @@ SRCS =	../drivers/drv_dc.c	\
 	../mmio/mmerror.c	\
 	../mmio/mmio.c		\
 	\
+	../depackers/mmcmp.c	\
+	../depackers/pp20.c	\
+	\
 	../playercode/mdreg.c	\
 	../playercode/mdriver.c	\
 	../playercode/mloader.c	\

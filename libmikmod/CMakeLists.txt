@@ -202,6 +202,7 @@ ADD_SUBDIRECTORY ("drivers")
 ADD_SUBDIRECTORY ("include")
 ADD_SUBDIRECTORY ("loaders")
 ADD_SUBDIRECTORY ("mmio")
+ADD_SUBDIRECTORY ("depackers")
 ADD_SUBDIRECTORY ("playercode")
 ADD_SUBDIRECTORY ("posix")
 
@@ -376,6 +377,8 @@ SET (MIKMOD_LIB_MODULES
     mmio/mmalloc.c
     mmio/mmerror.c
     mmio/mmio.c
+    depackers/mmcmp.c
+    depackers/pp20.c
     playercode/mdreg.c
     playercode/mdriver.c
     playercode/mdulaw.c

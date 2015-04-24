@@ -61,7 +61,8 @@ CFLAGS=-O2 -Wall
 CFLAGS+=-ffast-math -fno-common
 CFLAGS+=-fvisibility=hidden -DSYM_VISIBILITY
 #CFLAGS+=-g
-LDFLAGS=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
+LDFLAGS =-Wl,-single_module
+LDFLAGS+=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
 LDFLAGS+=-Wl,-compatibility_version,4 -Wl,-current_version,6.0
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6
@@ -87,6 +88,7 @@ OBJ=drv_osx.o drv_openal.o drv_sdl.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o mdriver.o mdreg.o \
+    mmcmp.o pp20.o \
     mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 #   mdulaw.o
@@ -203,6 +205,10 @@ mmerror.o: ../mmio/mmerror.c $(HEADER_DEPS)
 	$(COMPILE) ../mmio/mmerror.c -o mmerror.o
 mmio.o: ../mmio/mmio.c $(HEADER_DEPS)
 	$(COMPILE) ../mmio/mmio.c -o mmio.o
+mmcmp.o: ../depackers/mmcmp.c $(HEADER_DEPS)
+	$(COMPILE) ../depackers/mmcmp.c -o mmcmp.o
+pp20.o: ../depackers/pp20.c $(HEADER_DEPS)
+	$(COMPILE) ../depackers/pp20.c -o pp20.o
 mdriver.o: ../playercode/mdriver.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mdriver.c -o mdriver.o
 mdreg.o: ../playercode/mdreg.c $(HEADER_DEPS)

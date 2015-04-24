@@ -35,6 +35,7 @@ OBJS=../drivers/drv_psp.o ../drivers/drv_nos.o \
      ../loaders/load_stm.o ../loaders/load_stx.o ../loaders/load_ult.o \
      ../loaders/load_umx.o ../loaders/load_uni.o ../loaders/load_xm.o \
      ../mmio/mmalloc.o ../mmio/mmerror.o ../mmio/mmio.o \
+     ../depackers/mmcmp.o ../depackers/pp20.o \
      ../playercode/mdriver.o ../playercode/mdreg.o \
      ../playercode/mloader.o ../playercode/mlreg.o \
      ../playercode/mlutil.o ../playercode/mplayer.o \

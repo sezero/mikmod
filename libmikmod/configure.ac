@@ -1345,6 +1345,7 @@ drivers/dos/Makefile
 include/Makefile
 loaders/Makefile
 mmio/Makefile
+depackers/Makefile
 playercode/Makefile
 posix/Makefile])
 AC_CONFIG_HEADERS([config.h])

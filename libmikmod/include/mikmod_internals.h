@@ -624,6 +624,14 @@ extern int    Player_Init(MODULE*);
 extern void   Player_Exit(MODULE*);
 extern void   Player_HandleTick(void);
 
+/*========== UnPackers */
+
+typedef BOOL (*MUNPACKER) (struct MREADER*,
+                           void** /* unpacked data out */,
+                           int* /* unpacked data size */);
+extern BOOL PP20_Unpack(MREADER*, void**, int*);
+extern BOOL MMCMP_Unpack(MREADER*, void**, int*);
+
 /*========== Drivers */
 
 /* max. number of handles a driver has to provide. (not strict) */

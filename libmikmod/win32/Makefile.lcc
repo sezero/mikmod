@@ -37,6 +37,7 @@ OBJ=$(DRIVER_OBJ) \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
+    mmcmp.o pp20.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 
@@ -121,6 +122,10 @@ mmerror.o: ..\mmio\mmerror.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\mmio\mmerror.c
 mmio.o: ..\mmio\mmio.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\mmio\mmio.c
+mmcmp.o: ..\depackers\mmcmp.c $(HEADER_DEPS)
+	$(COMPILE) /Fo$@ ..\depackers\mmcmp.c
+pp20.o: ..\depackers\pp20.c $(HEADER_DEPS)
+	$(COMPILE) /Fo$@ ..\depackers\pp20.c
 mdriver.o: ..\playercode\mdriver.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\playercode\mdriver.c
 mdreg.o: ..\playercode\mdreg.c $(HEADER_DEPS)
@@ -147,3 +152,4 @@ virtch2.o: ..\playercode\virtch2.c ..\playercode\virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\playercode\virtch2.c
 virtch_common.o: ..\playercode\virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\playercode\virtch_common.c
+

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		638B8F531AE42B6C00D32F8C /* mmcmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B8F521AE42B6C00D32F8C /* mmcmp.c */; };
+		638B8F541AE42B6C00D32F8C /* mmcmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B8F521AE42B6C00D32F8C /* mmcmp.c */; };
+		638B8F561AE42B7F00D32F8C /* pp20.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B8F551AE42B7F00D32F8C /* pp20.c */; };
+		638B8F571AE42B7F00D32F8C /* pp20.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B8F551AE42B7F00D32F8C /* pp20.c */; };
 		63FCEC8019637671007CF2F3 /* drv_openal.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F9982201D1638A01046A14 /* drv_openal.c */; };
 		63FCEC81196376C3007CF2F3 /* load_gt2.c in Sources */ = {isa = PBXBuildFile; fileRef = F4E367F907EDC8E8000D2C4B /* load_gt2.c */; };
 		A48F9F0005EB7BAC0073A1B4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A48F9EFF05EB7BAC0073A1B4 /* Info.plist */; };
@@ -124,6 +128,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		638B8F521AE42B6C00D32F8C /* mmcmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mmcmp.c; path = ../depackers/mmcmp.c; sourceTree = SOURCE_ROOT; };
+		638B8F551AE42B7F00D32F8C /* pp20.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pp20.c; path = ../depackers/pp20.c; sourceTree = SOURCE_ROOT; };
 		A48F9EFF05EB7BAC0073A1B4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A48F9F1505EB7C0F0073A1B4 /* drv_aiff.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = drv_aiff.c; path = ../drivers/drv_aiff.c; sourceTree = "<group>"; };
 		A48FA0FE05EB7CBE0073A1B4 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
@@ -236,9 +242,19 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		638B8F4B1AE42B0000D32F8C /* depackers */ = {
+			isa = PBXGroup;
+			children = (
+				638B8F551AE42B7F00D32F8C /* pp20.c */,
+				638B8F521AE42B6C00D32F8C /* mmcmp.c */,
+			);
+			name = depackers;
+			sourceTree = "<group>";
+		};
 		F5F5DE20017CB2BC0103A810 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				638B8F4B1AE42B0000D32F8C /* depackers */,
 				F5F5DE7E017CB4010103A810 /* config.h */,
 				F5F5DE26017CB2BC0103A810 /* playercode */,
 				F5F5DE21017CB2BC0103A810 /* drivers */,
@@ -495,6 +511,8 @@
 				A4E3AF5605D43FCC000F1B47 /* virtch2.c in Sources */,
 				A48FA29305EB7D750073A1B4 /* drv_openal.c in Sources */,
 				F4E367FA07EDC8E8000D2C4B /* load_gt2.c in Sources */,
+				638B8F531AE42B6C00D32F8C /* mmcmp.c in Sources */,
+				638B8F561AE42B7F00D32F8C /* pp20.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -547,6 +565,8 @@
 				A4E3AF8905D43FCC000F1B47 /* virtch.c in Sources */,
 				A4E3AF8A05D43FCC000F1B47 /* virtch_common.c in Sources */,
 				A4E3AF8B05D43FCC000F1B47 /* virtch2.c in Sources */,
+				638B8F541AE42B6C00D32F8C /* mmcmp.c in Sources */,
+				638B8F571AE42B7F00D32F8C /* pp20.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

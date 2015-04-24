@@ -40,6 +40,8 @@ $(MIKMOD_PATH)/loaders/load_xm.c \
 $(MIKMOD_PATH)/mmio/mmalloc.c \
 $(MIKMOD_PATH)/mmio/mmerror.c \
 $(MIKMOD_PATH)/mmio/mmio.c \
+$(MIKMOD_PATH)/depackers/mmcmp.c \
+$(MIKMOD_PATH)/depackers/pp20.c \
 $(MIKMOD_PATH)/playercode/mdreg.c \
 $(MIKMOD_PATH)/playercode/mdriver.c \
 $(MIKMOD_PATH)/playercode/mdulaw.c \

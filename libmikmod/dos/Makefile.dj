@@ -41,7 +41,7 @@ CFLAGS += -O2 -Wall -fomit-frame-pointer -ffast-math
 endif
 
 # Directory layout
-SRCPATH = ../drivers/dos ../loaders ../mmio ../playercode
+SRCPATH = ../drivers/dos ../loaders ../mmio ../depackers ../playercode
 OUT = out
 
 # MikMod drivers
@@ -106,6 +106,8 @@ out/mlutil.o: config.h ../include/mikmod_internals.h
 out/mmalloc.o: config.h ../include/mikmod_internals.h
 out/mmerror.o: config.h ../include/mikmod_internals.h
 out/mmio.o: config.h ../include/mikmod_internals.h
+out/mmcmp.o: config.h ../include/mikmod_internals.h
+out/pp20.o: config.h ../include/mikmod_internals.h
 out/mplayer.o: config.h ../include/mikmod_internals.h
 out/munitrk.o: config.h ../include/mikmod_internals.h
 out/mwav.o: config.h ../include/mikmod_internals.h

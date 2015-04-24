@@ -3,8 +3,8 @@ AUTOMAKE_OPTIONS = foreign
 if BUILD_DOCS
    MAYBE_DOCS = docs
 endif
-SUBDIRS = drivers include loaders mmio playercode posix \
-	  dlapi $(MAYBE_DOCS)
+SUBDIRS = drivers include loaders mmio depackers playercode \
+	  posix dlapi $(MAYBE_DOCS)
 
 bin_SCRIPTS = libmikmod-config
 
@@ -92,6 +92,8 @@ libmikmod_la_SOURCES = \
 		mmio/mmalloc.c \
 		mmio/mmerror.c \
 		mmio/mmio.c \
+		depackers/mmcmp.c \
+		depackers/pp20.c \
 		playercode/mdreg.c \
 		playercode/mdriver.c \
 		playercode/mdulaw.c \

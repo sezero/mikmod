@@ -474,6 +474,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\depackers\mmcmp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\depackers\pp20.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\playercode\mplayer.c"
 				>
 			</File>

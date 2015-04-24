@@ -252,6 +252,14 @@ SOURCE=..\..\mmio\mmio.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\depackers\mmcmp.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\depackers\pp20.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\playercode\mplayer.c
 # End Source File
 # Begin Source File
