@@ -7,6 +7,8 @@ libmikmod v3.3.8 was released on XX-XXX-XXXX.
   bug (roadblas.xm) should play correctly now. Thanks to Eugene Toder.
 - Fixed a possible undefined behavior in the XM loader.
 - Support for OpenBSD sndio.
+- Support for MMCMP ("ziRCONia") and Amiga PowerPack (PP20) compressed
+  modules, based on code from libmodplug and libxmp.
 - Fixed SDL output driver, so that it doesn't crash upon resetting.
 - Updated configury. The aix, hpux, bsd/sunaudio and sgi audio drivers
   are now configurable and not built unconditionally.
