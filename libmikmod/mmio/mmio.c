@@ -168,7 +168,7 @@ MREADER *_mm_new_file_reader(FILE* fp)
 
 void _mm_delete_file_reader (MREADER* reader)
 {
-	if(reader) MikMod_free(reader);
+	MikMod_free(reader);
 }
 
 /*========== File Writer */
@@ -213,7 +213,7 @@ MWRITER *_mm_new_file_writer(FILE* fp)
 
 void _mm_delete_file_writer (MWRITER* writer)
 {
-	if(writer) MikMod_free (writer);
+	MikMod_free (writer);
 }
 
 /*========== Memory Reader */
@@ -227,7 +227,7 @@ typedef struct MMEMREADER {
 
 void _mm_delete_mem_reader(MREADER* reader)
 {
-	if (reader) MikMod_free(reader);
+	MikMod_free(reader);
 }
 
 MREADER *_mm_new_mem_reader(const void *buffer, int len)
