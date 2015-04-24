@@ -202,7 +202,7 @@ LibObjectsPPC	=	¶
 					{objppc}virtch.c.x ¶
 					{objppc}virtch2.c.x ¶
 					{objppc}mmcmp.c.x ¶
-					{objppc}pp20.c.c.x ¶
+					{objppc}pp20.c.x ¶
 					{objppc}load_669.c.x ¶
 					{objppc}load_amf.c.x ¶
 					{objppc}load_asy.c.x ¶
