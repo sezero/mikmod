@@ -51,7 +51,6 @@ extern int fprintf(FILE *, const char *, ...);
 
 /* no need for packed structs, because we are reading one
  * member at a time from the file, not typecasting memory. */
-
 /*#pragma pack(1)*/
 typedef struct MMCMPFILEHEADER
 {
@@ -106,9 +105,8 @@ typedef struct MMCMPBITBUFFER
 {
 	ULONG bitcount;
 	ULONG bitbuffer;
-	ULONG start;
-	ULONG end;
-	MREADER *reader;
+	const UBYTE *start;
+	const UBYTE *end;
 } MMCMPBITBUFFER;
 
 
@@ -118,8 +116,7 @@ static ULONG MMCMP_GetBits(MMCMPBITBUFFER* b, ULONG nBits)
 	if (!nBits) return 0;
 	while (b->bitcount < 24)
 	{
-		b->bitbuffer |= ((b->start < b->end) ? _mm_read_UBYTE(b->reader) : 0) << b->bitcount;
-		b->start++;
+		b->bitbuffer |= ((b->start < b->end) ? *b->start++ : 0) << b->bitcount;
 		b->bitcount += 8;
 	}
 	d = b->bitbuffer & ((1 << nBits) - 1);
@@ -159,6 +156,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 	ULONG *pblk_table;
 	MMCMPSUBBLOCK *subblocks;
 	ULONG i, blockidx, numsubs;
+	UBYTE *buf;  ULONG bufsize;
 
 	_mm_fseek(reader,0,SEEK_END);
 	srclen = _mm_ftell(reader);
@@ -185,11 +183,13 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 	}
 	destlen = mmh.filesize;
 	numsubs = 32;
+	bufsize = 65536;
 
 	destbuf = (UBYTE*)MikMod_malloc(destlen);
+	buf = (UBYTE*)MikMod_malloc(bufsize);
 	pblk_table = (ULONG*)MikMod_malloc(mmh.nblocks*4);
 	subblocks = (MMCMPSUBBLOCK*)MikMod_malloc(numsubs*sizeof(MMCMPSUBBLOCK));
-	if (!destbuf || !pblk_table || !subblocks)
+	if (!destbuf || !buf || !pblk_table || !subblocks)
 		goto err;
 
 	_mm_fseek(reader,mmh.blktable,SEEK_SET);
@@ -219,8 +219,10 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 		if (srcpos >= srclen) goto err;
 
 		if (numsubs < block.sub_blk) {
-			numsubs = block.sub_blk;
-			subblocks = (MMCMPSUBBLOCK*)MikMod_realloc(subblocks, numsubs*sizeof(MMCMPSUBBLOCK));
+			numsubs = (block.sub_blk + 31) & ~31;
+			MikMod_free(subblocks);
+			subblocks = (MMCMPSUBBLOCK*)MikMod_malloc(numsubs*sizeof(MMCMPSUBBLOCK));
+			if (!subblocks) goto err;
 		}
 		for (i = 0; i < block.sub_blk; i++) {
 			subblocks[i].unpk_pos = _mm_read_I_ULONG(reader);
@@ -257,7 +259,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 		if (block.flags & MMCMP_16BIT && block.num_bits < 16)
 		{
 			MMCMPBITBUFFER bb;
-			ULONG size = subblocks[0].unpk_size;
+			ULONG size;
 			ULONG pos = 0;
 			ULONG numbits = block.num_bits;
 			ULONG oldval = 0;
@@ -269,14 +271,24 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 			if (block.flags & MMCMP_ABS16) fprintf(stderr, "ABS16 ");
 			fprintf(stderr, "\n");
 #endif
+			if (block.pk_size <= block.tt_entries) goto err;
+			size = block.pk_size - block.tt_entries;
+			if (bufsize < size) {
+				while (bufsize < size) bufsize += 65536;
+				MikMod_free(buf);
+				if (!(buf = (UBYTE*)MikMod_malloc(bufsize)))
+					goto err;
+			}
+
 			bb.bitcount = 0;
 			bb.bitbuffer = 0;
-			bb.start = srcpos+block.tt_entries;
-			bb.end = srcpos+block.pk_size;
-			bb.reader = reader;
+			bb.start = buf;
+			bb.end = buf + size;
 
-			_mm_fseek(reader,bb.start,SEEK_SET);
+			_mm_fseek(reader,srcpos+block.tt_entries,SEEK_SET);
+			_mm_read_UBYTES(buf,size,reader);
 			destptr = destbuf + subblocks[0].unpk_pos;
+			size = subblocks[0].unpk_size;
 			i = 0;
 
 			while (1)
@@ -333,21 +345,31 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 		/* Data is 8-bit packed */
 		{
 			MMCMPBITBUFFER bb;
-			ULONG size = subblocks[0].unpk_size;
+			ULONG size;
 			ULONG pos = 0;
 			ULONG numbits = block.num_bits;
 			ULONG oldval = 0;
 			UBYTE ptable[0x100];
 
+			if (block.pk_size <= block.tt_entries) goto err;
+			size = block.pk_size - block.tt_entries;
+			if (bufsize < size) {
+				while (bufsize < size) bufsize += 65536;
+				MikMod_free(buf);
+				if (!(buf = (UBYTE*)MikMod_malloc(bufsize)))
+					goto err;
+			}
+
 			bb.bitcount = 0;
 			bb.bitbuffer = 0;
-			bb.start = srcpos+block.tt_entries;
-			bb.end = srcpos+block.pk_size;
-			bb.reader = reader;
+			bb.start = buf;
+			bb.end = buf + size;
 
 			_mm_read_UBYTES(ptable,0x100,reader);
-			_mm_fseek(reader,bb.start,SEEK_SET);
+			_mm_fseek(reader,srcpos+block.tt_entries,SEEK_SET);
+			_mm_read_UBYTES(buf,size,reader);
 			destptr = destbuf + subblocks[0].unpk_pos;
+			size = subblocks[0].unpk_size;
 			i = 0;
 
 			while (1)
@@ -401,6 +423,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 		}
 	}
 
+	MikMod_free(buf);
 	MikMod_free(pblk_table);
 	MikMod_free(subblocks);
 	*out = destbuf;
@@ -408,6 +431,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 	return 1;
 
     err:
+	MikMod_free(buf);
 	MikMod_free(pblk_table);
 	MikMod_free(subblocks);
 	MikMod_free(destbuf);
