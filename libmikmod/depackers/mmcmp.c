@@ -215,6 +215,9 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 
 		if (!block.unpk_size || !block.pk_size || !block.sub_blk)
 			goto err;
+		if (block.pk_size <= block.tt_entries)
+			goto err;
+
 		srcpos += 20 + block.sub_blk*8;
 		if (srcpos >= srclen) goto err;
 
@@ -271,7 +274,6 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 			if (block.flags & MMCMP_ABS16) fprintf(stderr, "ABS16 ");
 			fprintf(stderr, "\n");
 #endif
-			if (block.pk_size <= block.tt_entries) goto err;
 			size = block.pk_size - block.tt_entries;
 			if (bufsize < size) {
 				while (bufsize < size) bufsize += 65536;
@@ -351,7 +353,6 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
 			ULONG oldval = 0;
 			UBYTE ptable[0x100];
 
-			if (block.pk_size <= block.tt_entries) goto err;
 			size = block.pk_size - block.tt_entries;
 			if (bufsize < size) {
 				while (bufsize < size) bufsize += 65536;
