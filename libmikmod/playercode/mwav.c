@@ -270,6 +270,7 @@ MIKMODAPI extern SAMPLE *Sample_LoadRawMem(const char *buf, int len, ULONG rate,
 	SAMPLE *result=NULL;
 	MREADER *reader;
 
+	if (!buf || len <= 0) return NULL;
 	if ((reader=_mm_new_mem_reader(buf, len)) != NULL) {
 		result=Sample_LoadRawGeneric(reader, rate, channel, flags);
 		_mm_delete_mem_reader(reader);
@@ -282,7 +283,7 @@ MIKMODAPI SAMPLE* Sample_LoadRawFP(FILE *fp, ULONG rate, ULONG channel, ULONG fl
 	SAMPLE* result=NULL;
 	MREADER* reader;
 
-	if((reader=_mm_new_file_reader(fp)) != NULL) {
+	if(fp && (reader=_mm_new_file_reader(fp)) != NULL) {
 		result=Sample_LoadRawGeneric(reader, rate, channel, flags);
 		_mm_delete_file_reader(reader);
 	}
@@ -318,6 +319,7 @@ MIKMODAPI extern SAMPLE *Sample_LoadMem(const char *buf, int len)
 	SAMPLE* result=NULL;
 	MREADER* reader;
 
+	if (!buf || len <= 0) return NULL;
 	if ((reader=_mm_new_mem_reader(buf, len)) != NULL) {
 		result=Sample_LoadGeneric(reader);
 		_mm_delete_mem_reader(reader);
@@ -330,7 +332,7 @@ MIKMODAPI SAMPLE* Sample_LoadFP(FILE *fp)
 	SAMPLE* result=NULL;
 	MREADER* reader;
 
-	if((reader=_mm_new_file_reader(fp)) != NULL) {
+	if(fp && (reader=_mm_new_file_reader(fp)) != NULL) {
 		result=Sample_LoadGeneric(reader);
 		_mm_delete_file_reader(reader);
 	}

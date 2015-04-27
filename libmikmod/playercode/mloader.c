@@ -403,6 +403,7 @@ MIKMODAPI CHAR* Player_LoadTitleMem(const char *buffer,int len)
 	CHAR *result=NULL;
 	MREADER* reader;
 
+	if (!buffer || len <= 0) return NULL;
 	if ((reader=_mm_new_mem_reader(buffer,len)) != NULL)
 	{
 		MUTEX_LOCK(lists);
@@ -618,6 +619,7 @@ MIKMODAPI MODULE* Player_LoadMem(const char *buffer,int len,int maxchan,BOOL cur
 	MODULE* result=NULL;
 	MREADER* reader;
 
+	if (!buffer || len <= 0) return NULL;
 	if ((reader=_mm_new_mem_reader(buffer, len)) != NULL) {
 		result=Player_LoadGeneric(reader,maxchan,curious);
 		_mm_delete_mem_reader(reader);
@@ -632,7 +634,7 @@ MIKMODAPI MODULE* Player_LoadFP(FILE* fp,int maxchan,BOOL curious)
 	MODULE* result=NULL;
 	struct MREADER* reader;
 
-	if ((reader=_mm_new_file_reader(fp)) != NULL) {
+	if (fp && (reader=_mm_new_file_reader(fp)) != NULL) {
 		result=Player_LoadGeneric(reader,maxchan,curious);
 		_mm_delete_file_reader(reader);
 	}
