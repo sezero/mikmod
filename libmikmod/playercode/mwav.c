@@ -259,7 +259,6 @@ MIKMODAPI SAMPLE* Sample_LoadRawGeneric(MREADER* reader, ULONG rate, ULONG chann
 	SAMPLE* result;
 
 	MUTEX_LOCK(vars);
-/*	result = Sample_LoadRawGeneric_internal(reader, NULL);*/
 	result = Sample_LoadRawGeneric_internal(reader, rate, channel, flags);
 	MUTEX_UNLOCK(vars);
 
@@ -294,8 +293,6 @@ MIKMODAPI SAMPLE* Sample_LoadRaw(const CHAR* filename, ULONG rate, ULONG channel
 {
 	FILE *fp;
 	SAMPLE *si=NULL;
-
-	printf("filename: %s\n", filename);
 
 	if(!(md_mode & DMODE_SOFT_SNDFX)) return NULL;
 	if((fp=_mm_fopen(filename,"rb"))) {
