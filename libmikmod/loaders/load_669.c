@@ -293,7 +293,7 @@ static BOOL S69_Load(BOOL curious)
 	for(i=36+35;(i>=36+0)&&(mh->message[i]==' ');i--) mh->message[i]=0;
 	for(i=72+35;(i>=72+0)&&(mh->message[i]==' ');i--) mh->message[i]=0;
 	if((mh->message[0])||(mh->message[36])||(mh->message[72]))
-		if((of.comment=(CHAR*)MikMod_malloc(3*(36+1)+1))) {
+		if((of.comment=(CHAR*)MikMod_malloc(3*(36+1)+1)) != NULL) {
 			strncpy(of.comment,mh->message,36);
 			strcat(of.comment,"\r");
 			if (mh->message[36]) strncat(of.comment,mh->message+36,36);
