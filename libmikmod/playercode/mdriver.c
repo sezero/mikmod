@@ -193,7 +193,7 @@ MIKMODAPI CHAR* MikMod_InfoDriver(void)
 		len += 4 + (l->next ? 1 : 0) + strlen(l->Version);
 
 	if(len)
-	  if((list=(CHAR*)MikMod_malloc(len*sizeof(CHAR)))) {
+	  if((list=(CHAR*)MikMod_malloc(len*sizeof(CHAR))) != NULL) {
 		CHAR *list_end = list;
 		list[0] = 0;
 		/* list all registered device drivers : */

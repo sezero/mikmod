@@ -73,7 +73,7 @@ MIKMODAPI CHAR* MikMod_InfoLoader(void)
 		len += 1 + (l->next ? 1 : 0) + strlen(l->version);
 
 	if(len)
-	  if((list=(CHAR*)MikMod_malloc(len*sizeof(CHAR)))) {
+	  if((list=(CHAR*)MikMod_malloc(len*sizeof(CHAR))) != NULL) {
 		CHAR *list_end = list;
 		list[0] = 0;
 		/* list all registered module loders */
@@ -286,7 +286,7 @@ CHAR *DupStr(const CHAR* s, UWORD len, BOOL strict)
 
 	/* When the buffer wasn't completely empty, allocate a cstring and copy the
 	   buffer into that string, except for any control-chars */
-	if((d=(CHAR*)MikMod_malloc(sizeof(CHAR)*(len+1)))) {
+	if((d=(CHAR*)MikMod_malloc(sizeof(CHAR)*(len+1))) != NULL) {
 		for(t=0;t<len;t++) d[t]=(s[t]<32)?'.':s[t];
 		d[len]=0;
 	}
@@ -342,9 +342,7 @@ static void ML_FreeEx(MODULE *mf)
 
 static MODULE *ML_AllocUniMod(void)
 {
-	MODULE *mf;
-
-	return (mf=(MODULE*)MikMod_malloc(sizeof(MODULE)));
+	return (MODULE *) MikMod_malloc(sizeof(MODULE));
 }
 
 static void Player_Free_internal(MODULE *mf)
@@ -391,7 +389,7 @@ MIKMODAPI CHAR* Player_LoadTitleFP(FILE *fp)
 	CHAR* result=NULL;
 	MREADER* reader;
 
-	if(fp && (reader=_mm_new_file_reader(fp))) {
+	if(fp && (reader=_mm_new_file_reader(fp)) != NULL) {
 		MUTEX_LOCK(lists);
 		result=Player_LoadTitle_internal(reader);
 		MUTEX_UNLOCK(lists);
@@ -405,7 +403,7 @@ MIKMODAPI CHAR* Player_LoadTitleMem(const char *buffer,int len)
 	CHAR *result=NULL;
 	MREADER* reader;
 
-	if ((reader=_mm_new_mem_reader(buffer,len)))
+	if ((reader=_mm_new_mem_reader(buffer,len)) != NULL)
 	{
 		MUTEX_LOCK(lists);
 		result=Player_LoadTitle_internal(reader);
@@ -434,8 +432,8 @@ MIKMODAPI CHAR* Player_LoadTitle(const CHAR* filename)
 	FILE* fp;
 	MREADER* reader;
 
-	if((fp=_mm_fopen(filename,"rb"))) {
-		if((reader=_mm_new_file_reader(fp))) {
+	if((fp=_mm_fopen(filename,"rb")) != NULL) {
+		if((reader=_mm_new_file_reader(fp)) != NULL) {
 			MUTEX_LOCK(lists);
 			result=Player_LoadTitle_internal(reader);
 			MUTEX_UNLOCK(lists);
@@ -620,7 +618,7 @@ MIKMODAPI MODULE* Player_LoadMem(const char *buffer,int len,int maxchan,BOOL cur
 	MODULE* result=NULL;
 	MREADER* reader;
 
-	if ((reader=_mm_new_mem_reader(buffer, len))) {
+	if ((reader=_mm_new_mem_reader(buffer, len)) != NULL) {
 		result=Player_LoadGeneric(reader,maxchan,curious);
 		_mm_delete_mem_reader(reader);
 	}
@@ -632,9 +630,9 @@ MIKMODAPI MODULE* Player_LoadMem(const char *buffer,int len,int maxchan,BOOL cur
 MIKMODAPI MODULE* Player_LoadFP(FILE* fp,int maxchan,BOOL curious)
 {
 	MODULE* result=NULL;
-	struct MREADER* reader=_mm_new_file_reader (fp);
+	struct MREADER* reader;
 
-	if (reader) {
+	if ((reader=_mm_new_file_reader(fp)) != NULL) {
 		result=Player_LoadGeneric(reader,maxchan,curious);
 		_mm_delete_file_reader(reader);
 	}
@@ -648,7 +646,7 @@ MIKMODAPI MODULE* Player_Load(const CHAR* filename,int maxchan,BOOL curious)
 	FILE *fp;
 	MODULE *mf=NULL;
 
-	if((fp=_mm_fopen(filename,"rb"))) {
+	if((fp=_mm_fopen(filename,"rb")) != NULL) {
 		mf=Player_LoadFP(fp,maxchan,curious);
 		_mm_fclose(fp);
 	}

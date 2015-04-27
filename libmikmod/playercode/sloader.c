@@ -418,7 +418,7 @@ static int DitherSamples(SAMPLOAD* samplist,int type)
 
 	if(!samplist) return 0;
 
-	if((maxsize=MD_SampleSpace(type)*1024))
+	if((maxsize=MD_SampleSpace(type)*1024) != 0)
 		while(SampleTotal(samplist,type)>maxsize) {
 			/* First Pass - check for any 16 bit samples */
 			s = samplist;

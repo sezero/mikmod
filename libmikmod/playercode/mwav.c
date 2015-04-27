@@ -270,7 +270,7 @@ MIKMODAPI extern SAMPLE *Sample_LoadRawMem(const char *buf, int len, ULONG rate,
 	SAMPLE *result=NULL;
 	MREADER *reader;
 
-	if ((reader=_mm_new_mem_reader(buf, len))) {
+	if ((reader=_mm_new_mem_reader(buf, len)) != NULL) {
 		result=Sample_LoadRawGeneric(reader, rate, channel, flags);
 		_mm_delete_mem_reader(reader);
 	}
@@ -282,7 +282,7 @@ MIKMODAPI SAMPLE* Sample_LoadRawFP(FILE *fp, ULONG rate, ULONG channel, ULONG fl
 	SAMPLE* result=NULL;
 	MREADER* reader;
 
-	if((reader=_mm_new_file_reader(fp))) {
+	if((reader=_mm_new_file_reader(fp)) != NULL) {
 		result=Sample_LoadRawGeneric(reader, rate, channel, flags);
 		_mm_delete_file_reader(reader);
 	}
@@ -295,7 +295,7 @@ MIKMODAPI SAMPLE* Sample_LoadRaw(const CHAR* filename, ULONG rate, ULONG channel
 	SAMPLE *si=NULL;
 
 	if(!(md_mode & DMODE_SOFT_SNDFX)) return NULL;
-	if((fp=_mm_fopen(filename,"rb"))) {
+	if((fp=_mm_fopen(filename,"rb")) != NULL) {
 		si = Sample_LoadRawFP(fp, rate, channel, flags);
 		_mm_fclose(fp);
 	}
@@ -318,7 +318,7 @@ MIKMODAPI extern SAMPLE *Sample_LoadMem(const char *buf, int len)
 	SAMPLE* result=NULL;
 	MREADER* reader;
 
-	if ((reader=_mm_new_mem_reader(buf, len))) {
+	if ((reader=_mm_new_mem_reader(buf, len)) != NULL) {
 		result=Sample_LoadGeneric(reader);
 		_mm_delete_mem_reader(reader);
 	}
@@ -330,7 +330,7 @@ MIKMODAPI SAMPLE* Sample_LoadFP(FILE *fp)
 	SAMPLE* result=NULL;
 	MREADER* reader;
 
-	if((reader=_mm_new_file_reader(fp))) {
+	if((reader=_mm_new_file_reader(fp)) != NULL) {
 		result=Sample_LoadGeneric(reader);
 		_mm_delete_file_reader(reader);
 	}
@@ -343,7 +343,7 @@ MIKMODAPI SAMPLE* Sample_Load(const CHAR* filename)
 	SAMPLE *si=NULL;
 
 	if(!(md_mode & DMODE_SOFT_SNDFX)) return NULL;
-	if((fp=_mm_fopen(filename,"rb"))) {
+	if((fp=_mm_fopen(filename,"rb")) != NULL) {
 		si = Sample_LoadFP(fp);
 		_mm_fclose(fp);
 	}
@@ -353,7 +353,7 @@ MIKMODAPI SAMPLE* Sample_Load(const CHAR* filename)
 MIKMODAPI void Sample_Free(SAMPLE* si)
 {
 	if(si) {
-		if (si->onfree != NULL) { si->onfree(si->ctx); }
+		if (si->onfree) si->onfree(si->ctx);
 		MD_SampleUnload(si->handle);
 		MikMod_free(si);
 	}
