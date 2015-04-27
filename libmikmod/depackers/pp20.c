@@ -132,7 +132,7 @@ static BOOL ppDecrunch(const UBYTE *src, UBYTE *dest,
   /* return (src == buf_src) ? 1 : 0; */
 }
 
-BOOL PP20_Unpack(MREADER* reader, void** out, int* outlen)
+BOOL PP20_Unpack(MREADER* reader, void** out, long* outlen)
 {
 	ULONG srclen, destlen;
 	UBYTE *destbuf, *srcbuf;
@@ -140,11 +140,11 @@ BOOL PP20_Unpack(MREADER* reader, void** out, int* outlen)
 	BOOL ret;
 
 	/* PP FORMAT:
-	 *      1 longword identifier           'PP20' or 'PX20'
-	 *     [1 word checksum (if 'PX20')     $ssss]
-	 *      1 longword efficiency           $eeeeeeee
-	 *      X longwords crunched file       $cccccccc,$cccccccc,...
-	 *      1 longword decrunch info        'decrlen' << 8 | '8 bits other info'
+	 *  1 longword identifier       'PP20' or 'PX20'
+	 * [1 word checksum (if 'PX20') $ssss]
+	 *  1 longword efficiency       $eeeeeeee
+	 *  X longwords crunched file   $cccccccc,$cccccccc,...
+	 *  1 longword decrunch info    'decrlen' << 8 | '8 bits other info'
 	 */
 
 	_mm_fseek(reader,0,SEEK_END);

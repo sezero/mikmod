@@ -148,7 +148,7 @@ static const ULONG MMCMP16BitFetch[16] =
 };
 
 
-BOOL MMCMP_Unpack(MREADER* reader, void** out, int* outlen)
+BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 {
 	ULONG srclen, destlen;
 	UBYTE *destbuf, *destptr;

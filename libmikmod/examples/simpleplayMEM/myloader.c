@@ -25,7 +25,7 @@ void my_delete_mem_reader(MREADER* reader)
 	if (reader) free(reader);
 }
 
-MREADER *my_new_mem_reader(const void *buffer, int len)
+MREADER *my_new_mem_reader(const void *buffer, long len)
 {
 	MY_MEMREADER* reader = (MY_MEMREADER*) malloc(sizeof(MY_MEMREADER));
 	if (reader)

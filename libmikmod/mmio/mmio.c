@@ -230,7 +230,7 @@ void _mm_delete_mem_reader(MREADER* reader)
 	MikMod_free(reader);
 }
 
-MREADER *_mm_new_mem_reader(const void *buffer, int len)
+MREADER *_mm_new_mem_reader(const void *buffer, long len)
 {
 	MMEMREADER* reader=(MMEMREADER*)MikMod_malloc(sizeof(MMEMREADER));
 	if (reader)

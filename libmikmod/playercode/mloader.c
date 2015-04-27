@@ -454,7 +454,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	BOOL ok;
 	MODULE *mf;
 	void *unpacked;
-	int newlen;
+	long newlen;
 
 	modreader = reader;
 	_mm_errno = 0;
@@ -467,7 +467,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 		_mm_rewind(modreader);
 		if (unpackers[t](modreader,&unpacked,&newlen)) {
 			modreader=_mm_new_mem_reader(unpacked,newlen);
-			if(!modreader) {/* really ?! */
+			if(!modreader) {/* really? */
 				modreader = reader;
 				MikMod_free(unpacked);
 				return NULL;

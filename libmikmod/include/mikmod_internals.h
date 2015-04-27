@@ -128,7 +128,7 @@ DECLARE_MUTEX(vars);
 
 /*========== Portable file I/O */
 
-extern MREADER* _mm_new_mem_reader(const void *buffer, int len);
+extern MREADER* _mm_new_mem_reader(const void *buffer, long len);
 extern void _mm_delete_mem_reader(MREADER *reader);
 
 extern MREADER* _mm_new_file_reader(FILE* fp);
@@ -627,10 +627,10 @@ extern void   Player_HandleTick(void);
 /*========== UnPackers */
 
 typedef BOOL (*MUNPACKER) (struct MREADER*,
-                           void** /* unpacked data out */,
-                           int* /* unpacked data size */);
-extern BOOL PP20_Unpack(MREADER*, void**, int*);
-extern BOOL MMCMP_Unpack(MREADER*, void**, int*);
+                           void** /* unpacked data out */ ,
+                           long* /* unpacked data size */ );
+extern BOOL PP20_Unpack(MREADER*, void**, long*);
+extern BOOL MMCMP_Unpack(MREADER*, void**, long*);
 
 /*========== Drivers */
 

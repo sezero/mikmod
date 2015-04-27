@@ -8,7 +8,7 @@ typedef struct _MY_MEMREADER {
 	long pos;
 } MY_MEMREADER;
 
-MREADER *my_new_mem_reader(const void *buffer, int len);
+MREADER *my_new_mem_reader(const void *buffer, long len);
 void my_delete_mem_reader(MREADER* reader);
 
 #endif
