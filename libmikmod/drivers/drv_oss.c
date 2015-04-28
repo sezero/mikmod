@@ -121,18 +121,18 @@ static void OSS_CommandLine(const CHAR *cmdline)
 	CHAR *ptr;
 
 #ifdef SNDCTL_DSP_SETFRAGMENT
-	if((ptr=MD_GetAtom("buffer",cmdline,0))) {
+	if((ptr=MD_GetAtom("buffer",cmdline,0)) != NULL) {
 		fragsize=atoi(ptr);
 		if((fragsize<7)||(fragsize>17)) fragsize=DEFAULT_FRAGSIZE;
 		MikMod_free(ptr);
 	}
-	if((ptr=MD_GetAtom("count",cmdline,0))) {
+	if((ptr=MD_GetAtom("count",cmdline,0)) != NULL) {
 		numfrags=atoi(ptr);
 		if((numfrags<2)||(numfrags>255)) numfrags=DEFAULT_NUMFRAGS;
 		MikMod_free(ptr);
 	}
 #endif
-	if((ptr=MD_GetAtom("card",cmdline,0))) {
+	if((ptr=MD_GetAtom("card",cmdline,0)) != NULL) {
 		card = atoi(ptr);
 		if((card<0)||(card>99)) card=DEFAULT_CARD;
 		MikMod_free(ptr);

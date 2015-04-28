@@ -417,7 +417,8 @@ static void Ultra_CommandLine(const CHAR *cmdline)
 		MikMod_free(ptr);
 	}
 #ifdef __DJGPP__
-	if ((ptr = MD_GetAtom("dma", cmdline, 0))) {
+	ptr = MD_GetAtom("dma", cmdline, 0);
+	if (ptr) {
 		gus_dma_usage (atoi(ptr));
 		MikMod_free(ptr);
 	}

@@ -68,21 +68,21 @@ static void Dart_CommandLine(const CHAR *cmdline)
 	char *ptr;
 	int buf;
 
-	if ((ptr = MD_GetAtom("buffer", cmdline, 0))) {
+	if ((ptr = MD_GetAtom("buffer", cmdline, 0)) != NULL) {
 		buf = atoi(ptr);
 		if (buf >= 12 && buf <= 16)
 			BufferSize = 1 << buf;
 		MikMod_free(ptr);
 	}
 
-	if ((ptr = MD_GetAtom("count", cmdline, 0))) {
+	if ((ptr = MD_GetAtom("count", cmdline, 0)) != NULL) {
 		buf = atoi(ptr);
 		if (buf >= 2 && buf <= MAX_BUFFERCOUNT)
 			BufferCount = buf;
 		MikMod_free(ptr);
 	}
 
-	if ((ptr = MD_GetAtom("device", cmdline, 0))) {
+	if ((ptr = MD_GetAtom("device", cmdline, 0)) != NULL) {
 		buf = atoi(ptr);
 		if (buf >= 0 && buf <= 8)
 			DeviceIndex = buf;

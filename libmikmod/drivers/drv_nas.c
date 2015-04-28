@@ -220,7 +220,7 @@ nas_init_server (struct my_info *i)
 {
   AuServer *s;
 
-  if ((s = AuOpenServer (audioserver, 0, NULL, 0, NULL, NULL)) == 0) {
+  if (!(s = AuOpenServer (audioserver, 0, NULL, 0, NULL, NULL))) {
     _mm_errno = MMERR_OPENING_AUDIO;
     return -1;
   }
@@ -388,9 +388,11 @@ static BOOL
 NAS_there_p (void)
 {
   AuServer *s;
-  if ((s = AuOpenServer (NULL, 0, NULL, 0, NULL, NULL)) == 0)
+
+  if (!(s = AuOpenServer (NULL, 0, NULL, 0, NULL, NULL)))
     return 0;
   AuCloseServer (s);
+
   return 1;
 }
 

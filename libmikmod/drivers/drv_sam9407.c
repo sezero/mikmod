@@ -104,7 +104,7 @@ static void commandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 
-	if((ptr=MD_GetAtom("card", cmdline, 0))) {
+	if((ptr=MD_GetAtom("card", cmdline, 0)) != NULL) {
 		card=atoi(ptr);
 		MikMod_free(ptr);
 	}

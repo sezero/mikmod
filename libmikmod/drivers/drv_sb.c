@@ -53,19 +53,19 @@ static void SB_CommandLine(const CHAR *cmdline)
 {
 	char *ptr, *end;
 
-	if ((ptr=MD_GetAtom("port",cmdline,0))) {
+	if ((ptr=MD_GetAtom("port",cmdline,0)) != NULL) {
 		sb.port = strtol(ptr, &end, 16);
 		MikMod_free(ptr);
 	}
-	if ((ptr=MD_GetAtom("irq",cmdline,0))) {
+	if ((ptr=MD_GetAtom("irq",cmdline,0)) != NULL) {
 		sb.irq = strtol(ptr, &end, 10);
 		MikMod_free(ptr);
 	}
-	if ((ptr=MD_GetAtom("dma",cmdline,0))) {
+	if ((ptr=MD_GetAtom("dma",cmdline,0)) != NULL) {
 		sb.dma8 = strtol(ptr, &end, 10);
 		MikMod_free(ptr);
 	}
-	if ((ptr=MD_GetAtom("hidma",cmdline,0))) {
+	if ((ptr=MD_GetAtom("hidma",cmdline,0)) != NULL) {
 		sb.dma16 = strtol(ptr, &end, 10);
 		MikMod_free(ptr);
 	}

@@ -137,7 +137,7 @@ static void OPENAL_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 
-	if((ptr=MD_GetAtom("buffersize",cmdline,0)))
+	if((ptr=MD_GetAtom("buffersize",cmdline,0)) != NULL)
 	{
 		buffer_size = atoi(ptr);
 		MikMod_free(ptr);
@@ -149,7 +149,7 @@ static void OPENAL_CommandLine(const CHAR *cmdline)
 
 	if (buffer_size < 4096) buffer_size = 4096;
 
-	if((ptr=MD_GetAtom("bufferqueue",cmdline,0)))
+	if((ptr=MD_GetAtom("bufferqueue",cmdline,0)) != NULL)
 	{
 		buffer_queue = atoi(ptr);
 		MikMod_free(ptr);

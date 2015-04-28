@@ -140,7 +140,8 @@ static void DS_CommandLine(const CHAR *cmdline)
 		MikMod_free(ptr);
 	}
 
-	if ((ptr=MD_GetAtom("globalfocus",cmdline,1))) {
+	ptr=MD_GetAtom("globalfocus",cmdline,1);
+	if (ptr) {
 		controlflags |= DSBCAPS_GLOBALFOCUS;
 		MikMod_free(ptr);
 	} else

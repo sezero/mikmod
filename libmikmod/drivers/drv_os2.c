@@ -83,8 +83,8 @@ void OS2_UpdateBufferThread(void *dummy)
 	DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, PRTYD_MAXIMUM - 1, 0);
 
 	while (!FinishPlayback) {
+		static ULONG NextBuffer = 0;  /* next fragment to be filled */
 		ULONG count;
-static	ULONG NextBuffer = 0;	/* next fragment to be filled */
 
 		/* wait for play enable */
 		DosWaitEventSem(Play, SEM_INDEFINITE_WAIT);
@@ -121,13 +121,13 @@ static void OS2_CommandLine(const CHAR *cmdline)
 	char *ptr;
 	int buf;
 
-	if ((ptr = MD_GetAtom("buffer", cmdline, 0))) {
+	if ((ptr = MD_GetAtom("buffer", cmdline, 0)) != NULL) {
 		buf = atoi(ptr);
 		if (buf >= 12 && buf <= 16)
 			BufferSize = 1 << buf;
 		MikMod_free(ptr);
 	}
-	if ((ptr = MD_GetAtom("device", cmdline, 0))) {
+	if ((ptr = MD_GetAtom("device", cmdline, 0)) != NULL) {
 		buf = atoi(ptr);
 		if (buf >= 0 && buf <= 8)
 			DeviceIndex = buf;

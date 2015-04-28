@@ -53,15 +53,15 @@ static void WSS_CommandLine(const CHAR *cmdline)
 {
 	char *ptr, *end;
 
-	if ((ptr=MD_GetAtom("port",cmdline,0))) {
+	if ((ptr=MD_GetAtom("port",cmdline,0)) != NULL) {
 		wss.port = strtol(ptr, &end, 16);
 		MikMod_free(ptr);
 	}
-	if ((ptr=MD_GetAtom("irq",cmdline,0))) {
+	if ((ptr=MD_GetAtom("irq",cmdline,0)) != NULL) {
 		wss.irq = strtol(ptr, &end, 10);
 		MikMod_free(ptr);
 	}
-	if ((ptr=MD_GetAtom("dma",cmdline,0))) {
+	if ((ptr=MD_GetAtom("dma",cmdline,0)) != NULL) {
 		wss.dma = strtol(ptr, &end, 10);
 		MikMod_free(ptr);
 	}

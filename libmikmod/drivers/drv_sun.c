@@ -174,7 +174,7 @@ static void Sun_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 
-	if ((ptr = MD_GetAtom("buffer", cmdline, 0))) {
+	if ((ptr = MD_GetAtom("buffer", cmdline, 0)) != NULL) {
 		int buf = atoi(ptr);
 
 		if (buf >= 7 && buf <= 17)
@@ -183,10 +183,10 @@ static void Sun_CommandLine(const CHAR *cmdline)
 		MikMod_free(ptr);
 	}
 
-	if ((ptr = MD_GetAtom("headphone", cmdline, 1))) {
+	if ((ptr = MD_GetAtom("headphone", cmdline, 1)) != NULL) {
 		port = AUDIO_HEADPHONE;
 		MikMod_free(ptr);
-	} else if ((ptr = MD_GetAtom("speaker", cmdline, 1))) {
+	} else if ((ptr = MD_GetAtom("speaker", cmdline, 1)) != NULL) {
 		port = AUDIO_SPEAKER;
 		MikMod_free(ptr);
 	}

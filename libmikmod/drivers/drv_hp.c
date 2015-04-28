@@ -69,7 +69,8 @@ static void HP_CommandLine(const CHAR *cmdline)
 		MikMod_free(buffer);
 	}
 
-	if((buffer=MD_GetAtom("headphone",cmdline,1))) {
+	buffer=MD_GetAtom("headphone",cmdline,1);
+	if(buffer) {
 		headphone=1;
 		MikMod_free(buffer);
 	} else

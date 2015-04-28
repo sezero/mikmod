@@ -73,12 +73,12 @@ static void SGI_CommandLine(const CHAR *cmdline)
 {
 	CHAR *ptr;
 
-	if ((ptr=MD_GetAtom("fragsize",cmdline,0))) {
+	if ((ptr=MD_GetAtom("fragsize",cmdline,0)) != NULL) {
 		sgi_fragsize=atol(ptr);
 		MikMod_free(ptr);
 	} else sgi_fragsize=DEFAULT_SGI_FRAGSIZE;
 
-	if ((ptr=MD_GetAtom("bufsize",cmdline,0))) {
+	if ((ptr=MD_GetAtom("bufsize",cmdline,0)) != NULL) {
 		sgi_bufsize=atol(ptr);
 		MikMod_free(ptr);
 	} else sgi_bufsize=DEFAULT_SGI_BUFSIZE;
