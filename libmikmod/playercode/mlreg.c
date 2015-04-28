@@ -58,7 +58,7 @@ static void MikMod_RegisterAllLoaders_internal(void)
 	_mm_registerloader(&load_m15);
 }
 
-void MikMod_RegisterAllLoaders(void)
+MIKMODAPI void MikMod_RegisterAllLoaders(void)
 {
 	MUTEX_LOCK(lists);
 	MikMod_RegisterAllLoaders_internal();
