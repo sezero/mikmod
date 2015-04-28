@@ -62,8 +62,8 @@ CFLAGS+=-ffast-math -fno-common
 CFLAGS+=-fvisibility=hidden -DSYM_VISIBILITY
 #CFLAGS+=-g
 LDFLAGS =-Wl,-single_module
-LDFLAGS+=-Wl,-install_name,"@executable_path/$(LIBSHARED)" -Wl,-single_module
-LDFLAGS+=-Wl,-compatibility_version,4 -Wl,-current_version,6.0
+LDFLAGS+=-Wl,-install_name,"@executable_path/$(LIBSHARED)"
+LDFLAGS+=-Wl,-compatibility_version,4.0 -Wl,-current_version,6.0
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6
 #CPPFLAGS+=-DHAVE_POSIX_MEMALIGN
