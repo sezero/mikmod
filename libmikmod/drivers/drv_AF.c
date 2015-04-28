@@ -82,7 +82,8 @@ static void AF_CommandLine(const CHAR *cmdline)
 
 static BOOL AF_IsThere(void)
 {
-	if ((AFaud=AFOpenAudioConn(soundbox)))
+	AFaud=AFOpenAudioConn(soundbox);
+	if (AFaud) {
 		AFCloseAudioConn(AFaud);
 		AFaud=NULL;
 		return 1;
