@@ -21,8 +21,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   WAV sample loader
 
 ==============================================================================*/
@@ -371,8 +369,10 @@ void Sample_Free_internal(SAMPLE *si)
 static void extract_channel(const char *src, char *dst, int num_chan, int num_samples, int samp_size, int channel)
 {
 	int i;
-	printf("Extract channel: %p %p, num_chan=%d, num_samples=%d, samp_size=%d, channel=%d\n",
-			src,dst,num_chan,num_samples,samp_size,channel);
+#ifdef MIKMOD_DEBUG
+	fprintf(stderr,"Extract channel: %p %p, num_chan=%d, num_samples=%d, samp_size=%d, channel=%d\n",
+		src,dst,num_chan,num_samples,samp_size,channel);
+#endif
 	src += channel * samp_size;
 
 	while (num_samples--)
@@ -385,4 +385,4 @@ static void extract_channel(const char *src, char *dst, int num_chan, int num_sa
 	}
 }
 
-/* ex:set ts=4: */
+/* ex:set ts=8: */
