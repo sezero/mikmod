@@ -49,14 +49,11 @@ extern int fprintf(FILE *, const char *, ...);
 
 /*#define MMCMP_DEBUG*/
 
-/* no need for packed structs, because we are reading one
- * member at a time from the file, not typecasting memory. */
-/*#pragma pack(1)*/
-typedef struct MMCMPFILEHEADER
+typedef struct MMCMPFILEHDR
 {
-	UBYTE id[8];
-	UWORD hdrsize;
-} MMCMPFILEHEADER;
+	UBYTE id[8]; /* string 'ziRCONia' */
+	UWORD hdrsize; /* sizeof MMCMPHEADER */
+} MMCMPFILEHDR; /* 10 bytes */
 
 typedef struct MMCMPHEADER
 {
@@ -66,7 +63,7 @@ typedef struct MMCMPHEADER
 	ULONG blktable;
 	UBYTE glb_comp;
 	UBYTE fmt_comp;
-} MMCMPHEADER;
+} MMCMPHEADER; /* 14 bytes */
 
 typedef struct MMCMPBLOCK
 {
@@ -77,22 +74,13 @@ typedef struct MMCMPBLOCK
 	UWORD flags;
 	UWORD tt_entries;
 	UWORD num_bits;
-} MMCMPBLOCK;
+} MMCMPBLOCK; /* 20 bytes */
 
 typedef struct MMCMPSUBBLOCK
 {
 	ULONG unpk_pos;
 	ULONG unpk_size;
-} MMCMPSUBBLOCK;
-/*#pragma pack()*/
-
-/* make sure of structure sizes */
-/*
-typedef int chk_MMCMPFILEHEADER[(sizeof(struct MMCMPFILEHEADER) == 10) * 2 - 1];
-typedef int chk_MMCMPHEADER[(sizeof(struct MMCMPHEADER) == 14) * 2 - 1];
-typedef int chk_MMCMPBLOCK[(sizeof(struct MMCMPBLOCK) == 20) * 2 - 1];
-typedef int chk_MMCMPSUBBLOCK[(sizeof(struct MMCMPSUBBLOCK) == 8) * 2 - 1];
-*/
+} MMCMPSUBBLOCK; /* 8 bytes */
 
 #define MMCMP_COMP	0x0001
 #define MMCMP_DELTA	0x0002
@@ -101,6 +89,7 @@ typedef int chk_MMCMPSUBBLOCK[(sizeof(struct MMCMPSUBBLOCK) == 8) * 2 - 1];
 #define MMCMP_ABS16	0x0200
 #define MMCMP_ENDIAN	0x0400
 
+
 typedef struct MMCMPBITBUFFER
 {
 	ULONG bitcount;
@@ -108,7 +97,6 @@ typedef struct MMCMPBITBUFFER
 	const UBYTE *start;
 	const UBYTE *end;
 } MMCMPBITBUFFER;
-
 
 static ULONG MMCMP_GetBits(MMCMPBITBUFFER* b, ULONG nBits)
 {
