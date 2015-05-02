@@ -260,6 +260,14 @@ SOURCE=..\..\depackers\pp20.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\depackers\s404.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\depackers\xpk.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\playercode\mplayer.c
 # End Source File
 # Begin Source File

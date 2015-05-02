@@ -94,6 +94,8 @@ libmikmod_la_SOURCES = \
 		mmio/mmio.c \
 		depackers/mmcmp.c \
 		depackers/pp20.c \
+		depackers/s404.c \
+		depackers/xpk.c \
 		playercode/mdreg.c \
 		playercode/mdriver.c \
 		playercode/mdulaw.c \

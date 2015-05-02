@@ -108,6 +108,8 @@ out/mmerror.o: config.h ../include/mikmod_internals.h
 out/mmio.o: config.h ../include/mikmod_internals.h
 out/mmcmp.o: config.h ../include/mikmod_internals.h
 out/pp20.o: config.h ../include/mikmod_internals.h
+out/s404.o: config.h ../include/mikmod_internals.h
+out/xpk.o: config.h ../include/mikmod_internals.h
 out/mplayer.o: config.h ../include/mikmod_internals.h
 out/munitrk.o: config.h ../include/mikmod_internals.h
 out/mwav.o: config.h ../include/mikmod_internals.h

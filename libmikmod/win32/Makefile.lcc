@@ -37,7 +37,7 @@ OBJ=$(DRIVER_OBJ) \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
-    mmcmp.o pp20.o \
+    mmcmp.o pp20.o s404.o xpk.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 
@@ -126,6 +126,10 @@ mmcmp.o: ..\depackers\mmcmp.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\depackers\mmcmp.c
 pp20.o: ..\depackers\pp20.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\depackers\pp20.c
+s404.o: ..\depackers\s404.c $(HEADER_DEPS)
+	$(COMPILE) /Fo$@ ..\depackers\s404.c
+xpk.o: ..\depackers\xpk.c $(HEADER_DEPS)
+	$(COMPILE) /Fo$@ ..\depackers\xpk.c
 mdriver.o: ..\playercode\mdriver.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\playercode\mdriver.c
 mdreg.o: ..\playercode\mdreg.c $(HEADER_DEPS)

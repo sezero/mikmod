@@ -53,6 +53,8 @@ static	MLOADER *firstloader=NULL;
 static	MUNPACKER unpackers[] = {
 	PP20_Unpack,
 	MMCMP_Unpack,
+	XPK_Unpack,
+	S404_Unpack,
 	NULL
 };
 

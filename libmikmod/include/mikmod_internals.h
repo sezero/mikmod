@@ -631,6 +631,8 @@ typedef BOOL (*MUNPACKER) (struct MREADER*,
                            long* /* unpacked data size */ );
 extern BOOL PP20_Unpack(MREADER*, void**, long*);
 extern BOOL MMCMP_Unpack(MREADER*, void**, long*);
+extern BOOL XPK_Unpack(MREADER*, void**, long*);
+extern BOOL S404_Unpack(MREADER*, void**, long*);
 
 /*========== Drivers */
 

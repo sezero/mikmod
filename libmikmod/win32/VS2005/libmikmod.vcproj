@@ -482,6 +482,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\depackers\s404.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\depackers\xpk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\playercode\mplayer.c"
 				>
 			</File>

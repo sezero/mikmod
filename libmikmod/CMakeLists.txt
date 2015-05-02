@@ -379,6 +379,8 @@ SET (MIKMOD_LIB_MODULES
     mmio/mmio.c
     depackers/mmcmp.c
     depackers/pp20.c
+    depackers/s404.c
+    depackers/xpk.c
     playercode/mdreg.c
     playercode/mdriver.c
     playercode/mdulaw.c
@@ -881,4 +883,3 @@ INSTALL(
     DESTINATION
         "lib${LIB_SUFFIX}/pkgconfig"
 )
-

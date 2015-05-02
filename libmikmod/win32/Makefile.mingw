@@ -91,7 +91,7 @@ OBJ=drv_ds.o drv_xaudio2.o drv_win.o drv_openal.o drv_sdl.o \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o mdriver.o mdreg.o \
-    mmcmp.o pp20.o \
+    mmcmp.o pp20.o s404.o xpk.o \
     mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 #   mdulaw.o
@@ -210,6 +210,10 @@ mmcmp.o: ../depackers/mmcmp.c $(HEADER_DEPS)
 	$(COMPILE) ../depackers/mmcmp.c -o mmcmp.o
 pp20.o: ../depackers/pp20.c $(HEADER_DEPS)
 	$(COMPILE) ../depackers/pp20.c -o pp20.o
+s404.o: ../depackers/s404.c $(HEADER_DEPS)
+	$(COMPILE) ../depackers/s404.c -o s404.o
+xpk.o: ../depackers/xpk.c $(HEADER_DEPS)
+	$(COMPILE) ../depackers/xpk.c -o xpk.o
 mdriver.o: ../playercode/mdriver.c $(HEADER_DEPS)
 	$(COMPILE) ../playercode/mdriver.c -o mdriver.o
 mdreg.o: ../playercode/mdreg.c $(HEADER_DEPS)
