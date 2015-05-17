@@ -16,17 +16,15 @@ else
 CC=$(CROSS)-gcc
 AS=$(CROSS)-as
 endif
-CFLAGS = $(COPT) -DHAVE_CONFIG_H $(INCLUDE)
-INCLUDE = -I. -I../src
 LD = $(CC)
-LDFLAGS = $(LDOPT) -L. -lmikmod
 
+CFLAGS = -DHAVE_CONFIG_H $(INCLUDE)
+INCLUDE = -I. -I../src
+LDFLAGS = -L. -lmikmod
 ifeq ($(DEBUG),1)
-COPT = -g -Wall
-LDOPT = -g
+CFLAGS += -g -Wall
 else
-COPT = -O2 -Wall -fomit-frame-pointer -ffast-math
-LDOPT = -s
+CFLAGS += -O2 -Wall -fomit-frame-pointer -ffast-math
 endif
 
 # Build rules
