@@ -205,6 +205,16 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 			goto err;
 		if (block.pk_size <= block.tt_entries)
 			goto err;
+		if (block.flags & MMCMP_COMP) {
+			if (block.flags & MMCMP_16BIT) {
+				if (block.num_bits >= 16)
+					goto err;
+			}
+			else {
+				if (block.num_bits >=  8)
+					goto err;
+			}
+		}
 
 		srcpos += 20 + block.sub_blk*8;
 		if (srcpos >= srclen) goto err;
@@ -229,9 +239,8 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 		fprintf(stderr, " pksize=%u unpksize=%u", block.pk_size, block.unpk_size);
 		fprintf(stderr, " tt_entries=%u num_bits=%u\n", block.tt_entries, block.num_bits);
 #endif
-		/* Data is not packed */
 		if (!(block.flags & MMCMP_COMP))
-		{
+		{ /* Data is not packed */
 			_mm_fseek(reader,srcpos,SEEK_SET);
 			destptr = destbuf + subblocks[0].unpk_pos;
 			i = 0;
@@ -245,10 +254,9 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 				destptr += subblocks[i].unpk_size;
 				if (++i == block.sub_blk) break;
 			}
-		} else
-		/* Data is 16-bit packed */
-		if (block.flags & MMCMP_16BIT && block.num_bits < 16)
-		{
+		}
+		else if (block.flags & MMCMP_16BIT)
+		{ /* Data is 16-bit packed */
 			MMCMPBITBUFFER bb;
 			ULONG size;
 			ULONG pos = 0;
@@ -331,9 +339,9 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 					pos = 0;
 				}
 			}
-		} else if (block.num_bits < 8)
-		/* Data is 8-bit packed */
-		{
+		}
+		else
+		{ /* Data is 8-bit packed */
 			MMCMPBITBUFFER bb;
 			ULONG size;
 			ULONG pos = 0;
@@ -406,9 +414,6 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 					pos = 0;
 				}
 			}
-		} else
-		{
-			goto err;
 		}
 	}
 
@@ -419,7 +424,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 	*outlen = destlen;
 	return 1;
 
-    err:
+  err:
 	MikMod_free(buf);
 	MikMod_free(pblk_table);
 	MikMod_free(subblocks);
