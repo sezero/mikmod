@@ -12,7 +12,8 @@ libmikmod v3.3.8 was released on XX-XXX-XXXX.
   libmodplug and libxmp.
 - Fixed SDL output driver, so that it doesn't crash upon resetting.
 - Updated configury. The aix, hpux, bsd/sunaudio and sgi audio drivers
-  are now configurable and not built unconditionally.
+  are now configurable and not built unconditionally. Haiku support
+  thanks to Jérôme Duval.
 - Minor fix/tidy-ups.
 
 

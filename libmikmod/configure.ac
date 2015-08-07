@@ -44,6 +44,7 @@ libmikmod_openbsd=no
 libmikmod_os2=no
 libmikmod_djgpp=no
 libmikmod_amiga=no
+libmikmod_haiku=no
 libmikmod_irix=no
 libmikmod_sun=no
 libmikmod_aix=no
@@ -60,6 +61,7 @@ case $host_os in
 	*djgpp) libmikmod_djgpp=yes ;;
 	amigaos*|aros*|morphos*)
 		libmikmod_amiga=yes ;;
+	haiku*) libmikmod_haiku=yes ;;
 	hpux*) libmikmod_hpux=yes ;;
 	irix*) libmikmod_irix=yes ;;
 	aix*) AC_DEFINE([AIX], 1, [Define if your system is AIX 3.x - might be needed for 4.x too])
@@ -603,9 +605,9 @@ then
 	)
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-		dnl There is no need for -pthread on darwin, and gcc
+		dnl There is no need for -pthread on darwin or haiku, as gcc
 		dnl complains about unrecognized option -pthread
-		if test $libmikmod_darwin = no
+		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			libmikmod_threads=""
 			CFLAGS="$CFLAGS -pthread"
@@ -1228,9 +1230,9 @@ then
 	REENTRANT="-D_REENTRANT"
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-		dnl There is no need for -pthread on darwin, and gcc
+		dnl There is no need for -pthread on darwin or haiku, as gcc
 		dnl complains about unrecognized option -pthread
-		if test $libmikmod_darwin = no
+		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			REENTRANT="-pthread $REENTRANT"
 			LIB_LDADD="-pthread"
