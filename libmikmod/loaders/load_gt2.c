@@ -43,6 +43,24 @@
 
 #include "mikmod_internals.h"
 
+#if 1 /* DISABLED UNTIL IT'S COMPLETED PROPERLY. */
+static BOOL GT2_Test(void) {
+	return 0;
+}
+static BOOL GT2_Init(void) {
+	return 0;
+}
+static void GT2_Cleanup(void) {
+}
+static BOOL GT2_Load(BOOL curious) {
+	return 0;
+}
+static CHAR *GT2_LoadTitle(void) {
+	return NULL;
+}
+#endif
+
+#if 0 /* DISABLED UNTIL IT'S COMPLETED PROPERLY. */
 typedef struct GT_NOTE {
 	UBYTE	note; /* 24-127, 48 is middle C-2. 0 for no note */
 	UBYTE	inst; /* instrument, 1-255, 0 for none */
@@ -396,6 +414,7 @@ static CHAR *GT2_LoadTitle(void)
 
 	return (DupStr(title, 32, 1));
 }
+#endif /* #if 0 */
 
 /*========== Loader information */
 

@@ -40,7 +40,7 @@ static void MikMod_RegisterAllLoaders_internal(void)
 	_mm_registerloader(&load_dsm);
 	_mm_registerloader(&load_far);
 	_mm_registerloader(&load_gdm);
-	_mm_registerloader(&load_gt2);
+/*	_mm_registerloader(&load_gt2);*/ /* load_gt2 isn't complete */
 	_mm_registerloader(&load_it);
 	_mm_registerloader(&load_imf);
 	_mm_registerloader(&load_mod);
