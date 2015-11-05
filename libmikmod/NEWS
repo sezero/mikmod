@@ -11,6 +11,8 @@ libmikmod v3.3.8 was released on XX-XXX-XXXX.
   and XPK compressed module formats, based on public domain code from
   libmodplug and libxmp.
 - Fixed SDL output driver, so that it doesn't crash upon resetting.
+- Disabled the gt2 loader until it is completed properly. (It has been
+  always non-functional since its introduction in v3.2.0.)
 - Updated configury. The aix, hpux, bsd/sunaudio and sgi audio drivers
   are now configurable and not built unconditionally. Haiku support
   thanks to Jérôme Duval.
