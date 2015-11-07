@@ -466,7 +466,10 @@ static BOOL AMF_Load(BOOL curious)
 		s.c2spd     =_mm_read_I_UWORD(modreader);
 		if(s.c2spd==8368) s.c2spd=8363;
 		s.volume    =_mm_read_UBYTE(modreader);
-		if(mh->version>=11) {
+		/* "the tribal zone.amf" and "the way its gonna b.amf" by Maelcum
+		 * are the only version 10 files I can find, and they have 32 bit
+		 * reppos and repend, not 16. */
+		if(mh->version>=10) {/* was 11 */
 			s.reppos    =_mm_read_I_ULONG(modreader);
 			s.repend    =_mm_read_I_ULONG(modreader);
 		} else {
