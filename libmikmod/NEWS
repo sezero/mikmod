@@ -5,11 +5,17 @@ libmikmod v3.3.8 was released on XX-XXX-XXXX.
 
 - Handle the FastTracker2 pattern loop (E60) bug. Modules abusing this
   bug (roadblas.xm) should play correctly now. Thanks to Eugene Toder.
+- AMF loader: Fixed segmentation fault in case of bad sample offsets in
+  broken files. (sf.net bug #26, thanks to 'Saga' of OpenMPT project for
+  the report and analysis.)
+- AMF loader: Fixed loading of v10 files where samle loop start and end
+  values should be read as 32 bits, not 16 bits. (tested with Maelcum's
+ "the tribal zone" and "the way its gonna b". noticed in OpenMPT source)
 - Fixed a possible undefined behavior in the XM loader.
-- Support for OpenBSD sndio.
 - Support for MMCMP, Amiga PP20 (PowerPack), STC (Stone Cracker S404)
   and XPK compressed module formats, based on public domain code from
   libmodplug and libxmp.
+- Support for OpenBSD sndio.
 - Fixed SDL output driver, so that it doesn't crash upon resetting.
 - Disabled the gt2 loader until it is completed properly. (It has been
   always non-functional since its introduction in v3.2.0.)
