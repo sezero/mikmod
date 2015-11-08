@@ -1,8 +1,12 @@
 /* config.h.in.  Generated manually for DJGPP.  */
 
-/* djgpp-v2.04 does provide snprintf and vsnprintf !!! */
+/* djgpp-v2.04 and newer provide snprintf() and vsnprintf().
+ * djgpp-v2.05 is already released, so let's enable them by
+ * default here. */
 /* Define if you have the snprintf function.  */
-/*#define HAVE_SNPRINTF*/
+#define HAVE_SNPRINTF
+/* Define if you have the vsnprintf function.  */
+#define HAVE_VSNPRINTF
 
 /* Define if your system supports binary pipes (i.e. Unix) */
 /*#define DRV_PIPE*/
@@ -43,9 +47,6 @@
 
 /* Define if you have the <malloc.h> header file.  */
 #define HAVE_MALLOC_H
-
-/* Define if you have the <sys/ioctl.h> header file.  */
-#define HAVE_SYS_IOCTL_H
 
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H

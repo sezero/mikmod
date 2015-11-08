@@ -3,11 +3,13 @@
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).  */
 #define HAVE_MIKMOD_FREE 1
 
-/* djgpp-v2.04 does provide snprintf and vsnprintf !!! */
+/* djgpp-v2.04 and newer provide snprintf() and vsnprintf().
+ * djgpp-v2.05 is already released, so let's enable them by
+ * default here. */
 /* Define to 1 if you have the `snprintf' function. */
-/* #define HAVE_SNPRINTF 1 */
+#define HAVE_SNPRINTF 1
 /* Define to 1 if you have the `vsnprintf' function. */
-/* #define HAVE_VSNPRINTF 1 */
+#define HAVE_VSNPRINTF 1
 
 /* Define if your system has a working fnmatch function.  */
 #define HAVE_FNMATCH	1
@@ -47,9 +49,6 @@
 
 /* Define if you have the <limits.h> header file.  */
 #define HAVE_LIMITS_H	1
-
-/* Define if you have the <sys/ioctl.h> header file.  */
-#define HAVE_SYS_IOCTL_H	1
 
 /* Define if you have the <sys/time.h> header file.  */
 #define HAVE_SYS_TIME_H		1
