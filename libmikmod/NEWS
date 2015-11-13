@@ -22,6 +22,8 @@ libmikmod v3.3.8 was released on XX-XXX-XXXX.
 - Updated configury. The aix, hpux, bsd/sunaudio and sgi audio drivers
   are now configurable and not built unconditionally. Haiku support
   thanks to Jérôme Duval.
+- Documentation update.
+- Update DOS build for the new djgpp-2.05 release.
 - Minor fix/tidy-ups.
 
 
