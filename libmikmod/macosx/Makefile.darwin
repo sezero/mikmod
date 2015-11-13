@@ -64,6 +64,10 @@ CFLAGS+=-fvisibility=hidden -DSYM_VISIBILITY
 LDFLAGS =-Wl,-single_module
 LDFLAGS+=-Wl,-install_name,"@executable_path/$(LIBSHARED)"
 LDFLAGS+=-Wl,-compatibility_version,4.0 -Wl,-current_version,6.0
+
+# specifically for 10.5 and newer:
+#CFLAGS+=-mmacosx-version-min=10.5
+#LDFLAGS+=-mmacosx-version-min=10.5
 # specifically for 10.6 and newer:
 #CFLAGS+=-mmacosx-version-min=10.6
 #CPPFLAGS+=-DHAVE_POSIX_MEMALIGN
