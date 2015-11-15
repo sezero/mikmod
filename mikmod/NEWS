@@ -1,7 +1,7 @@
 Summary of changes between MikMod 3.2.6 and MikMod 3.2.7:
 ==================================================================
 
-MikMod 3.2.7 was released on XX-XXX-XXXX.
+MikMod 3.2.7 was released on 15-Nov-2015.
 
 - Documentation update.
 - Update DOS build for the new djgpp-2.05 release.

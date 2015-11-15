@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.3.7 and libmikmod 3.3.8:
 ========================================================================
 
-libmikmod v3.3.8 was released on XX-XXX-XXXX.
+libmikmod v3.3.8 was released on 15-Nov-2015.
 
 - Handle the FastTracker2 pattern loop (E60) bug. Modules abusing this
   bug (roadblas.xm) should play correctly now. Thanks to Eugene Toder.
