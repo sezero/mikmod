@@ -350,6 +350,8 @@ BOOL PL_Load(PLAYLIST * pl, const CHAR *filename)
 
 				PL_Add(pl, arc ? mod : dummy, arc ? dummy : NULL, time,
 					   (BOOL)played);
+
+				free (dummy);
 			} else
 				PL_Add(pl, mod, arc, time, (BOOL)played);
 		}
