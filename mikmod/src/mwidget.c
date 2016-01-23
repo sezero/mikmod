@@ -1026,6 +1026,7 @@ void wid_str_set_input (WID_STR *w, const char *input, int length)
 {
 	if (length>=0) {
 		if (w->input) free (w->input);
+		if (length) w->input = (char *) malloc(length + 1);
 		w->length = length;
 	}
 	if (w->length == 0) {

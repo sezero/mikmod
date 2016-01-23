@@ -428,7 +428,7 @@ void CF_themes_free (THEME **themes, int *cnt)
 		free (*themes);
 	}
 	*cnt = 0;
-	*themes = NULL;
+	if (themes) *themes = NULL;
 }
 
 /* Free the user themes (themes above THEME_COUNT) */
