@@ -47,6 +47,7 @@ static BOOL signed8 = 0;
 
 static void closeLibs(void) { /* close ahi */
 	if (AHIReq[1]) {
+		AHIReq[0]->ahir_Link = NULL; /* in case we are linked to req[0] */
 		if (!CheckIO((struct IORequest *) AHIReq[1])) {
 			AbortIO((struct IORequest *) AHIReq[1]);
 			WaitIO((struct IORequest *) AHIReq[1]);
