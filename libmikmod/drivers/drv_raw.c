@@ -53,6 +53,10 @@
 
 #include "mikmod_internals.h"
 
+#ifdef __VBCC__
+#define unlink remove
+#endif
+
 #define BUFFERSIZE 32768
 #define FILENAME "music.raw"
 

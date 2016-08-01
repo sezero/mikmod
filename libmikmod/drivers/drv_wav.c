@@ -43,6 +43,9 @@
 #ifdef SUNOS
 extern int fclose(FILE *);
 #endif
+#ifdef __VBCC__
+#define unlink remove
+#endif
 
 #define BUFFERSIZE 32768
 #define FILENAME "music.wav"

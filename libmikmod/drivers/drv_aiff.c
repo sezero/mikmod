@@ -65,6 +65,9 @@ static	ULONG	gAiffDumpSize = 0;
 #ifdef SUNOS
 extern int fclose(FILE *);
 #endif
+#ifdef __VBCC__
+#define unlink remove
+#endif
 
 static void	AIFF_ConvertToIeeeExtended (double theValue, char *theBytes);
 static void	AIFF_PutHeader (void);
