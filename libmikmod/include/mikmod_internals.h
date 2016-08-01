@@ -36,6 +36,9 @@ extern "C" {
 #if defined(__OS2__) || defined(__EMX__) || (defined(_WIN32) && !defined(__MINGW32__))
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
+#if defined(__VBCC__)
+extern int strcasecmp (const char *, const char *);
+#endif
 
 #ifndef MIKMOD_UNIX
 #if (defined(unix) || defined(__unix__) || defined(__unix) || \
