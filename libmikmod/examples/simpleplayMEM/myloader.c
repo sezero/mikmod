@@ -6,7 +6,6 @@
  * This example is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRENTY; without event the implied warrenty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include <limits.h>
@@ -27,7 +26,7 @@ void my_delete_mem_reader(MREADER* reader)
 
 MREADER *my_new_mem_reader(const void *buffer, long len)
 {
-	MY_MEMREADER* reader = (MY_MEMREADER*) malloc(sizeof(MY_MEMREADER));
+	MY_MEMREADER* reader = (MY_MEMREADER*) calloc(1, sizeof(MY_MEMREADER));
 	if (reader)
 	{
 		reader->core.Eof = &My_MemReader_Eof;
@@ -72,10 +71,10 @@ static BOOL My_MemReader_Read(MREADER* reader,void* ptr,size_t size)
 		ret = 1;
 	}
 
-	s = mr->buffer;
+	s = (const unsigned char *) mr->buffer;
 	s += mr->pos;
 	mr->pos += siz;
-	d = ptr;
+	d = (unsigned char *) ptr;
 
 	while (siz) {
 		*d++ = *s++;
