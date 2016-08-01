@@ -511,7 +511,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 
 	if(!l) {
 		_mm_errno = MMERR_NOT_A_MODULE;
-err1:		if(modreader!=reader) {
+		if(modreader!=reader) {
 			_mm_delete_mem_reader(modreader);
 			modreader=reader;
 			MikMod_free(unpk);
@@ -523,7 +523,17 @@ err1:		if(modreader!=reader) {
 	}
 
 	/* init unitrk routines */
-	if(!UniInit()) goto err1;
+	if(!UniInit()) {
+		if(modreader!=reader) {
+			_mm_delete_mem_reader(modreader);
+			modreader=reader;
+			MikMod_free(unpk);
+		}
+		if(_mm_errorhandler) _mm_errorhandler();
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
+		return NULL;
+	}
 
 	/* init the module structure with vanilla settings */
 	memset(&of,0,sizeof(MODULE));
@@ -554,7 +564,15 @@ err1:		if(modreader!=reader) {
 	if(ok) ok = ((mf=ML_AllocUniMod()) != NULL);
 	if(!ok) {
 		ML_FreeEx(&of);
-		goto err1;
+		if(modreader!=reader) {
+			_mm_delete_mem_reader(modreader);
+			modreader=reader;
+			MikMod_free(unpk);
+		}
+		if(_mm_errorhandler) _mm_errorhandler();
+		_mm_rewind(modreader);
+		_mm_iobase_revert(modreader);
+		return NULL;
 	}
 
 	/* If the module doesn't have any specific panning, create a
