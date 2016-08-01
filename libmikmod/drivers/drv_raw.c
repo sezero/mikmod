@@ -36,20 +36,7 @@
 #include <unistd.h>
 #endif
 
-#ifndef macintosh
-#include <sys/types.h>
-#include <sys/stat.h>
-#if !defined(S_IREAD) && defined(S_IRUSR)
-#define S_IREAD  S_IRUSR
-#endif
-#if !defined(S_IWRITE) && defined(S_IWUSR)
-#define S_IWRITE S_IWUSR
-#endif
-#endif
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
+#include <stdio.h>
 
 #include "mikmod_internals.h"
 
@@ -60,15 +47,7 @@
 #define BUFFERSIZE 32768
 #define FILENAME "music.raw"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
-#if defined(_WIN32) && !defined(__MWERKS__)
-#define open _open
-#endif
-
-static	int rawout=-1;
+static	FILE *rawout=NULL;
 static	SBYTE *audiobuffer=NULL;
 static	CHAR *filename=NULL;
 
@@ -96,28 +75,24 @@ static int RAW_Init(void)
 	}
 #endif
 
-#if !defined(macintosh) && !defined(__MWERKS__)
-	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY,S_IREAD|S_IWRITE);
-#else
-	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY);
-#endif
-	if(rawout<0) {
+	rawout=fopen(filename?filename:FILENAME,"wb");
+	if(!rawout) {
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;
 	}
 	md_mode|=DMODE_SOFT_MUSIC|DMODE_SOFT_SNDFX;
 
 	if (!(audiobuffer=(SBYTE*)MikMod_malloc(BUFFERSIZE))) {
-		close(rawout);
+		fclose(rawout);
 		unlink(filename?filename:FILENAME);
-		rawout=-1;
+		rawout=NULL;
 		return 1;
 	}
 
 	if ((VC_Init())) {
-		close(rawout);
+		fclose(rawout);
 		unlink(filename?filename:FILENAME);
-		rawout=-1;
+		rawout=NULL;
 		return 1;
 	}
 	return 0;
@@ -126,9 +101,9 @@ static int RAW_Init(void)
 static void RAW_Exit(void)
 {
 	VC_Exit();
-	if (rawout!=-1) {
-		close(rawout);
-		rawout=-1;
+	if (rawout) {
+		fclose(rawout);
+		rawout=NULL;
 	}
 	MikMod_free(audiobuffer);
 	audiobuffer = NULL;
@@ -136,18 +111,14 @@ static void RAW_Exit(void)
 
 static void RAW_Update(void)
 {
-	write(rawout,audiobuffer,VC_WriteBytes(audiobuffer,BUFFERSIZE));
+	fwrite(audiobuffer,VC_WriteBytes(audiobuffer,BUFFERSIZE),1,rawout);
 }
 
 static int RAW_Reset(void)
 {
-	close(rawout);
-#if !defined(macintosh) && !defined(__MWERKS__)
-	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY,S_IREAD|S_IWRITE);
-#else
-	rawout=open(filename?filename:FILENAME,O_RDWR|O_TRUNC|O_CREAT|O_BINARY);
-#endif
-	if(rawout<0) {
+	fclose(rawout);
+	rawout=fopen(filename?filename:FILENAME,"wb");
+	if(!rawout) {
 		_mm_errno=MMERR_OPENING_FILE;
 		return 1;
 	}
