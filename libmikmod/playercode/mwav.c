@@ -263,7 +263,7 @@ MIKMODAPI SAMPLE* Sample_LoadRawGeneric(MREADER* reader, ULONG rate, ULONG chann
 	return result;
 }
 
-MIKMODAPI extern SAMPLE *Sample_LoadRawMem(const char *buf, int len, ULONG rate, ULONG channel, ULONG flags)
+MIKMODAPI SAMPLE *Sample_LoadRawMem(const char *buf, int len, ULONG rate, ULONG channel, ULONG flags)
 {
 	SAMPLE *result=NULL;
 	MREADER *reader;
@@ -312,7 +312,7 @@ MIKMODAPI SAMPLE* Sample_LoadGeneric(MREADER* reader)
 	return result;
 }
 
-MIKMODAPI extern SAMPLE *Sample_LoadMem(const char *buf, int len)
+MIKMODAPI SAMPLE *Sample_LoadMem(const char *buf, int len)
 {
 	SAMPLE* result=NULL;
 	MREADER* reader;
