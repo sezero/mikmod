@@ -1,3 +1,19 @@
+Summary of changes between libmikmod 3.3.8 and libmikmod 3.3.9:
+========================================================================
+
+libmikmod v3.3.9 was released on XX-XXX-XXXX.
+
+- Amiga, AHI driver: Fixed a crash upon driver shutdown.
+- Amiga: Updates. Added standalone makefiles with cross-build support.
+- RAW file writer: Changed to use ansi stdio functions instead of
+  posix unistd, for better portability.
+- Playercode: Allocate the right channel reverb buffers only if the
+  mixer is setup for stereo mode. (Helps with ports to memory-tight
+  platforms. Patch from Andrew Rossignol.)
+- Fixed access to uninitialized memory in the simpleplayMEM example
+  program.
+
+
 Summary of changes between libmikmod 3.3.7 and libmikmod 3.3.8:
 ========================================================================
 

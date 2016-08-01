@@ -1,7 +1,7 @@
   Hello folks!
 
 
-This is libmikmod, version 3.3.8, a portable sound library for Unix
+This is libmikmod, version 3.3.9, a portable sound library for Unix
 and other systems. Check out the file 'NEWS' for more history information.
 
 
@@ -24,7 +24,7 @@ and other systems. Check out the file 'NEWS' for more history information.
   located in the 'os2' subdirectory.
 
 - If you're building libmikmod for AmigaOS, or its variants like MorphOS
-  or AROS, the configury method as explained below should work fine.
+  or AROS, refer to the 'README' located in the 'amiga' subdirectory.
 
 - If you're building libmikmod for MacOS, refer to the 'README' file
   located in the 'macintosh' subdirectory.
