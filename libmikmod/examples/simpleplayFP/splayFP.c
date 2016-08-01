@@ -6,16 +6,20 @@
  * This example is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRENTY; without event the implied warrenty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include <stdio.h>
 #include <mikmod.h>
-#if !defined(_WIN32)
+
+#if defined(_WIN32)
+#define MikMod_Sleep(ns) Sleep(ns / 1000)
+#elif defined(_MIKMOD_AMIGA)
+void amiga_sysinit (void);
+void amiga_usleep (unsigned long timeout);
+#define MikMod_Sleep(ns) amiga_usleep(ns)
+#else
 #include <unistd.h>  /* for usleep() */
 #define MikMod_Sleep(ns) usleep(ns)
-#else
-#define MikMod_Sleep(ns) Sleep(ns / 1000)
 #endif
 
 int main(int argc, char **argv)
@@ -27,6 +31,10 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Usage: ./splayFP file\n");
 		return 1;
 	}
+
+#ifdef _MIKMOD_AMIGA
+	amiga_sysinit ();
+#endif
 
 	/* initialize MikMod threads */
 	MikMod_InitThreads ();

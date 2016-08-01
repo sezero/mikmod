@@ -6,18 +6,21 @@
  * This example is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRENTY; without event the implied warrenty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <mikmod.h>
 
-#if !defined _WIN32 && !defined _WIN64
+#if defined(_WIN32)
+#define MikMod_Sleep(ns) Sleep(ns / 1000)
+#elif defined(_MIKMOD_AMIGA)
+void amiga_sysinit (void);
+void amiga_usleep (unsigned long timeout);
+#define MikMod_Sleep(ns) amiga_usleep(ns)
+#else
 #include <unistd.h>  /* for usleep() */
 #define MikMod_Sleep(ns) usleep(ns)
-#else
-#define MikMod_Sleep(ns) Sleep(ns / 1000)
 #endif
 
 SAMPLE *Load(const char *fn)
@@ -63,6 +66,10 @@ int main(void)
     /* voices */
     int v1, v2;
     int i;
+
+#ifdef _MIKMOD_AMIGA
+    amiga_sysinit ();
+#endif
 
     /* register all the drivers */
     MikMod_RegisterAllDrivers();
