@@ -393,7 +393,7 @@ static BOOL STX_Load(BOOL curious)
 		q->loopstart  = s.loopbeg;
 		q->loopend    = s.loopend;
 		q->volume     = s.volume;
-		q->seekpos    = (((long)s.memsegh)<<16|s.memsegl)<<4;
+		q->seekpos    = (((ULONG)s.memsegh)<<16|s.memsegl)<<4;
 		q->flags     |= SF_SIGNED;
 
 		if(s.flags&1) q->flags |= SF_LOOP;
