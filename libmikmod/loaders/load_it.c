@@ -177,7 +177,7 @@ static const CHAR* IT_Version[]={
 };
 
 /* table for porta-to-note command within volume/panning column */
-static UBYTE portatable[10]= {0,1,4,8,16,32,64,96,128,255};
+static const UBYTE portatable[10]= {0,1,4,8,16,32,64,96,128,255};
 
 /*========== Loader code */
 

@@ -113,7 +113,7 @@ static const CHAR * S3M_Version[] = {
 	"Impulse Tracker 2.14p4 (S3M format)"
 };
 /* version number position in above array */
-static int numeric[NUMTRACKERS]={14,14,16,16};
+static const int numeric[NUMTRACKERS]={14,14,16,16};
 
 /*========== Loader code */
 

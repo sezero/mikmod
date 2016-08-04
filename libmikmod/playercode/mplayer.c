@@ -54,19 +54,19 @@ MODULE *pf = NULL;
 
 #define	HIGH_OCTAVE		2	/* number of above-range octaves */
 
-static	UWORD oldperiods[OCTAVE*2]={
+static	const UWORD oldperiods[OCTAVE*2]={
 	0x6b00, 0x6800, 0x6500, 0x6220, 0x5f50, 0x5c80,
 	0x5a00, 0x5740, 0x54d0, 0x5260, 0x5010, 0x4dc0,
 	0x4b90, 0x4960, 0x4750, 0x4540, 0x4350, 0x4160,
 	0x3f90, 0x3dc0, 0x3c10, 0x3a40, 0x38b0, 0x3700
 };
 
-static	UBYTE VibratoTable[32]={
+static	const UBYTE VibratoTable[32]={
 	  0, 24, 49, 74, 97,120,141,161,180,197,212,224,235,244,250,253,
 	255,253,250,244,235,224,212,197,180,161,141,120, 97, 74, 49, 24
 };
 
-static	UBYTE avibtab[128]={
+static	const UBYTE avibtab[128]={
 	 0, 1, 3, 4, 6, 7, 9,10,12,14,15,17,18,20,21,23,
 	24,25,27,28,30,31,32,34,35,36,38,39,40,41,42,44,
 	45,46,47,48,49,50,51,52,53,54,54,55,56,57,57,58,
@@ -78,7 +78,7 @@ static	UBYTE avibtab[128]={
 };
 
 /* Triton's linear periods to frequency translation table (for XM modules) */
-static	ULONG lintab[768]={
+static	const ULONG lintab[768]={
 	535232,534749,534266,533784,533303,532822,532341,531861,
 	531381,530902,530423,529944,529466,528988,528511,528034,
 	527558,527082,526607,526131,525657,525183,524709,524236,
@@ -178,7 +178,7 @@ static	ULONG lintab[768]={
 };
 
 #define LOGFAC 2*16
-static	UWORD logtab[104]={
+static	const UWORD logtab[104]={
 	LOGFAC*907,LOGFAC*900,LOGFAC*894,LOGFAC*887,
 	LOGFAC*881,LOGFAC*875,LOGFAC*868,LOGFAC*862,
 	LOGFAC*856,LOGFAC*850,LOGFAC*844,LOGFAC*838,
@@ -207,7 +207,7 @@ static	UWORD logtab[104]={
 	LOGFAC*440,LOGFAC*437,LOGFAC*434,LOGFAC*431
 };
 
-static	SBYTE PanbrelloTable[256]={
+static	const SBYTE PanbrelloTable[256]={
 	  0,  2,  3,  5,  6,  8,  9, 11, 12, 14, 16, 17, 19, 20, 22, 23,
 	 24, 26, 27, 29, 30, 32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44,
 	 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 56, 57, 58, 59,

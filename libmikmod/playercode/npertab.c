@@ -32,7 +32,7 @@
 
 #include "mikmod_internals.h"
 
-UWORD npertab[7 * OCTAVE] = {
+const UWORD npertab[7 * OCTAVE] = {
 	/* Octaves 6 -> 0 */
 	/* C    C#     D    D#     E     F    F#     G    G#     A    A#     B */
 	0x6b0,0x650,0x5f4,0x5a0,0x54c,0x500,0x4b8,0x474,0x434,0x3f8,0x3c0,0x38a,

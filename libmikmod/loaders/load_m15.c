@@ -83,7 +83,7 @@ static const char *signatures[REJECT]={
 	"CAKEWALK",	/* cakewalk midi files */
 	"SZDD"		/* Microsoft compressed files */
 };
-static int siglen[REJECT]={8,4};
+static const int siglen[REJECT]={8,4};
 
 /*========== Loader code */
 

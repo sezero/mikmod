@@ -77,7 +77,8 @@ typedef struct MODNOTE {
 /* This table is taken from AMF2MOD.C
  * written in 1995 by Mr. P / Powersource
  * mrp@fish.share.net, ac054@sfn.saskatoon.sk.ca */
-UWORD periodtable[]={6848,6464,6096,5760,5424,5120,4832,4560,4304,
+static const UWORD periodtable[] = {
+	6848,6464,6096,5760,5424,5120,4832,4560,4304,
 	4064,3840,3628,3424,3232,3048,2880,2712,2560,
 	2416,2280,2152,2032,1920,1814,1712,1616,1524,
 	1440,1356,1280,1208,1140,1076,1016, 960, 907,

@@ -101,7 +101,7 @@ static	DSMNOTE* dsmbuf=NULL;
 
 static	CHAR DSM_Version[]="DSIK DSM-format";
 
-static	unsigned char DSMSIG[4+4]={'R','I','F','F','D','S','M','F'};
+static	const unsigned char DSMSIG[4+4]={'R','I','F','F','D','S','M','F'};
 
 /*========== Loader code */
 

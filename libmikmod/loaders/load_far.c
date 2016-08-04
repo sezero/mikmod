@@ -92,7 +92,7 @@ static	FARHEADER1 *mh1 = NULL;
 static	FARHEADER2 *mh2 = NULL;
 static	FARNOTE *pat = NULL;
 
-static	unsigned char FARSIG[4+3]={'F','A','R',0xfe,13,10,26};
+static	const unsigned char FARSIG[4+3]={'F','A','R',0xfe,13,10,26};
 
 /*========== Loader code */
 

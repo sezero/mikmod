@@ -37,7 +37,7 @@
 /* Unibuffer chunk size */
 #define BUFPAGE  128
 
-UWORD unioperands[UNI_LAST]={
+const UWORD unioperands[UNI_LAST] = {
 	0, /* not used */
 	1, /* UNI_NOTE */
 	1, /* UNI_INSTRUMENT */

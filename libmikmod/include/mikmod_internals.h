@@ -337,7 +337,7 @@ enum {
     UNI_LAST
 };
 
-extern UWORD unioperands[UNI_LAST];
+extern const UWORD unioperands[UNI_LAST];
 
 /* IT / S3M Extended SS effects: */
 enum {
@@ -573,9 +573,9 @@ typedef struct MLOADER {
 
 /* internal loader variables */
 extern MREADER* modreader;
-extern UWORD   finetune[16];
 extern MODULE  of;                  /* static unimod loading space */
-extern UWORD   npertab[7*OCTAVE];   /* used by the original MOD loaders */
+extern const UWORD finetune[16];
+extern const UWORD npertab[7*OCTAVE];/* used by the original MOD loaders */
 
 extern SBYTE   remap[UF_MAXCHAN];   /* for removing empty channels */
 extern UBYTE*  poslookup;           /* lookup table for pattern jumps after

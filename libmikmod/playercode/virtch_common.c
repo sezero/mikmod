@@ -224,7 +224,7 @@ void VC_SetupPointers(void)
 	}
 }
 
-#else
+#else /* _IN_VIRTCH_ */
 
 #ifndef _VIRTCH_COMMON_
 #define _VIRTCH_COMMON_
