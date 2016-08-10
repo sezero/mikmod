@@ -256,9 +256,7 @@ ULONG VC1_SilenceBytes(SBYTE* buf,ULONG todo)
 	todo=samples2bytes(bytes2samples(todo));
 
 	/* clear the buffer to zero (16 bits signed) or 0x80 (8 bits unsigned) */
-	if(vc_mode & DMODE_FLOAT)
-		memset(buf,0,todo);
-	else if(vc_mode & DMODE_16BITS)
+	if(vc_mode &(DMODE_16BITS|DMODE_FLOAT))
 		memset(buf,0,todo);
 	else
 		memset(buf,0x80,todo);
