@@ -841,13 +841,25 @@ static __inline __m128i mm_hiqq(const __m128i a) {
 
 #endif
 
-/* MikMod_malloc_aligned16() returns a 16 byte aligned zero-filled
+#if defined(HAVE_SSE2) || defined(HAVE_ALTIVEC)
+/* MikMod_amalloc() returns a 16 byte aligned zero-filled
    memory in SIMD-enabled builds.
- - the returned memory can be reclaimed using MikMod_free_aligned16()
+ - the returned memory can be freed with MikMod_afree()
  - the returned memory CAN NOT be realloc()'ed safely.  */
-void* MikMod_malloc_aligned16(size_t);
-void MikMod_free_aligned16(void *);  /* frees if ptr != NULL */
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+void* MikMod_amalloc(size_t);
+void MikMod_afree(void *);  /* frees if ptr != NULL */
+#ifdef __cplusplus
+}
+#endif
+
+#else /* NO SIMD */
+#define MikMod_amalloc MikMod_malloc
+#define MikMod_afree MikMod_free
+#endif
+
+#endif /* _MIKMOD_INTERNALS_H */
 
 /* ex:set ts=4: */

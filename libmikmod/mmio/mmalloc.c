@@ -37,6 +37,7 @@
 #include "string.h"
 #include "mikmod_internals.h"
 
+#if defined(HAVE_SSE2) || defined(HAVE_ALTIVEC)
 #undef WIN32_ALIGNED_MALLOC
 #if defined(_WIN32) && !defined(_WIN32_WCE)
 # if defined(_WIN64) /* OK with MSVC and MinGW */
@@ -50,18 +51,8 @@
 
 #define PTRSIZE (sizeof(void*))
 
-#if !(defined(HAVE_SSE2) || defined(HAVE_ALTIVEC))
-/* don't bother in SIMD-disabled builds */
-void* MikMod_malloc_aligned16(size_t size)
-{
-	return MikMod_calloc(1, size);
-}
-void MikMod_free_aligned16(void *data)
-{
-	if (data) MikMod_free(data);
-}
-#else /* return a 16 byte aligned address */
-void* MikMod_malloc_aligned16(size_t size)
+/* return a 16 byte aligned address */
+void* MikMod_amalloc(size_t size)
 {
 	void *d;
 #if defined(HAVE_POSIX_MEMALIGN)
@@ -93,7 +84,7 @@ void* MikMod_malloc_aligned16(size_t size)
 	return NULL;
 }
 
-void MikMod_free_aligned16(void *data)
+void MikMod_afree(void *data)
 {
 	if (!data) return;
 #if defined(HAVE_POSIX_MEMALIGN)

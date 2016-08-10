@@ -285,8 +285,8 @@ ULONG VC1_WriteBytes(SBYTE* buf,ULONG todo)
 void VC1_Exit(void)
 {
 	MikMod_free(vinf);
-	MikMod_free_aligned16(vc_tickbuf);
-	MikMod_free_aligned16(Samples);
+	MikMod_afree(vc_tickbuf);
+	MikMod_afree(Samples);
 
 	vc_tickbuf = NULL;
 	vinf = NULL;
@@ -362,7 +362,7 @@ void VC1_VoiceSetPanning(UBYTE voice,ULONG pan)
 void VC1_SampleUnload(SWORD handle)
 {
 	if (Samples && (handle < MAXSAMPLEHANDLES)) {
-		MikMod_free_aligned16(Samples[handle]);
+		MikMod_afree(Samples[handle]);
 		Samples[handle]=NULL;
 	}
 }
@@ -397,7 +397,7 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 	SL_SampleSigned(sload);
 	SL_Sample8to16(sload);
 
-	if(!(Samples[handle]=(SWORD*)MikMod_malloc_aligned16((length+20)<<1))) {
+	if(!(Samples[handle]=(SWORD*)MikMod_amalloc((length+20)<<1))) {
 		_mm_errno = MMERR_SAMPLE_TOO_BIG;
 		return -1;
 	}
