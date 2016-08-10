@@ -40,7 +40,6 @@
 #include <unistd.h>
 #endif
 
-#include <ctype.h>
 #include <string.h>
 
 #include "mikmod_internals.h"

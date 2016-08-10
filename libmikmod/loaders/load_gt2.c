@@ -34,11 +34,11 @@
 #include <unistd.h>
 #endif
 
-#include <ctype.h>
-#include <stdio.h>
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+
+#include <stdio.h>
 #include <string.h>
 
 #include "mikmod_internals.h"
