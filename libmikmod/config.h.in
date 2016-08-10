@@ -270,6 +270,9 @@
 /* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
 #undef MIKMOD_UNIX
 
+/* disable the high quality mixer (build only with the standart mixer) */
+#undef NO_HQMIXER
+
 /* Name of package */
 #undef PACKAGE
 

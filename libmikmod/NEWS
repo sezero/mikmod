@@ -12,6 +12,7 @@ libmikmod v3.3.9 was released on XX-XXX-XXXX.
   platforms. Patch from Andrew Rossignol.)
 - Fixed access to uninitialized memory in the simpleplayMEM example
   program.
+- Added a configuration option to exclude the hqmixer (off by default.)
 
 
 Summary of changes between libmikmod 3.3.7 and libmikmod 3.3.8:

@@ -30,6 +30,9 @@ CPPFLAGS+= -DDRV_RAW
 # support for output to stdout (not needed by everyone)
 #CPPFLAGS+= -DDRV_STDOUT
 
+# disable the high quality mixer (build only with the standart mixer)
+#CPPFLAGS+= -DNO_HQMIXER
+
 # drv_os2 and drv_dart require mmpm2
 LIBS = mmpm2.lib
 

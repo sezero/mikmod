@@ -39,6 +39,8 @@
 #include "config.h"
 #endif
 
+#ifndef NO_HQMIXER
+
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -1359,5 +1361,7 @@ int VC2_SetNumVoices(void)
 
 	return 0;
 }
+
+#endif /* ! NO_HQMIXER */
 
 /* ex:set ts=4: */

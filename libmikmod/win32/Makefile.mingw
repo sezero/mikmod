@@ -32,6 +32,9 @@ CPPFLAGS+=-DDRV_WIN
 LDLIBS+=-ldsound
 CPPFLAGS+=-DDRV_DS
 
+# disable the high quality mixer (build only with the standart mixer)
+#CPPFLAGS+=-DNO_HQMIXER
+
 # support for output through OpenAL (see drv_openal.c
 # for notes about OpenAL header location issues.)
 #LDLIBS+=-lOpenAL32

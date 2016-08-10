@@ -80,6 +80,8 @@ esac
 # libmikmod specific control variables and their default values.
 # ==============================================================
 
+libmikmod_hqmixer=yes
+
 libmikmod_driverlist=nosound
 
 libmikmod_driver_af=no
@@ -136,6 +138,14 @@ libmikmod_docs=yes
 # =========================
 # Configure script options.
 # =========================
+
+AC_ARG_ENABLE([hqmixer], [AS_HELP_STRING([--disable-hqmixer],[exclude support for high quality mixer [default=no]])],
+[if test "$enableval" = "no"
+then
+  libmikmod_hqmixer=no
+else
+  libmikmod_hqmixer=yes
+fi])
 
 AC_ARG_ENABLE([af], [AS_HELP_STRING([--enable-af],[include DEC AudioFile server driver [default=no]])],
 [if test "$enableval" = "yes"
@@ -1289,6 +1299,11 @@ then
    AC_DEFINE_UNQUOTED([MIKMOD_UNIX], $libmikmod_unix, [Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h.])
 fi
 
+if test $libmikmod_hqmixer = no
+then
+	AC_DEFINE([NO_HQMIXER], 1, [disable the high quality mixer (build only with the standart mixer)])
+fi
+
 # symbol visibility
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -Werror"
@@ -1374,5 +1389,6 @@ Library configuration:
   SIMD optimizations: $libmikmod_simd
   Dynamically loaded drivers whenever possible: $libmikmod_dynload
   Drivers to be compiled: $libmikmod_driverlist
+  HQ Mixer: $libmikmod_hqmixer
   Install path: $prefix/lib, $prefix/include
 "

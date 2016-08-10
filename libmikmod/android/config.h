@@ -1,5 +1,8 @@
 /* Customized config.h for Android builds */
 
+/* disable the high quality mixer (build only with the standart mixer) */
+/* #define NO_HQMIXER */
+
 /* Define if the OpenSL ES driver is compiled */
 #define DRV_OSLES 1
 /* Define if you want an .aiff file writer driver */

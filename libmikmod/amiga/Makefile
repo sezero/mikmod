@@ -41,6 +41,9 @@ ifeq ($(AOS4),1)
 include gcc_aos4.mk
 endif
 
+# disable the high quality mixer (build only with the standart mixer)
+#CPPFLAGS_LIB+=-DNO_HQMIXER
+
 # support for AHI output:
 CPPFLAGS_LIB+=-DDRV_AHI
 # support for wav file output:

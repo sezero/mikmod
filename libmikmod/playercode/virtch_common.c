@@ -32,6 +32,7 @@
 #endif
 #include "mikmod_internals.h"
 
+#ifndef NO_HQMIXER
 extern ULONG VC1_SilenceBytes(SBYTE*,ULONG);
 extern ULONG VC2_SilenceBytes(SBYTE*,ULONG);
 extern ULONG VC1_WriteBytes(SBYTE*,ULONG);
@@ -68,10 +69,12 @@ extern ULONG VC1_SampleLength(int,SAMPLE*);
 extern ULONG VC2_SampleLength(int,SAMPLE*);
 extern ULONG VC1_VoiceRealVolume(UBYTE);
 extern ULONG VC2_VoiceRealVolume(UBYTE);
+#endif
 
 
 #ifndef _IN_VIRTCH_
 
+#ifndef NO_HQMIXER
 extern int   VC1_Init(void);
 extern int   VC2_Init(void);
 static int  (*VC_Init_ptr)(void)=VC1_Init;
@@ -223,6 +226,7 @@ void VC_SetupPointers(void)
 		VC_VoiceRealVolume_ptr=VC1_VoiceRealVolume;
 	}
 }
+#endif/* !NO_HQMIXER */
 
 #else /* _IN_VIRTCH_ */
 

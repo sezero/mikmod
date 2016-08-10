@@ -162,6 +162,8 @@ SET (ENABLE_DL 0)
 SET (ENABLE_THREADS 0) # windows builds have it using win32api already.
 ENDIF()
 
+SET (DISABLE_HQMIXER 0 CACHE BOOL "Exclude support for high quality mixer")
+
 SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations (Unstable!)")
 SET (ENABLE_RPATH 1 CACHE BOOL "Whether to use an rpath when linking" )
 SET (ENABLE_STATIC 1 CACHE BOOL "Whether to build the static library (which takes more time)" )
@@ -434,6 +436,12 @@ IF(WIN32)
         PROPERTIES DEFINE_SYMBOL DLL_EXPORT
     )
 ENDIF(WIN32)
+
+IF(DISABLE_HQMIXER)
+  SET(NO_HQMIXER 1)
+ELSE()
+  SET(NO_HQMIXER)
+ENDIF()
 
 IF(ENABLE_PIPE)
   SET(DRV_PIPE 1)

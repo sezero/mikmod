@@ -15,6 +15,9 @@ CFLAGS+=-DDRV_WAV
 # support for output raw data to a file:
 CFLAGS+=-DDRV_RAW
 
+# disable the high quality mixer (build only with the standart mixer)
+#CFLAGS+=-DNO_HQMIXER
+
 CFLAGS+=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_MALLOC_H -DHAVE_UNISTD_H -DHAVE_SNPRINTF
 
 # compiler flags

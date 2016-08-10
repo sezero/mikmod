@@ -8,6 +8,9 @@
 /* Define if you have the vsnprintf function.  */
 #define HAVE_VSNPRINTF
 
+/* Define to disable the high quality mixer (build only with the standart mixer) */
+/*#define NO_HQMIXER*/
+
 /* Define if your system supports binary pipes (i.e. Unix) */
 /*#define DRV_PIPE*/
 /* Define if you want support for output to stdout */

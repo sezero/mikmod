@@ -1119,6 +1119,33 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 	}
 }
 
+#ifdef NO_HQMIXER
+#define VC_SetupPointers() do{}while(0)
+#define VC1_Init VC_Init
+#define VC1_Exit VC_Exit
+#define VC1_PlayStart VC_PlayStart
+#define VC1_PlayStop VC_PlayStop
+#define VC1_SampleLength VC_SampleLength
+#define VC1_SampleSpace VC_SampleSpace
+#define VC1_SampleLoad VC_SampleLoad
+#define VC1_SampleUnload VC_SampleUnload
+#define VC1_SetNumVoices VC_SetNumVoices
+#define VC1_SilenceBytes VC_SilenceBytes
+#define VC1_VoicePlay VC_VoicePlay
+#define VC1_VoiceStop VC_VoiceStop
+#define VC1_VoiceGetFrequency VC_VoiceGetFrequency
+#define VC1_VoiceGetPanning VC_VoiceGetPanning
+#define VC1_VoiceGetPosition VC_VoiceGetPosition
+#define VC1_VoiceGetVolume VC_VoiceGetVolume
+#define VC1_VoiceRealVolume VC_VoiceRealVolume
+#define VC1_VoiceSetFrequency VC_VoiceSetFrequency
+#define VC1_VoiceSetPanning VC_VoiceSetPanning
+#define VC1_VoiceSetVolume VC_VoiceSetVolume
+#define VC1_VoiceStopped VC_VoiceStopped
+#define VC1_WriteBytes VC_WriteBytes
+#define VC1_WriteSamples VC_WriteSamples
+#endif
+
 #define _IN_VIRTCH_
 #include "virtch_common.c"
 #undef _IN_VIRTCH_
@@ -1218,10 +1245,12 @@ void VC1_WriteSamples(SBYTE* buf,ULONG todo)
 
 int VC1_Init(void)
 {
+#ifndef NO_HQMIXER
 	VC_SetupPointers();
 
 	if (md_mode&DMODE_HQMIXER)
 		return VC2_Init();
+#endif
 
 	if(!(Samples=(SWORD**)MikMod_malloc_aligned16(MAXSAMPLEHANDLES*sizeof(SWORD*)))) {
 		_mm_errno = MMERR_INITIALIZING_MIXER;
