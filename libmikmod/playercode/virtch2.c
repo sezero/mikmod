@@ -437,9 +437,6 @@ end:
 	return idx;
 }
 
-#endif
-
-
 static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,ULONG todo)
 {
 	SWORD sample=0;
@@ -492,11 +489,9 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 
 	if (todo)
 	{
-#if defined HAVE_SSE2 || defined HAVE_ALTIVEC
 		if (md_mode & DMODE_SIMDMIXER) {
 			return MixSIMDStereoNormal(srce, dest, idx, increment, todo);
 		}
-#endif
 		while(todo)
 		{
 			i=idx>>FRACBITS,
@@ -515,6 +510,52 @@ static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG i
 
 	return idx;
 }
+
+#else /* HAVE_SSE2 || HAVE_ALTIVEC */
+static SLONGLONG MixStereoNormal(const SWORD* const srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,ULONG todo)
+{
+	SWORD sample=0;
+	SLONGLONG i,f;
+
+	while(todo--) {
+		i=idx>>FRACBITS,f=idx&FRACMASK;
+		sample=(SWORD)(((((SLONGLONG)srce[i]*(FRACMASK+1L-f)) +
+			((SLONGLONG)srce[i+1] * f)) >> FRACBITS));
+		idx += increment;
+
+		if(vnf->rampvol) {
+			*dest++ += (long)(
+			  ( ( ((SLONGLONG)vnf->oldlvol*vnf->rampvol) +
+			      (vnf->lvolsel*(CLICK_BUFFER-vnf->rampvol))
+			    ) * (SLONGLONG)sample ) >> CLICK_SHIFT );
+			*dest++ += (long)(
+			  ( ( ((SLONGLONG)vnf->oldrvol*vnf->rampvol) +
+			      (vnf->rvolsel*(CLICK_BUFFER-vnf->rampvol))
+			    ) * (SLONGLONG)sample ) >> CLICK_SHIFT );
+			vnf->rampvol--;
+		} else
+		  if(vnf->click) {
+			*dest++ += (long)(
+			  ( ( (SLONGLONG)(vnf->lvolsel*(CLICK_BUFFER-vnf->click)) *
+			      (SLONGLONG)sample ) + (vnf->lastvalL * vnf->click) )
+			    >> CLICK_SHIFT );
+			*dest++ += (long)(
+			  ( ( ((SLONGLONG)vnf->rvolsel*(CLICK_BUFFER-vnf->click)) *
+			      (SLONGLONG)sample ) + (vnf->lastvalR * vnf->click) )
+			    >> CLICK_SHIFT );
+			vnf->click--;
+		} else {
+			*dest++ +=vnf->lvolsel*sample;
+			*dest++ +=vnf->rvolsel*sample;
+		}
+	}
+	vnf->lastvalL=vnf->lvolsel*sample;
+	vnf->lastvalR=vnf->rvolsel*sample;
+
+	return idx;
+}
+#endif /* HAVE_SSE2 || HAVE_ALTIVEC */
+
 
 static SLONGLONG MixStereoSurround(const SWORD* srce,SLONG* dest,SLONGLONG idx,SLONGLONG increment,ULONG todo)
 {
