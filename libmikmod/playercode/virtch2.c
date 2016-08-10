@@ -923,6 +923,7 @@ static void Mix32To16_Stereo_SIMD_4Tap(SWORD* dste, const SLONG* srce, NATIVE co
 		srce+=32; /* 32 = 4 * 8  */
 	}
 
+	/* FIXME: THIS PART WRITES PAST DST !! */
 	if (remain)
 	{
 		Mix32To16_Stereo(dste, srce, remain);
