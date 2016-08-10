@@ -33,13 +33,6 @@ extern "C" {
 
 #include <stdarg.h>
 
-#if defined(__OS2__) || defined(__EMX__) || (defined(_WIN32) && !defined(__MINGW32__))
-#define strcasecmp(s,t) stricmp(s,t)
-#endif
-#if defined(__VBCC__)
-extern int strcasecmp (const char *, const char *);
-#endif
-
 #ifndef MIKMOD_UNIX
 #if (defined(unix) || defined(__unix__) || defined(__unix) || \
         (defined(__APPLE__) && defined(__MACH__))) && \
@@ -128,6 +121,10 @@ extern MikMod_handler_t _mm_errorhandler;
 
 DECLARE_MUTEX(lists);
 DECLARE_MUTEX(vars);
+
+/*========== Replacement funcs */
+
+extern int _mm_strcasecmp (const char *__s1, const char *__s2);
 
 /*========== Portable file I/O */
 

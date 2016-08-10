@@ -47,6 +47,8 @@ SRCS =	../drivers/drv_dc.c	\
 	../depackers/s404.c	\
 	../depackers/xpk.c	\
 	\
+	../posix/strcasecmp.c	\
+	\
 	../playercode/mdreg.c	\
 	../playercode/mdriver.c	\
 	../playercode/mloader.c	\

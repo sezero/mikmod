@@ -66,7 +66,7 @@ OBJ=drv_os2.obj drv_dart.obj &
     load_it.obj load_imf.obj load_m15.obj load_med.obj load_mod.obj load_mtm.obj load_okt.obj &
     load_s3m.obj load_stm.obj load_stx.obj load_ult.obj load_umx.obj load_uni.obj load_xm.obj &
     mmalloc.obj mmerror.obj mmio.obj &
-    mmcmp.obj pp20.obj s404.obj xpk.obj &
+    mmcmp.obj pp20.obj s404.obj xpk.obj strcasecmp.obj &
     mdriver.obj mdreg.obj mloader.obj mlreg.obj mlutil.obj mplayer.obj munitrk.obj mwav.obj &
     npertab.obj sloader.obj virtch.obj virtch2.obj virtch_common.obj
 
@@ -85,7 +85,7 @@ $(DLLNAME): $(OBJ)
 $(LIBSTATIC): $(OBJ)
 	wlib -q -b -n $@ $(OBJ)
 
-HEADER_DEPS=..\include\mikmod.h ..\include\mikmod_internals.h
+HEADER_DEPS=..\include\mikmod.h ..\include\mikmod_internals.h ../include/mikmod_ctype.h
 drv_dart.obj: ..\drivers\drv_dart.c $(HEADER_DEPS)
 	$(COMPILE) -fo=$^@ ..\drivers\drv_dart.c
 drv_nos.obj: ..\drivers\drv_nos.c $(HEADER_DEPS)
@@ -182,3 +182,5 @@ virtch2.obj: ..\playercode\virtch2.c ..\playercode\virtch_common.c $(HEADER_DEPS
 	$(COMPILE) -fo=$^@ ..\playercode\virtch2.c
 virtch_common.obj: ..\playercode\virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) -fo=$^@ ..\playercode\virtch_common.c
+strcasecmp.obj: ..\posix\strcasecmp.c $(HEADER_DEPS)
+	$(COMPILE) -fo=$^@ ..\posix\strcasecmp.c

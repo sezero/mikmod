@@ -1,4 +1,4 @@
-# Makefile for win32 for the lcc-win32 compiler.
+# Makefile for windows for the lcc-win32 compiler.
 #
 # For XAudio2 support you need DirectX SDK / xaudio2.h, then:
 # add /DDRV_XAUDIO2 among your CFLAGS. (not tested.)
@@ -37,7 +37,7 @@ OBJ=$(DRIVER_OBJ) \
     load_it.o load_imf.o load_m15.o load_med.o load_mod.o load_mtm.o load_okt.o \
     load_s3m.o load_stm.o load_stx.o load_ult.o load_umx.o load_uni.o load_xm.o \
     mmalloc.o mmerror.o mmio.o \
-    mmcmp.o pp20.o s404.o xpk.o \
+    mmcmp.o pp20.o s404.o xpk.o strcasecmp.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 
@@ -53,7 +53,7 @@ $(DLLNAME):     $(OBJ) mikmod.def
 $(LIBSTATIC):   $(OBJ)
 	$(LIB) /OUT:$(LIBSTATIC) *.o
 
-HEADER_DEPS=..\include\mikmod.h ..\include\mikmod_internals.h
+HEADER_DEPS=..\include\mikmod.h ..\include\mikmod_internals.h ../include/mikmod_ctype.h
 drv_ds.o: ..\drivers\drv_ds.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\drivers\drv_ds.c
 drv_aiff.o: ..\drivers\drv_aiff.c $(HEADER_DEPS)
@@ -156,4 +156,6 @@ virtch2.o: ..\playercode\virtch2.c ..\playercode\virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\playercode\virtch2.c
 virtch_common.o: ..\playercode\virtch_common.c $(HEADER_DEPS)
 	$(COMPILE) /Fo$@ ..\playercode\virtch_common.c
+strcasecmp.o: ..\posix\strcasecmp.c $(HEADER_DEPS)
+	$(COMPILE) /Fo$@ ..\posix\strcasecmp.c
 

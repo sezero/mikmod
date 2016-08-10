@@ -43,12 +43,6 @@
 /* Define if you have the srandom function.  */
 /* #undef HAVE_SRANDOM */
 
-/* Define if you have the strcasecmp function.  */
-#define HAVE_STRCASECMP 1
-
-/* Define if you have the strdup function.  */
-#define HAVE_STRDUP 1
-
 /* Define if you have the strstr function.  */
 #define HAVE_STRSTR 1
 
@@ -63,9 +57,6 @@
 
 /* Define if you have the <memory.h> header file.  */
 /* #undef HAVE_MEMORY_H */
-
-/* Define if you have the <strings.h> header file.  */
-/* #undef HAVE_STRINGS_H */
 
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H 1

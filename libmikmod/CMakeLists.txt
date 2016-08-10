@@ -301,7 +301,7 @@ INCLUDE_DIRECTORIES(BEFORE "${CMAKE_SOURCE_DIR}/include")
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR})
 
 CHECK_MULTI_INCLUDE_FILES(
-    "dlfcn.h" "fcntl.h" "limits.h" "malloc.h" "memory.h" "strings.h" "sys/ioctl.h" "unistd.h" "windows.h"
+    "dlfcn.h" "fcntl.h" "limits.h" "malloc.h" "memory.h" "sys/ioctl.h" "unistd.h" "windows.h"
 )
 
 IF(WIN32 AND NOT HAVE_WINDOWS_H)
@@ -383,6 +383,7 @@ SET (MIKMOD_LIB_MODULES
     depackers/pp20.c
     depackers/s404.c
     depackers/xpk.c
+    posix/strcasecmp.c
     playercode/mdreg.c
     playercode/mdriver.c
     playercode/mdulaw.c
@@ -401,7 +402,7 @@ SET (MIKMOD_LIB_MODULES
 
 REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
     posix
-    memcmp strcasecmp strdup strstr)
+    memcmp strstr)
 
 SET (LIBMIKMOD_LIBS)
 

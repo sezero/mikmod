@@ -35,7 +35,6 @@
 #include <unistd.h>
 #endif
 
-#include <ctype.h>
 #include <stdio.h>
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -43,6 +42,7 @@
 #include <string.h>
 
 #include "mikmod_internals.h"
+#include "mikmod_ctype.h"
 
 #ifdef SUNOS
 extern int fprintf(FILE *, const char *, ...);
@@ -204,7 +204,7 @@ static BOOL M15_Test(void)
 			   (*h.samples[t].samplename))
 				ust_loader = 1;
 		} else
-		  if(!isdigit((int)h.samples[t].samplename[0]))
+		  if(!mik_isdigit((int)h.samples[t].samplename[0]))
 				ust_loader = 1;
 
 		if(h.samples[t].length>4999||h.samples[t].reppos>9999) {

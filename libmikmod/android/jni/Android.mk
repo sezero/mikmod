@@ -44,6 +44,7 @@ $(MIKMOD_PATH)/depackers/mmcmp.c \
 $(MIKMOD_PATH)/depackers/pp20.c \
 $(MIKMOD_PATH)/depackers/s404.c \
 $(MIKMOD_PATH)/depackers/xpk.c \
+$(MIKMOD_PATH)/posix/strcasecmp.c \
 $(MIKMOD_PATH)/playercode/mdreg.c \
 $(MIKMOD_PATH)/playercode/mdriver.c \
 $(MIKMOD_PATH)/playercode/mdulaw.c \

@@ -67,6 +67,7 @@ OBJ=objs/drv_ahi.o \
     objs/drv_aiff.o \
     objs/drv_wav.o \
     objs/drv_nos.o \
+    objs/strcasecmp.o \
     objs/load_669.o \
     objs/load_amf.o \
     objs/load_asy.o \
@@ -143,7 +144,7 @@ splayMEM2: $(LIB) objs/amiga.o objs/splayMEM2.o
 soundeffects: $(LIB) objs/amiga.o objs/soundeffects.o
 	$(CC) objs/amiga.o objs/soundeffects.o $(LDFLAGS) $(LDLIBS) -o soundeffects
 
-HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h
+HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h ../include/mikmod_ctype.h
 objs/drv_ahi.o: ../drivers/drv_ahi.c $(HEADER_DEPS)
 	$(COMPILE_LIB) ../drivers/drv_ahi.c -o objs/drv_ahi.o
 objs/drv_nos.o: ../drivers/drv_nos.c $(HEADER_DEPS)
@@ -238,6 +239,8 @@ objs/virtch2.o: ../playercode/virtch2.c ../playercode/virtch_common.c $(HEADER_D
 	$(COMPILE_LIB) ../playercode/virtch2.c -o objs/virtch2.o
 objs/virtch_common.o: ../playercode/virtch_common.c $(HEADER_DEPS)
 	$(COMPILE_LIB) ../playercode/virtch_common.c -o objs/virtch_common.o
+objs/strcasecmp.o: ../posix/strcasecmp.c $(HEADER_DEPS)
+	$(COMPILE_LIB) ../posix/strcasecmp.c -o objs/strcasecmp.o
 
 objs/amiga.o:  ../examples/amiga.c
 	$(COMPILE_APP) ../examples/amiga.c -o objs/amiga.o
@@ -253,3 +256,4 @@ objs/splayMEM2.o: ../examples/simpleplayMEM2/splayMEM2.c $(HEADER_DEPS)
 	$(COMPILE_APP) ../examples/simpleplayMEM2/splayMEM2.c -o objs/splayMEM2.o
 objs/soundeffects.o: ../examples/soundeffects/soundeffects.c $(HEADER_DEPS)
 	$(COMPILE_APP) ../examples/soundeffects/soundeffects.c -o objs/soundeffects.o
+

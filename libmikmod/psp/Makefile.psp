@@ -40,6 +40,7 @@ OBJS=../drivers/drv_psp.o ../drivers/drv_nos.o \
      ../mmio/mmalloc.o ../mmio/mmerror.o ../mmio/mmio.o \
      ../depackers/mmcmp.o ../depackers/pp20.o \
      ../depackers/s404.o ../depackers/xpk.o \
+     ../posix/strcasecmp.o \
      ../playercode/mdriver.o ../playercode/mdreg.o \
      ../playercode/mloader.o ../playercode/mlreg.o \
      ../playercode/mlutil.o ../playercode/mplayer.o \

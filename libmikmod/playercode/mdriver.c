@@ -33,9 +33,6 @@
 #endif
 
 #include <string.h>
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
 
 #include "mikmod_internals.h"
 
@@ -246,7 +243,7 @@ MIKMODAPI int MikMod_DriverFromAlias(const CHAR *alias)
 	cruise=firstdriver;
 	while(cruise) {
 		if (cruise->Alias) {
-			if (!(strcasecmp(alias,cruise->Alias))) break;
+			if (!(_mm_strcasecmp(alias,cruise->Alias))) break;
 			rank++;
 		}
 		cruise=cruise->next;

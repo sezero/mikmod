@@ -510,14 +510,14 @@ AC_C_BIGENDIAN
 
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h strings.h sys/ioctl.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h])
 
 # ============================
 # Check for library functions.
 # ============================
 
 AC_CHECK_FUNCS([posix_memalign setenv snprintf srandom])
-AC_REPLACE_FUNCS([memcmp strcasecmp strdup strstr])
+AC_REPLACE_FUNCS([memcmp strstr])
 AC_CHECK_LIB([m],[floor],LIBRARY_LIB="-lm $LIBRARY_LIB")
 AC_EGREP_HEADER([srandom],[math.h],AC_DEFINE([SRANDOM_IN_MATH_H], 1,
 					 [Define if your system defines random(3) and srandom(3) in math.h instead of stdlib.h]))

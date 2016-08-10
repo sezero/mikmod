@@ -96,6 +96,7 @@ libmikmod_la_SOURCES = \
 		depackers/pp20.c \
 		depackers/s404.c \
 		depackers/xpk.c \
+		posix/strcasecmp.c \
 		playercode/mdreg.c \
 		playercode/mdriver.c \
 		playercode/mdulaw.c \

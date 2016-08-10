@@ -34,7 +34,6 @@
 #include <unistd.h>
 #endif
 
-#include <ctype.h>
 #include <stdio.h>
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -42,6 +41,7 @@
 #include <string.h>
 
 #include "mikmod_internals.h"
+#include "mikmod_ctype.h"
 
 #ifdef SUNOS
 extern int fprintf(FILE *, const char *, ...);
@@ -111,7 +111,7 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 
 	/* Star Tracker */
 	if (((!memcmp(id, "FLT", 3)) || (!memcmp(id, "EXO", 3))) &&
-		(isdigit(id[3]))) {
+		(mik_isdigit(id[3]))) {
 		*descr = startrekker;
 		modtype = trekker = 1;
 		*numchn = id[3] - '0';
@@ -141,7 +141,7 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 	}
 
 	/* Fasttracker */
-	if ((!memcmp(id + 1, "CHN", 3)) && (isdigit(id[0]))) {
+	if ((!memcmp(id + 1, "CHN", 3)) && (mik_isdigit(id[0]))) {
 		*descr = fasttracker;
 		modtype = 1;
 		*numchn = id[0] - '0';
@@ -149,7 +149,7 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 	}
 	/* Fasttracker or Taketracker */
 	if (((!memcmp(id + 2, "CH", 2)) || (!memcmp(id + 2, "CN", 2)))
-		&& (isdigit(id[0])) && (isdigit(id[1]))) {
+		&& (mik_isdigit(id[0])) && (mik_isdigit(id[1]))) {
 		if (id[3] == 'H') {
 			*descr = fasttracker;
 			modtype = 2;		/* this can also be Imago Orpheus */
