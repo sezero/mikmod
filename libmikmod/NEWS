@@ -13,6 +13,7 @@ libmikmod v3.3.9 was released on XX-XXX-XXXX.
 - Fixed access to uninitialized memory in the simpleplayMEM example
   program.
 - Added a configuration option to exclude the hqmixer (off by default.)
+- Using locale-insensitive ctype.h and casecmp functions in library.
 - Configury: New --disable-alldrv option to disable all of the audio
   output drivers.  If additional --enable-xxx options are given, the
   specified drivers will be enabled.
