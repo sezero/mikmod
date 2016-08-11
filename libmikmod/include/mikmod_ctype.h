@@ -61,6 +61,10 @@ static inline int mik_isspace(int c) {
     return 0;
 }
 
+static inline int mik_isgraph(int c) {
+    return (c > 0x20 && c <= 0x7e);
+}
+
 static inline int mik_isprint(int c) {
     return (c >= 0x20 && c <= 0x7e);
 }
