@@ -147,6 +147,40 @@ else
   libmikmod_hqmixer=yes
 fi])
 
+AC_ARG_ENABLE([alldrv], [AS_HELP_STRING([--disable-alldrv],[disable all of the audio drivers. using additional --enable-XXX options enables the specified drivers.])],
+[if test "$enableval" = "no"
+then
+  libmikmod_driver_af=no
+  libmikmod_driver_ahi=no
+  libmikmod_driver_aix=no
+  libmikmod_driver_alsa=no
+  libmikmod_driver_pulseaudio=no
+  libmikmod_driver_esd=no
+  libmikmod_driver_nas=no
+  libmikmod_driver_hp=no
+  libmikmod_driver_sdl=no
+  libmikmod_driver_openal=no
+  libmikmod_driver_oss=no
+  libmikmod_driver_sam9407=no
+  libmikmod_driver_sgi=no
+  libmikmod_driver_sndio=no
+  libmikmod_driver_sun=no
+  libmikmod_driver_osx=no
+  libmikmod_driver_mac=no
+  libmikmod_driver_win=nos
+  libmikmod_driver_ds=nos
+  libmikmod_driver_xaudio2=no
+  libmikmod_driver_ultra=no
+  libmikmod_driver_os2=no
+  libmikmod_driver_dart=no
+  libmikmod_driver_aiff=no
+  libmikmod_driver_wav=no
+  libmikmod_driver_raw=no
+  libmikmod_driver_stdout=no
+  libmikmod_driver_pipe=no
+  libmikmod_driver_osles=no
+fi])
+
 AC_ARG_ENABLE([af], [AS_HELP_STRING([--enable-af],[include DEC AudioFile server driver [default=no]])],
 [if test "$enableval" = "yes"
 then
