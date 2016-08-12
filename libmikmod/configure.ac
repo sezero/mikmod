@@ -167,8 +167,8 @@ then
   libmikmod_driver_sun=no
   libmikmod_driver_osx=no
   libmikmod_driver_mac=no
-  libmikmod_driver_win=nos
-  libmikmod_driver_ds=nos
+  libmikmod_driver_win=no
+  libmikmod_driver_ds=no
   libmikmod_driver_xaudio2=no
   libmikmod_driver_ultra=no
   libmikmod_driver_os2=no
