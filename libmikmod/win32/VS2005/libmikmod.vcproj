@@ -521,6 +521,10 @@
 				RelativePath="..\..\playercode\virtch_common.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\posix\strcasecmp.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -529,6 +533,10 @@
 			>
 			<File
 				RelativePath="..\..\include\mikmod.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\mikmod_ctype.h"
 				>
 			</File>
 			<File

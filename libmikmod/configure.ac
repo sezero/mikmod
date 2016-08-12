@@ -524,6 +524,7 @@ AC_PROG_LIBTOOL
 
 AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
+AC_C_INLINE
 AC_CACHE_CHECK([if compiler understands the signed keyword],[libmikmod_cv_gcc_signed],
 	AC_LANG_SAVE
 	AC_LANG_C

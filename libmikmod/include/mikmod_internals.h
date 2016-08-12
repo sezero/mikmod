@@ -33,6 +33,10 @@ extern "C" {
 
 #include <stdarg.h>
 
+#if defined(_MSC_VER) && !defined(__cplusplus) && !defined(HAVE_CONFIG_H)
+#define inline __inline
+#endif
+
 #ifndef MIKMOD_UNIX
 #if (defined(unix) || defined(__unix__) || defined(__unix) || \
         (defined(__APPLE__) && defined(__MACH__))) && \

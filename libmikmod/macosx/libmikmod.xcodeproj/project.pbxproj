@@ -15,6 +15,10 @@
 		638B8F571AE42B7F00D32F8C /* pp20.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B8F551AE42B7F00D32F8C /* pp20.c */; };
 		639350C31AF3DC5400D6BBA4 /* xpk.c in Sources */ = {isa = PBXBuildFile; fileRef = 639350C21AF3DC5400D6BBA4 /* xpk.c */; };
 		639350C41AF3DC5400D6BBA4 /* xpk.c in Sources */ = {isa = PBXBuildFile; fileRef = 639350C21AF3DC5400D6BBA4 /* xpk.c */; };
+		63F234211D5E0C600047A150 /* strcasecmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F234201D5E0C600047A150 /* strcasecmp.c */; };
+		63F234221D5E0C600047A150 /* strcasecmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F234201D5E0C600047A150 /* strcasecmp.c */; };
+		63F234241D5E0C7A0047A150 /* mikmod_ctype.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F234231D5E0C7A0047A150 /* mikmod_ctype.h */; };
+		63F234251D5E0C7A0047A150 /* mikmod_ctype.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F234231D5E0C7A0047A150 /* mikmod_ctype.h */; };
 		63FCEC8019637671007CF2F3 /* drv_openal.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F9982201D1638A01046A14 /* drv_openal.c */; };
 		63FCEC81196376C3007CF2F3 /* load_gt2.c in Sources */ = {isa = PBXBuildFile; fileRef = F4E367F907EDC8E8000D2C4B /* load_gt2.c */; };
 		A48F9F0005EB7BAC0073A1B4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A48F9EFF05EB7BAC0073A1B4 /* Info.plist */; };
@@ -136,6 +140,8 @@
 		638B8F521AE42B6C00D32F8C /* mmcmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mmcmp.c; path = ../depackers/mmcmp.c; sourceTree = SOURCE_ROOT; };
 		638B8F551AE42B7F00D32F8C /* pp20.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pp20.c; path = ../depackers/pp20.c; sourceTree = SOURCE_ROOT; };
 		639350C21AF3DC5400D6BBA4 /* xpk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xpk.c; path = ../depackers/xpk.c; sourceTree = SOURCE_ROOT; };
+		63F234201D5E0C600047A150 /* strcasecmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strcasecmp.c; path = ../posix/strcasecmp.c; sourceTree = SOURCE_ROOT; };
+		63F234231D5E0C7A0047A150 /* mikmod_ctype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mikmod_ctype.h; path = ../include/mikmod_ctype.h; sourceTree = SOURCE_ROOT; };
 		A48F9EFF05EB7BAC0073A1B4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A48F9F1505EB7C0F0073A1B4 /* drv_aiff.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = drv_aiff.c; path = ../drivers/drv_aiff.c; sourceTree = "<group>"; };
 		A48FA0FE05EB7CBE0073A1B4 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
@@ -259,9 +265,18 @@
 			name = depackers;
 			sourceTree = "<group>";
 		};
+		63F2341D1D5E0C340047A150 /* posix */ = {
+			isa = PBXGroup;
+			children = (
+				63F234201D5E0C600047A150 /* strcasecmp.c */,
+			);
+			name = posix;
+			sourceTree = "<group>";
+		};
 		F5F5DE20017CB2BC0103A810 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				63F2341D1D5E0C340047A150 /* posix */,
 				638B8F4B1AE42B0000D32F8C /* depackers */,
 				F5F5DE7E017CB4010103A810 /* config.h */,
 				F5F5DE26017CB2BC0103A810 /* playercode */,
@@ -291,6 +306,7 @@
 		F5F5DE22017CB2BC0103A810 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				63F234231D5E0C7A0047A150 /* mikmod_ctype.h */,
 				F5F5DE7C017CB3EC0103A810 /* mikmod.h */,
 				F5F5DE31017CB3390103A810 /* mikmod_internals.h */,
 			);
@@ -365,6 +381,7 @@
 				A4E3AF2805D43FCC000F1B47 /* mikmod.h in Headers */,
 				A4E3AF2905D43FCC000F1B47 /* config.h in Headers */,
 				A4E3AF2B05D43FCC000F1B47 /* mikmod_internals.h in Headers */,
+				63F234241D5E0C7A0047A150 /* mikmod_ctype.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +392,7 @@
 				A4E3AF5F05D43FCC000F1B47 /* mikmod_internals.h in Headers */,
 				A48FA2DC05EB80940073A1B4 /* mikmod.h in Headers */,
 				A4E3AF6005D43FCC000F1B47 /* config.h in Headers */,
+				63F234251D5E0C7A0047A150 /* mikmod_ctype.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,7 +446,14 @@
 			isa = PBXProject;
 			buildConfigurationList = F4979A1D08AFF5D0001ABEC2 /* Build configuration list for PBXProject "libmikmod" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* libmikmod */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
@@ -523,6 +548,7 @@
 				638B8F561AE42B7F00D32F8C /* pp20.c in Sources */,
 				639350C31AF3DC5400D6BBA4 /* xpk.c in Sources */,
 				63883ECF1AF40F0A00666EF1 /* s404.c in Sources */,
+				63F234211D5E0C600047A150 /* strcasecmp.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -579,6 +605,7 @@
 				638B8F571AE42B7F00D32F8C /* pp20.c in Sources */,
 				639350C41AF3DC5400D6BBA4 /* xpk.c in Sources */,
 				63883ED01AF40F0A00666EF1 /* s404.c in Sources */,
+				63F234221D5E0C600047A150 /* strcasecmp.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -298,6 +298,10 @@ SOURCE=..\..\playercode\virtch2.c
 
 SOURCE=..\..\playercode\virtch_common.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\posix\strcasecmp.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -305,6 +309,10 @@ SOURCE=..\..\playercode\virtch_common.c
 # Begin Source File
 
 SOURCE=..\..\include\mikmod.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\mikmod_ctype.h
 # End Source File
 # Begin Source File
 

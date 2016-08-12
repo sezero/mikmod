@@ -275,6 +275,14 @@ FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
     ENDIF (${FLAG_EXISTS_VAR})
 ENDFOREACH(CFLAG_TO_CHECK)
 
+# check inline keyword
+CHECK_C_SOURCE_COMPILES("static inline int static_foo() {return 0;}
+                         int main(void) {return 0;}" HAVE_C_INLINE)
+CHECK_C_SOURCE_COMPILES("static __inline__ int static_foo() {return 0;}
+                         int main(void) {return 0;}" HAVE_C___INLINE__)
+CHECK_C_SOURCE_COMPILES("static __inline int static_foo() {return 0;}
+                         int main(void) {return 0;}" HAVE_C___INLINE)
+
 # check for symbol visibility attributes
 IF(NOT WIN32 AND NOT CYGWIN)
     SET(OLD_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")

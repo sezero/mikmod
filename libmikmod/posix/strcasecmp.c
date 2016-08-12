@@ -2,6 +2,7 @@
 #include "config.h"
 #endif
 
+#include "mikmod_internals.h"
 #include "mikmod_ctype.h"
 
 int _mm_strcasecmp(const char *__s1, const char *__s2)
