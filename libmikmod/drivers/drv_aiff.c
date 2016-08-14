@@ -21,8 +21,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   Driver for output to a file called MUSIC.AIFF [or .AIF on Windows].
 
 ==============================================================================*/
@@ -67,6 +65,9 @@ extern int fclose(FILE *);
 #endif
 #ifdef __VBCC__
 #define unlink remove
+#endif
+#ifdef _WIN32
+#define unlink _unlink
 #endif
 
 static void	AIFF_ConvertToIeeeExtended (double theValue, char *theBytes);
