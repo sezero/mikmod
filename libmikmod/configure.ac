@@ -811,8 +811,8 @@ case $host_os in
 		AC_CHECK_HEADERS([xaudio2.h],[libmikmod_driver_xaudio2=yes])
 		if test $libmikmod_driver_xaudio2 = yes
 		then
-			AC_CACHE_CHECK([if XAUDIO2_DEBUG_ENGINE is defined],[libmikmod_cv_xaudio2_7_header],
-			 [AC_TRY_COMPILE([#include <xaudio2.h>],[int flag=XAUDIO2_DEBUG_ENGINE;],
+			AC_CACHE_CHECK([if XAUDIO2_VOICE_NOSAMPLESPLAYED is defined],[libmikmod_cv_xaudio2_7_header],
+			 [AC_TRY_COMPILE([#include <xaudio2.h>],[int flag=XAUDIO2_VOICE_NOSAMPLESPLAYED;],
 					[libmikmod_cv_xaudio2_7_header=yes],[libmikmod_cv_xaudio2_7_header=no])])
 			if test $libmikmod_cv_xaudio2_7_header = yes && test $use_xaudio28 = yes
 			then
