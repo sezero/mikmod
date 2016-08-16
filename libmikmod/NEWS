@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.3.8 and libmikmod 3.3.9:
 ========================================================================
 
-libmikmod v3.3.9 was released on XX-XXX-XXXX.
+libmikmod v3.3.9 was released on 12-Aug-2016.
 
 - Amiga, AHI driver: Fixed a crash upon driver shutdown.
 - Amiga: Updates. Added standalone makefiles with cross-build support.
