@@ -154,7 +154,7 @@ static long _mm_FileReader_Tell(MREADER* reader)
 
 MREADER *_mm_new_file_reader(FILE* fp)
 {
-	MFILEREADER* reader=(MFILEREADER*)MikMod_malloc(sizeof(MFILEREADER));
+	MFILEREADER* reader=(MFILEREADER*)MikMod_calloc(1,sizeof(MFILEREADER));
 	if (reader) {
 		reader->core.Eof =&_mm_FileReader_Eof;
 		reader->core.Read=&_mm_FileReader_Read;
@@ -200,7 +200,7 @@ static int _mm_FileWriter_Put(MWRITER* writer,int value)
 
 MWRITER *_mm_new_file_writer(FILE* fp)
 {
-	MFILEWRITER* writer=(MFILEWRITER*)MikMod_malloc(sizeof(MFILEWRITER));
+	MFILEWRITER* writer=(MFILEWRITER*)MikMod_calloc(1,sizeof(MFILEWRITER));
 	if (writer) {
 		writer->core.Seek =&_mm_FileWriter_Seek;
 		writer->core.Tell =&_mm_FileWriter_Tell;
@@ -232,7 +232,7 @@ void _mm_delete_mem_reader(MREADER* reader)
 
 MREADER *_mm_new_mem_reader(const void *buffer, long len)
 {
-	MMEMREADER* reader=(MMEMREADER*)MikMod_malloc(sizeof(MMEMREADER));
+	MMEMREADER* reader=(MMEMREADER*)MikMod_calloc(1,sizeof(MMEMREADER));
 	if (reader)
 	{
 		reader->core.Eof =&_mm_MemReader_Eof;
