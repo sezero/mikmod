@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.3.9 and libmikmod 3.3.10:
 ========================================================================
 
-libmikmod v3.3.10 was released on XX-XXX-XXXX.
+libmikmod v3.3.10 was released on 31-Aug-2016.
 
 - Fixed windows builds when UNICODE is defined. (Thanks S. Michel).
 
@@ -37,9 +37,9 @@ libmikmod v3.3.8 was released on 15-Nov-2015.
 - AMF loader: Fixed segmentation fault in case of bad sample offsets in
   broken files. (sf.net bug #26, thanks to 'Saga' of OpenMPT project for
   the report and analysis.)
-- AMF loader: Fixed loading of v10 files where samle loop start and end
-  values should be read as 32 bits, not 16 bits. (tested with Maelcum's
- "the tribal zone" and "the way its gonna b". noticed in OpenMPT source)
+- AMF loader: Fixed loading of v10 files where sample loop start and end
+  values must be read as 32 bits, not 16 bits. (Tested with Maelcum's
+ "the tribal zone" and "the way its gonna b". Noticed in OpenMPT source)
 - Fixed a possible undefined behavior in the XM loader.
 - Support for MMCMP, Amiga PP20 (PowerPack), STC (Stone Cracker S404)
   and XPK compressed module formats, based on public domain code from
