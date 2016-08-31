@@ -860,8 +860,8 @@ MIKMODAPI BOOL MikMod_InitThreads(void)
 		} else
 			result=1;
 #elif defined(_WIN32)
-		if((!(_mm_mutex_lists=CreateMutex(NULL,FALSE,"libmikmod(lists)")))||
-		   (!(_mm_mutex_vars=CreateMutex(NULL,FALSE,"libmikmod(vars)"))))
+		if((!(_mm_mutex_lists=CreateMutex(NULL,FALSE,TEXT("libmikmod(lists)"))))||
+		   (!(_mm_mutex_vars=CreateMutex(NULL,FALSE,TEXT("libmikmod(vars)")))))
 			result=0;
 		else
 			result=1;

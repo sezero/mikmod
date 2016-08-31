@@ -228,7 +228,7 @@ static int DS_Init(void)
 	pSoundBufferNotify = (LPDIRECTSOUNDNOTIFY) p;
 
 	notifyUpdateHandle=CreateEvent
-				(NULL,FALSE,FALSE,"libmikmod DirectSound Driver positionNotify Event");
+				(NULL,FALSE,FALSE,TEXT("libmikmod DirectSound Driver positionNotify Event"));
 	if (!notifyUpdateHandle) {
 		_mm_errno=MMERR_DS_EVENT;
 		return 1;

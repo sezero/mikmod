@@ -281,7 +281,7 @@ static int XAudio2_Init(void) {
 		goto fail;
 	}
 #ifndef __cplusplus
-	if ((hBufferEvent = CreateEvent(NULL, FALSE, FALSE, "libmikmod XAudio2 Driver buffer Event")) == NULL) {
+	if ((hBufferEvent = CreateEvent(NULL, FALSE, FALSE, TEXT("libmikmod XAudio2 Driver buffer Event"))) == NULL) {
 		goto fail;
 	}
 #endif
