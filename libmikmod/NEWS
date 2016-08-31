@@ -1,3 +1,11 @@
+Summary of changes between libmikmod 3.3.9 and libmikmod 3.3.10:
+========================================================================
+
+libmikmod v3.3.10 was released on XX-XXX-XXXX.
+
+- Fixed windows builds when UNICODE is defined. (Thanks S. Michel).
+
+
 Summary of changes between libmikmod 3.3.8 and libmikmod 3.3.9:
 ========================================================================
 

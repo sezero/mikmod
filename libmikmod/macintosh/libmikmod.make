@@ -135,7 +135,6 @@ CCPPCOptions	=	{CCOptions} {DebugPPCOptions} -longlong on -prefix mpwmikmodheade
 #------------------------------------------------------------------------------
 
 LibObjects68K		=	¶
-					{obj68k}strdup.c.o ¶
 					{obj68k}strcasecmp.c.o ¶
 					{obj68k}mmalloc.c.o ¶
 					{obj68k}mmerror.c.o ¶
@@ -185,7 +184,6 @@ LibObjects68K		=	¶
 					#
 
 LibObjectsPPC	=	¶
-					{objppc}strdup.c.x ¶
 					{objppc}strcasecmp.c.x ¶
 					{objppc}mmalloc.c.x ¶
 					{objppc}mmerror.c.x ¶
