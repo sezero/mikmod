@@ -37,15 +37,16 @@ extern "C" {
 #define inline __inline
 #endif
 
+#include "mikmod.h"
+
 #ifndef MIKMOD_UNIX
-#if (defined(unix) || defined(__unix__) || defined(__unix) || \
-        (defined(__APPLE__) && defined(__MACH__))) && \
-   !(defined(__DJGPP__) || defined(_WIN32) || defined(__OS2__) || defined(__EMX__))
+#if (defined(unix) || defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) && \
+   !(defined(_MIKMOD_WIN32) || defined(_MIKMOD_OS2) || defined(_MIKMOD_DOS) || defined(_MIKMOD_AMIGA) || defined(macintosh))
 #define MIKMOD_UNIX 1
+#else
+#define MIKMOD_UNIX 0
 #endif
 #endif /* MIKMOD_UNIX */
-
-#include "mikmod.h"
 
 /*========== More type definitions */
 
