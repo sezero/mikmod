@@ -208,9 +208,12 @@ ADD_SUBDIRECTORY ("depackers")
 ADD_SUBDIRECTORY ("playercode")
 ADD_SUBDIRECTORY ("posix")
 
-SET(COMPILER_FLAGS_TO_CHECK
-    "-Wall" "-Werror=implicit-function-declaration"
-)
+IF (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
+    ADD_DEFINITIONS("-Wall" "-Wwrite-strings" "-Wshadow" "-Wundef" "-Wcast-qual")
+ENDIF()
+
+SET(COMPILER_FLAGS_TO_CHECK "-Werror=implicit-function-declaration")
+#LIST(APPEND COMPILER_FLAGS_TO_CHECK "-ffast-math")
 
 IF (APPLE)
     LIST(APPEND COMPILER_FLAGS_TO_CHECK "-fno-common")
@@ -234,32 +237,8 @@ IF (ENABLE_SIMD)
     ELSEIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
         LIST(APPEND COMPILER_FLAGS_TO_CHECK "-maltivec")
 
-    ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
+    ENDIF()
 ENDIF(ENABLE_SIMD)
-
-IF (${CMAKE_COMPILER_IS_GNUCC})
-    ADD_DEFINITIONS(
-        "-Wmissing-prototypes"
-        "-Wformat-nonliteral"
-        "-Wcast-align"
-        "-Wpointer-arith"
-        "-Wbad-function-cast"
-        "-Wstrict-prototypes"
-        "-Wmissing-declarations"
-        "-Wundef"
-        "-Wnested-externs"
-        "-Wcast-qual"
-        "-Wshadow"
-        "-Wwrite-strings"
-        "-Wunused"
-    )
-    LIST(APPEND COMPILER_FLAGS_TO_CHECK
-        "-Wold-style-declaration"
-        "-Wold-style-definition"
-        "-Wdeclaration-after-statement"
-        "-Wfloat-equal"
-    )
-ENDIF()
 
 SET (IDX 1)
 FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
@@ -268,8 +247,8 @@ FOREACH (CFLAG_TO_CHECK ${COMPILER_FLAGS_TO_CHECK})
     CHECK_C_COMPILER_FLAG("${CFLAG_TO_CHECK}" ${FLAG_EXISTS_VAR})
     IF (${FLAG_EXISTS_VAR})
         ADD_DEFINITIONS(${CFLAG_TO_CHECK})
-    ENDIF (${FLAG_EXISTS_VAR})
-ENDFOREACH(CFLAG_TO_CHECK)
+    ENDIF()
+ENDFOREACH()
 
 # check inline keyword
 CHECK_C_SOURCE_COMPILES("static inline int static_foo() {return 0;}
