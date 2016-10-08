@@ -237,30 +237,28 @@ IF (ENABLE_SIMD)
     ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
 ENDIF(ENABLE_SIMD)
 
-IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
-    IF (${CMAKE_COMPILER_IS_GNUCC})
-        ADD_DEFINITIONS(
-            "-Wmissing-prototypes"
-            "-Wformat-nonliteral"
-            "-Wcast-align"
-            "-Wpointer-arith"
-            "-Wbad-function-cast"
-            "-Wstrict-prototypes"
-            "-Wmissing-declarations"
-            "-Wundef"
-            "-Wnested-externs"
-            "-Wcast-qual"
-            "-Wshadow"
-            "-Wwrite-strings"
-            "-Wunused"
-        )
-        LIST(APPEND COMPILER_FLAGS_TO_CHECK
-            "-Wold-style-declaration"
-            "-Wold-style-definition"
-            "-Wdeclaration-after-statement"
-            "-Wfloat-equal"
-        )
-    ENDIF()
+IF (${CMAKE_COMPILER_IS_GNUCC})
+    ADD_DEFINITIONS(
+        "-Wmissing-prototypes"
+        "-Wformat-nonliteral"
+        "-Wcast-align"
+        "-Wpointer-arith"
+        "-Wbad-function-cast"
+        "-Wstrict-prototypes"
+        "-Wmissing-declarations"
+        "-Wundef"
+        "-Wnested-externs"
+        "-Wcast-qual"
+        "-Wshadow"
+        "-Wwrite-strings"
+        "-Wunused"
+    )
+    LIST(APPEND COMPILER_FLAGS_TO_CHECK
+        "-Wold-style-declaration"
+        "-Wold-style-definition"
+        "-Wdeclaration-after-statement"
+        "-Wfloat-equal"
+    )
 ENDIF()
 
 SET (IDX 1)
@@ -437,7 +435,7 @@ ENDIF (ENABLE_STATIC)
 
 SET_TARGET_PROPERTIES(mikmod
     PROPERTIES VERSION 3.3.0 SOVERSION 3
-    )
+)
 IF(WIN32)
     SET_TARGET_PROPERTIES(mikmod
         PROPERTIES DEFINE_SYMBOL DLL_EXPORT
