@@ -1,4 +1,9 @@
-/* ========== Features selected */
+/* config.h --  Generated CMake. */
+
+/* Version number of package */
+#cmakedefine VERSION "${VERSION}"
+
+/* ========== Features selection */
 
 /* Define if your system supports binary pipes (i.e. Unix) */
 #cmakedefine DRV_PIPE 1
@@ -202,9 +207,6 @@
 /* Define to 1 if you have the <sys/sam9407.h> header file. */
 #cmakedefine HAVE_SYS_SAM9407_H 1
 
-/* Define to 1 if you have the <sndio.h> header file. */
-#cmakedefine HAVE_SNDIO_H 1
-
 /* Define to 1 if you have the <sys/soundcard.h> header file. */
 #cmakedefine HAVE_SYS_SOUNDCARD_H 1
 
@@ -228,9 +230,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
-
-/* Version number of package */
-#cmakedefine VERSION "${VERSION}"
 
 /* Define if the C compiler supports the `inline' keyword. */
 #cmakedefine HAVE_C_INLINE
