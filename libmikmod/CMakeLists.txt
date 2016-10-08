@@ -164,9 +164,9 @@ ENDIF()
 
 SET (DISABLE_HQMIXER 0 CACHE BOOL "Exclude support for high quality mixer")
 
-SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations (Unstable!)")
+SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations (UNSTABLE!!!)")
 SET (ENABLE_RPATH 1 CACHE BOOL "Whether to use an rpath when linking" )
-SET (ENABLE_STATIC 1 CACHE BOOL "Whether to build the static library (which takes more time)" )
+SET (ENABLE_STATIC 1 CACHE BOOL "Whether to build the static library" )
 
 ### This is to set the RPATH correctly, so when installed
 ### under a prefix the executables will find the libraries.
@@ -240,7 +240,6 @@ ENDIF(ENABLE_SIMD)
 IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo))
     IF (${CMAKE_COMPILER_IS_GNUCC})
         ADD_DEFINITIONS(
-            "-Wold-style-declaration"
             "-Wmissing-prototypes"
             "-Wformat-nonliteral"
             "-Wcast-align"
@@ -254,15 +253,14 @@ IF ((CMAKE_BUILD_TYPE STREQUAL debug) OR (CMAKE_BUILD_TYPE STREQUAL RelWithDebIn
             "-Wshadow"
             "-Wwrite-strings"
             "-Wunused"
-            "-Wfloat-equal"
+        )
+        LIST(APPEND COMPILER_FLAGS_TO_CHECK
+            "-Wold-style-declaration"
             "-Wold-style-definition"
             "-Wdeclaration-after-statement"
+            "-Wfloat-equal"
         )
     ENDIF()
-ENDIF()
-
-IF (CMAKE_BUILD_TYPE STREQUAL release)
-    LIST(APPEND COMPILER_FLAGS_TO_CHECK "-flto")
 ENDIF()
 
 SET (IDX 1)
