@@ -191,11 +191,11 @@ static void audiobuffer_mark_free(int size)
 }
 
 /* I hope to have this function integrated into libesd someday...*/
-static ssize_t esd_writebuf(int fd,const void *buffer,size_t count)
+static ssize_t esd_writebuf(int fd, const void *buffer, size_t count)
 {
 	ssize_t res;
 
-	res = write(fd, (char*)buffer, count);
+	res = write(fd, buffer, count);
 	if (res < 0 && errno == EAGAIN)
 		return 0;
 
