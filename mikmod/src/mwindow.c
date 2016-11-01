@@ -828,10 +828,11 @@ void win_box_color(MWINDOW *win, int x1, int y1, int x2, int y2, ATTRS *back)
 				win_set_background (back[k--]);
 			mvaddch(i, x1, BOX_VLINE);
 		}
-		if (x2 <= maxx)
+		if (x2 <= maxx) {
 			if (back)
 				win_set_background (back[j++]);
 			mvaddch(i, x2, BOX_VLINE);
+		}
 	}
 }
 /* draw a box */
