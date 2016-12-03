@@ -57,7 +57,7 @@ CFLAGS+= $(DLLFLAGS)
 BLD_TARGET=$(DLLNAME)
 !endif
 
-COMPILE=wcc386 $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
+COMPILE=wcc386 -q $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
 
 OBJ=drv_os2.obj drv_dart.obj &
     drv_raw.obj drv_aiff.obj drv_wav.obj &
