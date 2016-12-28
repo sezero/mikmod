@@ -103,7 +103,7 @@ typedef enum {
 /*#define THREAD_START(name,fkt,arg) \
 	(_beginthread(_mm_mutex_##name, NULL, 4096, arg) != 0)*/
 #define THREAD_START(name,fkt,arg) \
-	(_beginthread(fkt, NULL, 4096, arg) != 0)
+	(_beginthread(fkt, NULL, 4096, arg) != -1)
 #define THREAD_JOIN(name,modevar) \
 	{	modevar = MTH_QUITTING; \
 		while (modevar==MTH_QUITTING) SLEEP(1); \
