@@ -10,11 +10,6 @@
 target = dll
 !endif
 
-!ifndef __UNIX__
-INCLUDES=-I..\os2 -I..\include
-!else
-INCLUDES=-I../os2 -I../include
-!endif
 CPPFLAGS=-DMIKMOD_BUILD -DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_MALLOC_H
 #
 # To build a debug version:
@@ -76,10 +71,11 @@ OBJ=drv_os2.obj drv_dart.obj &
 
 all: $(BLD_TARGET)
 
+# rely on symbol name, not ordinal: -irn switch of wlib is default, but -inn is not.
 $(DLLNAME): $(OBJ)
-	wlink NAM $@ SYSTEM os2v2_dll INITINSTANCE TERMINSTANCE LIBR {$(LIBS)} FIL {$(OBJ)} OPTION IMPF=$(EXPNAME)
-	wlib -q -b -iro -inn $(LIBNAME) +$(DLLNAME)
-#	wlib -q -b -n @$(EXPNAME)
+	wlink NAM $@ SYSTEM os2v2_dll INITINSTANCE TERMINSTANCE OPTION MANYAUTODATA LIBR {$(LIBS)} FIL {$(OBJ)} OPTION IMPF=$(EXPNAME)
+	wlib -q -b -n -inn $(LIBNAME) +$(DLLNAME)
+#	wlib -q -b -n -inn $(LIBNAME) @$(EXPNAME)
 
 $(LIBSTATIC): $(OBJ)
 	wlib -q -b -n $@ $(OBJ)
@@ -96,10 +92,12 @@ distclean: clean .symbolic
 clean: .symbolic
 	@if exist *.obj del *.obj
 .c: ..\drivers;..\loaders;..\depackers;..\mmio;..\playercode;..\posix
+INCLUDES=-I..\os2 -I..\include
 !else
 distclean: clean .symbolic
 	rm -f $(DLLNAME) $(EXPNAME) $(LIBNAME) $(LIBSTATIC)
 clean: .symbolic
 	rm -f *.obj
 .c: ../drivers;../loaders;../depackers;../mmio;../playercode;../posix
+INCLUDES=-I../os2 -I../include
 !endif
