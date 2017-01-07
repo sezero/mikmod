@@ -11,8 +11,8 @@ target = dll
 !endif
 
 CPPFLAGS=-DMIKMOD_BUILD -DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_MALLOC_H
-#
-# To build a debug version:
+
+# To build a debug version :
 #CPPFLAGS+= -DMIKMOD_DEBUG
 
 # MMPM/2 driver (will work with any OS/2 version starting from 2.1.)
@@ -74,8 +74,7 @@ all: $(BLD_TARGET)
 # rely on symbol name, not ordinal: -irn switch of wlib is default, but -inn is not.
 $(DLLNAME): $(OBJ)
 	wlink NAM $@ SYSTEM os2v2_dll INITINSTANCE TERMINSTANCE OPTION MANYAUTODATA LIBR {$(LIBS)} FIL {$(OBJ)} OPTION IMPF=$(EXPNAME)
-	wlib -q -b -n -inn $(LIBNAME) +$(DLLNAME)
-#	wlib -q -b -n -inn $(LIBNAME) @$(EXPNAME)
+	wlib -q -b -n -inn -pa -s -t -zld -ii -io $(LIBNAME) +$(DLLNAME)
 
 $(LIBSTATIC): $(OBJ)
 	wlib -q -b -n $@ $(OBJ)
