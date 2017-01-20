@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id: os2video.inc,v 1.1.1.1 2004/01/16 02:07:31 raph Exp $
-
   OS/2 console i/o routines
 
 ==============================================================================*/
@@ -55,13 +53,9 @@ void mvaddnstr(int y,int x,const char *str,int len)
 
 void mvaddch(int y,int x,char ch)
 {
-#ifdef __WATCOMC__
-	char text[2]={0,0};
-	
+	char text[2];
 	text[0]=ch;
-#else
-	char text[2]={ch,0};
-#endif
+	text[1]=0;
 	VioWrtCharStrAtt(text,1,y,x,&mvattr,hvio);
 }
 
@@ -132,14 +126,17 @@ void win_clrtoeol(MWINDOW *win, int x,int y)
 	}
 }
 
+#ifdef __EMX__
 static int _mik_kbhit(void)
 {
 	KBDKEYINFO k;
 	if (KbdPeek(&k, 0))
 		return 0;
-	else
-		return (k.fbStatus & KBDTRF_FINAL_CHAR_IN);
+	return (k.fbStatus & KBDTRF_FINAL_CHAR_IN);
 }
+#else
+#define _mik_kbhit kbhit
+#endif
 
 static int win_getch(void)
 {
