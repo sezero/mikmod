@@ -99,9 +99,6 @@ typedef enum {
 
 #define DEFINE_THREAD(name,modevar) \
 	int modevar = MTH_NORUN
-/* FIXME */
-/*#define THREAD_START(name,fkt,arg) \
-	(_beginthread(_mm_mutex_##name, NULL, 4096, arg) != 0)*/
 #define THREAD_START(name,fkt,arg) \
 	(_beginthread(fkt, NULL, 4096, arg) != -1)
 #define THREAD_JOIN(name,modevar) \

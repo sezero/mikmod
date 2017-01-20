@@ -52,7 +52,9 @@ static MP_DATA playdata;
 static BOOL active = 0, paused = 1, use_threads = 0;
 static int volume = -1;
 
+#ifdef USE_THREADS
 static DEFINE_MUTEX(data);
+#endif
 static DEFINE_THREAD(updater,updater_mode);
 
 static void do_update(void)
