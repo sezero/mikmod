@@ -325,6 +325,7 @@ static char* get_command (const char *pattern, const char *arc, const char *file
 	return command;
 }
 
+#if !(defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga))
 /* Split command in single arguments by inserting '\0' in command and
    store them in argv. Size of argv: sizeargv */
 static void split_command (char *command, char **argv, int sizeargv)
@@ -357,6 +358,7 @@ static void split_command (char *command, char **argv, int sizeargv)
 		}
 	}
 }
+#endif
 
 /* Create a copy of file 'fd' with the first 'start' lines and the
    last 'end' lines removed. Ignore all lines up to the first
@@ -735,8 +737,8 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 #else
 			pclose(file);
 #endif
-#else
-/* Archive display, the Unix way */
+
+#else /* Archive display, the Unix way */
 			int fd[2];
 
 			if (!pipe(fd)) {
