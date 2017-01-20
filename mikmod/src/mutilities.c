@@ -50,6 +50,10 @@
 #include <sys/stat.h>
 #if defined(_WIN32)
 #include <time.h>
+#elif defined(__OS2__) || defined(__EMX__)
+#define INCL_DOS
+#include <os2.h>
+#include <io.h>
 #else
 #include <sys/time.h>
 #endif
@@ -439,6 +443,25 @@ unsigned long Time1000(void)
 	LastRest = Delta % Freq;	/* save those ticks not being counted */
 	LastCount = Count;			/* save last count */
 
+	return LastTime;
+#elif defined(__OS2__) || defined(__EMX__)
+	static int first = 1;
+	static ULONG Freq;
+	static long long LastCount = 0;
+	static long long LastRest = 0;
+	static long LastTime = 0;
+	long long Delta, Count;
+
+	if (first) {
+		first = 0;
+		DosTmrQueryFreq(&Freq);
+	}
+
+	DosTmrQueryTime((QWORD *) & Count);
+	Delta = 1000 * (Count - LastCount) + LastRest;
+	LastTime += (long)(Delta / Freq);
+	LastRest = Delta % Freq;
+	LastCount = Count;
 	return LastTime;
 #else
 	struct timeval tv;
