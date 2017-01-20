@@ -278,7 +278,9 @@ static char lzsignat[] = "-lz";
 
 /* interesting file extensions */
 static char targzext[] = ".TAR.GZ .TAZ .TGZ";
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 static char tarbzip2ext[] = ".TAR.BZ2 .TBZ .TBZ2";
+#endif
 
 static ARCHIVE archiver_def[] = {
 	/* location, marker, list, filenames column, extract, skippat, skipstart, skipend */
