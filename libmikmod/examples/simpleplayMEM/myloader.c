@@ -114,6 +114,8 @@ static int My_MemReader_Seek(MREADER* reader,long offset,int whence)
 	case SEEK_END:
 		mr->pos = mr->len + offset;
 		break;
+	default: /* invalid */
+		return -1;
 	}
 	if (mr->pos < reader->iobase) {
 		mr->pos = mr->core.iobase;

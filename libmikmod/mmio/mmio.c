@@ -69,16 +69,12 @@ extern int fseek(FILE *, long, int);
 extern size_t fwrite(const void *, size_t, size_t, FILE *);
 #endif
 
-#define COPY_BUFSIZE  1024
-
 /* some prototypes */
 static BOOL _mm_MemReader_Eof(MREADER* reader);
 static BOOL _mm_MemReader_Read(MREADER* reader,void* ptr,size_t size);
 static int _mm_MemReader_Get(MREADER* reader);
 static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence);
 static long _mm_MemReader_Tell(MREADER* reader);
-
-/*static long _mm_iobase = 0, temp_iobase = 0;*/
 
 FILE* _mm_fopen(const CHAR* fname, const CHAR* attrib)
 {
@@ -320,6 +316,8 @@ static int _mm_MemReader_Seek(MREADER* reader,long offset,int whence)
 	case SEEK_END:
 		mr->pos = mr->len + offset;
 		break;
+	default: /* invalid */
+		return -1;
 	}
 	if (mr->pos < reader->iobase) {
 		mr->pos = mr->core.iobase;
