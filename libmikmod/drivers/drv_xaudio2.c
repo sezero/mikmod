@@ -130,7 +130,7 @@ class XAudio2VoiceCallback: public IXAudio2VoiceCallback {
 public:
 	HANDLE hBufferEvent;
 public:
-	XAudio2VoiceCallback(): hBufferEvent(CreateEvent(NULL, FALSE, FALSE, "libmikmod XAudio2 Driver buffer Event")) { }
+	XAudio2VoiceCallback(): hBufferEvent(CreateEvent(NULL, FALSE, FALSE, TEXT("libmikmod XAudio2 Driver buffer Event"))) { }
 	virtual ~XAudio2VoiceCallback() { CloseHandle(hBufferEvent); }
 	STDMETHOD_(void, cb_OnVoiceProcessPassStart)(UINT32 SamplesRequired) {
 		dbgprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
@@ -158,7 +158,7 @@ public:
 static XAudio2VoiceCallback *pcbVoice = NULL;
 #define hBufferEvent	pcbVoice->hBufferEvent
 #define IXAudio2_Release(p)				((p)->Release())
-#if !defined(DRV_XAUDIO28)
+#ifndef DRV_XAUDIO28
 #define IXAudio2_CreateMasteringVoice(p,a,b,c,d,e,f)	((p)->CreateMasteringVoice(a,b,c,d,e,f))
 #define IXAudio2SourceVoice_GetState(p,a)		((p)->GetState(a))
 #else
@@ -188,7 +188,7 @@ static DWORD WINAPI UpdateBufferProc(LPVOID lpParameter) {
 			XAUDIO2_VOICE_STATE state;
 			XAUDIO2_BUFFER audio_buf;
 
-			#if !defined(DRV_XAUDIO28)
+			#ifndef DRV_XAUDIO28
 			IXAudio2SourceVoice_GetState(pSourceVoice, &state);
 			#else
 			IXAudio2SourceVoice_GetState(pSourceVoice, &state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
@@ -267,7 +267,7 @@ static int XAudio2_Init(void) {
 	if (FAILED(XAudio2Create(&pXAudio2, flags, XAUDIO2_DEFAULT_PROCESSOR))) {
 		goto fail;
 	}
-#if defined(DRV_XAUDIO28)
+#ifdef DRV_XAUDIO28
 	if (FAILED(IXAudio2_CreateMasteringVoice(pXAudio2, &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE,
 						 0, NULL, NULL, AudioCategory_Other))) {
 		goto fail;
@@ -363,7 +363,7 @@ static void XAudio2_Update(void) {
 			XAUDIO2_VOICE_STATE state;
 			XAUDIO2_BUFFER audio_buf;
 
-			#if !defined(DRV_XAUDIO28)
+			#ifndef DRV_XAUDIO28
 			IXAudio2SourceVoice_GetState(pSourceVoice, &state);
 			#else
 			IXAudio2SourceVoice_GetState(pSourceVoice, &state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
