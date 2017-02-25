@@ -49,6 +49,19 @@
 #endif
 #include <dsound.h>
 
+#ifdef __WATCOMC__
+/* If you encounter build failures from Open Watcom's dsound.h,
+ * see: https://github.com/open-watcom/open-watcom-v2/pull/313
+ */
+/* Open Watcom has broken __cdecl (leading underscore) name mangling for Windows
+ * internal var names. It is fixed in Open Watcom V2 fork as of May/2014:
+ * https://github.com/open-watcom/open-watcom-v2/commit/961ef1ff756f3ec5a7248cefcae00a6ecaa97ff4
+ * Therefore, we define and use a local copy of IID_IDirectSoundNotify here.
+ */
+#include <guiddef.h>
+DEFINE_GUID(IID_IDirectSoundNotify,0xB0210783,0x89cd,0x11d0,0xAF,0x08,0x00,0xA0,0xC9,0x25,0xCD,0x16);
+#endif
+
 /* PF_XMMI64_INSTRUCTIONS_AVAILABLE not in all SDKs */
 #ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
 #define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
