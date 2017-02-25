@@ -50,6 +50,7 @@ LIBNAME=mikmod.lib
 LIBSTATIC=mikmod_static.lib
 
 !ifeq target static
+CPPFLAGS+= -DMIKMOD_STATIC=1
 BLD_TARGET=$(LIBSTATIC)
 !else
 CFLAGS+= $(DLLFLAGS)

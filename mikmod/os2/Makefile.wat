@@ -1,6 +1,13 @@
-# Makefile for OS/2 using Watcom compiler.
+# Makefile for OS/2 using Open Watcom compiler.
 #
 # wmake -f Makefile.wat
+#
+# to statically link to mikmod:
+# wmake -f Makefile.wat target=static
+
+!ifndef target
+target = dynamic
+!endif
 
 CC=wcc386
 !ifndef __UNIX__
@@ -9,10 +16,14 @@ INCLUDES=-I..\os2 -I..\src
 INCLUDES=-I../os2 -I../src
 !endif
 CPPFLAGS=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_SYS_IOCTL_H -DHAVE_SYS_TIME_H -DHAVE_STRERROR -DHAVE_SNPRINTF -DHAVE_MKSTEMP
-# for an exe using mikmod.dll: link to mikmod.lib
-# for a statically linked exe: link to mikmod_static.lib which, in turn, requires mmpm2.lib
+
+!ifneq target static
 LIBS=mikmod.lib
-#LIBS=mikmod_static.lib mmpm2.lib
+!else
+CPPFLAGS+= -DMIKMOD_STATIC
+LIBS=mikmod_static.lib mmpm2.lib
+!endif
+
 CFLAGS = -bt=os2 -bm -fp5 -fpi87 -mf -oeatxh -w4 -zp8 -ei -zq
 # -5s  :  Pentium stack calling conventions.
 # -5r  :  Pentium register calling conventions.
