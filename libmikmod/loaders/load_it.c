@@ -234,10 +234,11 @@ static BOOL IT_GetNumChannels(UWORD patrows)
 	int row=0,flag,ch;
 
 	do {
-		if((flag=_mm_read_UBYTE(modreader))==EOF) {
+		if(_mm_eof(modreader)) {
 			_mm_errno=MMERR_LOADING_PATTERN;
 			return 0;
 		}
+		flag=_mm_read_UBYTE(modreader);
 		if(!flag)
 			row++;
 		else {
@@ -336,10 +337,11 @@ static BOOL IT_ReadPattern(UWORD patrows)
 	memset(itt,255,200*64*sizeof(ITNOTE));
 
 	do {
-		if((flag=_mm_read_UBYTE(modreader))==EOF) {
+		if(_mm_eof(modreader)) {
 			_mm_errno = MMERR_LOADING_PATTERN;
 			return 0;
 		}
+		flag=_mm_read_UBYTE(modreader);
 		if(!flag) {
 			itt=&itt[of.numchn];
 			row++;
