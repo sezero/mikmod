@@ -318,7 +318,10 @@ static BOOL STM_Load(BOOL curious)
 	/* 99 terminates the patorder list */
 	while((mh->patorder[t]<=99)&&(mh->patorder[t]<mh->numpat)) {
 		of.positions[t]=mh->patorder[t];
-		t++;
+		if(++t == 0x80) {
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
 	}
 	if(mh->patorder[t]<=99) t++;
 	of.numpos=t;
