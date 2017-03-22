@@ -287,6 +287,10 @@ static BOOL S3M_Load(BOOL curious)
 		_mm_errno = MMERR_LOADING_HEADER;
 		return 0;
 	}
+	if(mh->ordnum > 256) {
+		_mm_errno=MMERR_LOADING_HEADER;
+		return 0;
+	}
 
 	/* then we can decide the module type */
 	tracker=mh->tracker>>12;

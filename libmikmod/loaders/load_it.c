@@ -487,6 +487,10 @@ static BOOL IT_Load(BOOL curious)
 		_mm_errno=MMERR_LOADING_HEADER;
 		return 0;
 	}
+	if(mh->ordnum > 256) {
+		_mm_errno=MMERR_LOADING_HEADER;
+		return 0;
+	}
 
 	/* set module variables */
 	of.songname    = DupStr(mh->songname,26,0); /* make a cstr of songname  */
