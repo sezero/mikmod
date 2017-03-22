@@ -331,8 +331,10 @@ static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
 
 static BOOL IT_ReadPattern(UWORD patrows)
 {
-	int row=0,flag,ch,blah;
+	int row=0,flag,ch;
+	unsigned int blah;
 	ITNOTE *itt=itpat,dummy,*n,*l;
+	UBYTE *m;
 
 	memset(itt,255,200*64*sizeof(ITNOTE));
 
@@ -350,29 +352,34 @@ static BOOL IT_ReadPattern(UWORD patrows)
 			if(ch!=-1) {
 				n=&itt[ch];
 				l=&last[ch];
+				m=&mask[ch];
 			} else
+			{
 				n=l=&dummy;
+				blah = 0;
+				m=(UBYTE*)&blah;
+			}
 
-			if(flag&128) mask[ch]=_mm_read_UBYTE(modreader);
-			if(mask[ch]&1)
+			if(flag&128) *m=_mm_read_UBYTE(modreader);
+			if(*m&1)
 				/* convert IT note off to internal note off */
 				if((l->note=n->note=_mm_read_UBYTE(modreader))==255)
 					l->note=n->note=253;
-			if(mask[ch]&2)
+			if(*m&2)
 				l->ins=n->ins=_mm_read_UBYTE(modreader);
-			if(mask[ch]&4)
+			if(*m&4)
 				l->volpan=n->volpan=_mm_read_UBYTE(modreader);
-			if(mask[ch]&8) {
+			if(*m&8) {
 				l->cmd=n->cmd=_mm_read_UBYTE(modreader);
 				l->inf=n->inf=_mm_read_UBYTE(modreader);
 			}
-			if(mask[ch]&16)
+			if(*m&16)
 				n->note=l->note;
-			if(mask[ch]&32)
+			if(*m&32)
 				n->ins=l->ins;
-			if(mask[ch]&64)
+			if(*m&64)
 				n->volpan=l->volpan;
-			if(mask[ch]&128) {
+			if(*m&128) {
 				n->cmd=l->cmd;
 				n->inf=l->inf;
 			}
