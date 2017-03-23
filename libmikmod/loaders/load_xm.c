@@ -679,10 +679,8 @@ static BOOL XM_Load(BOOL curious)
 	_mm_read_string(mh->songname,21,modreader);
 	_mm_read_string(mh->trackername,20,modreader);
 	mh->version     =_mm_read_I_UWORD(modreader);
-	if((mh->version<0x102)||(mh->version>0x104)) {
-		_mm_errno=MMERR_NOT_A_MODULE;
-		return 0;
-	}
+	if(mh->version < 0x102 || mh->version > 0x104)
+		goto bad_xm;
 	mh->headersize  =_mm_read_I_ULONG(modreader);
 	mh->songlength  =_mm_read_I_UWORD(modreader);
 	mh->restart     =_mm_read_I_UWORD(modreader);
@@ -692,18 +690,18 @@ static BOOL XM_Load(BOOL curious)
 	mh->flags       =_mm_read_I_UWORD(modreader);
 	mh->tempo       =_mm_read_I_UWORD(modreader);
 	mh->bpm         =_mm_read_I_UWORD(modreader);
-	if(!mh->bpm || mh->songlength > 256) {
-		_mm_errno=MMERR_NOT_A_MODULE;
-		return 0;
-	}
+	if(mh->numchn > 64) goto bad_xm;
+	if(mh->tempo > 32 || mh->bpm < 32 || mh->bpm > 255)
+		goto bad_xm;
+	if(mh->songlength > 256 || mh->headersize < 20 || mh->headersize > 20+256)
+		goto bad_xm;
+	if(mh->numpat > 256 || mh->numins > 255 || mh->restart > 255)
+		goto bad_xm;
 /*	_mm_read_UBYTES(mh->orders,256,modreader);*/
 /*	_mm_read_UBYTES(mh->orders,mh->headersize-20,modreader);*/
 	_mm_read_UBYTES(mh->orders,mh->songlength,modreader);
-	if(_mm_fseek(modreader, mh->headersize+60, SEEK_SET) ||
-	   _mm_eof(modreader)) {
-		_mm_errno = MMERR_LOADING_HEADER;
-		return 0;
-	}
+	if(_mm_fseek(modreader, mh->headersize+60, SEEK_SET) || _mm_eof(modreader))
+		goto bad_hdr;
 
 	/* set module variables */
 	of.initspeed = mh->tempo;
@@ -730,8 +728,7 @@ static BOOL XM_Load(BOOL curious)
 	of.numpos    = mh->songlength;               /* copy the songlength */
 	of.reppos    = mh->restart<mh->songlength?mh->restart:0;
 	of.numins    = mh->numins;
-	of.flags    |= UF_XMPERIODS | UF_INST | UF_NOWRAP | UF_FT2QUIRKS |
-				   UF_PANNING;
+	of.flags    |= UF_XMPERIODS | UF_INST | UF_NOWRAP | UF_FT2QUIRKS | UF_PANNING;
 	if(mh->flags&1) of.flags |= UF_LINEAR;
 	of.bpmlimit  = 32;
 
@@ -812,6 +809,9 @@ static BOOL XM_Load(BOOL curious)
 	MikMod_free(wh);MikMod_free(nextwav);
 	wh=NULL;nextwav=NULL;
 	return 1;
+
+bad_hdr: _mm_errno = MMERR_LOADING_HEADER;	return 0;
+bad_xm:  _mm_errno = MMERR_NOT_A_MODULE;	return 0;
 }
 
 static CHAR *XM_LoadTitle(void)
