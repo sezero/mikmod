@@ -302,7 +302,7 @@ static BOOL STX_Load(BOOL curious)
 		return 0;
 	}
 	if(mh->ordnum > 256 || mh->insnum > 256 || mh->patnum > 254) {
-		_mm_errno=MMERR_LOADING_HEADER;
+		_mm_errno = MMERR_NOT_A_MODULE;
 		return 0;
 	}
 

@@ -273,7 +273,7 @@ static BOOL STM_Load(BOOL curious)
 	mh->globalvol   =_mm_read_UBYTE(modreader);
 	_mm_read_UBYTES(mh->reserved,13,modreader);
 	if(mh->numpat > 128) {
-		_mm_errno = MMERR_LOADING_HEADER;
+		_mm_errno = MMERR_NOT_A_MODULE;
 		return 0;
 	}
 
@@ -319,7 +319,7 @@ static BOOL STM_Load(BOOL curious)
 	while((mh->patorder[t]<=99)&&(mh->patorder[t]<mh->numpat)) {
 		of.positions[t]=mh->patorder[t];
 		if(++t == 0x80) {
-			_mm_errno = MMERR_LOADING_HEADER;
+			_mm_errno = MMERR_NOT_A_MODULE;
 			return 0;
 		}
 	}
