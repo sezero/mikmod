@@ -494,7 +494,7 @@ static BOOL IT_Load(BOOL curious)
 		_mm_errno=MMERR_LOADING_HEADER;
 		return 0;
 	}
-	if(mh->ordnum > 256) {
+	if(mh->ordnum > 256 || mh->insnum > 255 || mh->smpnum > 255 || mh->patnum > 255) {
 		_mm_errno=MMERR_LOADING_HEADER;
 		return 0;
 	}
