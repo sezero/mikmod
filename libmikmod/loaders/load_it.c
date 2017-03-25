@@ -334,6 +334,7 @@ static BOOL IT_ReadPattern(UWORD patrows)
 	int row=0,flag,ch;
 	unsigned int blah;
 	ITNOTE *itt=itpat,dummy,*n,*l;
+	ITNOTE *ite=&itpat[200*64 -1];
 	UBYTE *m;
 
 	memset(itt,255,200*64*sizeof(ITNOTE));
@@ -353,6 +354,10 @@ static BOOL IT_ReadPattern(UWORD patrows)
 				n=&itt[ch];
 				l=&last[ch];
 				m=&mask[ch];
+				if(n > ite) { /* malformed file */
+					_mm_errno = MMERR_NOT_A_MODULE;
+					return 0;
+				}
 			} else
 			{
 				n=l=&dummy;
