@@ -373,6 +373,11 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 
 	if(type==MD_HARDWARE) return -1;
 
+	if(s->length > 0x7FFFFFEB) {
+		_mm_errno = MMERR_NOT_A_STREAM;/* better error? */
+		return -1;
+	}
+
 	/* Find empty slot to put sample address in */
 	for(handle=0;handle<MAXSAMPLEHANDLES;handle++)
 		if(!Samples[handle]) break;
@@ -401,8 +406,11 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 	}
 
 	/* read sample into buffer */
-	if (SL_Load(Samples[handle],sload,length))
+	if (SL_Load(Samples[handle],sload,length)) {
+		MikMod_afree(Samples[handle]);
+		Samples[handle]=NULL;
 		return -1;
+	}
 
 	/* Unclick sample */
 	if(s->flags & SF_LOOP) {

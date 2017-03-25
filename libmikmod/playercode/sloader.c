@@ -262,6 +262,10 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 			c_block -= stodo;
 		} else {
 			if(infmt&SF_16BITS) {
+				if(_mm_eof(reader)) {
+					_mm_errno=MMERR_NOT_A_STREAM;/* better error? */
+					return 1;
+				}
 				if(infmt&SF_BIG_ENDIAN)
 					_mm_read_M_SWORDS(sl_buffer,stodo,reader);
 				else
@@ -270,6 +274,10 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 				SBYTE *src;
 				SWORD *dest;
 
+				if(_mm_eof(reader)) {
+					_mm_errno=MMERR_NOT_A_STREAM;/* better error? */
+					return 1;
+				}
 				reader->Read(reader,sl_buffer,sizeof(SBYTE)*stodo);
 				src = (SBYTE*)sl_buffer;
 				dest  = sl_buffer;

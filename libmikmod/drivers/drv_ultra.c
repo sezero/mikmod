@@ -452,6 +452,11 @@ static SWORD Ultra_SampleLoad(struct SAMPLOAD *sload, int type)
 	unsigned char *buffer;
 	unsigned int length, loopstart, loopend;
 
+	if (s->length > 0x7FFFFFEB) {
+		_mm_errno = MMERR_NOT_A_STREAM;/* better error? */
+		return -1;
+	}
+
 	/* Find empty slot to put sample in */
 	for (handle = 0; handle < GUS_SAMPLES; handle++)
 		if (!samples[handle])
