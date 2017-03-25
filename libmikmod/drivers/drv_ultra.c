@@ -452,7 +452,7 @@ static SWORD Ultra_SampleLoad(struct SAMPLOAD *sload, int type)
 	unsigned char *buffer;
 	unsigned int length, loopstart, loopend;
 
-	if (s->length > 0x7FFFFFEB) {
+	if (s->length > MAX_SAMPLE_SIZE) {
 		_mm_errno = MMERR_NOT_A_STREAM;/* better error? */
 		return -1;
 	}

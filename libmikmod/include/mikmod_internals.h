@@ -211,6 +211,8 @@ extern void _mm_write_I_ULONGS(ULONG*,int,MWRITER*);
 
 /*========== Samples */
 
+#define MAX_SAMPLE_SIZE 0x10000000 /* a sane value guaranteed to not overflow an SLONG */
+
 /* This is a handle of sorts attached to any sample registered with
    SL_RegisterSample.  Generally, this only need be used or changed by the
    loaders and drivers of mikmod. */

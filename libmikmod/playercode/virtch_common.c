@@ -373,8 +373,8 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 
 	if(type==MD_HARDWARE) return -1;
 
-	if(s->length > 0x7FFFFFEB) {
-		_mm_errno = MMERR_NOT_A_STREAM;/* better error? */
+	if(s->length > MAX_SAMPLE_SIZE) {
+		_mm_errno = MMERR_NOT_A_STREAM; /* better error? */
 		return -1;
 	}
 
