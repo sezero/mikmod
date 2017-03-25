@@ -229,7 +229,6 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 			subblocks[i].unpk_pos = _mm_read_I_ULONG(reader);
 			subblocks[i].unpk_size = _mm_read_I_ULONG(reader);
 			if (subblocks[i].unpk_pos >= destlen) goto err;
-			if (subblocks[i].unpk_size > destlen) goto err;
 			if (subblocks[i].unpk_size > destlen - subblocks[i].unpk_pos) goto err;
 		}
 
