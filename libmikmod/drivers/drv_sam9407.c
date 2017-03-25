@@ -141,11 +141,10 @@ static SWORD sampleLoad(SAMPLOAD *s, int type)
 	SWORD *samples;
 	int rc;
 
-	if(s->length > 0x7FFFFFEB) {
+	if(s->sample->length > 0x7FFFFFEB) {
 		_mm_errno = MMERR_NOT_A_STREAM;/* better error? */
 		return -1;
 	}
-
 	for(handle=0; handle<SAM_NUM_BANKS; handle++)
 		if(!banks[handle].inUse)
 			break;
