@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>libmikmod</string>
 	<key>CFBundleGetInfoString</key>
-	<string>libmikmod v3.3.10</string>
+	<string>libmikmod v3.3.11</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -19,11 +19,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.3.10</string>
+	<string>3.3.11</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.3.10</string>
+	<string>3.3.11</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>

@@ -1,3 +1,17 @@
+Summary of changes between libmikmod 3.3.10 and libmikmod 3.3.11:
+========================================================================
+
+libmikmod v3.3.11 was released on XX-XXX-XXXX.
+
+- Fixed lots of possible crashes in several module loaders and in mmcmp
+  depacker, using the fuzzing data kindly provided by Lionel Debroux.
+- Fixed a possible endless loop in the IT loader with malformed files.
+- Support for building the Windows version using Open Watcom compiler.
+- A few minor OS/2 fixes.
+- CMake updates.
+- Other minor fix/tidy-ups.
+
+
 Summary of changes between libmikmod 3.3.9 and libmikmod 3.3.10:
 ========================================================================
 
