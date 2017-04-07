@@ -32,7 +32,7 @@
 
 /*========== Messages */
 
-#define playerversion "3.2.7"
+#define playerversion "3.2.8"
 
 #define mikversion "-= MikMod " playerversion " =-"
 

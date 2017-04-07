@@ -1,3 +1,15 @@
+Summary of changes between MikMod 3.2.7 and MikMod 3.2.8:
+==================================================================
+
+MikMod 3.2.8 was released on XX-XXX-XXXX.
+
+- Fixed several warnings from clang static analyzer.
+- Fixed a misleading indentation warning from gcc6.
+- A few minor OS/2 fixes.
+- Support for building the Windows version using Open Watcom compiler.
+- Other minor fix/tidy-ups.
+
+
 Summary of changes between MikMod 3.2.6 and MikMod 3.2.7:
 ==================================================================
 
