@@ -127,12 +127,36 @@ static	IMFHEADER *mh=NULL;
 
 static BOOL IMF_Test(void)
 {
-	UBYTE id[4];
+	UBYTE buf[512], *p;
+	int t, chn;
 
 	_mm_fseek(modreader,0x3c,SEEK_SET);
-	if(!_mm_read_UBYTES(id,4,modreader)) return 0;
-	if(!memcmp(id,"IM10",4)) return 1;
-	return 0;
+	if (!_mm_read_UBYTES(buf,4,modreader)) return 0;
+	if (memcmp(buf,"IM10",4) != 0) return 0;	/* no magic */
+
+	_mm_fseek(modreader,32,SEEK_SET);
+	if (_mm_read_I_UWORD(modreader) > 256) return 0;/* bad ordnum */
+	if (_mm_read_I_UWORD(modreader) > 256) return 0;/* bad patnum */
+	if (_mm_read_I_UWORD(modreader) > 256) return 0;/* bad insnum */
+
+	_mm_fseek(modreader,64,SEEK_SET);
+	if(!_mm_read_UBYTES(buf,512,modreader)) return 0;
+	/* verify channel status */
+	for (t = 0, chn = 0, p = &buf[15]; t < 512; t += 32, p += 32) {
+		switch (*p) {
+		case  0:		/* channel enabled */
+		case  1:		/* channel muted */
+			chn++;
+			break;
+		case  2:		/* channel disabled */
+			break;
+		default:		/* bad status value */
+			return 0;
+		}
+	}
+	if(!chn) return 0;		/* no channels found */
+
+	return 1;
 }
 
 static BOOL IMF_Init(void)
