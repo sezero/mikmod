@@ -211,6 +211,11 @@ static BOOL FAR_Load(BOOL curious)
 	if(mh1->stlen)
 		if (!ReadLinedComment(mh1->stlen, 66)) return 0;
 
+	if(_mm_eof(modreader)) {
+		_mm_errno = MMERR_LOADING_HEADER;
+		return 0;
+	}
+
 	/* try to read module header (second part) */
 	_mm_read_UBYTES(mh2->orders,256,modreader);
 	mh2->numpat        = _mm_read_UBYTE(modreader);
