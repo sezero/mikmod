@@ -344,7 +344,13 @@ static BOOL LoadMEDPatterns(void)
 			of.numchn = numtracks;
 		if (numlines > maxlines)
 			maxlines = numlines;
+		/* sanity check */
+		if (numtracks > 64)
+			return 0;
 	}
+	/* sanity check */
+	if (! of.numchn)	/* docs say 4, 8, 12 or 16 */
+		return 0;
 
 	of.numtrk = of.numpat * of.numchn;
 	if (!AllocTracks())
@@ -392,7 +398,15 @@ static BOOL LoadMMD1Patterns(void)
 			of.numchn = numtracks;
 		if (numlines > maxlines)
 			maxlines = numlines;
+		/* sanity check */
+		if (numtracks > 64)
+			return 0;
+		if (numlines >= 3200) /* per docs */
+			return 0;
 	}
+	/* sanity check */
+	if (! of.numchn)	/* docs say 4, 8, 12 or 16 */
+		return 0;
 
 	of.numtrk = of.numpat * of.numchn;
 	if (!AllocTracks())
@@ -473,6 +487,11 @@ static BOOL MED_Load(BOOL curious)
 	ms->numblocks = _mm_read_M_UWORD(modreader);
 	ms->songlen = _mm_read_M_UWORD(modreader);
 	_mm_read_UBYTES(ms->playseq, 256, modreader);
+	/* sanity check */
+	if (ms->numblocks > 255 || ms->songlen > 256) {
+		_mm_errno = MMERR_NOT_A_MODULE;
+		return 0;
+	}
 	ms->deftempo = _mm_read_M_UWORD(modreader);
 	ms->playtransp = _mm_read_SBYTE(modreader);
 	ms->flags = _mm_read_UBYTE(modreader);
@@ -481,6 +500,11 @@ static BOOL MED_Load(BOOL curious)
 	_mm_read_UBYTES(ms->trkvol, 16, modreader);
 	ms->mastervol = _mm_read_UBYTE(modreader);
 	ms->numsamples = _mm_read_UBYTE(modreader);
+	/* sanity check */
+	if (ms->numsamples > 64) {
+		_mm_errno = MMERR_NOT_A_MODULE;
+		return 0;
+	}
 
 	/* check for a bad header */
 	if (_mm_eof(modreader)) {
@@ -507,6 +531,14 @@ static BOOL MED_Load(BOOL curious)
 		me->songname = _mm_read_M_ULONG(modreader);
 		me->songnamelen = _mm_read_M_ULONG(modreader);
 		me->dumps = _mm_read_M_ULONG(modreader);
+		/* sanity check */
+		if (me->annolen > 0xffff) {
+			_mm_errno = MMERR_NOT_A_MODULE;
+			return 0;
+		}
+		/* truncate insane songnamelen (fail instead??) */
+		if (me->songnamelen > 256)
+			me->songnamelen = 256;
 	}
 
 	/* seek to and read the samplepointer array */
