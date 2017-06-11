@@ -167,9 +167,9 @@ BOOL ReadLinedComment(UWORD len,UWORD linelen)
 				storage[i]=0; /* if (i==linelen) */
 				strcat(of.comment,storage);strcat(of.comment,"\r");
 			}
-			MikMod_free(storage);
-			MikMod_free(tempcomment);
 		}
+		MikMod_free(storage);
+		MikMod_free(tempcomment);
 	}
 	return 1;
 }
