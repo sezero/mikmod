@@ -6,6 +6,8 @@ libmikmod v3.3.11 was released on XX-XXX-XXXX.
 - Fixed lots of possible crashes in several module loaders and in mmcmp
   depacker, using the fuzzing data kindly provided by Lionel Debroux.
 - Fixed a possible endless loop in the IT loader with malformed files.
+- Fixed broken fixed-line comment reader (new code adapted from OpenMPT
+  project: thanks to Johannes Schultz, aka. sagamusix, for permission).
 - Support for building the Windows version using Open Watcom compiler.
 - A few minor OS/2 fixes.
 - CMake updates.

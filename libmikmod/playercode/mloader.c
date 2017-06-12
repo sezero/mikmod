@@ -133,44 +133,44 @@ BOOL ReadComment(UWORD len)
 
 BOOL ReadLinedComment(UWORD len,UWORD linelen)
 {
-	CHAR *tempcomment,*line,*storage;
-	UWORD total=0,t,lines;
-	int i;
+	/* Adapted from the OpenMPT project, C'ified. */
+	CHAR *buf, *storage, *p;
+	size_t numlines, line, fpos, cpos, lpos, cnt;
 
-	lines = (len + linelen - 1) / linelen;
-	if (len) {
-		if(!(tempcomment=(CHAR*)MikMod_malloc(len+1))) return 0;
-		if(!(storage=(CHAR*)MikMod_malloc(linelen+1))) {
-			MikMod_free(tempcomment);
-			return 0;
-		}
-		memset(tempcomment, ' ', len);
-		_mm_read_UBYTES(tempcomment,len,modreader);
+	if (!linelen) return 0;
+	if (!len) return 1;
 
-		/* compute message length */
-		for(line=tempcomment,total=t=0;t<lines;t++,line+=linelen) {
-			for(i=linelen;(i>=0)&&(line[i]==' ');i--) line[i]=0;
-			for(i=0;i<linelen;i++) if (!line[i]) break;
-			total+=1+i;
-		}
-
-		if(total>lines) {
-			if(!(of.comment=(CHAR*)MikMod_malloc(total+1))) {
-				MikMod_free(storage);
-				MikMod_free(tempcomment);
-				return 0;
-			}
-
-			/* convert message */
-			for(line=tempcomment,t=0;t<lines;t++,line+=linelen) {
-				for(i=0;i<linelen;i++) if(!(storage[i]=line[i])) break;
-				storage[i]=0; /* if (i==linelen) */
-				strcat(of.comment,storage);strcat(of.comment,"\r");
-			}
-		}
-		MikMod_free(storage);
-		MikMod_free(tempcomment);
+	if (!(buf = (CHAR *) MikMod_malloc(len))) return 0;
+	numlines = (len + linelen - 1) / linelen;
+	cnt = (linelen + 1) * numlines;
+	if (!(storage = (CHAR *) MikMod_malloc(cnt + 1))) {
+		MikMod_free(buf);
+		return 0;
 	}
+
+	_mm_read_UBYTES(buf,len,modreader);
+	storage[cnt] = 0;
+	for (line = 0, fpos = 0, cpos = 0; line < numlines; line++, fpos += linelen, cpos += (linelen + 1))
+	{
+		cnt = len - fpos;
+		if (cnt > linelen) cnt = linelen;
+		p = storage + cpos;
+		memcpy(p, buf + fpos, cnt);
+		p[cnt] = '\r';
+		/* fix weird chars */
+		for (lpos = 0; lpos < linelen; lpos++, p++) {
+			switch (*p) {
+			case '\0':
+			case '\n':
+			case '\r':
+				*p = ' ';
+				break;
+			}
+		}
+	}
+
+	of.comment = storage;
+	MikMod_free(buf);
 	return 1;
 }
 
