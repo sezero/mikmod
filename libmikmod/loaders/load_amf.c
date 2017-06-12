@@ -508,6 +508,10 @@ static BOOL AMF_Load(BOOL curious)
 	for(realtrackcnt=t=0;t<=mh->numtracks;t++)
 		if (realtrackcnt<track_remap[t])
 			realtrackcnt=track_remap[t];
+	if (realtrackcnt > (int)mh->numtracks) {
+		_mm_errno=MMERR_NOT_A_MODULE;
+		return 0;
+	}
 	for(t=0;t<of.numpat*of.numchn;t++)
 		of.patterns[t]=(of.patterns[t]<=mh->numtracks)?
 		               track_remap[of.patterns[t]]-1:realtrackcnt;
