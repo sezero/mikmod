@@ -152,32 +152,39 @@ static void GDM_Cleanup(void)
 
 static BOOL GDM_ReadPattern(void)
 {
-	int pos,flag,ch,i,maxch;
+	int pos,flag,ch,i;
 	GDMNOTE n;
-	UWORD length,x=0;
+	SLONG length,x=0;
 
 	/* get pattern length */
-	length=_mm_read_I_UWORD(modreader)-2;
+	length=(SLONG)_mm_read_I_UWORD(modreader);
+	length-=2;
 
 	/* clear pattern data */
 	memset(gdmbuf,255,32*64*sizeof(GDMNOTE));
 	pos=0;
-	maxch=0;
 
 	while (x<length) {
 		memset(&n,255,sizeof(GDMNOTE));
 		flag=_mm_read_UBYTE(modreader);
 		x++;
 
-		if (_mm_eof(modreader)) {
-			_mm_errno=MMERR_LOADING_PATTERN;
+		if (_mm_eof(modreader))
 			return 0;
-		}
 
 		ch=flag&31;
-		if (ch>maxch) maxch=ch;
+		if (ch > of.numchn)
+			return 0;
+
 		if (!flag) {
 			pos++;
+			if (x==length) {
+				if (pos > 64)
+				    return 0;
+			} else {
+				if (pos >= 64)
+				    return 0;
+			}
 			continue;
 		}
 		if (flag&0x60) {
