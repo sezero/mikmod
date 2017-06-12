@@ -3,15 +3,23 @@ Summary of changes between libmikmod 3.3.10 and libmikmod 3.3.11:
 
 libmikmod v3.3.11 was released on XX-XXX-XXXX.
 
-- Fixed lots of possible crashes in several module loaders and in mmcmp
-  depacker, using the fuzzing data kindly provided by Lionel Debroux.
+- Fixed lots of possible crashes in IT, S3M, STM, STX, AMF, IMF, GDM and
+  MED module loaders.
 - Fixed a possible endless loop in the IT loader with malformed files.
-- Fixed broken fixed-line comment reader (new code adapted from OpenMPT
-  project: thanks to Johannes Schultz, aka. sagamusix, for permission).
+- Fixed signed integer overflow leading to crashes in the sample loader.
+- Fixed a possible crash in MMCMP depacker with malformed files.
+- Fixed the broken fixed-line comment reader which might possibly lead
+  to crashes, and also badly translated several song messages. The new
+  code is adapted from libopenmpt.
 - Support for building the Windows version using Open Watcom compiler.
 - A few minor OS/2 fixes.
 - CMake updates.
-- Other minor fix/tidy-ups.
+- Other minor fixes/tidy-ups.
+
+Thanks to:
+- Lionel Debroux, for providing fuzz files which helped finding defects.
+- Johannes Schultz (sagamusix), for allowing us to use a piece of code
+  from libopenmpt.
 
 
 Summary of changes between libmikmod 3.3.9 and libmikmod 3.3.10:
