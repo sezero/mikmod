@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   DMP Advanced Module Format loader
 
 ==============================================================================*/
@@ -509,6 +507,7 @@ static BOOL AMF_Load(BOOL curious)
 		if (realtrackcnt<track_remap[t])
 			realtrackcnt=track_remap[t];
 	if (realtrackcnt > (int)mh->numtracks) {
+		MikMod_free(track_remap);
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
 	}
