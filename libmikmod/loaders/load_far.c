@@ -209,7 +209,7 @@ static BOOL FAR_Load(BOOL curious)
 
 	/* read songtext into comment field */
 	if(mh1->stlen)
-		if (!ReadLinedComment(mh1->stlen, 66)) return 0;
+		if (!ReadLinedComment(mh1->stlen, 132)) return 0;
 
 	if(_mm_eof(modreader)) {
 		_mm_errno = MMERR_LOADING_HEADER;
