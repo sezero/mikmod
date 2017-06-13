@@ -444,10 +444,16 @@ static void FixEnvelope(ENVPT *cur, int pts)
 
 static BOOL LoadInstruments(void)
 {
-	int t,u, ck;
+	long filend,ck;
+	int t,u;
 	INSTRUMENT *d;
 	ULONG next=0;
 	UWORD wavcnt=0;
+
+	ck = _mm_ftell(modreader);
+	_mm_fseek(modreader,0,SEEK_END);
+	filend = _mm_ftell(modreader);
+	_mm_fseek(modreader,ck,SEEK_SET);
 
 	if(!AllocInstruments()) return 0;
 	d=of.instruments;
@@ -462,12 +468,9 @@ static BOOL LoadInstruments(void)
 		ih.size     = _mm_read_I_ULONG(modreader);
 		headend    += ih.size;
 		ck = _mm_ftell(modreader);
-		_mm_fseek(modreader,0,SEEK_END);
-		if ((headend<0) || (_mm_ftell(modreader)<headend) || (headend<ck)) {
-			_mm_fseek(modreader,ck,SEEK_SET);
+		if ((headend<0) || (filend<headend) || (headend<ck)) {
 			break;
 		}
-		_mm_fseek(modreader,ck,SEEK_SET);
 		_mm_read_string(ih.name, 22, modreader);
 		ih.type     = _mm_read_UBYTE(modreader);
 		ih.numsmp   = _mm_read_I_UWORD(modreader);
@@ -582,6 +585,14 @@ static BOOL LoadInstruments(void)
 				   everything over */
 				if(mh->version>0x0103) next = 0;
 				for(u=0;u<ih.numsmp;u++,s++) {
+					/* XM sample header is 40 bytes: make sure we won't hit EOF */
+					/* Note: last instrument is at the end of file in version 0x0104 */
+					if(_mm_ftell(modreader)+40>filend) {
+						MikMod_free(nextwav);MikMod_free(wh);
+						nextwav=NULL;wh=NULL;
+						_mm_errno = MMERR_LOADING_SAMPLEINFO;
+						return 0;
+					}
 					/* Allocate more room for sample information if necessary */
 					if(of.numsmp+u==wavcnt) {
 						wavcnt+=XM_SMPINCR;
@@ -615,14 +626,6 @@ static BOOL LoadInstruments(void)
 
 					nextwav[of.numsmp+u]=next;
 					next+=s->length;
-
-					/* last instrument is at the end of file in version 0x0104 */
-					if(_mm_eof(modreader) && (mh->version<0x0104 || t<of.numins-1)) {
-						MikMod_free(nextwav);MikMod_free(wh);
-						nextwav=NULL;wh=NULL;
-						_mm_errno = MMERR_LOADING_SAMPLEINFO;
-						return 0;
-					}
 				}
 
 				if(mh->version>0x0103) {
@@ -634,12 +637,9 @@ static BOOL LoadInstruments(void)
 			} else {
 				/* read the remainder of the header */
 				ck = _mm_ftell(modreader);
-				_mm_fseek(modreader,0,SEEK_END);
-				if ((headend<0) || (_mm_ftell(modreader)<headend) || (headend<ck)) {
-					_mm_fseek(modreader,ck,SEEK_SET);
+				if ((headend<0) || (filend<headend) || (headend<ck)) {
 					break;
 				}
-				_mm_fseek(modreader,ck,SEEK_SET);
 				for(u=headend-_mm_ftell(modreader);u;u--) {
 					_mm_skip_BYTE(modreader);
 				}
