@@ -1,10 +1,10 @@
 Summary of changes between libmikmod 3.3.10 and libmikmod 3.3.11:
 ========================================================================
 
-libmikmod v3.3.11 was released on XX-XXX-XXXX.
+libmikmod v3.3.11 was released on June 14, 2017.
 
-- Fixed lots of possible crashes in IT, S3M, STM, STX, AMF, IMF, GDM and
-  MED module loaders.
+- Fixed lots of possible crashes in the IT, XM, S3M, STM, STX, AMF, IMF,
+  GDM and MED module loaders.
 - Fixed a possible endless loop in the IT loader with malformed files.
 - Fixed signed integer overflow leading to crashes in the sample loader.
 - Fixed a possible crash in MMCMP depacker with malformed files.

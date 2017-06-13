@@ -1,7 +1,7 @@
 Summary of changes between MikMod 3.2.7 and MikMod 3.2.8:
 ==================================================================
 
-MikMod 3.2.8 was released on XX-XXX-XXXX.
+MikMod 3.2.8 was released on June 14, 2017.
 
 - Fixed several warnings from clang static analyzer.
 - Fixed a misleading indentation warning from gcc6.
