@@ -1,4 +1,4 @@
-.TH LIBMIKMOD 1 "Version @VERSION@, 21 January 2014"
+.TH LIBMIKMOD 1 "Version @LIBMIKMOD_VERSION@, 20 June 2017"
 
 .SH NAME
 libmikmod-config - script to get information about the installed version of
@@ -10,10 +10,10 @@ libmikmod.
 
 .SH DESCRIPTION
 .PP
-\fIlibmikmod-config\fP is a tool that is used to configure to determine
-the compiler and linker flags that should be used to compile
-and link programs that use \fIlibmikmod\fP. It is also used internally
-to the .m4 macros for GNU autoconf that are included with \fIlibmikmod\fP.
+\fIlibmikmod-config\fP is a tool that is used to determine the compiler
+and linker flags that should be used to compile and link programs that
+use \fIlibmikmod\fP. It is also used internally by the libmikmod.m4
+macro for GNU autoconf that is included with \fIlibmikmod\fP.
 
 .SH OPTIONS
 
