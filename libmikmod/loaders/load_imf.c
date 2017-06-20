@@ -142,7 +142,7 @@ static BOOL IMF_Test(void)
 	_mm_fseek(modreader,64,SEEK_SET);
 	if(!_mm_read_UBYTES(buf,512,modreader)) return 0;
 	/* verify channel status */
-	for (t = 0, chn = 0, p = &buf[15]; t < 512; t += 32, p += 32) {
+	for (t = 0, chn = 0, p = &buf[15]; t < 512; t += 16, p += 16) {
 		switch (*p) {
 		case  0:		/* channel enabled */
 		case  1:		/* channel muted */
