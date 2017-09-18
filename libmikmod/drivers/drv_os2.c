@@ -27,10 +27,8 @@
 ==============================================================================*/
 
 /*
-
 	Written by Stefan Tibus <Stefan.Tibus@ThePentagon.com>
 	Improvements by Andrew Zabolotny <bit@eltech.ru>
-
 */
 
 #ifdef HAVE_CONFIG_H
@@ -215,7 +213,7 @@ static int OS2_Init(void)
 	memset(&mciOpenParms, 0, sizeof(mciOpenParms));
 	mciOpenParms.pszDeviceType = (PSZ) MAKEULONG(MCI_DEVTYPE_WAVEFORM_AUDIO,
 												 (USHORT) DeviceIndex);
-	mciOpenParms.pszElementName = (PSZ) & PlayList;
+	mciOpenParms.pszElementName = (PSZ) & PlayList[0];
 
 	/* open WAVEAUDIO-device */
 	if (mciSendCommand(0, MCI_OPEN,
