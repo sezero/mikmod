@@ -69,7 +69,7 @@ UWORD md_bpm = 125;	/* tempo */
 UBYTE md_numchn  = 0, md_sngchn = 0, md_sfxchn = 0;
 UBYTE md_hardchn = 0, md_softchn= 0;
 
-void (*md_player)(void) = Player_HandleTick;
+MikMod_player_t md_player  =  Player_HandleTick;
 
 MikMod_callback_t vc_callback = NULL;
 

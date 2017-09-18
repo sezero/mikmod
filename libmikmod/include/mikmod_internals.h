@@ -660,7 +660,7 @@ extern UBYTE md_softchn;     /* number of software mixed voices */
 
 /* This is for use by the hardware drivers only.  It points to the registered
    tickhandler function. */
-extern void (*md_player)(void);
+extern MikMod_player_t md_player;
 
 extern SWORD  MD_SampleLoad(SAMPLOAD*,int);
 extern void   MD_SampleUnload(SWORD);
