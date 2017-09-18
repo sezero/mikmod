@@ -308,7 +308,7 @@ static BOOL loadinstr6(void)
 		i->rpanvar      = _mm_read_UBYTE(modreader);
 		i->volfade      = _mm_read_M_UWORD(modreader);
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
+#if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define UNI_LoadEnvelope6(name) 										\
 		i-> name##flg=_mm_read_UBYTE(modreader);						\
 		i-> name##pts=_mm_read_UBYTE(modreader);						\
@@ -373,7 +373,7 @@ static BOOL loadinstr5(void)
 		for(u=0;u<96;u++)
 			i->samplenumber[u]=of.numsmp+_mm_read_UBYTE(modreader);
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
+#if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define UNI_LoadEnvelope5(name) 									\
 		i-> name##flg=_mm_read_UBYTE(modreader);					\
 		i-> name##pts=_mm_read_UBYTE(modreader);					\

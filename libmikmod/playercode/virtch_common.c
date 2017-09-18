@@ -109,7 +109,7 @@ static BOOL (*VC_VoiceStopped_ptr)(UBYTE);
 static SLONG (*VC_VoiceGetPosition_ptr)(UBYTE);
 static ULONG (*VC_VoiceRealVolume_ptr)(UBYTE);
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
+#if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define VC_PROC0(suffix) \
 MIKMODAPI void VC_##suffix (void) { VC_##suffix##_ptr(); }
 

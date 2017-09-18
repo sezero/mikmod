@@ -763,7 +763,7 @@ static BOOL IT_Load(BOOL curious)
 				}
 			} else {
 				/* load IT 2xx volume, pan and pitch envelopes */
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
+#if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define IT_LoadEnvelope(name,type) 										\
 				ih. name##flg   =_mm_read_UBYTE(modreader);				\
 				ih. name##pts   =_mm_read_UBYTE(modreader);				\
@@ -855,7 +855,7 @@ static BOOL IT_Load(BOOL curious)
 					d->rpanvar = ih.rpanvar;
 				}
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
+#if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define IT_ProcessEnvelope(name) 										\
 				if(ih. name##flg&1) d-> name##flg|=EF_ON;				\
 				if(ih. name##flg&2) d-> name##flg|=EF_LOOP;				\

@@ -527,7 +527,7 @@ static BOOL LoadInstruments(void)
 					d->samplenumber[u]=pth.what[u]+of.numsmp;
 				d->volfade = pth.volfade;
 
-#if defined __STDC__ || defined _MSC_VER || defined MPW_C
+#if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define XM_ProcessEnvelope(name) 										\
 				for (u = 0; u < (XMENVCNT >> 1); u++) {					\
 					d-> name##env[u].pos = pth. name##env[u << 1];		\
