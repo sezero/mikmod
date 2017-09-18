@@ -1230,7 +1230,7 @@ WIDGET *wid_colorsel_add(DIALOG *d, int spacing, const char *hotkeys, int active
 		for (i=0; i<strlen(w->hkeys); i++)
 			w->hkeys[i] = toupper(w->hkeys[i]);
 	} else
-		memset (&w->hkeys, 0, 5);
+		memset (w->hkeys, 0, 5);
 	w->sel_mode = WID_SEL_SINGLE;
 	dialog_add(d, (WIDGET *) w);
 	return (WIDGET *) w;

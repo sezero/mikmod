@@ -844,9 +844,9 @@ static void dynamic_display_volbars(MWINDOW *win)
 
 	for (t = first_volbar; t < (first_volbar + count) && t < mf->numchn; t++) {
 		v = playdata.vstatus[t].volamp * barw / 32;
-		memset(&storage, ' ', barw);
+		memset(storage, ' ', barw);
 		storage[barw] = '\0';
-		memset(&storage, CHAR_AMPLITUDE1, v / 2);
+		memset(storage, CHAR_AMPLITUDE1, v / 2);
 		if (v & 1) {
 			storage[v / 2] = CHAR_AMPLITUDE0;
 			v = v/2 + 1;
