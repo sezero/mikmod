@@ -155,6 +155,7 @@ extern char storage[STORAGELEN+2];
 #if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
 #undef S_ISLNK /* djgpp-v2.04 does define S_ISLNK (and has lstat, too..) */
 #define lstat             stat
+#undef S_ISSOCK
 #define S_ISSOCK(st_mode) 0
 #define S_ISLNK(st_mode)  0
 #endif
