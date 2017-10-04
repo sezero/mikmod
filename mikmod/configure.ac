@@ -204,8 +204,9 @@ dnl =================================
 dnl Set PACKAGE_DATA_DIR in config.h.
 dnl =================================
 
-ax_package_data_dir="${datadir}/${PACKAGE}"
-AX_DEFINE_DIR([PACKAGE_DATA_DIR], [ax_package_data_dir], [Define the directory for shared data.])
+AX_RECURSIVE_EVAL(${datadir}/${PACKAGE},ax_package_data_dir)
+AC_DEFINE_UNQUOTED([PACKAGE_DATA_DIR],"$ax_package_data_dir",[Define the directory for shared data.])
+#AC_SUBST(PACKAGE_DATA_DIR)
 
 dnl ================
 dnl Choose settings.
