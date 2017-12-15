@@ -1,0 +1,10 @@
+This is the source code of libmikmod and mikmod:
+http://mikmod.sourceforge.net/
+https://sourceforge.net/projects/mikmod/
+
+libmikmod is a library supporting many formats, including s3m, it, xm,
+and several others. Mikmod is a module player based on libmikmod.
+
+LICENSE:
+Mikmod player is is covered by the GNU General Public License v2.
+libmikmod is covered by the GNU Lesser General Public License v2.1.
