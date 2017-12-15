@@ -31,7 +31,10 @@
 #ifdef DRV_AHI
 
 #ifdef __amigaos4__
+#define SHAREDMEMFLAG MEMF_SHARED
 #define __USE_INLINE__
+#else
+#define SHAREDMEMFLAG MEMF_PUBLIC
 #endif
 
 #include <devices/ahi.h>
@@ -96,7 +99,7 @@ static int AHI_Init(void) {
 		AHIReq[0] = (struct AHIRequest *)CreateIORequest(AHImp, sizeof(struct AHIRequest));
 		if (AHIReq[0]) {
 			AHIReq[0]->ahir_Version = 4;
-			AHIReq[1] = AllocVec(sizeof(struct AHIRequest), MEMF_PUBLIC);
+			AHIReq[1] = AllocVec(sizeof(struct AHIRequest), SHAREDMEMFLAG);
 			if (AHIReq[1]) {
 				if (!OpenDevice(AHINAME, AHI_DEFAULT_UNIT, (struct IORequest *)AHIReq[0], 0)) {
 					/*AHIReq[0]->ahir_Std.io_Message.mn_Node.ln_Pri = 0;*/
@@ -112,9 +115,9 @@ static int AHI_Init(void) {
 
 					CopyMem(AHIReq[0], AHIReq[1], sizeof(struct AHIRequest));
 
-					AHIBuf[0] = AllocVec(BUFFERSIZE, MEMF_PUBLIC | MEMF_CLEAR);
+					AHIBuf[0] = AllocVec(BUFFERSIZE, SHAREDMEMFLAG | MEMF_CLEAR);
 					if (AHIBuf[0]) {
-						AHIBuf[1] = AllocVec(BUFFERSIZE, MEMF_PUBLIC | MEMF_CLEAR);
+						AHIBuf[1] = AllocVec(BUFFERSIZE, SHAREDMEMFLAG | MEMF_CLEAR);
 						if (AHIBuf[1]) {
 							signed8 = (md_mode & DMODE_16BITS)? 0 : 1;
 							return VC_Init();
