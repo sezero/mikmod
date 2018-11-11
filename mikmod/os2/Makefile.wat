@@ -42,7 +42,7 @@ EXTRA_OBJ = mgetopt.obj mgetopt1.obj mfnmatch.obj
 all: $(AOUT)
 
 $(AOUT): $(OBJ) $(EXTRA_OBJ)
-	wlink N $(AOUT) SYS OS2V2 LIBR {$(LIBS)} F {$(OBJ)} F {$(EXTRA_OBJ)}
+	wlink N $(AOUT) SYS OS2V2 OP q LIBR {$(LIBS)} F {$(OBJ)} F {$(EXTRA_OBJ)}
 
 .c.obj:
 	$(COMPILE) -fo=$^@ $<
