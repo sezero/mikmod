@@ -192,7 +192,7 @@ fi])
 AC_ARG_ENABLE([alsa], [AS_HELP_STRING([--enable-alsa],[Linux only: include ALSA driver [guessed]])],
 [if test "$enableval" = "yes"
 then
-  libmikmod_driver_alsa=$libmikmod_linux
+  libmikmod_driver_alsa=yes
 else
   libmikmod_driver_alsa=no
 fi])
@@ -212,10 +212,6 @@ then
 else
   libmikmod_driver_sun=no
 fi])
-case $host_os in
-  netbsd*|openbsd*|sunos*|solaris*) ;;
-  *) libmikmod_driver_sun=no ;;
-esac
 
 AC_ARG_ENABLE([sndio], [AS_HELP_STRING([--enable-sndio],[OpenBSD only: include sndio driver [guessed]])],
 [if test "$enableval" = "yes"
@@ -224,11 +220,6 @@ then
 else
   libmikmod_driver_sndio=no
 fi])
-case $host_os in
-# hey, a linux port at sndio.org ..
-  openbsd*|linux*) ;;
-  *) libmikmod_driver_sndio=no ;;
-esac
 
 AC_ARG_ENABLE([aix], [AS_HELP_STRING([--enable-aix],[AIX only: include AIX audio driver [guessed]])],
 [if test "$enableval" = "yes"
