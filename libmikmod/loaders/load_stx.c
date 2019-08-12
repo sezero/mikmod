@@ -114,6 +114,7 @@ static BOOL STX_Test(void)
 	UBYTE id[8];
 	int t;
 
+	memset(id,0,8);
 	_mm_fseek(modreader,0x3C,SEEK_SET);
 	if(!_mm_read_UBYTES(id,4,modreader)) return 0;
 	if(memcmp(id,"SCRM",4)) return 0;
