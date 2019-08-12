@@ -144,7 +144,7 @@ static void ASY_Cleanup(void)
 	patbuf = NULL;
 }
 
-static void ConvertNote(MODNOTE *n)
+static int ConvertNote(MODNOTE *n)
 {
 	UBYTE instrument, effect, effdat, note;
 	UWORD period;
@@ -220,7 +220,13 @@ static void ConvertNote(MODNOTE *n)
 	if ((effect == 0xa) && (effdat & 0xf) && (effdat & 0xf0))
 		effdat &= 0xf0;
 
+	if (effect >= UNI_LAST-UNI_PTEFFECT0) {
+		_mm_errno = MMERR_LOADING_TRACK;
+		/*fprintf(stderr,"ASY: bad effect %d\n",effect);*/
+		return -1;
+	}
 	UniPTEffect(effect, effdat);
+	return 0;
 }
 
 static UBYTE *ConvertTrack(MODNOTE *n)
@@ -229,7 +235,8 @@ static UBYTE *ConvertTrack(MODNOTE *n)
 
 	UniReset();
 	for (t = 0; t < 64; t++) {
-		ConvertNote(n);
+		if (ConvertNote(n) < 0)
+			return NULL;
 		UniNewline();
 		n += of.numchn;
 	}
