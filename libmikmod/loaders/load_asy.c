@@ -222,6 +222,7 @@ static int ConvertNote(MODNOTE *n)
 
 	if (effect >= UNI_LAST-UNI_PTEFFECT0) {
 		_mm_errno = MMERR_LOADING_TRACK;
+		/* FIXME: investigate better */
 		/*fprintf(stderr,"ASY: bad effect %d\n",effect);*/
 		return -1;
 	}
