@@ -368,8 +368,12 @@ BOOL S404_Unpack(MREADER *reader, void **out, long *outlen)
 	fprintf(stderr,"S404: iLen= %d, sLen= %d, pLen= %d, oLen= %d\n",
 		iLen, sLen, pLen, oLen);
 #endif
-	if (sLen < 0 || oLen <= 0 || pLen <= 0) return 0;
-	if (pLen + 16 >= iLen) return 0; /* sanity check */
+	if (sLen < 0 || oLen <= 0 || pLen <= 6 || pLen > iLen - 18) {
+		#ifdef STC_DEBUG
+		fprintf(stderr, "S404: bad lengths\n");
+		#endif
+		return 0;
+	}
 
 	if (!(src = (UBYTE*) MikMod_malloc(iLen - 16)))
 		return 0;
