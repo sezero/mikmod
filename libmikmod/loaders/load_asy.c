@@ -221,9 +221,11 @@ static int ConvertNote(MODNOTE *n)
 		effdat &= 0xf0;
 
 	if (effect >= UNI_LAST-UNI_PTEFFECT0) {
+#ifdef MIKMOD_DEBUG
+		/* FIXME: can diagnose earlier elsewhere?? */
+		fprintf(stderr,"ASY: bad effect %d\n",effect);
+#endif
 		_mm_errno = MMERR_LOADING_TRACK;
-		/* FIXME: investigate better */
-		/*fprintf(stderr,"ASY: bad effect %d\n",effect);*/
 		return -1;
 	}
 	UniPTEffect(effect, effdat);
