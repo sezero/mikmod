@@ -338,6 +338,11 @@ static BOOL ASY_Load(BOOL curious)
 		return 0;
 	for (t = 0; t < of.numpos; t++) {
 		of.positions[t] = mh->positions[t];
+		if (of.positions[t]>of.numpat) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"positions[%d]=%d > numpat=%d\n",t,of.positions[t],of.numpat);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
 	}
 
 	/* Finally, init the sampleinfo structures  */
