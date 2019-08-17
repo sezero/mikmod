@@ -220,14 +220,13 @@ static int ConvertNote(MODNOTE *n)
 	if ((effect == 0xa) && (effdat & 0xf) && (effdat & 0xf0))
 		effdat &= 0xf0;
 
-	if (effect >= UNI_LAST-UNI_PTEFFECT0) {
-#ifdef MIKMOD_DEBUG
-		/* FIXME: can diagnose earlier elsewhere?? */
-		fprintf(stderr,"ASY: bad effect %d\n",effect);
-#endif
-		_mm_errno = MMERR_LOADING_TRACK;
-		return -1;
+	if (effect == 0x1b) {
+		return 0; /* UniEffect(UNI_S3MEFFECTQ,dat) ? */
 	}
+	if (effect > 0xf) {
+		return 0;		/* return -1 to fail? */
+	}
+
 	UniPTEffect(effect, effdat);
 	return 0;
 }
