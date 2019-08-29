@@ -361,6 +361,11 @@ static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susen
 	t->a=0;
 	t->b=((t->flg&EF_SUSTAIN)&&(!(keyoff&KEY_OFF)))?0:1;
 
+	if (!t->pts) { /* FIXME: bad/crafted file. better/more general solution? */
+		t->b=0;
+		return t->env[0].val;
+	}
+
 	/* Imago Orpheus sometimes stores an extra initial point in the envelope */
 	if ((t->pts>=2)&&(t->env[0].pos==t->env[1].pos)) {
 		t->a++;
