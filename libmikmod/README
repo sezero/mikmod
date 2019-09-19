@@ -29,9 +29,9 @@ and other systems. Check out the file 'NEWS' for more history information.
 - If you're building libmikmod for MacOS, refer to the 'README' file
   located in the 'macintosh' subdirectory.
 
-- If you're building libmikmod for dreamcast, gp32 or psp platforms,
+- If you're building libmikmod for dreamcast, gp32, n64 or psp platforms,
   refer to the corresponding 'README' files located under the 'dc',
-  'gp32' or 'psp' subdirectory.
+  'gp32', 'n64' or 'psp' subdirectory.
 
 - If you're building libmikmod under any other system which is not a
   Unix flavour, then be warned that your platform is probably not

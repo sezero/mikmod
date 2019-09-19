@@ -318,6 +318,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_gp32.c
     drivers/drv_hp.c
     drivers/drv_mac.c
+    drivers/drv_n64.c
     drivers/drv_nas.c
     drivers/drv_nos.c
     drivers/drv_openal.c
