@@ -3189,6 +3189,9 @@ This driver only supports software mixing. This driver is not tested yet.
 @item drv_hp
 This driver is only available under HP-UX, and access its audio device.@*
 This driver only supports software mixing.
+@item drv_n64
+This driver is only for the Nintendo 64 platform, and uses the ``libdragon`` api.@*
+This driver only supports software mixing.
 @item drv_mac
 This driver is only available under MacOS, and uses the ``Sound Manager''.@*
 This driver supports the Classic and Carbon environments, and does only software mixing.
