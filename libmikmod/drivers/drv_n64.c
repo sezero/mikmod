@@ -83,7 +83,7 @@ static void N64_Update(void)
 		}
 	}
 
-	audio_write(N64_buffer);
+	audio_write((short *) N64_buffer);
 }
 
 MIKMODAPI MDRIVER drv_n64={
