@@ -12,6 +12,7 @@ AR = $(N64PREFIX)ar
 all: libmikmod.a
 
 SRCS =	../drivers/drv_n64.c	\
+	../drivers/drv_nos.c	\
 	\
 	../loaders/load_669.c	\
 	../loaders/load_amf.c	\
@@ -34,6 +35,11 @@ SRCS =	../drivers/drv_n64.c	\
 	../loaders/load_umx.c	\
 	../loaders/load_uni.c	\
 	../loaders/load_xm.c	\
+	\
+	../depackers/mmcmp.c	\
+	../depackers/pp20.c	\
+	../depackers/s404.c	\
+	../depackers/xpk.c	\
 	\
 	../mmio/mmalloc.c	\
 	../mmio/mmerror.c	\
