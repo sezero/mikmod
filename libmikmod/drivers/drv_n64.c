@@ -61,6 +61,8 @@ static void N64_Exit(void)
 
 static void N64_Update(void)
 {
+	if (!audio_can_write()) return;
+
 	if (md_mode & DMODE_STEREO)
 	{
 		/* Read buffer *twice* for stereo */
@@ -71,7 +73,7 @@ static void N64_Update(void)
 		/* Read buffer *once* for mono */
 		int i;
 		VC_WriteBytes(N64_buffer, audio_get_buffer_length() * sizeof(short));
-		for(i = audio_get_buffer_length() - 1; i >= 0; i--)
+		for (i = audio_get_buffer_length() - 1; i >= 0; i--)
 		{
 			/* Convert mono to stereo */
 			/* |a|b|c|d|.|.|.|.| -> |a|b|c|d|.|.|d|d|  */
