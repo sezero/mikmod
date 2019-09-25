@@ -61,21 +61,22 @@ static void N64_Exit(void)
 
 static void N64_Update(void)
 {
+	int i;
+
 	if (!audio_can_write()) return;
+
+	i = audio_get_buffer_length();
 
 	if (md_mode & DMODE_STEREO)
 	{
-		/* Read buffer *twice* for stereo */
-		VC_WriteBytes(N64_buffer, audio_get_buffer_length() * 2 * sizeof(short));
+		VC_WriteBytes(N64_buffer, i * 2 * sizeof(short));
 	}
 	else
 	{
-		/* Read buffer *once* for mono */
-		int i;
-		VC_WriteBytes(N64_buffer, audio_get_buffer_length() * sizeof(short));
-		for (i = audio_get_buffer_length() - 1; i >= 0; i--)
+		VC_WriteBytes(N64_buffer, i * sizeof(short));
+		for (--i; i >= 0; --i)
 		{
-			/* Convert mono to stereo */
+			/* Convert mono to stereo / interleaved. */
 			/* |a|b|c|d|.|.|.|.| -> |a|b|c|d|.|.|d|d|  */
 			/* |a|b|c|d|.|.|d|d| -> |a|b|c|d|c|c|d|d|  */
 			/* |a|b|c|d|c|c|d|d| -> |a|b|b|b|c|c|d|d|  */
