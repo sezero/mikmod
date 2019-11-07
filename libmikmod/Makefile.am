@@ -47,7 +47,7 @@ libmikmod_la_SOURCES = \
 		drivers/drv_mac.c \
 		drivers/drv_nas.c \
 		drivers/drv_nos.c \
-		drivers.drv_n64.c \
+		drivers/drv_n64.c \
 		drivers/drv_openal.c \
 		drivers/drv_os2.c \
 		drivers/drv_osles.c \
