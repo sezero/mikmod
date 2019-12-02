@@ -12,6 +12,8 @@ RANLIB = $(TARGET)-ranlib
 
 INCLUDES=-I$(LIBMIRKO)/include -I../gp32 -I../include
 CPPFLAGS=-DMIKMOD_BUILD -DDRV_GP32 -DHAVE_LIMITS_H
+# disable support for module depackers
+#CPPFLAGS+=-DNO_DEPACKERS
 # disable the high quality mixer (build only with the standart mixer)
 #CPPFLAGS+=-DNO_HQMIXER
 CFLAGS  =-O2 -Wall -DLITTLE_ENDIAN -DGP32 -mtune=arm9tdmi

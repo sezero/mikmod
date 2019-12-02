@@ -41,6 +41,8 @@
 #include "config.h"
 #endif
 
+#ifndef NO_DEPACKERS
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -206,3 +208,5 @@ BOOL PP20_Unpack(MREADER* reader, void** out, long* outlen)
 	}
 	return ret;
 }
+
+#endif /* NO_DEPACKERS */

@@ -31,6 +31,8 @@
 #include "config.h"
 #endif
 
+#ifndef NO_DEPACKERS
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -433,3 +435,5 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 	MikMod_free(destbuf);
 	return 0;
 }
+
+#endif /* NO_DEPACKERS */

@@ -11,6 +11,9 @@
 /* Define to disable the high quality mixer (build only with the standart mixer) */
 /*#define NO_HQMIXER*/
 
+/* disable support for module depackers */
+/*#define NO_DEPACKERS*/
+
 /* Define if your system supports binary pipes (i.e. Unix) */
 /*#define DRV_PIPE*/
 /* Define if you want support for output to stdout */

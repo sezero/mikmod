@@ -80,6 +80,7 @@ esac
 # libmikmod specific control variables and their default values.
 # ==============================================================
 
+libmikmod_depackers=yes
 libmikmod_hqmixer=yes
 
 libmikmod_driverlist=nosound
@@ -145,6 +146,14 @@ then
   libmikmod_hqmixer=no
 else
   libmikmod_hqmixer=yes
+fi])
+
+AC_ARG_ENABLE([depackers], [AS_HELP_STRING([--disable-depackers],[exclude support for module depackers [default=no]])],
+[if test "$enableval" = "no"
+then
+  libmikmod_depackers=no
+else
+  libmikmod_depackers=yes
 fi])
 
 AC_ARG_ENABLE([alldrv], [AS_HELP_STRING([--disable-alldrv],[disable all of the audio drivers. using additional --enable-XXX options enables the specified drivers.])],
@@ -1328,6 +1337,11 @@ fi
 if test $libmikmod_hqmixer = no
 then
 	AC_DEFINE([NO_HQMIXER], 1, [disable the high quality mixer (build only with the standart mixer)])
+fi
+
+if test $libmikmod_depackers = no
+then
+	AC_DEFINE([NO_DEPACKERS], 1, [disable support for module depackers])
 fi
 
 # symbol visibility

@@ -75,6 +75,9 @@
 /* Define to 0 or 1 to override MIKMOD_UNIX in mikmod_internals.h. */
 #cmakedefine MIKMOD_UNIX 1
 
+/* disable module depackers support. */
+#cmakedefine NO_DEPACKERS 1
+
 /* disable the high quality mixer (build only with the standart mixer) */
 #cmakedefine  NO_HQMIXER 1
 

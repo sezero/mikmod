@@ -1,5 +1,8 @@
 /* Customized config.h for Android builds */
 
+/* disable support for module depackers */
+/* #define NO_DEPACKERS */
+
 /* disable the high quality mixer (build only with the standart mixer) */
 /* #define NO_HQMIXER */
 

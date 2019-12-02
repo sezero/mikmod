@@ -1,4 +1,4 @@
-/* config.h.in.  Generated for Mac OS X builds.  */
+/* config.h.in.  Generated manually for Mac OS X.  */
 
 /* Define if you have the posix_memalign function. */
 /* posix_memalign this requires OSX 10.6 or newer! */
@@ -9,6 +9,9 @@
 
 /* Define if you have the ANSI C header files.  */
 #define STDC_HEADERS 1
+
+/* disable support for module depackers */
+/* #define NO_DEPACKERS */
 
 /* disable the high quality mixer (build only with the standart mixer) */
 /* #define NO_HQMIXER */

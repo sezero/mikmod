@@ -4,6 +4,8 @@ INCS = -I../dc -I../include $(KOS_INCS)
 KOS_CFLAGS += $(INCS) -Wall -O2 -DMIKMOD_BUILD -DHAVE_LIMITS_H -DHAVE_MALLOC_H -DHAVE_UNISTD_H
 # mikmod drivers selection:
 KOS_CFLAGS += -DDRV_DC -DDRV_WAV -DDRV_AIFF -DDRV_RAW
+# disable support for module depackers
+#KOS_CFLAGS += -DNO_DEPACKERS
 # disable the high quality mixer (build only with the standart mixer)
 #KOS_CFLAGS += -DNO_HQMIXER
 

@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#ifndef NO_DEPACKERS
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -395,3 +397,5 @@ BOOL S404_Unpack(MREADER *reader, void **out, long *outlen)
 	MikMod_free(dst);
 	return 0;
 }
+
+#endif /* NO_DEPACKERS */

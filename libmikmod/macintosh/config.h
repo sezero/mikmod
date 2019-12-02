@@ -9,6 +9,12 @@
 /* Define if you have the ANSI C header files.  */
 #define STDC_HEADERS 1
 
+/* disable support for module depackers */
+/* #define NO_DEPACKERS */
+
+/* disable the high quality mixer (build only with the standart mixer) */
+/* #define NO_HQMIXER */
+
 /* Define if you want support for output to stdout */
 /* #undef DRV_STDOUT */
 

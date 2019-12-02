@@ -162,6 +162,7 @@ SET (ENABLE_DL 0)
 SET (ENABLE_THREADS 0) # windows builds have it using win32api already.
 ENDIF()
 
+SET (DISABLE_DEPACKERS 0 CACHE BOOL "Exclude support for module depackers")
 SET (DISABLE_HQMIXER 0 CACHE BOOL "Exclude support for high quality mixer")
 
 SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations (UNSTABLE!!!)")
@@ -426,6 +427,11 @@ IF(DISABLE_HQMIXER)
   SET(NO_HQMIXER 1)
 ELSE()
   SET(NO_HQMIXER)
+ENDIF()
+IF(DISABLE_DEPACKERS)
+  SET(NO_DEPACKERS 1)
+ELSE()
+  SET(NO_DEPACKERS)
 ENDIF()
 
 IF(ENABLE_PIPE)

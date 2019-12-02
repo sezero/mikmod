@@ -48,6 +48,8 @@
 #include "config.h"
 #endif
 
+#ifndef NO_DEPACKERS
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -374,7 +376,6 @@ static int unsqsh(UBYTE *src, SLONG srclen, UBYTE *dest, SLONG destlen)
 	}
 
 	return decrunched;
-
 }
 
 BOOL XPK_Unpack(MREADER *reader, void **out, long *outlen)
@@ -425,3 +426,4 @@ BOOL XPK_Unpack(MREADER *reader, void **out, long *outlen)
 	return 0;
 }
 
+#endif /* NO_DEPACKERS */

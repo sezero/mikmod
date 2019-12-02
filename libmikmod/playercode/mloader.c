@@ -50,6 +50,7 @@ MODULE of;
 
 static	MLOADER *firstloader=NULL;
 
+#ifndef NO_DEPACKERS
 static	MUNPACKER unpackers[] = {
 	PP20_Unpack,
 	MMCMP_Unpack,
@@ -57,6 +58,7 @@ static	MUNPACKER unpackers[] = {
 	S404_Unpack,
 	NULL
 };
+#endif
 
 const UWORD finetune[16] = {
 	8363,8413,8463,8529,8581,8651,8723,8757,
@@ -347,6 +349,7 @@ static MODULE *ML_AllocUniMod(void)
 	return (MODULE *) MikMod_malloc(sizeof(MODULE));
 }
 
+#ifndef NO_DEPACKERS
 static BOOL ML_TryUnpack(MREADER *reader,void **out,long *outlen)
 {
 	int i;
@@ -360,6 +363,7 @@ static BOOL ML_TryUnpack(MREADER *reader,void **out,long *outlen)
 	}
 	return 0;
 }
+#endif
 
 static void Player_Free_internal(MODULE *mf)
 {
@@ -380,14 +384,17 @@ static CHAR* Player_LoadTitle_internal(MREADER *reader)
 {
 	MLOADER *l;
 	CHAR *title;
+	#ifndef NO_DEPACKERS
 	void *unpk;
 	long newlen;
+	#endif
 
 	modreader=reader;
 	_mm_errno = 0;
 	_mm_critical = 0;
 	_mm_iobase_setcur(modreader);
 
+	#ifndef NO_DEPACKERS
 	if(ML_TryUnpack(modreader,&unpk,&newlen)) {
 		if(!(modreader=_mm_new_mem_reader(unpk,newlen))) {
 			modreader=reader;
@@ -395,6 +402,7 @@ static CHAR* Player_LoadTitle_internal(MREADER *reader)
 			return NULL;
 		}
 	}
+	#endif
 
 	/* Try to find a loader that recognizes the module */
 	for(l=firstloader;l;l=l->next) {
@@ -411,11 +419,13 @@ static CHAR* Player_LoadTitle_internal(MREADER *reader)
 		title = NULL;
 	}
 
+	#ifndef NO_DEPACKERS
 	if (modreader!=reader) {
 		_mm_delete_mem_reader(modreader);
 		modreader=reader;
 		MikMod_free(unpk);
 	}
+	#endif
 	return title;
 }
 
@@ -487,14 +497,17 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	MLOADER *l;
 	BOOL ok;
 	MODULE *mf;
+	#ifndef NO_DEPACKERS
 	void *unpk;
 	long newlen;
+	#endif
 
 	modreader = reader;
 	_mm_errno = 0;
 	_mm_critical = 0;
 	_mm_iobase_setcur(modreader);
 
+	#ifndef NO_DEPACKERS
 	if(ML_TryUnpack(modreader,&unpk,&newlen)) {
 		if(!(modreader=_mm_new_mem_reader(unpk,newlen))) {
 			modreader=reader;
@@ -502,6 +515,7 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 			return NULL;
 		}
 	}
+	#endif
 
 	/* Try to find a loader that recognizes the module */
 	for(l=firstloader;l;l=l->next) {
@@ -511,11 +525,13 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 
 	if(!l) {
 		_mm_errno = MMERR_NOT_A_MODULE;
+		#ifndef NO_DEPACKERS
 		if(modreader!=reader) {
 			_mm_delete_mem_reader(modreader);
 			modreader=reader;
 			MikMod_free(unpk);
 		}
+		#endif
 		if(_mm_errorhandler) _mm_errorhandler();
 		_mm_rewind(modreader);
 		_mm_iobase_revert(modreader);
@@ -524,11 +540,13 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 
 	/* init unitrk routines */
 	if(!UniInit()) {
+		#ifndef NO_DEPACKERS
 		if(modreader!=reader) {
 			_mm_delete_mem_reader(modreader);
 			modreader=reader;
 			MikMod_free(unpk);
 		}
+		#endif
 		if(_mm_errorhandler) _mm_errorhandler();
 		_mm_rewind(modreader);
 		_mm_iobase_revert(modreader);
@@ -564,11 +582,13 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	if(ok) ok = ((mf=ML_AllocUniMod()) != NULL);
 	if(!ok) {
 		ML_FreeEx(&of);
+		#ifndef NO_DEPACKERS
 		if(modreader!=reader) {
 			_mm_delete_mem_reader(modreader);
 			modreader=reader;
 			MikMod_free(unpk);
 		}
+		#endif
 		if(_mm_errorhandler) _mm_errorhandler();
 		_mm_rewind(modreader);
 		_mm_iobase_revert(modreader);
@@ -599,11 +619,13 @@ static MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curi
 	if(ok) ok = !SL_LoadSamples();
 	if(ok) ok = !Player_Init(mf);
 
+	#ifndef NO_DEPACKERS
 	if(modreader!=reader) {
 		_mm_delete_mem_reader(modreader);
 		modreader=reader;
 		MikMod_free(unpk);
 	}
+	#endif
 	_mm_iobase_revert(modreader);
 
 	if(!ok) {
