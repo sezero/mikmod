@@ -21,7 +21,7 @@
 /*==============================================================================
 
   Driver for output on n64 platform
-  Originally from http://www.n64dev.net/ by ???
+  Originally from https://dragonminded.com/n64dev/ by DragonMinded
 
   Altered and updated to mikmod 3.3.11 by Victor Vieux <github@vrgl117.games>
 
