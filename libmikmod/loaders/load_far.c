@@ -258,7 +258,8 @@ static BOOL FAR_Load(BOOL curious)
 
 			crow = pat;
 			/* file often allocates 64 rows even if there are less in pattern */
-			if (mh2->patsiz[t]<2+(rows*16*4)) {
+			/* Also, don't allow more than 256 rows. */
+			if (mh2->patsiz[t]<2+(rows*16*4) || rows>256) {
 				_mm_errno = MMERR_LOADING_PATTERN;
 				return 0;
 			}
