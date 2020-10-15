@@ -93,6 +93,7 @@ static	FARHEADER2 *mh2 = NULL;
 static	FARNOTE *pat = NULL;
 
 static	const unsigned char FARSIG[4+3]={'F','A','R',0xfe,13,10,26};
+static  const UWORD FAR_MAXPATSIZE=(256*16*4)+2;
 
 /*========== Loader code */
 
@@ -259,7 +260,7 @@ static BOOL FAR_Load(BOOL curious)
 			crow = pat;
 			/* file often allocates 64 rows even if there are less in pattern */
 			/* Also, don't allow more than 256 rows. */
-			if (mh2->patsiz[t]<2+(rows*16*4) || rows>256) {
+			if (mh2->patsiz[t]<2+(rows*16*4) || rows>256 || mh2->patsiz[t]>FAR_MAXPATSIZE) {
 				_mm_errno = MMERR_LOADING_PATTERN;
 				return 0;
 			}
