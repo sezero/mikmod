@@ -84,7 +84,7 @@ typedef struct MODNOTE {
 static CHAR protracker[] = "Protracker";
 static CHAR startrekker[] = "Startrekker";
 static CHAR fasttracker[] = "Fasttracker";
-static CHAR oktalyser[] = "Oktalyser";
+static CHAR octalyser[] = "Octalyser";
 static CHAR oktalyzer[] = "Oktalyzer";
 static CHAR taketracker[] = "TakeTracker";
 static CHAR orpheus[] = "Imago Orpheus (MOD format)";
@@ -103,7 +103,7 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 	modtype = trekker = 0;
 
 	/* Protracker and variants */
-	if ((!memcmp(id, "M.K.", 4)) || (!memcmp(id, "M!K!", 4))) {
+	if ((!memcmp(id, "M.K.", 4)) || (!memcmp(id, "M!K!", 4)) || (!memcmp(id, "M&K!", 4))) {
 		*descr = protracker;
 		modtype = 0;
 		*numchn = 4;
@@ -133,11 +133,11 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 		return 1;
 	}
 
-	/* Oktalyser (Atari) */
-	if (!memcmp(id, "CD81", 4)) {
-		*descr = oktalyser;
+	/* Octalyser (Atari) */
+	if (!memcmp(id, "CD81", 4) || !memcmp(id, "CD61", 4)) {
+		*descr = octalyser;
 		modtype = 1;
-		*numchn = 8;
+		*numchn = id[2] - '0';
 		return 1;
 	}
 
