@@ -134,7 +134,7 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 			UniInstrument(n->ins);
 			UniNote(n->note+3*OCTAVE-1);
 		}
-		if (n->vol&0xf) UniPTEffect(0xc,(n->vol&0xf)<<2);
+		if (n->vol>=0x01 && n->vol<=0x10) UniPTEffect(0xc,(n->vol - 1)<<2);
 		if (n->eff)
 			switch(n->eff>>4) {
 				case 0x3: /* porta to note */
