@@ -221,7 +221,7 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 
 		if ((ins)&&(ins!=255))
 			UniInstrument(ins-1);
-		if (note!=255) {
+		if (note && note!=255) {
 			UniNote(((note>>4)*OCTAVE)+(note&0xf)-1);
 		}
 		for (i=0;i<4;i++) {
@@ -271,7 +271,7 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 				case 0x0e:	/* extended */
 					switch (inf&0xf0) {
 						case 0x10:	/* fine portamento up */
-							UniEffect(UNI_S3MEFFECTF, 0x0f|((inf<<4)&0x0f));
+							UniEffect(UNI_S3MEFFECTF, 0xf0|(inf&0x0f));
 							break;
 						case 0x20:	/* fine portamento down */
 							UniEffect(UNI_S3MEFFECTE, 0xf0|(inf&0x0f));
@@ -292,16 +292,16 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 							UniEffect(SS_TREMWAVE, inf&0x0f);
 							break;
 						case 0x80:	/* extra fine porta up */
-							UniEffect(UNI_S3MEFFECTF, 0x0e|((inf<<4)&0x0f));
+							UniEffect(UNI_S3MEFFECTF, 0xe0|(inf&0x0f));
 							break;
 						case 0x90:	/* extra fine porta down */
 							UniEffect(UNI_S3MEFFECTE, 0xe0|(inf&0x0f));
 							break;
 						case 0xa0:	/* fine volslide up */
-							UniEffect(UNI_S3MEFFECTD, 0x0f|((inf<<4)&0x0f));
+							UniEffect(UNI_S3MEFFECTD, 0x0f|((inf&0x0f)<<4));
 							break;
 						case 0xb0:	/* fine volslide down */
-							UniEffect(UNI_S3MEFFECTE, 0xf0|(inf&0x0f));
+							UniEffect(UNI_S3MEFFECTD, 0xf0|(inf&0x0f));
 							break;
 						case 0xc0:	/* note cut */
 						case 0xd0:	/* note delay */
@@ -472,16 +472,21 @@ static BOOL GDM_Load(BOOL curious)
 		q->length=s.length;
 		q->loopstart=s.loopbeg;
 		q->loopend=s.loopend;
-		q->volume=s.vol;
-		q->panning=s.pan;
+		q->volume=64;
 		q->seekpos=position;
 
 		position +=s.length;
 
+		/* Only use the sample volume byte if bit 2 is set. When bit 3 is set,
+		   the sample panning is supposed to be used, but 2GDM isn't capable
+		   of making a GDM using this feature; the panning byte is always 0xFF
+		   or junk. Likewise, bit 5 is unused (supposed to be LZW compression). */
 		if (s.flags&1)
 			q->flags |=SF_LOOP;
 		if (s.flags&2)
 			q->flags |=SF_16BITS;
+		if ((s.flags&4) && s.vol<=64)
+			q->volume=s.vol;
 		if (s.flags&16)
 			q->flags |=SF_STEREO;
 		q++;
