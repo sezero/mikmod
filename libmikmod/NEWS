@@ -1,3 +1,39 @@
+Summary of changes between libmikmod 3.3.11 and libmikmod 3.3.12:
+========================================================================
+
+libmikmod v3.3.12 was released on ???? ??, ????.
+
+- New configuration option to exclude module depackers (off by default.)
+- Fix high cpu usage in ALSA output driver (reported by David Lindsay.)
+- Fix handling of FAR pattern break byte (github bug #5.)
+- Add support for Mod's Grave WOW files to MOD loader (github bug #7.)
+- Check M&K! and CD61 signatures in Octalyser modules (github PR #12.)
+- Don't load STM samples with volume==0, fix sample offset calculation
+  (github bug #6.)
+- Fix volume event handling for FAR modules. (github PR #14.)
+- Fix GDM empty notes, fine volslide/portamento, and sample volume.
+  (github PR #15.)
+- Fix note tuning for 669 modules. (github PR #16.)
+- DoPTEffectB, DoPTEffectD: bounds-check the jump target.
+- StartEnvelope: workaround invalid envelopes with 0 pts.
+- Sanity-check against bad effects in Asylum loader.
+- Sanity-check that position values can't be higher than patterns in
+  several loaders.
+- Fix access to uninitialized memory in M15, IT, STM and STMIK loaders
+  in case of short files.
+- Refuse zero instrument and pattern numbers in STMIK loader.
+- Fixed off-by-one source buffer boundary check in PP20 depacker.
+- Improved sanity checks in S404 depacker to prevent out-of-bound reads.
+- Added Nintendo64 output driver -- based on old work by 'dragonminded'.
+- Several build and portability fixes/updates.
+
+Thanks to:
+- Lionel Debroux, for providing fuzz files which helped finding defects.
+- Alice Rowan (Lachesis), for providing FAR, GDM, STM, and other loader
+  fixes.
+- Victor Vieux, for providing and testing the N64 driver.
+
+
 Summary of changes between libmikmod 3.3.10 and libmikmod 3.3.11:
 ========================================================================
 
