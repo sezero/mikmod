@@ -93,6 +93,7 @@ static	FARHEADER2 *mh2 = NULL;
 static	FARNOTE *pat = NULL;
 
 static	const unsigned char FARSIG[4+3]={'F','A','R',0xfe,13,10,26};
+static  const UWORD FAR_MAXPATSIZE=(256*16*4)+2;
 
 /*========== Loader code */
 
@@ -245,18 +246,21 @@ static BOOL FAR_Load(BOOL curious)
 	if(!AllocPatterns()) return 0;
 
 	for(t=0;t<of.numpat;t++) {
-		UBYTE rows=0;
+		UWORD rows=0;
 		UBYTE tempo;
 
 		memset(pat,0,256*16*4*sizeof(FARNOTE));
 		if(mh2->patsiz[t]) {
-			rows  = _mm_read_UBYTE(modreader);
+			/* Break position byte is always 1 less than the final row index,
+			   i.e. it is 2 less than the total row count. */
+			rows  = _mm_read_UBYTE(modreader) + 2;
 			tempo = _mm_read_UBYTE(modreader);
 			(void)tempo; /* unused */
 
 			crow = pat;
 			/* file often allocates 64 rows even if there are less in pattern */
-			if (mh2->patsiz[t]<2+(rows*16*4)) {
+			/* Also, don't allow more than 256 rows. */
+			if (mh2->patsiz[t]<2+(rows*16*4) || rows>256 || mh2->patsiz[t]>FAR_MAXPATSIZE) {
 				_mm_errno = MMERR_LOADING_PATTERN;
 				return 0;
 			}
