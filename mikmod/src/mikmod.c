@@ -36,7 +36,7 @@
 #ifdef HAVE_GETOPT_LONG_ONLY
 #  include <getopt.h>
 #else
-#  include "mgetopt.h"
+#  include "getopt_long.h"
 #endif
 #include <ctype.h>
 #ifndef _WIN32

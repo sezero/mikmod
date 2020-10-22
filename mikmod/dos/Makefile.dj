@@ -47,10 +47,10 @@ clean:
 
 # DO NOT DELETE this line - makedep uses it as a separator line
 
-display.o: ../src/display.c config.h ../src/mgetopt.h ../src/display.h ../src/player.h ../src/mconfig.h \
+display.o: ../src/display.c config.h ../src/display.h ../src/player.h ../src/mconfig.h \
 	../src/rcfile.h ../src/mlist.h ../src/mutilities.h ../src/mwindow.h ../src/mconfedit.h ../src/mmenu.h \
 	../src/keys.h ../src/mplayer.h ../src/mlistedit.h
-marchive.o: ../src/marchive.c config.h ../src/mgetopt.h ../src/mlist.h ../src/marchive.h \
+marchive.o: ../src/marchive.c config.h ../src/mlist.h ../src/marchive.h \
 	../src/mutilities.h ../src/display.h
 mconfedit.o: ../src/mconfedit.c config.h ../src/rcfile.h ../src/mconfig.h ../src/mconfedit.h \
 	../src/mmenu.h ../src/mwindow.h ../src/mlist.h ../src/mdialog.h ../src/mwidget.h ../src/mutilities.h
@@ -58,24 +58,23 @@ mconfig.o: ../src/mconfig.c config.h ../src/player.h ../src/mconfig.h ../src/rcf
 	../src/mlist.h ../src/mutilities.h
 mdialog.o: ../src/mdialog.c config.h ../src/mwidget.h ../src/mwindow.h ../src/mconfig.h ../src/rcfile.h \
 	../src/mdialog.h ../src/display.h ../src/mutilities.h
-mikmod.o: ../src/mikmod.c config.h ../src/mgetopt.h ../src/player.h ../src/mutilities.h ../src/display.h \
+mikmod.o: ../src/mikmod.c config.h ../src/getopt_long.h ../src/player.h ../src/mutilities.h ../src/display.h \
 	../src/rcfile.h ../src/mconfig.h ../src/mlist.h ../src/mlistedit.h ../src/mmenu.h ../src/mwindow.h \
 	../src/marchive.h ../src/mdialog.h ../src/mwidget.h ../src/mplayer.h ../src/keys.h
-mlist.o: ../src/mlist.c config.h ../src/mgetopt.h ../src/mlist.h ../src/marchive.h \
+mlist.o: ../src/mlist.c config.h ../src/mlist.h ../src/marchive.h \
 	../src/mutilities.h
-mlistedit.o: ../src/mlistedit.c config.h ../src/mgetopt.h ../src/mlistedit.h ../src/mmenu.h \
+mlistedit.o: ../src/mlistedit.c config.h ../src/mlistedit.h ../src/mmenu.h \
 	../src/mwindow.h ../src/mconfig.h ../src/rcfile.h ../src/mlist.h ../src/player.h ../src/mdialog.h \
 	../src/mwidget.h ../src/mconfedit.h ../src/marchive.h ../src/keys.h ../src/display.h ../src/mutilities.h
 mmenu.o: ../src/mmenu.c config.h ../src/display.h ../src/mmenu.h ../src/mwindow.h ../src/mconfig.h \
 	../src/rcfile.h ../src/mdialog.h ../src/mwidget.h ../src/keys.h ../src/mutilities.h
 mplayer.o: ../src/mplayer.c config.h ../src/mplayer.h ../src/mthreads.h ../src/mconfig.h ../src/rcfile.h \
 	../src/mutilities.h
-mutilities.o: ../src/mutilities.c config.h ../src/mgetopt.h ../src/player.h ../src/mlist.h \
+mutilities.o: ../src/mutilities.c config.h ../src/player.h ../src/mlist.h \
 	../src/marchive.h ../src/mutilities.h
 mwidget.o: ../src/mwidget.c config.h ../src/display.h ../src/player.h ../src/mwindow.h ../src/mconfig.h \
 	../src/rcfile.h ../src/mwidget.h ../src/keys.h ../src/mutilities.h
 mwindow.o: ../src/mwindow.c config.h ../src/display.h ../src/player.h ../src/mwindow.h ../src/mconfig.h \
 	../src/rcfile.h ../src/mutilities.h ../src/keys.h ../src/mthreads.h ../src/dosvideo.inc
 rcfile.o: ../src/rcfile.c config.h ../src/rcfile.h
-mgetopt.o: ../src/mgetopt.h
-mgetopt1.o: ../src/mgetopt.h
+getopt_long.o: ../src/getopt_long.h

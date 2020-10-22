@@ -322,6 +322,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\getopt_long.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\marchive.c"
 				>
 			</File>
@@ -339,14 +343,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\mfnmatch.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\mgetopt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\mgetopt1.c"
 				>
 			</File>
 			<File
@@ -396,6 +392,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\getopt_long.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\keys.h"
 				>
 			</File>
@@ -417,10 +417,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\mfnmatch.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\mgetopt.h"
 				>
 			</File>
 			<File

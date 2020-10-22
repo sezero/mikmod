@@ -61,7 +61,7 @@ $(OUT)/mconfig.o: config.h ../src/player.h ../src/mconfig.h ../src/rcfile.h \
   ../src/mwindow.h ../src/mlist.h ../src/mutilities.h
 $(OUT)/mdialog.o: config.h ../src/mwidget.h ../src/mwindow.h ../src/mconfig.h \
   ../src/rcfile.h ../src/mdialog.h ../src/display.h ../src/mutilities.h
-$(OUT)/mikmod.o: config.h ../src/mgetopt.h ../src/player.h ../src/mutilities.h \
+$(OUT)/mikmod.o: config.h ../src/getopt_long.h ../src/player.h ../src/mutilities.h \
   ../src/display.h ../src/rcfile.h ../src/mconfig.h ../src/mlist.h \
   ../src/mlistedit.h ../src/mmenu.h ../src/mwindow.h ../src/marchive.h \
   ../src/mdialog.h ../src/mwidget.h ../src/mplayer.h ../src/keys.h
@@ -85,7 +85,4 @@ $(OUT)/mwindow.o: config.h ../src/display.h ../src/player.h ../src/mwindow.h \
   ../src/mthreads.h ../src/os2video.inc
 $(OUT)/rcfile.o: config.h ../src/rcfile.h ../src/mutilities.h
 
-$(OUT)/mgetopt.o: ../src/mgetopt.h
-$(OUT)/mgetopt1.o: ../src/mgetopt.h
-$(OUT)/mfnmatch.o: ../src/mfnmatch.h
-$(OUT)/musleep.o: config.h
+$(OUT)/getopt_long.o: ../src/getopt_long.h

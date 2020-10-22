@@ -37,7 +37,7 @@ COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
 
 OBJ = display.obj marchive.obj mconfedit.obj mconfig.obj mdialog.obj mikmod.obj mlist.obj mlistedit.obj &
       mmenu.obj mplayer.obj mutilities.obj mwidget.obj mwindow.obj rcfile.obj
-EXTRA_OBJ = mgetopt.obj mgetopt1.obj mfnmatch.obj
+EXTRA_OBJ = getopt_long.obj
 
 all: $(AOUT)
 

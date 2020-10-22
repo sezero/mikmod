@@ -93,6 +93,10 @@ SOURCE=..\..\src\display.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\getopt_long.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\marchive.c
 # End Source File
 # Begin Source File
@@ -110,14 +114,6 @@ SOURCE=..\..\src\mdialog.c
 # Begin Source File
 
 SOURCE=..\..\src\mfnmatch.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\mgetopt.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\mgetopt1.c
 # End Source File
 # Begin Source File
 
@@ -169,6 +165,10 @@ SOURCE=..\..\src\display.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\getopt_long.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\keys.h
 # End Source File
 # Begin Source File
@@ -190,10 +190,6 @@ SOURCE=..\..\src\mdialog.h
 # Begin Source File
 
 SOURCE=..\..\src\mfnmatch.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\mgetopt.h
 # End Source File
 # Begin Source File
 

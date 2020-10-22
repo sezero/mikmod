@@ -17,20 +17,18 @@ noinst_HEADERS = \
 	mwindow.h player.h rcfile.h
 
 EXTRA_mikmod_SOURCES = \
-	mfnmatch.c mgetopt.c mgetopt1.c musleep.c
+	mfnmatch.c getopt_long.c musleep.c
 
 EXTRA_DIST = CMakeLists.txt \
-	dosvideo.inc os2video.inc winvideo.inc mfnmatch.h mgetopt.h $(man_MANS)
+	dosvideo.inc os2video.inc winvideo.inc mfnmatch.h getopt_long.h $(man_MANS)
 
 mikmod_LDFLAGS = @LIBMIKMOD_LDADD@
 mikmod_LDADD = @EXTRA_OBJ@ @LIBMIKMOD_LIBS@ @PLAYER_LIB@
 
 mikmod_DEPENDENCIES = @EXTRA_OBJ@
 
-mgetopt.o: $(srcdir)/mgetopt.c $(srcdir)/mgetopt.h
-	$(COMPILE) -o $@ -c $(srcdir)/mgetopt.c
-mgetopt1.o: $(srcdir)/mgetopt1.c $(srcdir)/mgetopt.h
-	$(COMPILE) -o $@ -c $(srcdir)/mgetopt1.c
+getopt_long.o: $(srcdir)/getopt_long.c $(srcdir)/getopt_long.h
+	$(COMPILE) -o $@ -c $(srcdir)/getopt_long.c
 mfnmatch.o: $(srcdir)/mfnmatch.c $(srcdir)/mfnmatch.h
 	$(COMPILE) -o $@ -c $(srcdir)/mfnmatch.c
 musleep.o: $(srcdir)/musleep.c

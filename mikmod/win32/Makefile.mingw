@@ -22,7 +22,7 @@ COMPILE=$(CC) $(CFLAGS) -I. -o $@ -c ../src/$*.c
 LIBS= -L. -lmikmod
 
 OBJS= display.o marchive.o mconfedit.o mconfig.o mdialog.o \
-	mfnmatch.o mgetopt.o mgetopt1.o mikmod.o mlist.o \
+	mfnmatch.o getopt_long.o mikmod.o mlist.o \
 	mlistedit.o mmenu.o mplayer.o mutilities.o mwidget.o \
 	mwindow.o rcfile.o
 
@@ -62,13 +62,10 @@ mdialog.o: ../src/mdialog.c ../src/mwidget.h ../src/mwindow.h ../src/mconfig.h \
 mfnmatch.o: ../src/mfnmatch.c ../src/mfnmatch.h
 	$(COMPILE)
 
-mgetopt.o: ../src/mgetopt.c ../src/mgetopt.h
+getopt_long: ../src/getopt_long.c ../src/getopt_long.h
 	$(COMPILE)
 
-mgetopt1.o: ../src/mgetopt1.c ../src/mgetopt.h
-	$(COMPILE)
-
-mikmod.o: ../src/mikmod.c ../src/mgetopt.h ../src/player.h ../src/mutilities.h \
+mikmod.o: ../src/mikmod.c ../src/getopt_long.h ../src/player.h ../src/mutilities.h \
 	../src/display.h ../src/rcfile.h ../src/mconfig.h ../src/mlist.h \
 	../src/mlistedit.h ../src/mmenu.h ../src/mwindow.h ../src/marchive.h \
 	../src/mdialog.h ../src/mwidget.h ../src/mplayer.h ../src/keys.h config.h

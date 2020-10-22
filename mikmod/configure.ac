@@ -247,7 +247,7 @@ case $host in
 esac
 
 if test "$have_getopt_long_only" != "yes"; then
-	EXTRA_OBJ="mgetopt.o mgetopt1.o $EXTRA_OBJ"
+	EXTRA_OBJ="getopt_long.o $EXTRA_OBJ"
 fi
 
 dnl Yet another kluge to get the result of AC_FUNC_FNMATCH.
