@@ -151,6 +151,8 @@ static MMD1NOTE *mmd1pat = NULL;
 
 static BOOL decimalvolumes;
 static BOOL bpmtempos;
+static BOOL is8channel;
+static UWORD rowsperbeat;
 
 #define d0note(row,col) mmd0pat[((row)*(UWORD)of.numchn)+(col)]
 #define d1note(row,col) mmd1pat[((row)*(UWORD)of.numchn)+(col)]
@@ -197,6 +199,48 @@ static void MED_Cleanup(void)
 	mmd1pat = NULL;
 }
 
+static UWORD MED_ConvertTempo(UWORD tempo)
+{
+	/* MED tempos 1-10 are compatibility tempos that are converted to different values.
+	   These were determined by testing with OctaMED 2.00 and roughly correspond to the
+	   formula: (195 + speed/2) / speed. Despite being "tracker compatible" these really
+	   are supposed to change the tempo and NOT the speed. These are tempo-mode only. */
+	static const UBYTE tempocompat[11] =
+	{
+		0, 195, 97, 65, 49, 39, 32, 28, 24, 22, 20
+	};
+
+	/* MEDs with 8 channels do something completely different with their tempos.
+	   This behavior completely overrides BPM mode timing when it is enabled.
+	   Table stolen from libxmp ;-( */
+	static const UBYTE tempo8channel[11] =
+	{
+		0, 47, 43, 40, 37, 35, 32, 30, 29, 27, 26
+	};
+
+	ULONG result;
+
+	if (bpmtempos && !is8channel) {
+		/* Convert MED BPM into ProTracker-compatible BPM. All that really needs to be done
+		   here is the BPM needs to be multiplied by (rows per beat)/(PT rows per beat = 4).
+		   BPM mode doesn't have compatibility tempos like tempo mode but OctaMED does
+		   something unusual with BPM<=2 that was found in electrosound 64.med. */
+		result = (tempo > 2) ? ((ULONG)tempo * rowsperbeat + 2) / 4 : 125;
+	} else {
+		if (is8channel) {
+			tempo = tempo < 10 ? tempo : 10;
+			tempo = tempo8channel[tempo];
+		}
+		if (tempo >= 1 && tempo <= 10)
+			tempo = tempocompat[tempo];
+
+		/* Convert MED tempo into ProTracker-compatble BPM. */
+		result = ((ULONG)tempo * 125) / 33;
+	}
+
+	return result < 65535 ? result : 65535;
+}
+
 static void EffectCvt(UBYTE eff, UBYTE dat)
 {
 	switch (eff) {
@@ -211,19 +255,13 @@ static void EffectCvt(UBYTE eff, UBYTE dat)
 	  case 0x8:				/* midi hold/decay */
 		break;
 	  case 0x9:
-		if (bpmtempos) {
+		/* Rarely MED modules request values over 0x20 but different OctaMED/OctaMEDPlayer
+		   versions handle that inconsistently (and the docs/UI insist you shouldn't use
+		   them), so just ignore anything above 0x20. */
+		if (dat <= 0x20) {
 			if (!dat)
 				dat = of.initspeed;
 			UniEffect(UNI_S3MEFFECTA, dat);
-		} else {
-			if (dat <= 0x20) {
-				if (!dat)
-					dat = of.initspeed;
-				else
-					dat /= 4;
-				UniPTEffect(0xf, dat);
-			} else
-				UniEffect(UNI_MEDSPEED, ((UWORD)dat * 125) / (33 * 4));
 		}
 		break;
 		/* 0xa 0xb PT effects */
@@ -258,14 +296,8 @@ static void EffectCvt(UBYTE eff, UBYTE dat)
 			UniPTEffect(0xc, 0);
 			break;
 		  default:
-			if (dat <= 10)
-				UniPTEffect(0xf, dat);
-			else if (dat <= 240) {
-				if (bpmtempos)
-					UniPTEffect(0xf, (dat < 32) ? 32 : dat);
-				else
-					UniEffect(UNI_MEDSPEED, ((UWORD)dat * 125) / 33);
-			}
+			if (dat <= 240)
+				UniEffect(UNI_MEDSPEED, MED_ConvertTempo(dat));
 		}
 		break;
 	  default:					/* all normal PT effects are handled here */
@@ -375,6 +407,8 @@ static BOOL LoadMEDPatterns(void)
 				mmdp->b = _mm_read_UBYTE(modreader);
 				mmdp->c = _mm_read_UBYTE(modreader);
 			}
+			/* Skip tracks this block doesn't use. */
+			for (col = numtracks; col < of.numchn; col++, mmdp++) {}
 		}
 
 		for (col = 0; col < of.numchn; col++)
@@ -434,6 +468,8 @@ static BOOL LoadMMD1Patterns(void)
 				mmdp->c = _mm_read_UBYTE(modreader);
 				mmdp->d = _mm_read_UBYTE(modreader);
 			}
+			/* Skip tracks this block doesn't use. */
+			for (col = numtracks; col < of.numchn; col++, mmdp++) {}
 		}
 
 		for (col = 0; col < of.numchn; col++)
@@ -570,46 +606,18 @@ static BOOL MED_Load(BOOL curious)
 	}
 
 	decimalvolumes = (ms->flags & 0x10) ? 0 : 1;
+	is8channel = (ms->flags & 0x40) ? 1 : 0;
 	bpmtempos = (ms->flags2 & 0x20) ? 1 : 0;
 
 	if (bpmtempos) {
-		int bpmlen = (ms->flags2 & 0x1f) + 1;
+		rowsperbeat = (ms->flags2 & 0x1f) + 1;
 		of.initspeed = ms->tempo2;
-		of.inittempo = ms->deftempo * bpmlen / 4;
-
-		if (bpmlen != 4) {
-			/* Let's do some math : compute GCD of BPM beat length and speed */
-			int a, b;
-
-			a = bpmlen;
-			b = ms->tempo2;
-
-			if (a > b) {
-				t = b;
-				b = a;
-				a = t;
-			}
-			while ((a != b) && (a)) {
-				t = a;
-				a = b - a;
-				b = t;
-				if (a > b) {
-					t = b;
-					b = a;
-					a = t;
-				}
-			}
-
-			of.initspeed /= b;
-			of.inittempo = ms->deftempo * bpmlen / (4 * b);
-		}
+		of.inittempo = MED_ConvertTempo(ms->deftempo);
 	} else {
 		of.initspeed = ms->tempo2;
-		of.inittempo = ms->deftempo ? ((UWORD)ms->deftempo * 125) / 33 : 128;
-		if ((ms->deftempo <= 10) && (ms->deftempo))
-			of.inittempo = (of.inittempo * 33) / 6;
-		of.flags |= UF_HIGHBPM;
+		of.inittempo = ms->deftempo ? MED_ConvertTempo(ms->deftempo) : 128;
 	}
+	of.flags |= UF_HIGHBPM;
 	MED_Version[12] = mh->id;
 	of.modtype = MikMod_strdup(MED_Version);
 	of.numchn = 0;				/* will be counted later */
