@@ -13,6 +13,8 @@ libmikmod v3.3.12 was released on ???? ??, ????.
 - Fix volume event handling for FAR modules. (github PR #14.)
 - Fix GDM empty notes, fine volslide/portamento, and sample volume.
   (github PR #15.)
+- Fix MED 9xx command in tempo mode and various BPM mode bugs (github
+  bug #17).
 - Fix note tuning for 669 modules. (github PR #16.)
 - DoPTEffectB, DoPTEffectD: bounds-check the jump target.
 - StartEnvelope: workaround invalid envelopes with 0 pts.
