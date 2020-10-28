@@ -1475,11 +1475,11 @@ static int DoXMEffectEA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	UBYTE dat;
 
 	dat=UniGetByte();
-	if (!tick)
+	if (!tick) {
 		if (dat) a->fslideupspd=dat;
-	a->tmpvolume+=a->fslideupspd;
-	if (a->tmpvolume>64) a->tmpvolume=64;
-
+		a->tmpvolume+=a->fslideupspd;
+		if (a->tmpvolume>64) a->tmpvolume=64;
+	}
 	return 0;
 }
 
@@ -1488,11 +1488,11 @@ static int DoXMEffectEB(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	UBYTE dat;
 
 	dat=UniGetByte();
-	if (!tick)
+	if (!tick) {
 		if (dat) a->fslidednspd=dat;
-	a->tmpvolume-=a->fslidednspd;
-	if (a->tmpvolume<0) a->tmpvolume=0;
-
+		a->tmpvolume-=a->fslidednspd;
+		if (a->tmpvolume<0) a->tmpvolume=0;
+	}
 	return 0;
 }
 
