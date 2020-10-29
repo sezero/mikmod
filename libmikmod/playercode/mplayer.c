@@ -987,10 +987,16 @@ static void DoEEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod,
 		}
 		break;
 	case 0x9: /* retrig note */
-		/* do not retrigger on tick 0, until we are emulating FT2 and effect
-		   data is zero */
-		if (!tick && !((flags & UF_FT2QUIRKS) && (!nib)))
-			break;
+		/* Protracker: retriggers on tick 0 first; does nothing when nib=0.
+		   Fasttracker 2: retriggers on tick nib first, including nib=0. */
+		if (!tick) {
+			if (flags & UF_FT2QUIRKS)
+				a->retrig=nib;
+			else if (nib)
+				a->retrig=0;
+			else
+				break;
+		}
 		/* only retrigger if data nibble > 0, or if tick 0 (FT2 compat) */
 		if (nib || !tick) {
 			if (!a->retrig) {
