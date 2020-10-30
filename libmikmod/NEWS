@@ -5,8 +5,10 @@ libmikmod v3.3.12 was released on ???? ??, ????.
 
 - New configuration option to exclude module depackers (off by default.)
 - Fix high cpu usage in ALSA output driver (reported by David Lindsay.)
-- Fix XM fine volume slide effects. (This behavior seems to have broken
-  between libmikmod-3.1.6 and 3.1.7.)
+- Fix XM fine volume slide effects (was broken between libmikmod-3.1.6
+  and 3.1.7 - github PR #20.)
+- Fix MOD retrigger (E9x) effect bug that would cause it to always
+  retrigger on tick 1. (github bug #21, PR #22.)
 - Fix handling of FAR pattern break byte (github bug #5.)
 - Add support for Mod's Grave WOW files to MOD loader (github bug #7.)
 - Check M&K! and CD61 signatures in Octalyser modules (github PR #12.)
