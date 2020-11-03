@@ -906,6 +906,43 @@ static int DoPTEffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	return 0;
 }
 
+static void DoLoop(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, UBYTE param)
+{
+	if (tick) return;
+	if (param) { /* set reppos or repcnt ? */
+		/* set repcnt, so check if repcnt already is set, which means we
+		   are already looping */
+		if (a->pat_repcnt)
+			a->pat_repcnt--; /* already looping, decrease counter */
+		else {
+#if 0
+			/* this would make walker.xm, shipped with Xsoundtracker,
+			   play correctly, but it's better to remain compatible
+			   with FT2 */
+			if ((!(flags&UF_NOWRAP))||(a->pat_reppos!=POS_NONE))
+#endif
+				a->pat_repcnt=param; /* not yet looping, so set repcnt */
+		}
+
+		if (a->pat_repcnt) { /* jump to reppos if repcnt>0 */
+			if (a->pat_reppos==POS_NONE)
+				a->pat_reppos=mod->patpos-1;
+			if (a->pat_reppos==-1) {
+				mod->pat_repcrazy=1;
+				mod->patpos=0;
+			} else
+				mod->patpos=a->pat_reppos;
+		} else a->pat_reppos=POS_NONE;
+	} else {
+		a->pat_reppos=mod->patpos-1; /* set reppos - can be (-1) */
+		/* emulate the FT2 pattern loop (E60) bug:
+		 * http://milkytracker.org/docs/MilkyTracker.html#fxE6x
+		 * roadblas.xm plays correctly with this. */
+		if (flags & UF_FT2QUIRKS) mod->patbrk=mod->patpos;
+	}
+	return;
+}
+
 static void DoEEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod,
 	SWORD channel, UBYTE dat)
 {
@@ -941,39 +978,7 @@ static void DoEEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod,
 		}
 		break;
 	case 0x6: /* set patternloop */
-		if (tick)
-			break;
-		if (nib) { /* set reppos or repcnt ? */
-			/* set repcnt, so check if repcnt already is set, which means we
-			   are already looping */
-			if (a->pat_repcnt)
-				a->pat_repcnt--; /* already looping, decrease counter */
-			else {
-#if 0
-				/* this would make walker.xm, shipped with Xsoundtracker,
-				   play correctly, but it's better to remain compatible
-				   with FT2 */
-				if ((!(flags&UF_NOWRAP))||(a->pat_reppos!=POS_NONE))
-#endif
-					a->pat_repcnt=nib; /* not yet looping, so set repcnt */
-			}
-
-			if (a->pat_repcnt) { /* jump to reppos if repcnt>0 */
-				if (a->pat_reppos==POS_NONE)
-					a->pat_reppos=mod->patpos-1;
-				if (a->pat_reppos==-1) {
-					mod->pat_repcrazy=1;
-					mod->patpos=0;
-				} else
-					mod->patpos=a->pat_reppos;
-			} else a->pat_reppos=POS_NONE;
-		} else {
-			a->pat_reppos=mod->patpos-1; /* set reppos - can be (-1) */
-			/* emulate the FT2 pattern loop (E60) bug:
-			 * http://milkytracker.org/docs/MilkyTracker.html#fxE6x
-			 * roadblas.xm plays correctly with this. */
-			if (flags & UF_FT2QUIRKS) mod->patbrk=mod->patpos;
-		}
+		DoLoop(tick, flags, a, mod, nib);
 		break;
 	case 0x7: /* set tremolo waveform */
 		a->wavecontrol&=0x0f;
@@ -2134,24 +2139,123 @@ static int DoMEDSpeed(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD
 	return 0;
 }
 
+static int DoMEDEffectVib(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* MED vibrato (larger speed/depth range than PT vibrato). */
+	UBYTE rate  = UniGetByte();
+	UBYTE depth = UniGetByte();
+	if (!tick) {
+		a->vibspd   = rate;
+		a->vibdepth = depth;
+	}
+	if (a->main.period)
+		DoVibrato(tick, a);
+
+	return 0;
+}
+
 static int DoMEDEffectF1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	DoEEffects(tick, flags, a, mod, channel, 0x90|(mod->sngspd/2));
-
+	/* "Play twice." Despite the documentation, this only retriggers exactly one time
+	   on the third tick (i.e. it is not equivalent to PT E93). */
+	if (tick == 3) {
+		if (a->main.period)
+			a->main.kick = KICK_NOTE;
+	}
 	return 0;
 }
 
 static int DoMEDEffectF2(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	DoEEffects(tick, flags, a, mod, channel, 0xd0|(mod->sngspd/2));
+	/* Delay for 3 ticks before playing. */
+	DoEEffects(tick, flags, a, mod, channel, 0xd3);
 
 	return 0;
 }
 
 static int DoMEDEffectF3(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	DoEEffects(tick, flags, a, mod, channel, 0x90|(mod->sngspd/3));
+	/* "Play three times." Actually, it's just a regular retrigger every 2 ticks,
+	   starting from tick 2. */
+	if (!tick) a->retrig=2;
+	if (!a->retrig) {
+		if (a->main.period) a->main.kick = KICK_NOTE;
+		a->retrig=2;
+	}
+	a->retrig--;
 
+	return 0;
+}
+
+static int DoMEDEffectFD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* Set pitch without triggering a new note. */
+	a->main.kick = KICK_ABSENT;
+	return 0;
+}
+
+static int DoMEDEffect16(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* Loop (similar to PT E6x but with an extended range).
+	   TODO: currently doesn't support the loop point persisting between patterns.
+	   It's not clear if anything actually relies on that. */
+	UBYTE param = UniGetByte();
+	int reppos;
+	int i;
+
+	DoLoop(tick, flags, a, mod, param);
+
+	/* OctaMED repeat position is global so set it for every channel...
+	   This fixes a playback bug found in "(brooker) #01.med", which sets
+	   the jump position in track 2 but jumps in track 1. */
+	reppos = a->pat_reppos;
+	for (i = 0; i < pf->numchn; i++)
+		pf->control[i].pat_reppos = reppos;
+
+	return 0;
+}
+
+static int DoMEDEffect18(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* Cut note (same as PT ECx but with an extended range). */
+	UBYTE param = UniGetByte();
+	if (tick >= param)
+		a->tmpvolume=0;
+
+	return 0;
+}
+
+static int DoMEDEffect1E(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* Pattern delay (same as PT EEx but with an extended range). */
+	UBYTE param = UniGetByte();
+	if (!tick && !mod->patdly2)
+		mod->patdly = (param<255) ? param+1 : 255;
+
+	return 0;
+}
+
+static int DoMEDEffect1F(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* Combined note delay and retrigger (same as PT E9x and EDx but can be combined).
+	   The high nibble is delay and the low nibble is retrigger. */
+	UBYTE param = UniGetByte();
+	UBYTE retrig = param & 0xf;
+
+	if (!tick) {
+		a->main.notedelay = (param & 0xf0) >> 4;
+		a->retrig = retrig;
+	} else if (a->main.notedelay) {
+		a->main.notedelay--;
+	}
+
+	if (!a->main.notedelay) {
+		if (retrig && !a->retrig) {
+			if (a->main.period) a->main.kick = KICK_NOTE;
+			a->retrig = retrig;
+		}
+		a->retrig--;
+	}
 	return 0;
 }
 
@@ -2249,6 +2353,13 @@ static effect_func effects[UNI_LAST] = {
 	DoMEDEffectF2,	/* UNI_MEDEFFECTF2 */
 	DoMEDEffectF3,	/* UNI_MEDEFFECTF3 */
 	DoOktArp,	/* UNI_OKTARP */
+	DoNothing,	/* unused */
+	DoMEDEffectVib, /* UNI_MEDEFFECT_VIB */
+	DoMEDEffectFD,	/* UNI_MEDEFFECT_FD */
+	DoMEDEffect16,	/* UNI_MEDEFFECT_16 */
+	DoMEDEffect18,	/* UNI_MEDEFFECT_18 */
+	DoMEDEffect1E,	/* UNI_MEDEFFECT_1E */
+	DoMEDEffect1F,	/* UNI_MEDEFFECT_1F */
 };
 
 static int pt_playeffects(MODULE *mod, SWORD channel, MP_CONTROL *a)

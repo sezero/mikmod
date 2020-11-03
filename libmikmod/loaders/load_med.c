@@ -149,6 +149,7 @@ static ULONG *ba = NULL;
 static MMD0NOTE *mmd0pat = NULL;
 static MMD1NOTE *mmd1pat = NULL;
 
+static UBYTE medversion;
 static BOOL decimalvolumes;
 static BOOL bpmtempos;
 static BOOL is8channel;
@@ -241,46 +242,73 @@ static UWORD MED_ConvertTempo(UWORD tempo)
 	return result < 65535 ? result : 65535;
 }
 
-static void EffectCvt(UBYTE eff, UBYTE dat)
+static void EffectCvt(UBYTE note, UBYTE eff, UBYTE dat)
 {
 	switch (eff) {
-		/* 0x0 0x1 0x2 0x3 0x4 PT effects */
-	  case 0x5:				/* PT vibrato with speed/depth nibbles swapped */
-		UniPTEffect(0x4, (dat >> 4) | ((dat & 0xf) << 4));
+	  /* 0x0: arpeggio */
+	  case 0x1:				/* portamento up (PT compatible, ignore 0) */
+		if (dat)
+			UniPTEffect(0x1, dat);
 		break;
-		/* 0x6 0x7 not used */
-	  case 0x6:
-	  case 0x7:
+	  case 0x2:				/* portamento down (PT compatible, ignore 0) */
+		if (dat)
+			UniPTEffect(0x2, dat);
 		break;
-	  case 0x8:				/* midi hold/decay */
+	  /* 0x3: tone portamento */
+	  case 0x4:				/* vibrato (~2x the speed/depth of PT vibrato) */
+		UniWriteByte(UNI_MEDEFFECT_VIB);
+		UniWriteByte((dat & 0xf0) >> 3);
+		UniWriteByte((dat & 0x0f) << 1);
 		break;
-	  case 0x9:
-		/* Rarely MED modules request values over 0x20 but different OctaMED/OctaMEDPlayer
-		   versions handle that inconsistently (and the docs/UI insist you shouldn't use
-		   them), so just ignore anything above 0x20. */
-		if (dat <= 0x20) {
-			if (!dat)
-				dat = of.initspeed;
+	  case 0x5:				/* tone portamento + volslide (MMD0: old vibrato) */
+		if (medversion == 0) {
+			/* Approximate conversion, probably wrong.
+			   The entire param is depth and the rate is fixed. */
+			UniWriteByte(UNI_MEDEFFECT_VIB);
+			UniWriteByte(0x16);
+			UniWriteByte((dat + 3) >> 2);
+			break;
+		}
+		UniPTEffect(eff, dat);
+		break;
+	  /* 0x6: vibrato + volslide */
+	  /* 0x7: tremolo */
+	  case 0x8:				/* set hold/decay (FIXME- hold/decay not implemented) */
+		break;
+	  case 0x9:				/* set speed */
+		/* TODO: Rarely MED modules request values of 0x00 or >0x20. In most Amiga versions
+		   these behave as speed=(param & 0x1F) ? (param & 0x1F) : 32. From Soundstudio 2
+		   up, these have different behavior. Since the docs/UI insist you shouldn't use
+		   these values and not many modules use these, just ignore them for now. */
+		if (dat >= 0x01 && dat <= 0x20) {
 			UniEffect(UNI_S3MEFFECTA, dat);
 		}
 		break;
-		/* 0xa 0xb PT effects */
+	  /* 0xa: volslide */
+	  /* 0xb: position jump */
 	  case 0xc:
 		if (decimalvolumes)
 			dat = (dat >> 4) * 10 + (dat & 0xf);
 		UniPTEffect(0xc, dat);
 		break;
+	  case 0xa:
 	  case 0xd:				/* same as PT volslide */
+		/* if both nibbles are set, a slide up is performed. */
+		if ((dat & 0xf) && (dat & 0xf0))
+			dat &= 0xf0;
 		UniPTEffect(0xa, dat);
 		break;
-	  case 0xe:				/* synth jmp - midi */
+	  case 0xe:				/* synth jump (FIXME- synth instruments not implemented) */
 		break;
 	  case 0xf:
 		switch (dat) {
-		  case 0:				/* patternbreak */
+		  case 0:			/* patternbreak */
 			UniPTEffect(0xd, 0);
 			break;
 		  case 0xf1:			/* play note twice */
+			/* Note: OctaMED 6.00d and up will not play FF1/FF3 effects when
+			   they are used on a line without a note. Since MMD2/MMD3 support is
+			   theoretical at this point, allow these unconditionally for now. */
 			UniWriteByte(UNI_MEDEFFECTF1);
 			break;
 		  case 0xf2:			/* delay note */
@@ -288,6 +316,15 @@ static void EffectCvt(UBYTE eff, UBYTE dat)
 			break;
 		  case 0xf3:			/* play note three times */
 			UniWriteByte(UNI_MEDEFFECTF3);
+			break;
+		  case 0xf8:			/* hardware filter off */
+			UniPTEffect(0xe, 0x01);
+			break;
+		  case 0xf9:			/* hardware filter on */
+			UniPTEffect(0xe, 0x00);
+			break;
+		  case 0xfd:			/* set pitch */
+			UniWriteByte(UNI_MEDEFFECT_FD);
 			break;
 		  case 0xfe:			/* stop playing */
 			UniPTEffect(0xb, of.numpat);
@@ -300,8 +337,61 @@ static void EffectCvt(UBYTE eff, UBYTE dat)
 				UniEffect(UNI_MEDSPEED, MED_ConvertTempo(dat));
 		}
 		break;
-	  default:					/* all normal PT effects are handled here */
-		UniPTEffect(eff, dat);
+	  case 0x11:				/* fine portamento up */
+		/* fine portamento of 0 does nothing. */
+		if (dat)
+			UniEffect(UNI_XMEFFECTE1, dat);
+		break;
+	  case 0x12:				/* fine portamento down */
+		if (dat)
+			UniEffect(UNI_XMEFFECTE2, dat);
+		break;
+	  case 0x14:				/* vibrato (PT compatible depth, ~2x speed) */
+		UniWriteByte(UNI_MEDEFFECT_VIB);
+		UniWriteByte((dat & 0xf0) >> 3);
+		UniWriteByte((dat & 0x0f));
+		break;
+	  case 0x15:				/* set finetune */
+		/* Valid values are 0x0 to 0x7 and 0xF8 to 0xFF. */
+		if (dat <= 0x7 || dat >= 0xF8)
+			UniPTEffect(0xe, 0x50 | (dat & 0xF));
+		break;
+	  case 0x16:				/* loop */
+		UniEffect(UNI_MEDEFFECT_16, dat);
+		break;
+	  case 0x18:				/* cut note */
+		UniEffect(UNI_MEDEFFECT_18, dat);
+		break;
+	  case 0x19:				/* sample offset */
+		UniPTEffect(0x9, dat);
+		break;
+	  case 0x1a:				/* fine volslide up */
+		/* volslide of 0 does nothing. */
+		if (dat)
+			UniEffect(UNI_XMEFFECTEA, dat);
+		break;
+	  case 0x1b:				/* fine volslide down */
+		if (dat)
+			UniEffect(UNI_XMEFFECTEB, dat);
+		break;
+	  case 0x1d:				/* pattern break */
+		UniPTEffect(0xd, dat);
+		break;
+	  case 0x1e:				/* pattern delay */
+		UniEffect(UNI_MEDEFFECT_1E, dat);
+		break;
+	  case 0x1f:				/* combined delay-retrigger */
+		/* This effect does nothing on lines without a note. */
+		if (note)
+			UniEffect(UNI_MEDEFFECT_1F, dat);
+		break;
+	  default:
+		if (eff < 0x10)
+			UniPTEffect(eff, dat);
+#ifdef MIKMOD_DEBUG
+		else
+			fprintf(stderr, "unsupported OctaMED command %u\n", eff);
+#endif
 		break;
 	}
 }
@@ -318,14 +408,14 @@ static UBYTE *MED_Convert1(int count, int col)
 
 		note = n->a & 0x7f;
 		inst = n->b & 0x3f;
-		eff = n->c & 0xf;
+		eff = n->c;
 		dat = n->d;
 
 		if (inst)
 			UniInstrument(inst - 1);
 		if (note)
 			UniNote(note + 3 * OCTAVE - 1);
-		EffectCvt(eff, dat);
+		EffectCvt(note, eff, dat);
 		UniNewline();
 	}
 	return UniDup();
@@ -354,7 +444,7 @@ static UBYTE *MED_Convert0(int count, int col)
 			UniInstrument(inst - 1);
 		if (note)
 			UniNote(note + 3 * OCTAVE - 1);
-		EffectCvt(eff, dat);
+		EffectCvt(note, eff, dat);
 		UniNewline();
 	}
 	return UniDup();
@@ -676,6 +766,9 @@ static BOOL MED_Load(BOOL curious)
 			if (ms->sample[t].replen > 1)
 				q->flags |= SF_LOOP;
 
+			if(ms->sample[t].svol <= 64)
+				q->volume = ms->sample[t].svol;
+
 			/* don't load sample if length>='MMD0'...
 			   such kluges make libmikmod's code unique !!! */
 			if (q->length >= MMD0_string)
@@ -712,11 +805,13 @@ static BOOL MED_Load(BOOL curious)
 	}
 
 	if (mh->id == MMD0_string) {
+		medversion = 0;
 		if (!LoadMEDPatterns()) {
 			_mm_errno = MMERR_LOADING_PATTERN;
 			return 0;
 		}
 	} else if (mh->id == MMD1_string) {
+		medversion = 1;
 		if (!LoadMMD1Patterns()) {
 			_mm_errno = MMERR_LOADING_PATTERN;
 			return 0;
