@@ -19,6 +19,8 @@ libmikmod v3.3.12 was released on ???? ??, ????.
   (github PR #15.)
 - Fix MED 9xx command in tempo mode and various BPM mode bugs (github
   bug #17).
+- Implement missing OctaMED effects and fix several other MED effects
+  (github bug #19, PR #23.)
 - Fix note tuning for 669 modules. (github PR #16.)
 - DoPTEffectB, DoPTEffectD: bounds-check the jump target.
 - StartEnvelope: workaround invalid envelopes with 0 pts.
