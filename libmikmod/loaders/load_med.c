@@ -48,6 +48,8 @@ extern int fprintf(FILE *, const char *, ...);
 
 /*========== Module information */
 
+#define MEDNOTECNT 120
+
 typedef struct MEDHEADER {
 	ULONG id;
 	ULONG modlen;
@@ -136,6 +138,19 @@ typedef struct MEDINSTEXT {
 typedef struct MEDINSTINFO {
 	UBYTE name[40];
 } MEDINSTINFO;
+
+enum MEDINSTTYPE {
+	INST_HYBRID	= -2,
+	INST_SYNTH	= -1,
+	INST_SAMPLE	= 0,
+	INST_IFFOCT_5	= 1,
+	INST_IFFOCT_3	= 2,
+	INST_IFFOCT_2	= 3,
+	INST_IFFOCT_4	= 4,
+	INST_IFFOCT_6	= 5,
+	INST_IFFOCT_7	= 6,
+	INST_EXTSAMPLE	= 7
+};
 
 /*========== Loader variables */
 
@@ -414,7 +429,7 @@ static UBYTE *MED_Convert1(int count, int col)
 		if (inst)
 			UniInstrument(inst - 1);
 		if (note)
-			UniNote(note + 3 * OCTAVE - 1);
+			UniNote(note - 1);
 		EffectCvt(note, eff, dat);
 		UniNewline();
 	}
@@ -443,7 +458,7 @@ static UBYTE *MED_Convert0(int count, int col)
 		if (inst)
 			UniInstrument(inst - 1);
 		if (note)
-			UniNote(note + 3 * OCTAVE - 1);
+			UniNote(note - 1);
 		EffectCvt(note, eff, dat);
 		UniNewline();
 	}
@@ -570,9 +585,10 @@ static BOOL LoadMMD1Patterns(void)
 
 static BOOL MED_Load(BOOL curious)
 {
-	int t;
+	int t, i;
 	ULONG sa[64];
 	MEDINSTHEADER s;
+	INSTRUMENT *d;
 	SAMPLE *q;
 	MEDSAMPLE *mss;
 
@@ -731,18 +747,29 @@ static BOOL MED_Load(BOOL curious)
 		ReadComment(me->annolen);
 	}
 
-	if (!AllocSamples())
+	/* TODO: should do an initial scan for IFFOCT instruments to determine the
+	   actual number of samples (instead of assuming 1-to-1). */
+	if (!AllocSamples() || !AllocInstruments())
 		return 0;
+
+	of.flags |= UF_INST;
 	q = of.samples;
+	d = of.instruments;
 	for (t = 0; t < of.numins; t++) {
 		q->flags = SF_SIGNED;
 		q->volume = 64;
+		s.type = INST_SAMPLE;
 		if (sa[t]) {
 			_mm_fseek(modreader, sa[t], SEEK_SET);
 			s.length = _mm_read_M_ULONG(modreader);
 			s.type = _mm_read_M_SWORD(modreader);
 
-			if (s.type) {
+			switch (s.type) {
+			  case INST_SAMPLE:
+			  case INST_EXTSAMPLE:
+				break;
+
+			  default:
 #ifdef MIKMOD_DEBUG
 				fprintf(stderr, "\rNon-sample instruments not supported in MED loader yet\n");
 #endif
@@ -798,10 +825,43 @@ static BOOL MED_Load(BOOL curious)
 			_mm_fseek(modreader, me->iinfo + t * me->i_ext_entrsz, SEEK_SET);
 			_mm_read_UBYTES(ii.name, 40, modreader);
 			q->samplename = DupStr((char*)ii.name, 40, 1);
-		} else
+			d->insname = DupStr((char*)ii.name, 40, 1);
+		} else {
 			q->samplename = NULL;
+			d->insname = NULL;
+		}
+
+		/* Instrument transpose tables. */
+		for (i = 0; i < MEDNOTECNT; i++) {
+			int note = i + 3 * OCTAVE + ms->sample[t].strans + ms->playtransp;
+
+			/* TODO: IFFOCT instruments... */
+			switch (s.type) {
+			  case INST_EXTSAMPLE:
+				/* TODO: not clear if this has the same wrapping behavior as regular samples.
+				   This is a MMD2/MMD3 extension so it has not been tested. */
+				note -= 2 * OCTAVE;
+				/* fall-through */
+
+			  case INST_SAMPLE:
+				/* TODO: in MMD2/MMD3 mixing mode, these wrapping transforms don't apply. */
+				if (note >= 10 * OCTAVE) {
+					/* Buggy octaves 8 through A wrap to 2 octaves below octave 1.
+					   Technically they're also a finetune step higher but that's safe
+					   to ignore. */
+					note -= 9 * OCTAVE;
+				} else if (note >= 6 * OCTAVE) {
+					/* Octaves 4 through 7 repeat octave 3. */
+					note = (note % 12) + 5 * OCTAVE;
+				}
+				d->samplenumber[i] = t;
+				d->samplenote[i] = note<0 ? 0 : note>255 ? 255 : note;
+				break;
+			}
+		}
 
 		q++;
+		d++;
 	}
 
 	if (mh->id == MMD0_string) {
