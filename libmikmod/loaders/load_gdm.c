@@ -327,11 +327,8 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 					break;
 				case 0x1e:	/* special */
 					switch (inf&0xf0) {
-						case 8:	/* set pan position */
-							if (inf >=128)
-								UniPTEffect(0x08,255);
-							else
-								UniPTEffect(0x08,inf<<1);
+						case 0x80:	/* set pan position */
+							UniPTEffect(0xe,inf);
 							break;
 					}
 					break;
