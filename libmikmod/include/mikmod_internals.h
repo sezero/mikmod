@@ -341,6 +341,11 @@ enum {
  /* Last effect supported by old modules in the UNI format. */
     UNI_FORMAT_LAST,
 
+ /* Scream Tracker effects */
+    UNI_S3MEFFECTH,    /* vibrato */
+ /* Impulse Tracker effects */
+    UNI_ITEFFECTH_OLD, /* vibrato (old) */
+    UNI_ITEFFECTU_OLD, /* fine vibrato (old) */
  /* OctaMED effects. */
     UNI_MEDEFFECT_VIB, /* MED vibrato */
     UNI_MEDEFFECT_FD,  /* set pitch */
