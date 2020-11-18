@@ -346,6 +346,9 @@ enum {
  /* Impulse Tracker effects */
     UNI_ITEFFECTH_OLD, /* vibrato (old) */
     UNI_ITEFFECTU_OLD, /* fine vibrato (old) */
+ /* GDM effects. */
+    UNI_GDMEFFECT4,    /* vibrato */
+    UNI_GDMEFFECT7,    /* tremolo */
  /* OctaMED effects. */
     UNI_MEDEFFECT_VIB, /* MED vibrato */
     UNI_MEDEFFECT_FD,  /* set pitch */

@@ -237,18 +237,18 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 					UniEffect(UNI_ITEFFECTG,inf);
 					break;
 				case 4:	/* vibrato */
-					UniEffect(UNI_ITEFFECTH,inf);
+					UniEffect(UNI_GDMEFFECT4,inf);
 					break;
 				case 5:	/* portamento+volslide */
 					UniEffect(UNI_ITEFFECTG,0);
 					UniEffect(UNI_S3MEFFECTD,inf);
 					break;
 				case 6:	/* vibrato+volslide */
-					UniEffect(UNI_ITEFFECTH,0);
+					UniEffect(UNI_GDMEFFECT4,0);
 					UniEffect(UNI_S3MEFFECTD,inf);
 					break;
 				case 7:	/* tremolo */
-					UniEffect(UNI_S3MEFFECTR,inf);
+					UniEffect(UNI_GDMEFFECT7,inf);
 					break;
 				case 8:	/* tremor */
 					UniEffect(UNI_S3MEFFECTI,inf);
@@ -277,19 +277,11 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 							UniEffect(UNI_S3MEFFECTE, 0xf0|(inf&0x0f));
 							break;
 						case 0x30:	/* glissando control */
-							UniEffect(SS_GLISSANDO, inf&0x0f);
-							break;
 						case 0x40:	/* vibrato waveform */
-							UniEffect(SS_VIBWAVE, inf&0x0f);
-							break;
 						case 0x50:	/* set c4spd */
-							UniEffect(SS_FINETUNE, inf&0x0f);
-							break;
 						case 0x60:	/* loop fun */
-							UniEffect(UNI_ITEFFECTS0, (inf&0x0f)|0xb0);
-							break;
 						case 0x70:	/* tremolo waveform */
-							UniEffect(SS_TREMWAVE, inf&0x0f);
+							UniPTEffect(0xe, inf);
 							break;
 						case 0x80:	/* extra fine porta up */
 							UniEffect(UNI_S3MEFFECTF, 0xe0|(inf&0x0f));
@@ -320,7 +312,7 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 					UniEffect(UNI_S3MEFFECTQ,inf);
 					break;
 				case 0x13:	/* set global volume */
-					UniEffect(UNI_XMEFFECTG,inf<<1);
+					UniEffect(UNI_XMEFFECTG,inf);
 					break;
 				case 0x14:	/* fine vibrato */
 					UniEffect(UNI_ITEFFECTU,inf);
