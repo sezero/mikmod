@@ -747,6 +747,22 @@ static int DoPTEffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	return 0;
 }
 
+static int DoPTEffect4Fix(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* PT-equivalent vibrato but without the tick 0 bug. */
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->vibdepth=dat&0xf;
+		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
+	}
+	if (a->main.period)
+		DoVibrato(tick, a, 0);
+
+	return 0;
+}
+
 static void DoVolSlide(MP_CONTROL *a, UBYTE dat)
 {
 	if (dat&0xf) {
@@ -776,29 +792,55 @@ static int DoPTEffect5(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 
 /* DoPTEffect6 after DoPTEffectA */
 
+static void DoTremolo(UWORD tick, MP_CONTROL *a, UWORD flags)
+{
+	SWORD temp;
+
+	if (!tick && (flags & VIB_PT_BUGS))
+		return;
+
+	temp = LFOTremolo(a->trmpos, (a->wavecontrol >> 4) & 3);
+	temp*=a->trmdepth;
+	temp>>=6;
+
+	a->volume = a->tmpvolume + temp;
+	if (a->volume>64) a->volume=64;
+	if (a->volume<0) a->volume=0;
+	a->ownvol = 1;
+
+	if (tick || (flags & VIB_TICK_0))
+		a->trmpos+=a->trmspd;
+}
+
 static int DoPTEffect7(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat;
-	SWORD temp;
 
 	dat=UniGetByte();
 	if (!tick) {
 		if (dat&0x0f) a->trmdepth=dat&0xf;
 		if (dat&0xf0) a->trmspd=(dat&0xf0)>>2;
 	}
-	if (a->main.period) {
-		temp = LFOTremolo(a->trmpos, (a->wavecontrol >> 4) & 3);
-		temp*=a->trmdepth;
-		temp>>=6;
+	/* TODO: PT should have the same tick 0 bug here that vibrato does. Several other
+	   formats use this effect and rely on it not being broken, so don't right now. */
+	if (a->main.period)
+		DoTremolo(tick, a, 0);
 
-		a->volume = a->tmpvolume + temp;
-		if (a->volume>64) a->volume=64;
-		if (a->volume<0) a->volume=0;
-		a->ownvol = 1;
+	return 0;
+}
 
-		if (tick)
-			a->trmpos+=a->trmspd;
+static int DoPTEffect7Fix(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	/* PT equivalent vibrato but without the tick 0 bug. */
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->trmdepth=dat&0xf;
+		if (dat&0xf0) a->trmspd=(dat&0xf0)>>2;
 	}
+	if (a->main.period)
+		DoTremolo(tick, a, 0);
 
 	return 0;
 }
@@ -1228,21 +1270,6 @@ static int DoS3MEffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	return 0;
 }
 
-static int DoS3MEffectH(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
-{
-	UBYTE dat;
-
-	dat=UniGetByte();
-	if (!tick) {
-		if (dat&0x0f) a->vibdepth=dat&0xf;
-		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-	}
-	if (a->main.period)
-		DoVibrato(tick, a, 0);
-
-	return 0;
-}
-
 static int DoS3MEffectI(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE inf, on, off;
@@ -1420,21 +1447,6 @@ static int DoKeyFade(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD 
 }
 
 /*========== Fast Tracker effects */
-
-static int DoXMEffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
-{
-	UBYTE dat;
-
-	dat = UniGetByte();
-	if (!tick) {
-		if (dat&0x0f) a->vibdepth=dat&0xf;
-		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-	}
-	if (a->main.period)
-		DoVibrato(tick, a, 0);
-
-	return 0;
-}
 
 /* DoXMEffect6 after DoXMEffectA */
 
@@ -2302,7 +2314,7 @@ static effect_func effects[UNI_LAST] = {
 	DoKeyOff,	/* UNI_KEYOFF */
 	DoKeyFade,	/* UNI_KEYFADE */
 	DoVolEffects,	/* UNI_VOLEFFECTS */
-	DoXMEffect4,	/* UNI_XMEFFECT4 */
+	DoPTEffect4Fix,	/* UNI_XMEFFECT4 */
 	DoXMEffect6,	/* UNI_XMEFFECT6 */
 	DoXMEffectA,	/* UNI_XMEFFECTA */
 	DoXMEffectE1,	/* UNI_XMEFFECTE1 */
@@ -2334,9 +2346,11 @@ static effect_func effects[UNI_LAST] = {
 	DoMEDEffectF3,	/* UNI_MEDEFFECTF3 */
 	DoOktArp,	/* UNI_OKTARP */
 	DoNothing,	/* unused */
-	DoS3MEffectH,   /* UNI_S3MEFFECTH */
+	DoPTEffect4Fix, /* UNI_S3MEFFECTH */
 	DoITEffectHOld, /* UNI_ITEFFECTH_OLD */
 	DoITEffectUOld, /* UNI_ITEFFECTU_OLD */
+	DoPTEffect4Fix,	/* UNI_GDMEFFECT4 */
+	DoPTEffect7Fix,	/* UNI_GDMEFFECT7 */
 	DoMEDEffectVib, /* UNI_MEDEFFECT_VIB */
 	DoMEDEffectFD,	/* UNI_MEDEFFECT_FD */
 	DoMEDEffect16,	/* UNI_MEDEFFECT_16 */
