@@ -106,7 +106,7 @@ extern MikMod_handler_t _mm_errorhandler;
         if(_mm_mutex_##name)\
             DosReleaseMutexSem(_mm_mutex_##name)
 
-#elif defined(_WIN32)
+#elif defined(_WIN32)||defined(__CYGWIN__)
 #include <windows.h>
 #define DECLARE_MUTEX(name) \
         extern HANDLE _mm_mutex_##name
