@@ -52,6 +52,7 @@ libmikmod_hpux=no
 
 case $host_os in
 	mingw*) libmikmod_mingw=yes ;;
+	msys*) libmikmod_mingw=yes ;;
 	cygwin*) libmikmod_cygwin=yes ;;
 	linux*) libmikmod_linux=yes ;;
 	darwin*) libmikmod_darwin=yes ;;
@@ -792,13 +793,13 @@ AC_SUBST(SDL_LIBS)
 # Windows audio
 # ---------------------
 case $host_os in
- mingw*|cygwin*)
+ mingw*|msys*|cygwin*)
 	# do a windows.h check, just in case..
 	AC_CHECK_HEADERS([windows.h],,[AC_MSG_ERROR([Targeting windows, but windows.h not available])])
 	if test $libmikmod_driver_ds = yes
 	then
 		libmikmod_driver_ds=no
-		AC_CHECK_HEADERS([dsound.h],[libmikmod_driver_ds=yes])
+		AC_CHECK_HEADERS([dsound.h],[libmikmod_driver_ds=yes],[],[#include <windows.h>])
 	fi
 	if test $libmikmod_driver_xaudio2 = yes
 	then
