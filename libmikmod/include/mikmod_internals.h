@@ -349,6 +349,7 @@ enum {
  /* GDM effects. */
     UNI_GDMEFFECT4,    /* vibrato */
     UNI_GDMEFFECT7,    /* tremolo */
+    UNI_GDMEFFECT14,   /* fine vibrato */
  /* OctaMED effects. */
     UNI_MEDEFFECT_VIB, /* MED vibrato */
     UNI_MEDEFFECT_FD,  /* set pitch */

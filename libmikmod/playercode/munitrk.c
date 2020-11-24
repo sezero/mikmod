@@ -106,6 +106,7 @@ const UWORD unioperands[UNI_LAST] = {
 	1, /* UNI_ITEFFECTU_OLD */
 	1, /* UNI_GDMEFFECT4 */
 	1, /* UNI_GDMEFFECT7 */
+	1, /* UNI_GDMEFFECT14 */
 	2, /* UNI_MEDEFFECT_VIB */
 	0, /* UNI_MEDEFFECT_FD */
 	1, /* UNI_MEDEFFECT_16 */
