@@ -1406,15 +1406,16 @@ static int DoS3MEffectU(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	if (!tick) {
 		if (dat&0x0f) a->vibdepth=dat&0xf;
 		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-	} else
-		if (a->main.period) {
-			temp = LFOVibrato(a->vibpos, a->wavecontrol & 3);
-			temp*=a->vibdepth;
-			temp>>=8;
+	}
+	if (a->main.period) {
+		temp = LFOVibrato(a->vibpos, a->wavecontrol & 3);
+		temp*=a->vibdepth;
+		temp>>=7;
 
-			a->main.period = a->tmpperiod + temp;
-			a->ownper = 1;
+		a->main.period = a->tmpperiod + temp;
+		a->ownper = 1;
 
+		if (tick)
 			a->vibpos+=a->vibspd;
 	}
 
@@ -2351,6 +2352,7 @@ static effect_func effects[UNI_LAST] = {
 	DoITEffectUOld, /* UNI_ITEFFECTU_OLD */
 	DoPTEffect4Fix,	/* UNI_GDMEFFECT4 */
 	DoPTEffect7Fix,	/* UNI_GDMEFFECT7 */
+	DoS3MEffectU,   /* UNI_GDMEFFECT14 */
 	DoMEDEffectVib, /* UNI_MEDEFFECT_VIB */
 	DoMEDEffectFD,	/* UNI_MEDEFFECT_FD */
 	DoMEDEffect16,	/* UNI_MEDEFFECT_16 */

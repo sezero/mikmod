@@ -315,7 +315,7 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 					UniEffect(UNI_XMEFFECTG,inf);
 					break;
 				case 0x14:	/* fine vibrato */
-					UniEffect(UNI_ITEFFECTU,inf);
+					UniEffect(UNI_GDMEFFECT14,inf);
 					break;
 				case 0x1e:	/* special */
 					switch (inf&0xf0) {
