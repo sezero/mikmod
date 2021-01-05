@@ -678,7 +678,7 @@ static BOOL MED_Load(BOOL curious)
 			_mm_errno = MMERR_NOT_A_MODULE;
 			return 0;
 		}
-		/* truncate insane songnamelen (fail instead??) */
+		/* truncate insane songnamelen (fail instead?) */
 		if (me->songnamelen > 256)
 			me->songnamelen = 256;
 	}

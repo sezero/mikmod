@@ -247,15 +247,13 @@ static BOOL FAR_Load(BOOL curious)
 
 	for(t=0;t<of.numpat;t++) {
 		UWORD rows=0;
-		UBYTE tempo;
 
 		memset(pat,0,256*16*4*sizeof(FARNOTE));
 		if(mh2->patsiz[t]) {
 			/* Break position byte is always 1 less than the final row index,
 			   i.e. it is 2 less than the total row count. */
 			rows  = _mm_read_UBYTE(modreader) + 2;
-			tempo = _mm_read_UBYTE(modreader);
-			(void)tempo; /* unused */
+			_mm_skip_BYTE(modreader);	/* tempo */
 
 			crow = pat;
 			/* file often allocates 64 rows even if there are less in pattern */
