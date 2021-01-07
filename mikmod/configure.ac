@@ -35,6 +35,7 @@ dnl ====================
 
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_EGREP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
@@ -43,7 +44,7 @@ dnl =================================
 dnl Use -Wall warning level with gcc.
 dnl =================================
 
-if test $ac_cv_prog_gcc = yes ; then
+if test $ac_cv_c_compiler_gnu = yes ; then
 	CFLAGS="$CFLAGS -Wall"
 fi
 
