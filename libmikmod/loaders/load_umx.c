@@ -79,11 +79,10 @@ struct upkg_hdr {
 	ULONG guid[4];
 	SLONG generation_count;
 #define UPKG_HDR_SIZE 64			/* 64 bytes up until here */
-	/*struct _genhist *gen;*/
+	struct _genhist *gen;
 };
 /* compile time assert for upkg_hdr size */
-/*typedef int _check_hdrsize[2 * (offsetof(struct upkg_hdr, gen) == UPKG_HDR_SIZE) - 1];*/
-typedef int _check_hdrsize[2 * (sizeof(struct upkg_hdr) == UPKG_HDR_SIZE) - 1];
+typedef int _check_hdrsize[2 * (offsetof(struct upkg_hdr, gen) == UPKG_HDR_SIZE) - 1];
 
 /*========== Supported content types */
 
@@ -282,21 +281,19 @@ static int probe_umx   (const struct upkg_hdr *hdr,
 	return t;
 }
 
-static SLONG probe_header (void *header)
+static SLONG probe_header (struct upkg_hdr *hdr)
 {
-	struct upkg_hdr *hdr;
-	unsigned char *p;
-	ULONG *swp;
-	int i;
+	hdr->tag           = _mm_read_I_ULONG(modreader);
+	hdr->file_version  = _mm_read_I_SLONG(modreader);
+	hdr->pkg_flags     = _mm_read_I_ULONG(modreader);
+	hdr->name_count    = _mm_read_I_SLONG(modreader);
+	hdr->name_offset   = _mm_read_I_SLONG(modreader);
+	hdr->export_count  = _mm_read_I_SLONG(modreader);
+	hdr->export_offset = _mm_read_I_SLONG(modreader);
+	hdr->import_count  = _mm_read_I_SLONG(modreader);
+	hdr->import_offset = _mm_read_I_SLONG(modreader);
 
-	/* byte swap the header - all members are 32 bit LE values */
-	p = (unsigned char *) header;
-	swp = (ULONG *) header;
-	for (i = 0; i < UPKG_HDR_SIZE/4; i++, p += 4) {
-		swp[i] = p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
-	}
-
-	hdr = (struct upkg_hdr *) header;
+	if (_mm_eof(modreader)) return -1;
 	if (hdr->tag != UPKG_HDR_TAG) {
 		return -1;
 	}
@@ -328,14 +325,13 @@ static SLONG probe_header (void *header)
 
 static int process_upkg (SLONG *ofs, SLONG *objsize)
 {
-	char header[UPKG_HDR_SIZE];
+	struct upkg_hdr header;
 
-	if (!_mm_read_UBYTES(header, UPKG_HDR_SIZE, modreader))
-		return -1;
-	if (probe_header(header) < 0)
+	memset(&header, 0, sizeof(header));
+	if (probe_header(&header) < 0)
 		return -1;
 
-	return probe_umx((struct upkg_hdr *)header, ofs, objsize);
+	return probe_umx(&header, ofs, objsize);
 }
 
 /*========== Loader vars */
