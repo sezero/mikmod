@@ -25,6 +25,8 @@ LIBS=mikmod_static.lib winmm.lib dsound.lib dxguid.lib
 !endif
 
 CFLAGS = -bt=nt -bm -fp5 -fpi87 -mf -oeatxh -w4 -zp8 -ei -zq
+# newer OpenWatcom versions enable W303 by default.
+CFLAGS+= -wcd=303
 # -5s  :  Pentium stack calling conventions.
 # -5r  :  Pentium register calling conventions.
 CFLAGS+= -5s
