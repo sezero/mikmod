@@ -9,11 +9,10 @@ SUBDIRS = drivers include loaders mmio depackers playercode \
 bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
-	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     amiga android macosx win32 \
-	     dos dc gp32 macintosh os2 psp \
-	     examples \
-	     config.h.cmake CMakeLists.txt cmake
+	     libmikmod.spec.in libmikmod.spec COPYING.LESSER  \
+	     examples config.h.cmake CMakeLists.txt cmake     \
+	     amiga android macosx win32 dos os2 macintosh     \
+	     dc gp32 n64 psp
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
