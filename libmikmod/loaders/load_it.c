@@ -277,7 +277,10 @@ static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
 				UniNote(note);
 		}
 
-		if((ins)&&(ins<100))
+		/* Impulse Tracker only allows up to 99 instruments and crashes when it
+		   encounters instruments >=100. But the file format supports them just
+		   fine and there are many MPT-created ITs with that many instruments. */
+		if((ins)&&(ins<253))
 			UniInstrument(ins-1);
 		else if(ins==253)
 			UniWriteByte(UNI_KEYOFF);
