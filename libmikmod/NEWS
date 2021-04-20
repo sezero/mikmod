@@ -42,6 +42,7 @@ libmikmod v3.3.12 was released on ???? ??, ????.
 - Fixed off-by-one source buffer boundary check in PP20 depacker.
 - Improved sanity checks in S404 depacker to prevent out-of-bound reads.
 - Added Nintendo64 output driver -- based on old work by 'dragonminded'.
+- Removed support for lcc-win32 compiler.
 - Several build and portability fixes/updates.
 
 Thanks to:

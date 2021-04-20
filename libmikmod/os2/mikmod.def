@@ -1,5 +1,5 @@
 LIBRARY mikmod
-DESCRIPTION "libmikmod 3.3.11"
+DESCRIPTION "libmikmod 3.3.12"
 EXPORTS
 	MikMod_GetVersion				@1
 
