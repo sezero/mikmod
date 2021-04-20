@@ -706,7 +706,7 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 #ifdef _mikmod_amiga
 			system(command);
 			file = fopen(dest, "r");
-#elif defined(__WATCOMC__)||(defined(_WIN32)&&!defined(__LCC__))
+#elif defined(__WATCOMC__)||defined(_WIN32)
 			file = _popen (command, "r");
 #else
 			file = popen (command, "r");

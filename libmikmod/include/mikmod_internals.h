@@ -768,7 +768,7 @@ extern MikMod_callback_t vc_callback;
 #if defined(_WIN64)
 # if defined(_MSC_VER)
 #  define IS_ALIGNED_16(ptr) (!((__int64)(ptr) & 15i64))
-# else /* GCC, LCC, .. */
+# else /* GCC, etc. */
 #  define IS_ALIGNED_16(ptr) (!((long long)(ptr) & 15LL))
 # endif
 #else /* long cast should be OK for all else */

@@ -1,4 +1,4 @@
-/* config.h.  Generated manually for Windows/LCC. */
+/* config.h.  Generated manually for Windows. */
 
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
 #define HAVE_MIKMOD_FREE 1

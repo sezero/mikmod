@@ -1,19 +1,16 @@
 This is the instructions to compile mikmod on win32.
 
-Mikmod can be compiler using Microsoft Visual Studio, lcc-win32,
-or MinGW or MinGW-w64 compilers.
+Mikmod can be compiler using Microsoft Visual Studio, MinGW, or
+Watcom compilers.
 
 1) First, compile libmikmod, and install it.
 
-   To install libmikmod, I copied libmikmod.lib (generated
-   when compiling libmikmod) in the /lib directory of lcc.
-   Next, I copied the file mikmod.h in the /include directory
-   of lcc.  Should be similar if you used MinGW[-w64] or MSVC.
+   To install libmikmod, copy libmikmod.lib (generated when
+   compiling libmikmod) in the /lib directory of MinGW. Next,
+   copy the file mikmod.h in the /include directory of MinGW.
+   Should be similar if you use MSVC or Watcom.
 
 2) Compiling mikmod:
-
- - using lcc:
-   cd to the win32 directory and type make -f Makefile.lcc
 
  - using MinGW or MinGW-w64:
    cd to the win32 directory and type make -f Makefile.mingw
