@@ -320,7 +320,7 @@ static BOOL S69_Load(BOOL curious)
 		sample.length=_mm_read_I_SLONG(modreader);
 		sample.loopbeg=_mm_read_I_SLONG(modreader);
 		sample.loopend=_mm_read_I_SLONG(modreader);
-		if (sample.loopend==0xfffff) sample.loopend=0;
+		if ((sample.loopend==0xfffff) || (sample.loopend==0xf0ffff)) sample.loopend=0;	/* No loop or special value used in Lost in Germany */
 
 		if((sample.length<0)||(sample.loopbeg<-1)||(sample.loopend<-1)) {
 			_mm_errno = MMERR_LOADING_HEADER;
