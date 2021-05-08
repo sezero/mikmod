@@ -1157,7 +1157,7 @@ static int DoS3MEffectA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	if (tick || mod->patdly2)
 		return 0;
 
-	if (speed >= 128)
+	if (speed > 128)
 		speed -= 128;
 	if (speed) {
 		mod->sngspd = speed;
