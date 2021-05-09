@@ -94,7 +94,7 @@ static BOOL AMF_Test(void)
 	if(memcmp(id,"AMF",3)) return 0;
 
 	ver=_mm_read_UBYTE(modreader);
-	if((ver>=10)&&(ver<=14)) return 1;
+	if((ver>=8)&&(ver<=14)) return 1;
 	return 0;
 }
 
@@ -126,7 +126,16 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 	/* read packed track */
 	if (r) {
 		tracksize=_mm_read_I_UWORD(r);
-		tracksize+=((ULONG)_mm_read_UBYTE(r))<<16;
+
+		/* The original code in DSMI library read the byte, but it is not used.
+		   Normally, it is zero, but Avoid.amf (version 8) have a track where its not.
+		   This track is garbage, so check the value and skip the track. */
+//		tracksize+=((ULONG)_mm_read_UBYTE(r))<<16;
+		if (_mm_read_UBYTE(r)!=0) {
+			_mm_fseek(modreader, tracksize*3, SEEK_CUR);
+			return 1;
+		}
+
 		if (tracksize)
 			while(tracksize--) {
 				row=_mm_read_UBYTE(r);
@@ -173,8 +182,12 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 				} else
 				  if(track[row].fxcnt<3) {
 					/* effect, param */
-					if(cmd>0x97)
-						return 0;
+					if(cmd>0x97) {
+						/* Instead of failing, we just ignore unknown effects.
+						   This will load the "escape from dulce base" module */
+						continue;
+/*						return 0;*/
+					}
 					track[row].effect[track[row].fxcnt]=cmd&0x7f;
 					track[row].parameter[track[row].fxcnt]=arg;
 					track[row].fxcnt++;
@@ -337,16 +350,28 @@ static BOOL AMF_Load(BOOL curious)
 	SAMPLE *q;
 	UWORD *track_remap;
 	ULONG samplepos, fileend;
-	int channel_remap[16];
+	UBYTE channel_remap[16];
 
 	/* try to read module header  */
 	_mm_read_UBYTES(mh->id,3,modreader);
 	mh->version     =_mm_read_UBYTE(modreader);
+
+	/* For version 8, the song name is only 20 characters long and then come
+	// some data, which I do not know what is. The original code by Otto Chrons
+	// load the song name as 20 characters long and then it is overwritten again
+	// it another function, where it loads 32 characters, no matter which version
+	// it is. So we do the same here */
 	_mm_read_string(mh->songname,32,modreader);
+
 	mh->numsamples  =_mm_read_UBYTE(modreader);
 	mh->numorders   =_mm_read_UBYTE(modreader);
 	mh->numtracks   =_mm_read_I_UWORD(modreader);
-	mh->numchannels =_mm_read_UBYTE(modreader);
+
+	if(mh->version>=9)
+		mh->numchannels=_mm_read_UBYTE(modreader);
+	else
+		mh->numchannels=4;
+
 	if((!mh->numchannels)||(mh->numchannels>(mh->version>=12?32:16))) {
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
@@ -355,7 +380,7 @@ static BOOL AMF_Load(BOOL curious)
 	if(mh->version>=11) {
 		memset(mh->panpos,0,32);
 		_mm_read_SBYTES(mh->panpos,(mh->version>=13)?32:16,modreader);
-	} else
+	} else if(mh->version>=9)
 		_mm_read_UBYTES(channel_remap,16,modreader);
 
 	if (mh->version>=13) {
@@ -406,16 +431,22 @@ static BOOL AMF_Load(BOOL curious)
 	 * UF_PANNING, to use our preferred panning table for this case.
 	 */
 	defaultpanning = 1;
-	for (t = 0; t < 32; t++) {
-		if (mh->panpos[t] > 64) {
-			of.panning[t] = PAN_SURROUND;
-			defaultpanning = 0;
-		} else
-			if (mh->panpos[t] == 64)
-				of.panning[t] = PAN_RIGHT;
-			else
-				of.panning[t] = (mh->panpos[t] + 64) << 1;
+
+	if(mh->version>=11) {
+		for (t = 0; t < 32; t++) {
+			if (mh->panpos[t] > 64) {
+				of.panning[t] = PAN_SURROUND;
+				defaultpanning = 0;
+			} else
+				if (mh->panpos[t] == 64)
+					of.panning[t] = PAN_RIGHT;
+				else
+					of.panning[t] = (mh->panpos[t] + 64) << 1;
+		}
 	}
+	else
+		defaultpanning = 0;
+
 	if (defaultpanning) {
 		for (t = 0; t < of.numchn; t++)
 			if (of.panning[t] == (((t + 1) & 2) ? PAN_RIGHT : PAN_LEFT)) {
@@ -440,11 +471,13 @@ static BOOL AMF_Load(BOOL curious)
 		if (mh->version>=14)
 			/* track size */
 			of.pattrows[t]=_mm_read_I_UWORD(modreader);
-		if (mh->version>=10)
-			_mm_read_I_UWORDS(of.patterns+(t*of.numchn),of.numchn,modreader);
+		if ((mh->version==9) || (mh->version==10)) {
+			/* Only version 9 and 10 uses channel remap */
+			for (u = 0; u < of.numchn; u++)
+				of.patterns[t * of.numchn + channel_remap[u]] = _mm_read_I_UWORD(modreader);
+		}
 		else
-			for(u=0;u<of.numchn;u++)
-				of.patterns[t*of.numchn+channel_remap[u]]=_mm_read_I_UWORD(modreader);
+			_mm_read_I_UWORDS(of.patterns + (t * of.numchn), of.numchn, modreader);
 	}
 	if(_mm_eof(modreader)) {
 		_mm_errno = MMERR_LOADING_HEADER;
@@ -460,7 +493,12 @@ static BOOL AMF_Load(BOOL curious)
 		_mm_read_string(s.samplename,32,modreader);
 		_mm_read_string(s.filename,13,modreader);
 		s.offset    =_mm_read_I_ULONG(modreader);
-		s.length    =_mm_read_I_ULONG(modreader);
+
+		if(mh->version>=10)
+			s.length =_mm_read_I_ULONG(modreader);
+		else
+			s.length = _mm_read_I_UWORD(modreader);
+
 		s.c2spd     =_mm_read_I_UWORD(modreader);
 		if(s.c2spd==8368) s.c2spd=8363;
 		s.volume    =_mm_read_UBYTE(modreader);
@@ -472,7 +510,9 @@ static BOOL AMF_Load(BOOL curious)
 			s.repend    =_mm_read_I_ULONG(modreader);
 		} else {
 			s.reppos    =_mm_read_I_UWORD(modreader);
-			s.repend    =s.length;
+			s.repend    =_mm_read_I_UWORD(modreader);
+			if (s.repend==0xffff)
+				s.repend=0;
 		}
 
 		if(_mm_eof(modreader)) {
