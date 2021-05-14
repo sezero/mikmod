@@ -138,17 +138,23 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 		if (n->vol>=0x01 && n->vol<=0x10) UniPTEffect(0xc,(n->vol - 1)<<2);
 		if (n->eff)
 			switch(n->eff>>4) {
+				case 0x1: /* pitch adjust up */
+					UniEffect(UNI_FAREFFECT1, n->eff & 0xf);
+					break;
+				case 0x2: /* pitch adjust down */
+					UniEffect(UNI_FAREFFECT2, n->eff & 0xf);
+					break;
 				case 0x3: /* porta to note */
-					UniPTEffect(0x3,(n->eff&0xf)<<4);
+					UniEffect(UNI_FAREFFECT3, n->eff & 0xf);
 					break;
 				case 0x4: /* retrigger */
-					UniPTEffect(0x0e, 0x90 | (n->eff & 0x0f));
+					UniEffect(UNI_FAREFFECT4, n->eff & 0xf);
 					break;
 				case 0x5: /* set vibrato depth */
 					vibdepth=n->eff&0xf;
 					break;
 				case 0x6: /* vibrato */
-					UniPTEffect(0x4,((n->eff&0xf)<<4)|vibdepth);
+					UniEffect(UNI_FAREFFECT6,((n->eff&0xf)<<4)|vibdepth);
 					break;
 				case 0x7: /* volume slide up */
 					UniPTEffect(0xa,(n->eff&0xf)<<4);
@@ -159,8 +165,14 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 				case 0xb: /* panning */
 					UniPTEffect(0xe,0x80|(n->eff&0xf));
 					break;
+				case 0xd: /* fine tempo down */
+					UniEffect(UNI_FAREFFECTD, n->eff & 0xf);
+					break;
+				case 0xe: /* fine tempo up */
+					UniEffect(UNI_FAREFFECTE, n->eff & 0xf);
+					break;
 				case 0xf: /* set speed */
-					UniPTEffect(0xf,n->eff&0xf);
+					UniEffect(UNI_FAREFFECTF,n->eff&0xf);
 					break;
 
 				/* others not yet implemented */
@@ -184,6 +196,7 @@ static BOOL FAR_Load(BOOL curious)
 	FARSAMPLE s;
 	FARNOTE *crow;
 	UBYTE smap[8];
+	UBYTE addextrapattern;
 
 	/* try to read module header (first part) */
 	_mm_read_UBYTES(mh1->id,4,modreader);
@@ -202,10 +215,10 @@ static BOOL FAR_Load(BOOL curious)
 	of.modtype   = MikMod_strdup(FAR_Version);
 	of.songname  = DupStr(mh1->songname,40,1);
 	of.numchn    = 16;
-	of.initspeed = mh1->speed;
-	of.inittempo = 80;
+	of.initspeed = mh1->speed != 0 ? mh1->speed : 4;
+	of.bpmlimit  = 5;
 	of.reppos    = 0;
-	of.flags    |= UF_PANNING;
+	of.flags    |= UF_PANNING | UF_FARTEMPO | UF_HIGHBPM;
 	for(t=0;t<16;t++) of.panning[t]=mh1->panning[t]<<4;
 
 	/* read songtext into comment field */
@@ -226,16 +239,26 @@ static BOOL FAR_Load(BOOL curious)
 
 	of.numpos = mh2->snglen;
 	if(!AllocPositions(of.numpos)) return 0;
-	for(t=0;t<of.numpos;t++) {
-		if(mh2->orders[t]==0xff) break;
-		of.positions[t] = mh2->orders[t];
-	}
 
 	/* count number of patterns stored in file */
 	of.numpat = 0;
 	for(t=0;t<256;t++)
 		if(mh2->patsiz[t])
 			if((t+1)>of.numpat) of.numpat=t+1;
+
+	addextrapattern = 0;
+	for (t = 0; t < of.numpos; t++) {
+		if (mh2->orders[t] == 0xff) break;
+		of.positions[t] = mh2->orders[t];
+		if (of.positions[t] >= of.numpat) {
+			of.positions[t] = of.numpat;
+			addextrapattern = 1;
+		}
+	}
+
+	if (addextrapattern)
+		of.numpat++;
+
 	of.numtrk = of.numpat*of.numchn;
 
 	/* seek across eventual new data */
@@ -281,8 +304,10 @@ static BOOL FAR_Load(BOOL curious)
 					_mm_errno=MMERR_LOADING_PATTERN;
 					return 0;
 				}
-		} else
+		} else {
 			tracks+=16;
+			of.pattrows[t] = 0;
+		}
 	}
 
 	/* read sample map */
@@ -321,7 +346,12 @@ static BOOL FAR_Load(BOOL curious)
 			q->volume     = s.volume<<2;
 
 			if(s.type&1) q->flags|=SF_16BITS;
-			if(s.loop&8) q->flags|=SF_LOOP;
+
+			/* It is not always the case that this bit is set, e.g. "Budda on a bicycle" has not.
+			   So we check the loop start and end instead */
+//			if(s.loop&8) q->flags|=SF_LOOP;
+			if (((q->loopstart > 0) || (q->loopend > 0)) && (q->loopstart < q->loopend))
+				q->flags |= SF_LOOP;
 
 			q->seekpos    = _mm_ftell(modreader);
 			_mm_fseek(modreader,q->length,SEEK_CUR);

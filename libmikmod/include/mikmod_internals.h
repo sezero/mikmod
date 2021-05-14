@@ -357,6 +357,15 @@ enum {
     UNI_MEDEFFECT_18,  /* stop note */
     UNI_MEDEFFECT_1E,  /* pattern delay */
     UNI_MEDEFFECT_1F,  /* note delay and retrigger */
+/* Farandole effects. */
+	UNI_FAREFFECT1,    /* Porta up */
+    UNI_FAREFFECT2,    /* Porta down */
+    UNI_FAREFFECT3,    /* Porta to note */
+    UNI_FAREFFECT4,    /* Retrigger */
+    UNI_FAREFFECT6,    /* Vibrato */
+    UNI_FAREFFECTD,    /* Fine tempo down */
+    UNI_FAREFFECTE,    /* Fine tempo up */
+	UNI_FAREFFECTF,    /* Set tempo */
 
     UNI_LAST
 };
@@ -522,6 +531,11 @@ typedef struct MP_CONTROL {
     SBYTE   sliding;
     UBYTE   s3mrtgspeed;/* last used retrig speed */
     UBYTE   s3mrtgslide;/* last used retrig slide */
+
+    UBYTE   fartoneportarunning; /* FAR tone porta (effect 3) is a little bit different than other effects. It should keep running when the effect has first started, even if it is not given on subsequently rows */
+    float   fartoneportaspeed;   /* FAR tone porta increment value */
+    float   farcurrentvalue;     /* Because we're using floats as speed and the current period is an integer, we need to store the current value here for next round */
+    UBYTE   farretrigcount;      /* Number of retrigs to do */
 
     UBYTE   glissando;  /* glissando (0 means off) */
     UBYTE   wavecontrol;

@@ -547,6 +547,7 @@ struct MP_VOICE;
 #define UF_FT2QUIRKS    0x0200 /* emulate some FT2 replay quirks */
 #define UF_PANNING      0x0400 /* module uses panning effects or have
                                   non-tracker default initial panning */
+#define UF_FARTEMPO     0x0800 /* Module uses Farandole tempo calculations */
 
 typedef struct MODULE {
  /* general module information */
@@ -589,6 +590,8 @@ typedef struct MODULE {
     SWORD       sngpos;      /* current song position */
     ULONG       sngtime;     /* current song time in 2^-10 seconds */
 
+    UBYTE       farcurtempo; /* Farandole current speed */
+    SWORD       fartempobend;/* Used by the Farandole fine tempo effects and store the current bend value */
     SWORD       relspd;      /* relative speed factor */
 
  /* internal module representation */

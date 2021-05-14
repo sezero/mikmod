@@ -40,6 +40,8 @@
 #include <stdlib.h>
 #endif
 
+#include <math.h>
+
 #include "mikmod_internals.h"
 
 #ifdef SUNOS
@@ -2272,6 +2274,271 @@ static int DoOktArp(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD c
 	return 0;
 }
 
+/*========== Farandole effects */
+
+static void DoFarTonePorta(MP_CONTROL* a)
+{
+	if (!a->main.fadevol)
+		a->main.kick = (a->main.kick == KICK_NOTE) ? KICK_NOTE : KICK_KEYOFF;
+	else
+		a->main.kick = (a->main.kick == KICK_NOTE) ? KICK_ENV : KICK_ABSENT;
+
+	a->farcurrentvalue += a->fartoneportaspeed;
+
+	/* Have we reached our note */
+	BOOL reachedNote = (a->fartoneportaspeed > 0) ? a->farcurrentvalue >= a->wantedperiod : a->farcurrentvalue <= a->wantedperiod;
+	if (reachedNote)
+	{
+		/* Stop the porta and set the periods to the reached note */
+		a->tmpperiod = a->main.period = a->wantedperiod;
+		a->fartoneportarunning = 0;
+	}
+	else
+	{
+		/* Do the porta */
+		a->tmpperiod = a->main.period = (UWORD)a->farcurrentvalue;
+	}
+
+	a->ownper = 1;
+}
+
+/* Find tempo factor */
+static int GetFARTempoFactor(MODULE* mod)
+{
+	return mod->farcurtempo == 0 ? 256 : (128 / mod->farcurtempo);
+}
+
+/* Set the right speed and BPM for Farandole modules */
+static void SetFARTempo(MODULE* mod)
+{
+	/* According to the Farandole document, the tempo of the song is 32/tempo notes per second.
+	   So if we set tempo to 1, we will get 32 notes per second. We then need to translate this
+	   to BPM, since this is what we're using as tempo.
+
+	   We know 125 BPM is at 50 hz speed (see https://modarchive.org/forums/index.php?topic=2709.0
+	   for more information). So the factor is 125/50 = 2.5. So we take the 32 notes per second
+	   above and multiply with 2.5: 32 * 2.5 = 80 BPM.
+
+	   So we now know, at speed 1, we need to run at 80 BPM and number of ticks (speed counter) is 1.
+
+	   Farandole however, uses another approach to calculate the tempo. It takes the speed
+	   argument and calculate a ticks per second as 128/arg. It also set the tick counter to 3 most
+	   of the times. It calculate a value (I guess it is how often GUS need to call the player) by
+	   1197255 / (128 / arg). So if we set speed to 1, we will get 1197255 / 128 = 9353.
+
+	   Ok, we know if we set the speed counter to 1, we need to run at 80 BPM, but now Farandole
+	   set the tick counter to 3, so we need to calculate the BPM to use for the difference. This
+	   is easy enough, just say 80 * 3 = 240 BPM.
+
+	   So with all this information, we will try to calculate the right BPM for the speed set.
+
+	   For argument 1:
+
+	   tps = 128 / 1 = 128
+	   gus = 1197255 / tps = 1197255 / 128 = 9353
+	   counter = 3
+	   factor = gus / 9353 = 9353 / 9353 = 1
+	   bpm = (80 * counter) / factor = (80 * 3) / 1 = 240
+
+	   For argument 4, which is the default speed
+
+	   tps = 128 / 4 = 32
+	   gus = 1197255 / tps = 1197255 / 32 = 37414
+	   counter = 3
+	   factor = gus / 9353 = 37414 / 9353 = 4
+	   bpm = (80 * counter) / factor = (80 * 3) / 4 = 60
+
+	   For argument 15, which is the slowest speed
+
+	   tps = 128 / 15 = 8
+	   gus = 1197255 / tps = 1197255 / 8 = 149656
+	   counter = 6 (see code below for why)
+	   factor = gus / 9353 = 149656 / 9353 = 16
+	   bpm = (80 * counter) / factor = (80 * 6) / 16 = 30
+
+	   You can make yourself a little exercise to prove that the above is correct :-) */
+
+	WORD realTempo = mod->fartempobend + GetFARTempoFactor(mod);
+
+	int gus = 1197255 / realTempo;
+
+	int eax = gus;
+	UBYTE cx = 0, di = 0;
+
+	while (eax > 0xffff)
+	{
+		eax >>= 1;
+		di++;
+		cx++;
+	}
+
+	if (cx >= 2)
+		di++;
+
+	mod->sngspd = di + 3;
+
+	int factor = round(gus / 9353.0f);
+	mod->bpm = (80 * mod->sngspd) / factor;
+}
+
+static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	a->slidespeed = (UWORD)dat << 2;
+
+	if (a->main.period)
+		a->tmpperiod -= a->slidespeed;
+
+	a->fartoneportarunning = 0;
+
+	return 0;
+}
+
+static int DoFAREffect2(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	a->slidespeed = (UWORD)dat << 2;
+
+	if (a->main.period)
+		a->tmpperiod += a->slidespeed;
+
+	a->fartoneportarunning = 0;
+
+	return 0;
+}
+
+static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	if (!tick)
+	{
+		/* We have to slide a.Main.Period toward a.WantedPeriod,
+		  compute the difference between those two values */
+		float dist = (float)(a->wantedperiod - a->main.period);
+
+		/* Adjust effect argument */
+		if (dat == 0)
+			dat = 1;
+
+		/* Unlike other players, the data is how many rows the port
+		   should take and not a speed */
+		a->fartoneportaspeed = dist / (mod->sngspd * dat);
+		a->farcurrentvalue = a->main.period;
+		a->fartoneportarunning = 1;
+	}
+
+	return 0;
+}
+
+static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	/* Here the argument is the number of retrigs to play evenly
+	   spaced in the current row */
+	if (!tick)
+	{
+		if (dat)
+		{
+			a->farretrigcount = dat;
+			a->retrig = 0;
+		}
+	}
+
+	if (dat)
+	{
+		if (!a->retrig)
+		{
+			if (a->farretrigcount > 0)
+			{
+				/* When retrig counter reaches 0,
+				   reset counter and restart the sample */
+				if (a->main.period != 0)
+					a->main.kick = KICK_NOTE;
+
+				a->farretrigcount--;
+				if (a->farretrigcount > 0)
+					a->retrig = ((mod->fartempobend + GetFARTempoFactor(mod)) / dat / 8) - 1;
+			}
+		}
+		else
+			a->retrig--;
+	}
+
+	return 0;
+}
+
+static int DoFAREffect6(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat = UniGetByte();
+	if (!tick) {
+		if (dat & 0x0f) a->vibdepth = dat & 0xf;
+		if (dat & 0xf0) a->vibspd = (dat & 0xf0) * 6;
+	}
+	if (a->main.period)
+		DoVibrato(tick, a, VIB_TICK_0);
+
+	return 0;
+}
+
+static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	if (dat != 0)
+	{
+		mod->fartempobend -= dat;
+
+		if ((mod->fartempobend + GetFARTempoFactor(mod)) <= 0)
+			mod->fartempobend = 0;
+	}
+	else
+		mod->fartempobend = 0;
+
+	SetFARTempo(mod);
+	
+	return 0;
+}
+
+static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	if (dat != 0)
+	{
+		mod->fartempobend += dat;
+
+		if ((mod->fartempobend + GetFARTempoFactor(mod)) >= 100)
+			mod->fartempobend = 100;
+	}
+	else
+		mod->fartempobend = 0;
+
+	SetFARTempo(mod);
+
+	return 0;
+}
+
+static int DoFAREffectF(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+{
+	UBYTE dat = UniGetByte();
+
+	if (!tick)
+	{
+		mod->farcurtempo = dat;
+		mod->vbtick = 0;
+
+		SetFARTempo(mod);
+	}
+
+	return 0;
+}
+
 /*========== General player functions */
 
 static int DoNothing(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
@@ -2359,6 +2626,14 @@ static effect_func effects[UNI_LAST] = {
 	DoMEDEffect18,	/* UNI_MEDEFFECT_18 */
 	DoMEDEffect1E,	/* UNI_MEDEFFECT_1E */
 	DoMEDEffect1F,	/* UNI_MEDEFFECT_1F */
+	DoFAREffect1,	/* UNI_FAREFFECT1 */
+	DoFAREffect2,	/* UNI_FAREFFECT2 */
+	DoFAREffect3,	/* UNI_FAREFFECT3 */
+	DoFAREffect4,	/* UNI_FAREFFECT4 */
+	DoFAREffect6,	/* UNI_FAREFFECT6 */
+	DoFAREffectD,	/* UNI_FAREFFECTD */
+	DoFAREffectE,	/* UNI_FAREFFECTE */
+	DoFAREffectF,	/* UNI_FAREFFECTF */
 };
 
 static int pt_playeffects(MODULE *mod, SWORD channel, MP_CONTROL *a)
@@ -2640,8 +2915,8 @@ static void pt_UpdateVoices(MODULE *mod, int max_volume)
 		}
 
 		md_bpm=mod->bpm+mod->relspd;
-		if (md_bpm<32)
-			md_bpm=32;
+		if (md_bpm<mod->bpmlimit)
+			md_bpm=mod->bpmlimit;
 		else if ((!(mod->flags&UF_HIGHBPM)) && md_bpm>255)
 			md_bpm=255;
 	}
@@ -2670,7 +2945,7 @@ static void pt_Notes(MODULE *mod)
 		a->newsamp=0;
 		if (!mod->vbtick) a->main.notedelay=0;
 
-		if (!a->row) continue;
+		if (!a->row || (mod->numrow == 0)) continue;
 		UniSetRow(a->row);
 		funky=0;
 
@@ -2682,6 +2957,7 @@ static void pt_Notes(MODULE *mod)
 				a->main.kick =KICK_NOTE;
 				a->main.start=-1;
 				a->sliding=0;
+				a->fartoneportarunning = 0;
 
 				/* retrig tremolo and vibrato waves ? */
 				if (!(a->wavecontrol & 0x40)) a->trmpos=0;
@@ -2816,6 +3092,10 @@ static void pt_EffectsPass1(MODULE *mod)
 			else if (a->tmpvolume)
 				a->sliding = explicitslides;
 		}
+
+		/* keep running Farandole tone porta */
+		if (a->fartoneportarunning)
+			DoFarTonePorta(a);
 
 		if (!a->ownper)
 			a->main.period=a->tmpperiod;
@@ -3022,7 +3302,7 @@ void Player_HandleTick(void)
 
 		/* do we have to get a new patternpointer ? (when pf->patpos reaches the
 		   pattern size, or when a patternbreak is active) */
-		if (((pf->patpos>=pf->numrow)&&(pf->numrow>0))&&(!pf->posjmp))
+		if ((pf->patpos>=pf->numrow)&&(!pf->posjmp))
 			pf->posjmp=3;
 
 		if (pf->posjmp) {
@@ -3043,11 +3323,18 @@ void Player_HandleTick(void)
 				if (!pf->wrap) return;
 				if (!(pf->sngpos=pf->reppos)) {
 				    pf->volume=pf->initvolume>128?128:pf->initvolume;
-					if(pf->initspeed!=0)
-						pf->sngspd=pf->initspeed<32?pf->initspeed:32;
-					else
-						pf->sngspd=6;
-					pf->bpm=pf->inittempo<32?32:pf->inittempo;
+					if (pf->flags & UF_FARTEMPO) {
+						pf->farcurtempo = pf->initspeed;
+						pf->fartempobend = 0;
+						SetFARTempo(pf);
+					}
+					else {
+						if(pf->initspeed!=0)
+							pf->sngspd=pf->initspeed<pf->bpmlimit?pf->initspeed:pf->bpmlimit;
+						else
+							pf->sngspd=6;
+						pf->bpm=pf->inittempo<pf->bpmlimit?pf->bpmlimit:pf->inittempo;
+					}
 				}
 			}
 		}
@@ -3088,16 +3375,26 @@ static void Player_Init_internal(MODULE* mod)
 
 	mod->pat_repcrazy=0;
 	mod->sngpos=0;
-	if(mod->initspeed!=0)
-		mod->sngspd=mod->initspeed<32?mod->initspeed:32;
-	else
-		mod->sngspd=6;
+
+	if (mod->flags & UF_FARTEMPO) {
+		mod->farcurtempo = mod->initspeed;
+		mod->fartempobend = 0;
+		SetFARTempo(mod);
+	}
+	else {
+		if(mod->initspeed!=0)
+			mod->sngspd=mod->initspeed<mod->bpmlimit?mod->initspeed:mod->bpmlimit;
+		else
+			mod->sngspd=6;
+
+		mod->bpm=mod->inittempo<mod->bpmlimit?mod->bpmlimit:mod->inittempo;
+	}
+
 	mod->volume=mod->initvolume>128?128:mod->initvolume;
 
 	mod->vbtick=mod->sngspd;
 	mod->patdly=0;
 	mod->patdly2=0;
-	mod->bpm=mod->inittempo<32?32:mod->inittempo;
 	mod->realchn=0;
 
 	mod->patpos=0;
