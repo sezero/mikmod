@@ -590,8 +590,6 @@ typedef struct MODULE {
     SWORD       sngpos;      /* current song position */
     ULONG       sngtime;     /* current song time in 2^-10 seconds */
 
-    UBYTE       farcurtempo; /* Farandole current speed */
-    SWORD       fartempobend;/* Used by the Farandole fine tempo effects and store the current bend value */
     SWORD       relspd;      /* relative speed factor */
 
  /* internal module representation */
