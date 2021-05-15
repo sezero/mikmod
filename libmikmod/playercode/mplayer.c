@@ -2385,12 +2385,14 @@ static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 {
 	UBYTE dat = UniGetByte();
 
-	a->slidespeed = (UWORD)dat << 2;
+	if (!tick) {
+		a->slidespeed = (UWORD)dat << 2;
 
-	if (a->main.period)
-		a->tmpperiod -= a->slidespeed;
+		if (a->main.period)
+			a->tmpperiod -= a->slidespeed;
 
-	a->fartoneportarunning = 0;
+		a->fartoneportarunning = 0;
+	}
 
 	return 0;
 }
@@ -2399,12 +2401,14 @@ static int DoFAREffect2(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 {
 	UBYTE dat = UniGetByte();
 
-	a->slidespeed = (UWORD)dat << 2;
+	if (!tick) {
+		a->slidespeed = (UWORD)dat << 2;
 
-	if (a->main.period)
-		a->tmpperiod += a->slidespeed;
+		if (a->main.period)
+			a->tmpperiod += a->slidespeed;
 
-	a->fartoneportarunning = 0;
+		a->fartoneportarunning = 0;
+	}
 
 	return 0;
 }
