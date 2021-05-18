@@ -325,7 +325,6 @@ static BOOL STM_Load(BOOL curious)
 			return 0;
 		}
 	}
-	if(mh->patorder[t]<=99) t++;
 	of.numpos=t;
 	of.numtrk=of.numpat*of.numchn;
 	of.numins=of.numsmp=31;
@@ -376,8 +375,13 @@ static BOOL STM_Load(BOOL curious)
 		/* contrary to the STM specs, sample data is signed */
 		q->flags = SF_SIGNED;
 
-		if(q->loopend && q->loopend != 0xffff)
-				q->flags|=SF_LOOP;
+		if(q->loopend && q->loopend != 0xffff && q->loopstart < q->length) {
+			q->flags|=SF_LOOP;
+			if (q->loopend > q->length)
+				q->loopend = q->length;
+		}
+		else
+			q->loopstart = q->loopend = 0;
 	}
 	return 1;
 }
