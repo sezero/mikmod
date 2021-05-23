@@ -3042,12 +3042,25 @@ void Player_HandleTick(void)
 				(pf->positions[pf->sngpos]==LAST_PATTERN)) {
 				if (!pf->wrap) return;
 				if (!(pf->sngpos=pf->reppos)) {
-				    pf->volume=pf->initvolume>128?128:pf->initvolume;
+					int t;
+
+					pf->volume=pf->initvolume>128?128:pf->initvolume;
 					if(pf->initspeed!=0)
 						pf->sngspd=pf->initspeed<32?pf->initspeed:32;
 					else
 						pf->sngspd=6;
 					pf->bpm=pf->inittempo<32?32:pf->inittempo;
+
+					/* Re-initialize all channels */
+					for (t = 0; t < pf->numchn; t++)
+					{
+						memset(&pf->control[t], 0, sizeof(MP_CONTROL));
+
+						pf->control[t].main.chanvol = pf->chanvol[t];
+						pf->control[t].main.panning = pf->panning[t];
+
+						Voice_Stop_internal(t);
+					}
 				}
 			}
 		}
