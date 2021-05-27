@@ -517,6 +517,8 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 LT_INIT([win32-dll])
+dnl for sdl.m4 and sdl2.m4:
+PKG_PROG_PKG_CONFIG
 
 # =============================================================
 # Check for typedefs, structures, and compiler characteristics.
