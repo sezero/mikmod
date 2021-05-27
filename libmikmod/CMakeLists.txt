@@ -262,15 +262,15 @@ CHECK_C_SOURCE_COMPILES("static __inline int static_foo() {return 0;}
 # check for symbol visibility attributes
 IF(NOT WIN32 AND NOT CYGWIN)
     SET(OLD_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-    SET(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS} -Werror")
-    CHECK_C_SOURCE_COMPILES("int foo(void) __attribute__((visibility(\"default\")));
-                             int main(void) {return 0;}" HAVE_VISIBILITY_DEFAULT)
-    IF(HAVE_VISIBILITY_DEFAULT)
-        CHECK_C_COMPILER_FLAG(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN)
-        IF(HAVE_VISIBILITY_HIDDEN)
-            ADD_DEFINITIONS(-fvisibility=hidden)
-            ADD_DEFINITIONS("-DSYM_VISIBILITY")
-        ENDIF()
+    SET(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS} -Werror -fvisibility=hidden")
+    CHECK_C_SOURCE_COMPILES("__attribute__((visibility(\"default\"))) int foo(void);
+                             __attribute__((visibility(\"hidden\")))  int bar(void);
+                             int foo (void) { return 0; }
+                             int bar (void) { return 1; }
+                             int main(void) { return 0; }" HAVE_VISIBILITY)
+    IF(HAVE_VISIBILITY)
+        ADD_DEFINITIONS(-fvisibility=hidden)
+        ADD_DEFINITIONS("-DSYM_VISIBILITY")
     ENDIF()
     SET(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS}")
 ENDIF()
