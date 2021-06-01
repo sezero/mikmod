@@ -127,14 +127,10 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 	if (r) {
 		tracksize=_mm_read_I_UWORD(r);
 
-		/* The original code in DSMI library read the byte, but it is not used.
-		   Normally, it is zero, but Avoid.amf (version 8) have a track where its not.
-		   This track is garbage, so check the value and skip the track. */
+		/* The original code in DSMI library read the byte,
+		   but it is not used, so we won't either */
 //		tracksize+=((ULONG)_mm_read_UBYTE(r))<<16;
-		if (_mm_read_UBYTE(r)!=0) {
-			_mm_fseek(modreader, tracksize*3, SEEK_CUR);
-			return 1;
-		}
+		_mm_read_UBYTE(r);
 
 		if (tracksize)
 			while(tracksize--) {
@@ -153,8 +149,10 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 
 				}
 				/* invalid row (probably unexpected end of row) */
-				if (row>=64)
-					return 0;
+				if (row>=64) {
+					_mm_fseek(modreader, tracksize * 3, SEEK_CUR);
+					return 1;
+				}
 				if (cmd<0x7f) {
 					/* note, vol */
 					track[row].note=cmd;
