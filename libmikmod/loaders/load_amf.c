@@ -114,7 +114,48 @@ static void AMF_Cleanup(void)
 	track=NULL;
 }
 
-static BOOL AMF_UnpackTrack(MREADER* r)
+/* Some older version 1.0 AMFs contain an anomaly where the sample length is
+ * a DWORD, the loop start is a WORD, and the loop end is missing. Later AMF
+ * 1.0 modules and up contain all three as DWORDs, and earlier versions have
+ * all three as WORDs. This function tries to detect this edge case in the
+ * instruments table. This should only be called on 1.0 AMFs.
+ */
+static BOOL AMF_ScanV10Instruments(MREADER *r, unsigned int numins)
+{
+	SLONG resetpos;
+	BOOL res = 0;
+	char str[32];
+	ULONG idx, len, start, end;
+	UBYTE type, vol;
+	UWORD c2spd;
+	unsigned int i;
+
+	resetpos = _mm_ftell(r);
+	if(resetpos < 0) return 0;
+
+	for(i = 0; i < numins; i++) {
+		type  = _mm_read_UBYTE(r);   /* type: should be 0 or 1 */
+		_mm_read_string(str, 32, r); /* name */
+		_mm_read_string(str, 13, r); /* filename */
+		idx   = _mm_read_I_ULONG(r); /* index (should be <= numins) */
+		len   = _mm_read_I_ULONG(r);
+		c2spd = _mm_read_I_UWORD(r); /* should be > 0 */
+		vol   = _mm_read_UBYTE(r);   /* should be [0,0x40] */
+		start = _mm_read_I_ULONG(r); /* should be <= len */
+		end   = _mm_read_I_ULONG(r); /* should be <= len */
+
+		if((type != 0 && type != 1) || (idx > numins) || (c2spd == 0) ||
+		   (vol > 0x40) || (start > len) || (end > len)) {
+			res = 1;
+			break;
+		}
+
+	}
+	_mm_fseek(r, resetpos, SEEK_SET);
+	return res;
+}
+
+static BOOL AMF_UnpackTrack(MREADER *r)
 {
 	ULONG tracksize;
 	UBYTE row,cmd;
@@ -130,7 +171,7 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 		/* The original code in DSMI library read the byte,
 		   but it is not used, so we won't either */
 //		tracksize+=((ULONG)_mm_read_UBYTE(r))<<16;
-		_mm_read_UBYTE(r);
+		(void)_mm_read_UBYTE(r);
 
 		if (tracksize)
 			while(tracksize--) {
@@ -155,14 +196,17 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 				}
 				if (cmd<0x7f) {
 					/* note, vol */
+					/* Note that 0xff values mean this note was not originally
+					   accomanied by a volume event. The +1 here causes it to
+					   overflow to 0, which will then (correctly) be ignored later. */
 					track[row].note=cmd;
 					track[row].volume=(UBYTE)arg+1;
 				} else
 				  if (cmd==0x7f) {
-					/* duplicate row */
-					if ((arg<0)&&(row+arg>=0)) {
-						memcpy(track+row,track+(row+arg),sizeof(AMFNOTE));
-					}
+					/* AMF.TXT claims this should duplicate the previous row, but
+					   this is a lie. This note value is used to communicate to
+					   DSMI that the current playing note should be updated when
+					   an instrument is used with no note. This can be ignored. */
 				} else
 				  if (cmd==0x80) {
 					/* instr */
@@ -184,7 +228,6 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 						/* Instead of failing, we just ignore unknown effects.
 						   This will load the "escape from dulce base" module */
 						continue;
-/*						return 0;*/
 					}
 					track[row].effect[track[row].fxcnt]=cmd&0x7f;
 					track[row].parameter[track[row].fxcnt]=arg;
@@ -196,7 +239,7 @@ static BOOL AMF_UnpackTrack(MREADER* r)
 	return 1;
 }
 
-static UBYTE* AMF_ConvertTrack(void)
+static UBYTE *AMF_ConvertTrack(void)
 {
 	int row,fx4memory=0;
 
@@ -326,6 +369,7 @@ static UBYTE* AMF_ConvertTrack(void)
 						UniEffect(fx4memory,0);
 					break;
 				case 0x17: /* Panning */
+					/* S3M pan, except offset by -64. */
 					if (inf>64)
 						UniEffect(UNI_ITEFFECTS0,0x91); /* surround */
 					else
@@ -349,6 +393,7 @@ static BOOL AMF_Load(BOOL curious)
 	UWORD *track_remap;
 	ULONG samplepos, fileend;
 	UBYTE channel_remap[16];
+	BOOL no_loopend;
 
 	/* try to read module header  */
 	_mm_read_UBYTES(mh->id,3,modreader);
@@ -484,6 +529,12 @@ static BOOL AMF_Load(BOOL curious)
 
 	/* read sample information */
 	if(!AllocSamples()) return 0;
+
+	no_loopend = 0;
+	if(mh->version == 10) {
+		no_loopend = AMF_ScanV10Instruments(modreader, of.numins);
+	}
+
 	q=of.samples;
 	for(t=0;t<of.numins;t++) {
 		/* try to read sample info */
@@ -503,9 +554,21 @@ static BOOL AMF_Load(BOOL curious)
 		/* "the tribal zone.amf" and "the way its gonna b.amf" by Maelcum
 		 * are the only version 10 files I can find, and they have 32 bit
 		 * reppos and repend, not 16. */
-		if(mh->version>=10) {/* was 11 */
+		if(mh->version>=10 && no_loopend==0) {/* was 11 */
 			s.reppos    =_mm_read_I_ULONG(modreader);
 			s.repend    =_mm_read_I_ULONG(modreader);
+		} else if(mh->version==10) {
+			/* Early AMF 1.0 modules have the upper two bytes of
+			 * the loop start and the entire loop end truncated.
+			 * libxmp cites "sweetdrm.amf" and "facing_n.amf", but
+			 * these are currently missing. M2AMF 1.3 (from DMP 2.32)
+			 * has been confirmed to output these, however. */
+			s.reppos    =_mm_read_I_UWORD(modreader);
+			s.repend    =s.length;
+			/* There's not really a correct way to handle the loop
+			 * end, but this makes unlooped samples work at least. */
+			if(s.reppos==0)
+				s.repend=0;
 		} else {
 			s.reppos    =_mm_read_I_UWORD(modreader);
 			s.repend    =_mm_read_I_UWORD(modreader);
