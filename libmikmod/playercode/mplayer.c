@@ -1157,8 +1157,18 @@ static int DoS3MEffectA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	if (tick || mod->patdly2)
 		return 0;
 
+#if 0
+	/* This was added between MikMod 3.1.2 and libmikmod 3.1.5 with
+	 * no documentation justifying its inclusion. Players for relevant
+	 * formats (S3M, IT, DSMI AMF, GDM, IMF) all allow values between
+	 * 128 and 255, so it's not clear what the purpose of this was.
+	 * See the following pull request threads:
+	 *
+	 * https://github.com/sezero/mikmod/pull/42
+	 * https://github.com/sezero/mikmod/pull/35 */
 	if (speed > 128)
 		speed -= 128;
+#endif
 	if (speed) {
 		mod->sngspd = speed;
 		mod->vbtick = 0;

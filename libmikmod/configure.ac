@@ -517,6 +517,8 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 LT_INIT([win32-dll])
+dnl for sdl.m4 and sdl2.m4:
+PKG_PROG_PKG_CONFIG
 
 # =============================================================
 # Check for typedefs, structures, and compiler characteristics.
@@ -1346,8 +1348,11 @@ ac_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -Werror"
 AC_CACHE_CHECK([if compiler supports visibility attributes],[libmikmod_cv_gcc_visibility],
 	AC_LANG_PUSH([C])
-	AC_TRY_COMPILE([void foo(void);
-__attribute__((visibility("default"))) void foo(void) {}],
+	AC_TRY_COMPILE([
+__attribute__((visibility("default"))) int foo(void);
+__attribute__((visibility("hidden")))  int bar(void);
+int foo(void) { return 0; }
+int bar(void) { return 1; }],
 		[],
 		[libmikmod_cv_gcc_visibility=yes],
 		[libmikmod_cv_gcc_visibility=no])
