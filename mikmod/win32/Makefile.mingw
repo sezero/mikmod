@@ -62,7 +62,7 @@ mdialog.o: ../src/mdialog.c ../src/mwidget.h ../src/mwindow.h ../src/mconfig.h \
 mfnmatch.o: ../src/mfnmatch.c ../src/mfnmatch.h
 	$(COMPILE)
 
-getopt_long: ../src/getopt_long.c ../src/getopt_long.h
+getopt_long.o: ../src/getopt_long.c ../src/getopt_long.h
 	$(COMPILE)
 
 mikmod.o: ../src/mikmod.c ../src/getopt_long.h ../src/player.h ../src/mutilities.h \
