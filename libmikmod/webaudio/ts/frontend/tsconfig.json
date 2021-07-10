@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"module": "system",
+		"target": "ES5",
+		"lib": ["ES2015", "DOM"],
+		"sourceMap": false,
+		"outFile": "../../dist/libmikmodaudionode.js",
+		"emitBOM": false,
+		"strict": true,
+		"removeComments": true
+	},
+	"files": [
+		"../shared/shared.ts",
+		"libmikmodaudionode.ts"
+	]
+}
