@@ -42,7 +42,9 @@ class LibMikModAudioNode {
 	private static onended: (() => void) | null = null;
 
 	public static isSupported(): boolean {
-		return (("AudioWorkletNode" in window) && ("WebAssembly" in window));
+		// Should we also check for HTTPS? Because, apparently, the browser already undefines
+		// AudioWorklet when not serving the files from a secure origin...
+		return (("AudioWorklet" in window) && ("AudioWorkletNode" in window) && ("WebAssembly" in window));
 	}
 
 	public static async init(audioContext: AudioContext, libPath?: string | null): Promise<void> {

@@ -41,6 +41,7 @@ interface LibMikModCLib {
 
 class LibMikMod {
 	private static cLib: LibMikModCLib | null = null;
+	private static tmpBuffer: Float32Array | null = null;
 
 	private static audioBufferPtr = 0;
 	private static audioBufferUsedLength = 0;
@@ -248,13 +249,77 @@ class LibMikMod {
 					// Convert mono 32-bit float samples into bytes
 					const maxBytes = channel.length << 2;
 
-					if (audioBufferUsedLength > maxBytes)
+					if (audioBufferUsedLength >= maxBytes) {
 						audioBufferUsedLength = maxBytes;
 
-					// Convert bytes into mono 32-bit float samples
-					tmpBuffer = new Float32Array(LibMikMod.cLib.HEAP8.buffer, LibMikMod.audioBufferPtr, audioBufferUsedLength >> 2);
-					LibMikMod.audioBufferPtr += audioBufferUsedLength;
-					LibMikMod.audioBufferUsedLength -= audioBufferUsedLength;
+						// Convert bytes into mono 32-bit float samples
+						tmpBuffer = new Float32Array(LibMikMod.cLib.HEAP8.buffer, LibMikMod.audioBufferPtr, audioBufferUsedLength >> 2);
+						LibMikMod.audioBufferPtr += audioBufferUsedLength;
+						LibMikMod.audioBufferUsedLength -= audioBufferUsedLength;
+					} else {
+						// We had data, but not enough to fill the buffer... This should not
+						// happen as long as BUFFERSIZE in drv_webaudio.c is a multiple of maxBytes,
+						// which is currently true, since BUFFERSIZE is 32768, and maxBytes is (128 * 4) = 512
+
+						if (!LibMikMod.tmpBuffer || LibMikMod.tmpBuffer.byteLength !== maxBytes)
+							LibMikMod.tmpBuffer = new Float32Array(channel.length);
+
+						// Convert bytes into mono 32-bit float samples
+						let samplesRead = audioBufferUsedLength >> 2;
+
+						tmpBuffer = new Float32Array(LibMikMod.cLib.HEAP8.buffer, LibMikMod.audioBufferPtr, samplesRead);
+						LibMikMod.audioBufferPtr = 0;
+						LibMikMod.audioBufferUsedLength = 0;
+						audioBufferUsedLength = 0;
+
+						LibMikMod.tmpBuffer.set(tmpBuffer);
+
+						let remainingSamples = channel.length - samplesRead;
+
+						while (remainingSamples > 0) {
+							if (!audioBufferUsedLength) {
+								for (let attempts = 0; attempts < 3; attempts++) {
+									audioBufferUsedLength = LibMikMod.cLib._update();
+
+									if (audioBufferUsedLength < 0) {
+										audioBufferUsedLength = 0;
+										break;
+									}
+
+									if (audioBufferUsedLength) {
+										LibMikMod.audioBufferPtr = LibMikMod.cLib._getAudioBuffer();
+										LibMikMod.audioBufferUsedLength = audioBufferUsedLength;
+										break;
+									}
+								}
+
+								// Output silence if we cannot fill the buffer
+								if (!audioBufferUsedLength) {
+									LibMikMod.tmpBuffer.fill(0, samplesRead);
+									break;
+								}
+							}
+
+							// Convert mono 32-bit float samples into bytes
+							let remainingBytes = remainingSamples << 2;
+							if (remainingBytes > audioBufferUsedLength)
+								remainingBytes = audioBufferUsedLength;
+
+							// Convert bytes into mono 32-bit float samples
+							const samplesToReadNow = remainingBytes >> 2;
+
+							tmpBuffer = new Float32Array(LibMikMod.cLib.HEAP8.buffer, LibMikMod.audioBufferPtr, samplesToReadNow);
+							LibMikMod.audioBufferPtr += remainingBytes;
+							LibMikMod.audioBufferUsedLength -= remainingBytes;
+
+							LibMikMod.tmpBuffer.set(tmpBuffer, samplesRead);
+
+							samplesRead += samplesToReadNow;
+							remainingSamples -= samplesToReadNow;
+						}
+
+						tmpBuffer = LibMikMod.tmpBuffer;
+					}
 				}
 
 				channel.set(tmpBuffer);

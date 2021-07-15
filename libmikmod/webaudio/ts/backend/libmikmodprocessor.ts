@@ -19,6 +19,9 @@
 
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletGlobalScope
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/process
+// https://developers.google.com/web/updates/2017/12/audio-worklet
+// https://developers.google.com/web/updates/2018/06/audio-worklet-design-pattern
+// https://github.com/GoogleChromeLabs/web-audio-samples/tree/main/audio-worklet
 
 class LibMikModProcessor extends AudioWorkletProcessor {
 	// Due to both LibMikMod and AudioWorklet's nature we can
