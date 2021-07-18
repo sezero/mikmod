@@ -4,13 +4,14 @@
 		"target": "ES5",
 		"lib": ["ES2015", "DOM"],
 		"sourceMap": false,
-		"outFile": "../../dist/libmikmodaudionode.js",
+		"outFile": "../../dist/libmikmod.js",
 		"emitBOM": false,
 		"strict": true,
+		"alwaysStrict": false,
 		"removeComments": true
 	},
 	"files": [
 		"../shared/shared.ts",
-		"libmikmodaudionode.ts"
+		"libmikmod.ts"
 	]
 }

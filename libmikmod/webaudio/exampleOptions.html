@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-	<title>LibMikMod Web Audio Example</title>
+	<title>LibMikMod Web Audio Example (with options)</title>
 
 	<style type="text/css">
 		body {
@@ -16,7 +16,7 @@
 	<noscript>Sorry! You need to enable JavaScript in order to run the example :(</noscript>
 
 	<h1>
-		LibMikMod Web Audio Example
+		LibMikMod Web Audio Example (with options)
 	</h1>
 
 	<h2>
@@ -97,7 +97,20 @@
 
 	<pre id="songInfo"></pre>
 
-	<script type="text/javascript" src="dist/libmikmodaudionode.min.js"></script>
+	<h2>
+		More information
+	</h2>
+
+	<ul>
+		<li>
+			<a target="_blank" href="https://github.com/sezero/mikmod">https://github.com/sezero/mikmod</a>
+		</li>
+		<li>
+			<a target="_blank" href="https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio">https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio</a>
+		</li>
+	</ul>
+
+	<script type="text/javascript" src="dist/libmikmod.min.js"></script>
 	<script type="text/javascript">
 		//<![CDATA[
 		"use strict";
@@ -108,7 +121,7 @@
 		// supports these two features:
 		// https://caniuse.com/wasm
 		// https://caniuse.com/mdn-api_audioworkletnode
-		if (!LibMikModAudioNode.isSupported())
+		if (!LibMikMod.isSupported())
 			alert("Sorry, but your browser does not meet the minimum requirements :(");
 
 		var inputReverb = document.getElementById("inputReverb"),
@@ -123,29 +136,12 @@
 			buttonPlay = document.getElementById("buttonPlay"),
 			buttonPause = document.getElementById("buttonPause"),
 			songInfo = document.getElementById("songInfo"),
-			fileLoading = false,
 			fileLoaded = false,
 			audioNode = null,
 			audioContext = new AudioContext();
 
-		function load() {
-			if (fileLoading || LibMikModAudioNode.loading)
-				return;
-
-			if (!inputModuleFile.files || !inputModuleFile.files.length) {
-				alert("Please, select a file first");
-				return;
-			}
-
-			if (!LibMikModAudioNode.initialized) {
-				LibMikModAudioNode.init(audioContext, "dist/").then(load, function (reason) {
-					alert("Error loading LibMikModAudioNode: " + reason);
-				});
-				return;
-			}
-
-			LibMikModAudioNode.stopModule();
-
+		function cleanUp() {
+			songInfo.textContent = "";
 			buttonChangeGeneralOptions.setAttribute("disabled", "disabled");
 			buttonPlay.setAttribute("disabled", "disabled");
 			buttonPause.setAttribute("disabled", "disabled");
@@ -153,31 +149,42 @@
 			audioContext.suspend();
 			if (audioNode)
 				audioNode.disconnect();
+		}
 
-			fileLoading = true;
+		function load() {
+			if (LibMikMod.loading)
+				return;
 
-			var reader = new FileReader();
-			reader.onerror = function () {
-				fileLoading = false;
-				alert("Error loading the file");
-			};
-			reader.onload = function () {
-				LibMikModAudioNode.loadModule(audioContext, reader.result, moduleOnload, moduleOnerror, moduleOnended, {
-					reverb: parseInt(inputReverb.value),
-					interpolation: inputInterpolation.checked,
-					noiseReduction: inputNoiseReduction.checked,
+			if (!inputModuleFile.files || !inputModuleFile.files.length) {
+				alert("Please, select a file first");
+				return;
+			}
 
-					hqMixer: inputHqMixer.checked,
-					wrap: inputWrap.checked,
-					loop: inputLoop.checked,
-					fadeout: inputFadeout.checked
+			if (!LibMikMod.initialized) {
+				LibMikMod.init(audioContext, "dist/").then(load, function (reason) {
+					alert("Error loading LibMikMod: " + reason);
 				});
-			};
-			reader.readAsArrayBuffer(inputModuleFile.files[0]);
+				return;
+			}
+
+			LibMikMod.stopModule();
+
+			cleanUp();
+
+			LibMikMod.loadModule(audioContext, inputModuleFile.files[0], moduleOnload, moduleOnerror, moduleOnended, {
+				reverb: parseInt(inputReverb.value),
+				interpolation: inputInterpolation.checked,
+				noiseReduction: inputNoiseReduction.checked,
+
+				hqMixer: inputHqMixer.checked,
+				wrap: inputWrap.checked,
+				loop: inputLoop.checked,
+				fadeout: inputFadeout.checked
+			});
 		}
 
 		function changeGeneralOptions() {
-			LibMikModAudioNode.changeGeneralOptions({
+			LibMikMod.changeGeneralOptions({
 				reverb: parseInt(inputReverb.value),
 				interpolation: inputInterpolation.checked,
 				noiseReduction: inputNoiseReduction.checked
@@ -196,12 +203,11 @@
 
 		function moduleOnload(newAudioNode) {
 			songInfo.textContent =
-				"Song name: " + LibMikModAudioNode.infoSongName + "\n" +
-				"Module type: " + LibMikModAudioNode.infoModType + "\n" +
-				"Comment: " + LibMikModAudioNode.infoComment
+				"Song name: " + LibMikMod.infoSongName + "\n" +
+				"Module type: " + LibMikMod.infoModType + "\n" +
+				"Comment: " + LibMikMod.infoComment
 			;
 
-			fileLoading = false;
 			newAudioNode.connect(audioContext.destination);
 			audioNode = newAudioNode;
 			buttonChangeGeneralOptions.removeAttribute("disabled");
@@ -214,16 +220,28 @@
 		function moduleOnerror(reason) {
 			songInfo.textContent = "";
 
-			if (fileLoading) {
-				fileLoading = false;
-				alert("Error loading the module: " + reason);
-			} else {
-				alert("Error during module playback: " + reason);
+			switch (errorCode) {
+				case LibMikMod.ERROR_INITIALIZE:
+					alert("Error initializing the library: " + reason);
+					break;
+
+				case LibMikMod.ERROR_FILE_READ:
+					alert("Error reading the file: " + reason);
+					break;
+
+				case LibMikMod.ERROR_MODULE_LOAD:
+					alert("Error loading the module: " + reason);
+					break;
+
+				//case LibMikMod.ERROR_PLAYBACK:
+				default:
+					alert("Error during module playback: " + reason);
+					break;
 			}
 		}
 
 		function moduleOnended() {
-			audioContext.suspend();
+			cleanUp();
 			alert("Playback ended!");
 		}
 

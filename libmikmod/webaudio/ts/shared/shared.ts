@@ -1,6 +1,9 @@
 /*	MikMod Web Audio library
 	(c) 2021 Carlos Rafael Gimenes das Neves.
 
+	https://github.com/sezero/mikmod
+	https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio
+
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
@@ -36,8 +39,9 @@ enum LibMikModMessageId {
 	LOAD_MODULE_BUFFER = 3,
 	CHANGE_GENERAL_OPTIONS = 4,
 	STOP_MODULE = 5,
-	PLAYBACK_ENDED = 6,
-	GET_ID = 7
+	PLAYBACK_ERROR = 6,
+	PLAYBACK_ENDED = 7,
+	GET_ID = 8
 }
 
 interface LibMikModMessage {

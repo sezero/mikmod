@@ -1,6 +1,9 @@
 /*	MikMod Web Audio library
 	(c) 2021 Carlos Rafael Gimenes das Neves.
 
+	https://github.com/sezero/mikmod
+	https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio
+
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
@@ -129,7 +132,8 @@ class LibMikModProcessor extends AudioWorkletProcessor {
 				LibMikMod.stopModule();
 				this.postResponse({
 					id: this.id,
-					messageId: LibMikModMessageId.PLAYBACK_ENDED
+					messageId: (LibMikMod.getErrno() ? LibMikModMessageId.PLAYBACK_ERROR : LibMikModMessageId.PLAYBACK_ENDED),
+					result: LibMikMod.getErrno()
 				});
 			}
 			return false;

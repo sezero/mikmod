@@ -1,4 +1,4 @@
-/*	MikMod Web Audio library
+/*	MikMod Web Audio library v0.0.1
 	(c) 2021 Carlos Rafael Gimenes das Neves.
 
 	https://github.com/sezero/mikmod
@@ -19,8 +19,4 @@
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 	02111-1307, USA.
 */
-
-// This is a dummy file, just to make TypeScript compile happily :)
-function LibMikModCLib(module: any): Promise<LibMikModCLib> {
-	return Promise.resolve(null as any);
-}
+"use strict";
