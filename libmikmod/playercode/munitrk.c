@@ -275,7 +275,7 @@ void UniNewline(void)
 		unibuf[lastp]+=0x20;
 		unipc = unitt+1;
 	} else {
-		if (UniExpand(unitt-unipc)) {
+		if (UniExpand(len)) {
 			/* current and previous row aren't equal... update the pointers */
 			unibuf[unitt] = len;
 			lastp = unitt;
