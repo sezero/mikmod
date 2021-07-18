@@ -7,6 +7,7 @@
 		"outDir": "./temp",
 		"emitBOM": false,
 		"strict": true,
+		"alwaysStrict": false,
 		"removeComments": true
 	},
 	"files": [

@@ -40,7 +40,20 @@
 
 	<pre id="songInfo"></pre>
 
-	<script type="text/javascript" src="dist/libmikmodaudionode.min.js"></script>
+	<h2>
+		More information
+	</h2>
+
+	<ul>
+		<li>
+			<a target="_blank" href="https://github.com/sezero/mikmod">https://github.com/sezero/mikmod</a>
+		</li>
+		<li>
+			<a target="_blank" href="https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio">https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio</a>
+		</li>
+	</ul>
+
+	<script type="text/javascript" src="dist/libmikmod.min.js"></script>
 	<script type="text/javascript">
 		//<![CDATA[
 		"use strict";
@@ -51,20 +64,29 @@
 		// supports these two features:
 		// https://caniuse.com/wasm
 		// https://caniuse.com/mdn-api_audioworkletnode
-		if (!LibMikModAudioNode.isSupported())
+		if (!LibMikMod.isSupported())
 			alert("Sorry, but your browser does not meet the minimum requirements :(");
 
 		var inputModuleFile = document.getElementById("inputModuleFile"),
 			buttonPlay = document.getElementById("buttonPlay"),
 			buttonPause = document.getElementById("buttonPause"),
 			songInfo = document.getElementById("songInfo"),
-			fileLoading = false,
 			fileLoaded = false,
 			audioNode = null,
 			audioContext = new AudioContext();
 
+		function cleanUp() {
+			songInfo.textContent = "";
+			buttonPlay.setAttribute("disabled", "disabled");
+			buttonPause.setAttribute("disabled", "disabled");
+			fileLoaded = false;
+			audioContext.suspend();
+			if (audioNode)
+				audioNode.disconnect();
+		}
+
 		function load() {
-			if (fileLoading || LibMikModAudioNode.loading)
+			if (LibMikMod.loading)
 				return;
 
 			if (!inputModuleFile.files || !inputModuleFile.files.length) {
@@ -72,33 +94,18 @@
 				return;
 			}
 
-			if (!LibMikModAudioNode.initialized) {
-				LibMikModAudioNode.init(audioContext, "dist/").then(load, function (reason) {
-					alert("Error loading LibMikModAudioNode: " + reason);
+			if (!LibMikMod.initialized) {
+				LibMikMod.init(audioContext, "dist/").then(load, function (reason) {
+					alert("Error loading LibMikMod: " + reason);
 				});
 				return;
 			}
 
-			LibMikModAudioNode.stopModule();
+			LibMikMod.stopModule();
 
-			buttonPlay.setAttribute("disabled", "disabled");
-			buttonPause.setAttribute("disabled", "disabled");
-			fileLoaded = false;
-			audioContext.suspend();
-			if (audioNode)
-				audioNode.disconnect();
+			cleanUp();
 
-			fileLoading = true;
-
-			var reader = new FileReader();
-			reader.onerror = function () {
-				fileLoading = false;
-				alert("Error loading the file");
-			};
-			reader.onload = function () {
-				LibMikModAudioNode.loadModule(audioContext, reader.result, moduleOnload, moduleOnerror, moduleOnended);
-			};
-			reader.readAsArrayBuffer(inputModuleFile.files[0]);
+			LibMikMod.loadModule(audioContext, inputModuleFile.files[0], moduleOnload, moduleOnerror, moduleOnended);
 		}
 
 		function play() {
@@ -113,12 +120,11 @@
 
 		function moduleOnload(newAudioNode) {
 			songInfo.textContent =
-				"Song name: " + LibMikModAudioNode.infoSongName + "\n" +
-				"Module type: " + LibMikModAudioNode.infoModType + "\n" +
-				"Comment: " + LibMikModAudioNode.infoComment
+				"Song name: " + LibMikMod.infoSongName + "\n" +
+				"Module type: " + LibMikMod.infoModType + "\n" +
+				"Comment: " + LibMikMod.infoComment
 			;
 
-			fileLoading = false;
 			newAudioNode.connect(audioContext.destination);
 			audioNode = newAudioNode;
 			buttonPlay.removeAttribute("disabled");
@@ -127,19 +133,31 @@
 			audioContext.resume();
 		}
 
-		function moduleOnerror(reason) {
+		function moduleOnerror(errorCode, reason) {
 			songInfo.textContent = "";
 
-			if (fileLoading) {
-				fileLoading = false;
-				alert("Error loading the module: " + reason);
-			} else {
-				alert("Error during module playback: " + reason);
+			switch (errorCode) {
+				case LibMikMod.ERROR_INITIALIZE:
+					alert("Error initializing the library: " + reason);
+					break;
+
+				case LibMikMod.ERROR_FILE_READ:
+					alert("Error reading the file: " + reason);
+					break;
+
+				case LibMikMod.ERROR_MODULE_LOAD:
+					alert("Error loading the module: " + reason);
+					break;
+
+				//case LibMikMod.ERROR_PLAYBACK:
+				default:
+					alert("Error during module playback: " + reason);
+					break;
 			}
 		}
 
 		function moduleOnended() {
-			audioContext.suspend();
+			cleanUp();
 			alert("Playback ended!");
 		}
 
