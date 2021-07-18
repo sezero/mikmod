@@ -148,7 +148,6 @@ static int ConvertNote(MODNOTE *n)
 {
 	UBYTE instrument, effect, effdat, note;
 	UWORD period;
-	UBYTE lastnote = 0;
 
 	instrument = n->b&0x1f;
 	effect = n->c;
@@ -193,7 +192,6 @@ static int ConvertNote(MODNOTE *n)
 					 * played */
 					if (effect || effdat) {
 						UniInstrument(instrument - 1);
-						note = lastnote;
 					} else
 						UniPTEffect(0xc,
 							mh->samples[instrument -
@@ -202,14 +200,11 @@ static int ConvertNote(MODNOTE *n)
 			} else {
 				/* Fasttracker handling */
 				UniInstrument(instrument - 1);
-				if (!note)
-					note = lastnote;
 			}
 		}
 	}
 	if (note) {
 		UniNote(note + 2 * OCTAVE - 1);
-		lastnote = note;
 	}
 
 	/* Convert pattern jump from Dec to Hex */
