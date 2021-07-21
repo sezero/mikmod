@@ -54,7 +54,8 @@ interface LibMikModMessage {
 interface LibMikModResponse {
 	id: number;
 	messageId: LibMikModMessageId;
-	result?: number;
+	errorCode?: number;
+	errorStr?: string | null;
 	infoSongName?: string | null;
 	infoModType?: string | null;
 	infoComment?: string | null;

@@ -88,13 +88,13 @@ class LibMikModProcessor extends AudioWorkletProcessor {
 						this.postResponse({
 							id: this.id,
 							messageId: LibMikModMessageId.LOAD_MODULE_BUFFER,
-							result
+							errorCode: result,
+							errorStr: LibMikMod.getStrerr(result)
 						});
 					} else {
 						this.postResponse({
 							id: this.id,
 							messageId: LibMikModMessageId.LOAD_MODULE_BUFFER,
-							result,
 							infoSongName: LibMikMod.getSongName(),
 							infoModType: LibMikMod.getModType(),
 							infoComment: LibMikMod.getComment()
@@ -129,12 +129,23 @@ class LibMikModProcessor extends AudioWorkletProcessor {
 		if (!LibMikMod.process(outputs)) {
 			if (!this.ended) {
 				this.ended = true;
+
+				const result = LibMikMod.getErrno();
+
 				LibMikMod.stopModule();
-				this.postResponse({
-					id: this.id,
-					messageId: (LibMikMod.getErrno() ? LibMikModMessageId.PLAYBACK_ERROR : LibMikModMessageId.PLAYBACK_ENDED),
-					result: LibMikMod.getErrno()
-				});
+
+				if (result)
+					this.postResponse({
+						id: this.id,
+						messageId: LibMikModMessageId.PLAYBACK_ERROR,
+						errorCode: result,
+						errorStr: LibMikMod.getStrerr(result)
+					});
+				else
+					this.postResponse({
+						id: this.id,
+						messageId: LibMikModMessageId.PLAYBACK_ENDED
+					});
 			}
 			return false;
 		}

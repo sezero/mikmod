@@ -32,12 +32,10 @@ interface LibMikModCLib {
 	_changeGeneralOptions(reverb: number, interpolation: number, noiseReduction: number): void;
 	_update(): number;
 	_getErrno(): number;
+	_getStrerr(code: number): number;
 	_getSongName(): number;
-	_getSongNameLength(): number;
 	_getModType(): number;
-	_getModTypeLength(): number;
 	_getComment(): number;
-	_getCommentLength(): number;
 	_getAudioBuffer(): number;
 	_getAudioBufferMaxLength(): number;
 	_getAudioBufferUsedLength(): number;
@@ -187,13 +185,19 @@ class LibMikMod {
 		}
 	}
 
-	private static getString(ptr: number, len: number): string | null {
+	private static getString(ptr: number): string | null {
 		if (LibMikMod.cLib && ptr) {
+			const heap = LibMikMod.cLib.HEAP8;
+
+			let len = 0;
+
+			for (let i = ptr; heap[i] && len < 1024; i++)
+				len++;
+
 			if (!len)
 				return "";
 
-			const arr: number[] = new Array(len),
-				heap = LibMikMod.cLib.HEAP8;
+			const arr: number[] = new Array(len);
 
 			while (len-- > 0)
 				arr[len] = heap[ptr + len];
@@ -205,19 +209,23 @@ class LibMikMod {
 	}
 
 	public static getSongName(): string | null {
-		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getSongName(), LibMikMod.cLib._getSongNameLength()) : null);
+		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getSongName()) : null);
 	}
 
 	public static getModType(): string | null {
-		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getModType(), LibMikMod.cLib._getModTypeLength()) : null);
+		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getModType()) : null);
 	}
 
 	public static getComment(): string | null {
-		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getComment(), LibMikMod.cLib._getCommentLength()) : null);
+		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getComment()) : null);
 	}
 
 	public static getErrno(): number {
 		return (LibMikMod.cLib ? LibMikMod.cLib._getErrno() : 0);
+	}
+
+	public static getStrerr(code: number): string | null {
+		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getStrerr(code)) : null);
 	}
 
 	public static process(outputs: Float32Array[][]): boolean {
