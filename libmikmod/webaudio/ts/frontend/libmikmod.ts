@@ -24,6 +24,8 @@ class LibMikMod {
 	// Due to both LibMikMod and AudioWorklet's nature we can
 	// have only one module loaded at a time...
 
+	public static readonly VERSION = 1;
+
 	public static readonly ERROR_INITIALIZE = 1;
 	public static readonly ERROR_FILE_READ = 2;
 	public static readonly ERROR_MODULE_LOAD = 3;
@@ -66,11 +68,11 @@ class LibMikMod {
 
 		LibMikMod.initialized = true;
 
-		const response = await fetch(libPath + "libmikmodclib.wasm");
+		const response = await fetch(libPath + "libmikmodclib.wasm?" + LibMikMod.VERSION);
 
 		LibMikMod.wasmBuffer = await response.arrayBuffer();
 
-		return audioContext.audioWorklet.addModule(libPath + "libmikmodprocessor.min.js");
+		return audioContext.audioWorklet.addModule(libPath + "libmikmodprocessor.min.js?" + LibMikMod.VERSION);
 	}
 
 	private static postMessage(message: LibMikModMessage): void {
@@ -303,8 +305,8 @@ class LibMikMod {
 				LibMikMod.loading = false;
 
 				if (LibMikMod.onload && LibMikMod.onerror && LibMikMod.audioNode) {
-					if (message.result) {
-						LibMikMod.notifyError(LibMikMod.ERROR_MODULE_LOAD, message.result);
+					if (message.errorCode) {
+						LibMikMod.notifyError(LibMikMod.ERROR_MODULE_LOAD, message.errorStr || message.errorCode.toString());
 					} else {
 						LibMikMod.infoSongName = (message.infoSongName || null);
 						LibMikMod.infoModType = (message.infoModType || null);
@@ -319,7 +321,7 @@ class LibMikMod {
 				if (message.id !== LibMikMod.currentId)
 					break;
 
-				LibMikMod.notifyProcessorError(message.result);
+				LibMikMod.notifyProcessorError(message.errorStr || message.errorCode?.toString());
 				break;
 
 			case LibMikModMessageId.PLAYBACK_ENDED:

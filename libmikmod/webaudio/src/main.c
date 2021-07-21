@@ -37,6 +37,8 @@ int init() {
 	if (libMikModInitialized)
 		return 0;
 
+	MikMod_errno = 0;
+
 	MikMod_InitThreads();
 
 	MikMod_RegisterDriver(&drv_webaudio);
@@ -60,13 +62,12 @@ int init() {
 		DMODE_NOISEREDUCTION // Low pass filtering
 	;
 
-	// MikMod_errno
-	const int r = MikMod_Init(NULL);
+	if (MikMod_Init(NULL))
+		return MikMod_errno;
 
-	if (!r)
-		libMikModInitialized = 1;
+	libMikModInitialized = 1;
 
-	return r;
+	return 0;
 }
 
 void freeModule() {
@@ -133,21 +134,25 @@ int loadModule(int mixfreq, int reverb, BOOL hqMixer, BOOL interpolation, BOOL n
 	md_reverb = (reverb <= 0 ? 0 : (reverb >= 15 ? 15 : reverb)); // 0 = none;  15 = chaos
 	md_pansep = 0; // 0 = mono;  128 == 100% (full left/right)
 
-	MikMod_Reset(NULL);
+	MikMod_errno = 0;
+
+	if (MikMod_Reset(NULL))
+		return MikMod_errno;
 
 	libMikModModule = Player_LoadMem(libMikModTempData, libMikModTempDataLength, 64, 0);
 	MikMod_free(libMikModTempData);
 	libMikModTempData = NULL;
 	libMikModTempDataLength = 0;
 
-	if (libMikModModule) {
-		libMikModModule->wrap = wrap;
-		libMikModModule->loop = loop;
-		libMikModModule->fadeout = fadeout;
-		Player_Start(libMikModModule);
-	}
+	if (!libMikModModule)
+		return MikMod_errno;
 
-	return MikMod_errno;
+	libMikModModule->wrap = wrap;
+	libMikModModule->loop = loop;
+	libMikModModule->fadeout = fadeout;
+	Player_Start(libMikModModule);
+
+	return 0;
 }
 
 void changeGeneralOptions(int reverb, BOOL interpolation, BOOL noiseReduction) {
@@ -172,26 +177,18 @@ int getErrno() {
 	return MikMod_errno;
 }
 
-CHAR* getSongName() {
+const CHAR* getStrerr(int code) {
+	return MikMod_strerror(code);
+}
+
+const CHAR* getSongName() {
 	return (libMikModModule ? libMikModModule->songname : NULL);
 }
 
-int getSongNameLength() {
-	return ((libMikModModule && libMikModModule->songname) ? strlen(libMikModModule->songname) : 0);
-}
-
-CHAR* getModType() {
+const CHAR* getModType() {
 	return (libMikModModule ? libMikModModule->modtype : NULL);
 }
 
-int getModTypeLength() {
-	return ((libMikModModule && libMikModModule->modtype) ? strlen(libMikModModule->modtype) : 0);
-}
-
-CHAR* getComment() {
+const CHAR* getComment() {
 	return (libMikModModule ? libMikModModule->comment : NULL);
-}
-
-int getCommentLength() {
-	return ((libMikModModule && libMikModModule->comment) ? strlen(libMikModModule->comment) : 0);
 }
