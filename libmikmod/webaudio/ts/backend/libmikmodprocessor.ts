@@ -30,20 +30,17 @@ class LibMikModProcessor extends AudioWorkletProcessor {
 	// Due to both LibMikMod and AudioWorklet's nature we can
 	// have only one module loaded at a time...
 
-	private static currentId = 0;
-
-	private readonly id: number;
+	private id = 0;
 	private ended = false;
 
 	public constructor() {
 		super();
 
-		this.id = ++LibMikModProcessor.currentId;
 		this.port.onmessage = this.handleMessage.bind(this);
 	}
 
 	private postResponse(response: LibMikModResponse): void {
-		if (this.id == LibMikModProcessor.currentId)
+		if (this.port)
 			this.port.postMessage(response);
 	}
 
@@ -55,95 +52,103 @@ class LibMikModProcessor extends AudioWorkletProcessor {
 
 		switch (message.messageId) {
 			case LibMikModMessageId.INIT:
-				if (!LibMikMod.loaded && !LibMikMod.loading && !LibMikMod.loadError && message.buffer) {
-					LibMikMod.init(message.buffer).then(() => {
-						this.postResponse({
-							id: this.id,
-							messageId: LibMikModMessageId.INIT
-						});
-					}, () => {
-						this.postResponse({
-							id: this.id,
-							messageId: LibMikModMessageId.INIT
-						});
-					});
-				}
-				break;
+				if (message.id || this.id || LibMikMod.loaded || LibMikMod.loading || LibMikMod.loadErrorStr || !message.buffer)
+					break;
 
-			case LibMikModMessageId.CHECK_STATUS:
-				if (message.id === this.id)
+				LibMikMod.init(message.buffer).then(() => {
+					this.ended = true;
+					this.id = -1;
+	
 					this.postResponse({
-						id: this.id,
-						messageId: LibMikModMessageId.CHECK_STATUS,
-						loading: LibMikMod.loading,
-						loaded: LibMikMod.loaded,
-						loadError: LibMikMod.loadError
+						id: LibMikMod.getVersion(),
+						messageId: LibMikModMessageId.INIT
 					});
+				}, () => {
+					this.ended = true;
+					this.id = -1;
+	
+					this.postResponse({
+						id: 0,
+						messageId: LibMikModMessageId.INIT,
+						errorCode: -1,
+						errorStr: LibMikMod.loadErrorStr
+					});
+				});
 				break;
 
 			case LibMikModMessageId.LOAD_MODULE_BUFFER:
-				if (message.id === this.id) {
-					const result = LibMikMod.loadModule(sampleRate, message.buffer, message.options);
-					if (result) {
-						this.postResponse({
-							id: this.id,
-							messageId: LibMikModMessageId.LOAD_MODULE_BUFFER,
-							errorCode: result,
-							errorStr: LibMikMod.getStrerr(result)
-						});
-					} else {
-						this.postResponse({
-							id: this.id,
-							messageId: LibMikModMessageId.LOAD_MODULE_BUFFER,
-							infoSongName: LibMikMod.getSongName(),
-							infoModType: LibMikMod.getModType(),
-							infoComment: LibMikMod.getComment()
-						});
-					}
+				if (!message.id || this.id)
+					break;
+
+				this.id = message.id;
+
+				const result = LibMikMod.loadModule(sampleRate, message.buffer, message.options);
+				if (result) {
+					this.ended = true;
+					this.id = -1;
+	
+					LibMikMod.stopModule();
+
+					this.postResponse({
+						id: message.id,
+						messageId: LibMikModMessageId.LOAD_MODULE_BUFFER,
+						errorCode: result,
+						errorStr: LibMikMod.getStrerr(result)
+					});
+				} else {
+					this.postResponse({
+						id: this.id,
+						messageId: LibMikModMessageId.LOAD_MODULE_BUFFER,
+						infoSongName: LibMikMod.getSongName(),
+						infoModType: LibMikMod.getModType(),
+						infoComment: LibMikMod.getComment()
+					});
 				}
 				break;
 
 			case LibMikModMessageId.CHANGE_GENERAL_OPTIONS:
+				if (message.id !== this.id)
+					break;
+
 				LibMikMod.changeGeneralOptions(message.options);
 				break;
 
 			case LibMikModMessageId.STOP_MODULE:
-				if (message.id === this.id && !this.ended) {
-					this.ended = true;
-					LibMikMod.stopModule();
-				}
-				break;
+				if (message.id !== this.id)
+					break;
 
-			case LibMikModMessageId.GET_ID:
-				this.postResponse({
-					id: this.id,
-					messageId: LibMikModMessageId.GET_ID
-				});
+				this.ended = true;
+				this.id = -1;
+
+				LibMikMod.stopModule();
 				break;
 		}
 	}
 
 	public process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: { [key: string]: Float32Array }): boolean {
-		if (this.id != LibMikModProcessor.currentId || this.ended)
+		if (this.ended)
 			return false;
+
 		if (!LibMikMod.process(outputs)) {
 			if (!this.ended) {
-				this.ended = true;
+				const id = this.id,
+					result = LibMikMod.getErrno();
 
-				const result = LibMikMod.getErrno();
+				this.ended = true;
+				this.id = -1;
 
 				LibMikMod.stopModule();
 
 				if (result)
 					this.postResponse({
-						id: this.id,
+						id,
 						messageId: LibMikModMessageId.PLAYBACK_ERROR,
 						errorCode: result,
 						errorStr: LibMikMod.getStrerr(result)
 					});
 				else
 					this.postResponse({
-						id: this.id,
+						id,
 						messageId: LibMikModMessageId.PLAYBACK_ENDED
 					});
 			}

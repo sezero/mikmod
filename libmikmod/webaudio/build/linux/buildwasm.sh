@@ -65,7 +65,7 @@ emcc \
 	-s WASM=1 \
 	-s PRECISE_F32=0 \
 	-s DYNAMIC_EXECUTION=0 \
-	-s EXPORTED_FUNCTIONS="['_init', '_freeModule', '_terminate', '_preLoadModule', '_loadModule', '_changeGeneralOptions', '_update', '_getErrno', '_getStrerr', '_getSongName', '_getModType', '_getComment', '_getAudioBuffer', '_getAudioBufferMaxLength', '_getAudioBufferUsedLength']" \
+	-s EXPORTED_FUNCTIONS="['_getVersion', '_init', '_freeModule', '_terminate', '_preLoadModule', '_loadModule', '_changeGeneralOptions', '_update', '_getErrno', '_getStrerr', '_getSongName', '_getModType', '_getComment', '_getAudioBuffer', '_getAudioBufferMaxLength', '_getAudioBufferUsedLength']" \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s INITIAL_MEMORY=3145728 \
 	-s MAXIMUM_MEMORY=33554432 \
