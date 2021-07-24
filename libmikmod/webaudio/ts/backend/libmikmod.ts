@@ -24,6 +24,7 @@ interface LibMikModCLib {
 	HEAP8: Uint8Array;
 	HEAPF32: Float32Array;
 
+	_getVersion(): number;
 	_init(): number;
 	_freeModule(): void;
 	_terminate(): void;
@@ -58,17 +59,17 @@ class LibMikMod {
 
 	public static loading = false;
 	public static loaded = false;
-	public static loadError = false;
+	public static loadErrorStr: string | null = null;
 
 	public static init(wasmBinary: ArrayBuffer): Promise<void> {
 		return (LibMikMod.loaded ? Promise.resolve() : new Promise((resolve, reject) => {
 			if (LibMikMod.loading) {
-				reject("Still loading");
+				reject(LibMikMod.loadErrorStr = "The library was still loading");
 				return;
 			}
 
-			if (LibMikMod.loadError) {
-				reject("Error loading the library");
+			if (LibMikMod.loadErrorStr) {
+				reject(LibMikMod.loadErrorStr);
 				return;
 			}
 
@@ -82,16 +83,15 @@ class LibMikMod {
 				if (!r) {
 					LibMikMod.loading = false;
 					LibMikMod.loaded = true;
+					LibMikMod.loadErrorStr = null;
 					resolve();
 				} else {
 					LibMikMod.loading = false;
-					LibMikMod.loadError = true;
-					reject(r);
+					reject(LibMikMod.loadErrorStr = LibMikMod.getStrerr(r));
 				}
 			}, (reason) => {
 				LibMikMod.loading = false;
-				LibMikMod.loadError = true;
-				reject(reason);
+				reject(LibMikMod.loadErrorStr = ((reason ? (reason.message || reason.toString()) : null) || "Unknown error while loading the library"));
 			});
 		}));
 	}
@@ -106,7 +106,11 @@ class LibMikMod {
 		}
 	}
 
-	public static loadModule(destinationSampleRate: number, srcBuffer?: ArrayBuffer | Uint8Array, options?: LibMikModLoadOptions | null): number {
+	public static getVersion(): number {
+		return (LibMikMod.cLib ? LibMikMod.cLib._getVersion() : 0);
+	}
+
+	public static loadModule(destinationSampleRate: number, srcBuffer?: ArrayBuffer | Uint8Array, options?: LibMikModInitialOptions | null): number {
 		if (!LibMikMod.cLib)
 			return 3; // MMERR_DYNAMIC_LINKING
 

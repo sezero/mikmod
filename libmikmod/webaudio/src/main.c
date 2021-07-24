@@ -33,6 +33,10 @@ char* libMikModTempData = NULL;
 int libMikModTempDataLength = 0;
 int libMikModInitialized = 0;
 
+int getVersion() {
+	return LIBMIKMOD_VERSION;
+}
+
 int init() {
 	if (libMikModInitialized)
 		return 0;

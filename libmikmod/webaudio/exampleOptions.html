@@ -20,30 +20,6 @@
 	</h1>
 
 	<h2>
-		General Options
-	</h2>
-
-	<p>
-		<label for="inputReverb">Reverb (0 to 15)</label>
-		<br />
-		<input id="inputReverb" type="number" min="0" max="15" value="0" />
-	</p>
-
-	<p>
-		<label>
-			<input type="checkbox" id="inputInterpolation" checked />
-			Interpolation
-		</label>
-	</p>
-
-	<p>
-		<label>
-			<input type="checkbox" id="inputNoiseReduction" checked />
-			Noise reduction
-		</label>
-	</p>
-
-	<h2>
 		Load Options <small>(can only be changed when (re)loading a module)</small>
 	</h2>
 
@@ -75,14 +51,46 @@
 		</label>
 	</p>
 
+	<h2>
+		General Options
+	</h2>
+
+	<p>
+		<label for="inputReverb">Reverb (0 to 15)</label>
+		<br />
+		<input id="inputReverb" type="number" min="0" max="15" value="0" />
+	</p>
+
+	<p>
+		<label>
+			<input type="checkbox" id="inputInterpolation" checked />
+			Interpolation
+		</label>
+	</p>
+
+	<p>
+		<label>
+			<input type="checkbox" id="inputNoiseReduction" checked />
+			Noise reduction
+		</label>
+	</p>
+
+	<h2>
+		Module File
+	</h2>
+
 	<p>
 		<label for="inputModuleFile">Module file (669, amf, asy, dsm, far, gdm, gt2, imf, it, m15, med, mod, mtm, okt, s3m, stm, stx, ult, umx, uni, xm)</label>
 		<br />
 		<input type="file" id="inputModuleFile" accept=".669,.amf,.asy,.dsm,.far,.gdm,.gt2,.imf,.it,.m15,.med,.mod,.mtm,.okt,.s3m,.stm,.stx,.ult,.umx,.uni,.xm" />
 	</p>
 
+	<h2>
+		Commands
+	</h2>
+
 	<p>
-		<button type="button" onclick="load()">(Re)Load module file</button>
+		<button type="button" onclick="load()" id="buttonLoad" disabled>(Re)Load module file</button>
 		<button type="button" onclick="changeGeneralOptions()" id="buttonChangeGeneralOptions" disabled>Change general options</button>
 	</p>
 
@@ -100,6 +108,8 @@
 	<h2>
 		More information
 	</h2>
+
+	<pre id="versionInfo"></pre>
 
 	<ul>
 		<li>
@@ -142,6 +152,14 @@
 
 		audioContext.suspend();
 
+		if (LibMikMod.isSupported())
+			LibMikMod.init(audioContext, "dist/").then(function () {
+				document.getElementById("versionInfo").textContent = "WEB_VERSION: " + LibMikMod.WEB_VERSION + "\nLIB_VERSION: " + LibMikMod.LIB_VERSION;
+				document.getElementById("buttonLoad").removeAttribute("disabled");
+			}, function (reason) {
+				alert("Error loading LibMikMod: " + reason);
+			});
+
 		function cleanUp() {
 			songInfo.textContent = "";
 			buttonChangeGeneralOptions.setAttribute("disabled", "disabled");
@@ -154,7 +172,7 @@
 		}
 
 		function load() {
-			if (LibMikMod.loading)
+			if (!LibMikMod.initialized)
 				return;
 
 			if (!inputModuleFile.files || !inputModuleFile.files.length) {
@@ -162,26 +180,23 @@
 				return;
 			}
 
-			if (!LibMikMod.initialized) {
-				LibMikMod.init(audioContext, "dist/").then(load, function (reason) {
-					alert("Error loading LibMikMod: " + reason);
-				});
-				return;
-			}
-
-			LibMikMod.stopModule();
-
 			cleanUp();
 
-			LibMikMod.loadModule(audioContext, inputModuleFile.files[0], moduleOnload, moduleOnerror, moduleOnended, {
-				reverb: parseInt(inputReverb.value),
-				interpolation: inputInterpolation.checked,
-				noiseReduction: inputNoiseReduction.checked,
+			LibMikMod.loadModule({
+				audioContext: audioContext,
+				source: inputModuleFile.files[0],
+				onload: moduleOnload,
+				onerror: moduleOnerror,
+				onended: moduleOnended,
 
 				hqMixer: inputHqMixer.checked,
 				wrap: inputWrap.checked,
 				loop: inputLoop.checked,
-				fadeout: inputFadeout.checked
+				fadeout: inputFadeout.checked,
+
+				reverb: parseInt(inputReverb.value),
+				interpolation: inputInterpolation.checked,
+				noiseReduction: inputNoiseReduction.checked
 			});
 		}
 
@@ -219,14 +234,10 @@
 			audioContext.resume();
 		}
 
-		function moduleOnerror(reason) {
+		function moduleOnerror(errorCode, reason) {
 			songInfo.textContent = "";
 
 			switch (errorCode) {
-				case LibMikMod.ERROR_INITIALIZE:
-					alert("Error initializing the library: " + reason);
-					break;
-
 				case LibMikMod.ERROR_FILE_READ:
 					alert("Error reading the file: " + reason);
 					break;

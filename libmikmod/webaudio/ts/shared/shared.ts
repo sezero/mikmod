@@ -26,28 +26,34 @@ interface LibMikModGeneralOptions {
 	noiseReduction?: boolean;
 }
 
-interface LibMikModLoadOptions extends LibMikModGeneralOptions {
+interface LibMikModInitialOptions extends LibMikModGeneralOptions {
 	hqMixer?: boolean;
 	wrap?: boolean;
 	loop?: boolean;
 	fadeout?: boolean;
 }
 
+interface LibMikModLoadOptions extends LibMikModInitialOptions {
+	audioContext: AudioContext;
+	source: File | ArrayBuffer | Uint8Array;
+	onload: (audioNode: AudioWorkletNode) => void;
+	onerror: (errorCode: number, reason?: any) => void;
+	onended: () => void;
+}
+
 enum LibMikModMessageId {
 	INIT = 1,
-	CHECK_STATUS = 2,
-	LOAD_MODULE_BUFFER = 3,
-	CHANGE_GENERAL_OPTIONS = 4,
-	STOP_MODULE = 5,
-	PLAYBACK_ERROR = 6,
-	PLAYBACK_ENDED = 7,
-	GET_ID = 8
+	LOAD_MODULE_BUFFER = 2,
+	CHANGE_GENERAL_OPTIONS = 3,
+	STOP_MODULE = 4,
+	PLAYBACK_ERROR = 5,
+	PLAYBACK_ENDED = 6
 }
 
 interface LibMikModMessage {
 	id: number;
 	messageId: LibMikModMessageId;
-	options?: LibMikModGeneralOptions | LibMikModLoadOptions | null;
+	options?: LibMikModGeneralOptions | LibMikModInitialOptions | null;
 	buffer?: ArrayBuffer;
 }
 
@@ -59,7 +65,4 @@ interface LibMikModResponse {
 	infoSongName?: string | null;
 	infoModType?: string | null;
 	infoComment?: string | null;
-	loading?: boolean;
-	loaded?: boolean;
-	loadError?: boolean;
 }
