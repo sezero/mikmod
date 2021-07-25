@@ -3,6 +3,14 @@ LIB_DIR=../../dist
 SRC_DIR=../../..
 TEMP_DIR=../../src/temp
 
+if [ ! -d "$LIB_DIR/" ]; then
+	mkdir $LIB_DIR
+fi
+
+if [ ! -d "$TEMP_DIR/" ]; then
+	mkdir $TEMP_DIR
+fi
+
 SRCS="\
 $SRC_DIR/loaders/load_669.c \
 $SRC_DIR/loaders/load_amf.c \

@@ -3,18 +3,19 @@ LibMikMod Web Audio
 
 This is a port of the MikMod Sound Library to the web using [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly), [Web Audio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API), [AudioWorklet](https://developer.mozilla.org/en-US/docs/Web/API/AudioWorklet) and [AudioWorkletNode](https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode).
 
-The files [libmikmod/webaudio/exampleSimple.html](https://github.com/carlosrafaelgn/mikmod/blob/master/libmikmod/webaudio/exampleSimple.html) and [libmikmod/webaudio/exampleOptions.html](https://github.com/carlosrafaelgn/mikmod/blob/master/libmikmod/webaudio/exampleOptions.html) are examples on how to use the library in the web environment. Both files can be live previewed here: [exampleSimple.html](https://fplay.com.br/examples/exampleSimple.html) / [exampleOptions.html](https://fplay.com.br/examples/exampleOptions.html).
+The files [libmikmod/webaudio/exampleSimple.html](https://github.com/carlosrafaelgn/mikmod/blob/master/libmikmod/webaudio/exampleSimple.html) and [libmikmod/webaudio/exampleOptions.html](https://github.com/carlosrafaelgn/mikmod/blob/master/libmikmod/webaudio/exampleOptions.html) are examples on how to use the library in the web environment. Both files can be live previewed here:
+
+- [exampleSimple.html](https://fplay.com.br/examples/exampleSimple.html)
+- [exampleOptions.html](https://fplay.com.br/examples/exampleOptions.html)
 
 Downloading the library
 -----------------------
 
-The web port of the library consists of three files, available in the [libmikmod/webaudio/dist](https://github.com/carlosrafaelgn/mikmod/tree/master/libmikmod/webaudio/dist) folder.
+The web port of the library consists of three files that can be built following the instructions below. After being built, the files will be located in the `libmikmod/webaudio/dist` folder.
 
-You can download them using the direct links below:
+For convenience, you can download the prebuilt files, the same ones used in the live examples, from the following address (be sure to check the library version before using the files, because they could be outdated compared to the actual library):
 
-- [libmikmod/webaudio/dist/libmikmod.min.js](https://github.com/carlosrafaelgn/mikmod/raw/master/libmikmod/webaudio/dist/libmikmod.min.js)
-- [libmikmod/webaudio/dist/libmikmodclib.wasm](https://github.com/carlosrafaelgn/mikmod/raw/master/libmikmod/webaudio/dist/libmikmodclib.wasm)
-- [libmikmod/webaudio/dist/libmikmodprocessor.min.js](https://github.com/carlosrafaelgn/mikmod/raw/master/libmikmod/webaudio/dist/libmikmodprocessor.min.js)
+https://fplay.com.br/examples/libmikmod.zip
 
 Using the library
 -----------------
