@@ -5,6 +5,14 @@ SET LIB_DIR=..\..\dist
 SET SRC_DIR=..\..\..
 SET TEMP_DIR=..\..\src\temp
 
+IF NOT EXIST %LIB_DIR%\ (
+	MKDIR %LIB_DIR%
+)
+
+IF NOT EXIST %TEMP_DIR%\ (
+	MKDIR %TEMP_DIR%
+)
+
 SET SRCS=^
 %SRC_DIR%\loaders\load_669.c ^
 %SRC_DIR%\loaders\load_amf.c ^
