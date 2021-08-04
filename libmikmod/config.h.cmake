@@ -88,10 +88,6 @@
 /* Define if your system is AIX 3.* - might be needed for 4.* too */
 #cmakedefine AIX 1
 
-/* Define if your system defines random(3) and srandom(3) in math.h instead
-   of stdlib.h */
-#cmakedefine SRANDOM_IN_MATH_H 1
-
 /* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
 #cmakedefine HAVE_RTLD_GLOBAL 1
 

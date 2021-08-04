@@ -554,9 +554,14 @@ AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h])
 
 AC_CHECK_FUNCS([posix_memalign setenv snprintf srandom])
 AC_REPLACE_FUNCS([memcmp strstr])
-AC_CHECK_LIB([m],[floor],LIBRARY_LIB="-lm $LIBRARY_LIB")
-AC_EGREP_HEADER([srandom],[math.h],AC_DEFINE([SRANDOM_IN_MATH_H], 1,
-					 [Define if your system defines random(3) and srandom(3) in math.h instead of stdlib.h]))
+
+case "${host_os}" in
+dnl These systems don't have libm or don't need it (list based on libtool)
+ mingw*|darwin*|cygwin*|haiku*|beos*|cegcc*|pw32*) ;;
+dnl djgpp has all c89 math funcs in libc.a
+ *djgpp) ;;
+ *) AC_CHECK_LIB([m],[pow],LIBRARY_LIB="-lm $LIBRARY_LIB") ;;
+esac
 
 # ====================
 # Check for libraries.

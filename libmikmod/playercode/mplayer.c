@@ -34,11 +34,7 @@
 
 #include <string.h>
 #include <stdarg.h>
-#ifdef SRANDOM_IN_MATH_H
-#include <math.h>
-#else
 #include <stdlib.h>
-#endif
 
 #include "mikmod_internals.h"
 
