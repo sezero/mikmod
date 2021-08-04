@@ -83,7 +83,7 @@ static const UBYTE ctable[]={
 	8, 7, 6, 2, 3, 4, 5, 0
 };
 
-static UWORD readmem16b(UBYTE *m)
+static UWORD readmem16b(const UBYTE *m)
 {
 	ULONG a, b;
 
@@ -93,7 +93,7 @@ static UWORD readmem16b(UBYTE *m)
 	return (a << 8) | b;
 }
 
-static ULONG readmem24b(UBYTE *m)
+static ULONG readmem24b(const UBYTE *m)
 {
 	ULONG a, b, c;
 
@@ -104,12 +104,25 @@ static ULONG readmem24b(UBYTE *m)
 	return (a << 16) | (b << 8) | c;
 }
 
-static UWORD xchecksum(ULONG * ptr, ULONG count)
+static ULONG readmem32b(const UBYTE *m)
 {
-	register ULONG sum = 0;
+	ULONG a, b, c, d;
+
+	a = m[0];
+	b = m[1];
+	c = m[2];
+	d = m[3];
+
+	return (a << 24) | (b << 16) | (c << 8) | d;
+}
+
+static UWORD xchecksum(UBYTE *ptr, ULONG count)
+{
+	ULONG sum = 0;
 
 	while (count-- > 0) {
-		sum ^= *ptr++;
+		sum ^= readmem32b(ptr);
+		ptr += 4;
 	}
 
 	return (UWORD) (sum ^ (sum >> 16));
@@ -363,7 +376,7 @@ static int unsqsh(UBYTE *src, SLONG srclen, UBYTE *dest, SLONG destlen)
 		type = *c++;
 		c++;			/* hchk */
 
-		sum = *(UWORD *)c;
+		sum = readmem16b(c);
 		c += 2;			/* checksum */
 
 		packed_size = readmem16b(c);	/* packed */
@@ -384,7 +397,7 @@ static int unsqsh(UBYTE *src, SLONG srclen, UBYTE *dest, SLONG destlen)
 		io.srclen = packed_size << 3;
 		memcpy(bc, c + packed_size, 3);
 		memset(c + packed_size, 0, 3);
-		lchk = xchecksum((ULONG *) (c), (packed_size + 3) >> 2);
+		lchk = xchecksum(c, (packed_size + 3) >> 2);
 		memcpy(c + packed_size, bc, 3);
 
 		if (lchk != sum) {
