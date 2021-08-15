@@ -40,8 +40,6 @@
 #include <stdlib.h>
 #endif
 
-#include <math.h>
-
 #include "mikmod_internals.h"
 
 #ifdef SUNOS
@@ -2290,7 +2288,7 @@ static void DoFarTonePorta(MP_CONTROL* a)
 	a->farcurrentvalue += a->fartoneportaspeed;
 
 	/* Have we reached our note */
-	BOOL reachedNote = (a->fartoneportaspeed > 0) ? a->farcurrentvalue >= a->wantedperiod : a->farcurrentvalue <= a->wantedperiod;
+	BOOL reachedNote = (a->fartoneportaspeed > 0) ? (a->farcurrentvalue >> 16) >= a->wantedperiod : (a->farcurrentvalue >> 16) <= a->wantedperiod;
 	if (reachedNote)
 	{
 		/* Stop the porta and set the periods to the reached note */
@@ -2300,14 +2298,14 @@ static void DoFarTonePorta(MP_CONTROL* a)
 	else
 	{
 		/* Do the porta */
-		a->tmpperiod = a->main.period = (UWORD)a->farcurrentvalue;
+		a->tmpperiod = a->main.period = (UWORD)(a->farcurrentvalue >> 16);
 	}
 
 	a->ownper = 1;
 }
 
 /* Find tempo factor */
-static int GetFARTempoFactor()
+static SLONG GetFARTempoFactor()
 {
 	return farcurtempo == 0 ? 256 : (128 / farcurtempo);
 }
@@ -2364,9 +2362,9 @@ static void SetFARTempo(MODULE* mod)
 
 	WORD realTempo = fartempobend + GetFARTempoFactor();
 
-	int gus = 1197255 / realTempo;
+	SLONG gus = 1197255 / realTempo;
 
-	int eax = gus;
+	SLONG eax = gus;
 	UBYTE cx = 0, di = 0;
 
 	while (eax > 0xffff)
@@ -2381,7 +2379,8 @@ static void SetFARTempo(MODULE* mod)
 
 	mod->sngspd = di + 3;
 
-	int factor = round(gus / 9353.0f);
+	// Calculate the factor using fixed point and round it
+	SLONG factor = (SLONG)((((SLONGLONG)gus << 32) / (9353 << 16)) + 0x8000) >> 16;
 	mod->bpm = (80 * mod->sngspd) / factor;
 }
 
@@ -2425,7 +2424,7 @@ static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	{
 		/* We have to slide a.Main.Period toward a.WantedPeriod,
 		  compute the difference between those two values */
-		float dist = (float)(a->wantedperiod - a->main.period);
+		SLONG dist = a->wantedperiod - a->main.period;
 
 		/* Adjust effect argument */
 		if (dat == 0)
@@ -2433,8 +2432,8 @@ static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 
 		/* Unlike other players, the data is how many rows the port
 		   should take and not a speed */
-		a->fartoneportaspeed = dist / (mod->sngspd * dat);
-		a->farcurrentvalue = a->main.period;
+		a->fartoneportaspeed = (dist << 16) / (mod->sngspd * dat);
+		a->farcurrentvalue = (SLONG)a->main.period << 16;
 		a->fartoneportarunning = 1;
 	}
 

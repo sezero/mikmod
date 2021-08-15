@@ -533,8 +533,8 @@ typedef struct MP_CONTROL {
     UBYTE   s3mrtgslide;/* last used retrig slide */
 
     UBYTE   fartoneportarunning; /* FAR tone porta (effect 3) is a little bit different than other effects. It should keep running when the effect has first started, even if it is not given on subsequently rows */
-    float   fartoneportaspeed;   /* FAR tone porta increment value */
-    float   farcurrentvalue;     /* Because we're using floats as speed and the current period is an integer, we need to store the current value here for next round */
+    SLONG   fartoneportaspeed;   /* FAR tone porta increment value */
+    SLONG   farcurrentvalue;     /* Because we're using fixing points as speed and the current period is an integer, we need to store the current value here for next round */
     UBYTE   farretrigcount;      /* Number of retrigs to do */
 
     UBYTE   glissando;  /* glissando (0 means off) */
