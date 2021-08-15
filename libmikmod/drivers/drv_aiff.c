@@ -43,7 +43,7 @@
 #include <unistd.h>
 #endif
 #include <stdio.h>
-#include <math.h>	/* required for IEEE extended conversion */
+#include <string.h>
 
 #define AIFF_BUFFERSIZE			32768
 #if defined(_WIN32) || defined(__DJGPP__)
@@ -70,7 +70,7 @@ extern int fclose(FILE *);
 #define unlink _unlink
 #endif
 
-static void	AIFF_ConvertToIeeeExtended (double theValue, char *theBytes);
+static void	AIFF_ConvertToIeeeExtended (ULONG num, UBYTE *bytes);
 static void	AIFF_PutHeader (void);
 static void	AIFF_CommandLine (const CHAR *theCmdLine);
 static BOOL	AIFF_IsThere (void);
@@ -79,64 +79,40 @@ static void	AIFF_Exit (void);
 static void	AIFF_Update (void);
 
 
-static void AIFF_ConvertToIeeeExtended (double theValue, char *theBytes)
+/* the following taken from uint2tenbytefloat() of libsndfile. */
+static void AIFF_ConvertToIeeeExtended (ULONG num, UBYTE *bytes)
 {
-    int mySign, myExponent;
-    double myFMant, myFsMant;
-    ULONG myHiMant, myLoMant;
+    ULONG mask = 0x40000000;
+    int  count;
 
-    if (theValue < 0)
-    {
-        mySign = 0x8000;
-        theValue *= -1;
-    } else
-    {
-        mySign = 0;
+    memset (bytes, 0, 10);
+
+    if (num <= 1) {
+        bytes[0] = 0x3F;
+        bytes[1] = 0xFF;
+        bytes[2] = 0x80;
+        return;
     }
 
-    if (theValue < 1e-18)
-    {
-        myExponent = 0;
-        myHiMant = 0;
-        myLoMant = 0;
-    }
-    else
-    {
-        myFMant = frexp (theValue, &myExponent);
-        if ((myExponent > 16384) || !(myFMant < 1))
-        {
-            myExponent = mySign | 0x7FFF;
-            myHiMant = 0;
-            myLoMant = 0;
-        }
-        else
-        {
-            myExponent += 16382;
-            if (myExponent < 0)
-            {
-                myFMant = ldexp (myFMant, myExponent);
-                myExponent = 0;
-            }
-            myExponent |= mySign;
-            myFMant = ldexp (myFMant, 32);
-            myFsMant = floor (myFMant);
-            myHiMant = AIFF_FLOAT_TO_UNSIGNED (myFsMant);
-            myFMant = ldexp (myFMant - myFsMant, 32);
-            myFsMant = floor (myFMant);
-            myLoMant = AIFF_FLOAT_TO_UNSIGNED (myFsMant);
-        }
+    bytes[0] = 0x40;
+
+    if (num >= mask) {
+        bytes [1] = 0x1D;
+        return;
     }
 
-    theBytes[0] = myExponent >> 8;
-    theBytes[1] = myExponent;
-    theBytes[2] = myHiMant >> 24;
-    theBytes[3] = myHiMant >> 16;
-    theBytes[4] = myHiMant >> 8;
-    theBytes[5] = myHiMant;
-    theBytes[6] = myLoMant >> 24;
-    theBytes[7] = myLoMant >> 16;
-    theBytes[8] = myLoMant >> 8;
-    theBytes[9] = myLoMant;
+    for (count = 0; count < 32; count ++) {
+        if (num & mask)
+            break;
+        mask >>= 1;
+    }
+
+    num = (count < 31) ? num << (count + 1) : 0;
+    bytes [1] = 29 - count;
+    bytes [2] = (num >> 24) & 0xFF;
+    bytes [3] = (num >> 16) & 0xFF;
+    bytes [4] = (num >>  8) & 0xFF;
+    bytes [5] =  num & 0xFF;
 }
 
 static void AIFF_PutHeader(void)
@@ -145,7 +121,7 @@ static void AIFF_PutHeader(void)
     UBYTE	myIEEE[10];
 
     myFrames = gAiffDumpSize / (((md_mode&DMODE_STEREO) ? 2 : 1) * ((md_mode & DMODE_16BITS) ? 2 : 1));
-    AIFF_ConvertToIeeeExtended ((double) md_mixfreq, (char *)myIEEE);
+    AIFF_ConvertToIeeeExtended ((ULONG) md_mixfreq, myIEEE);
 
     _mm_fseek (gAiffOut, 0, SEEK_SET);
     _mm_write_string  ("FORM", gAiffOut);				/* chunk 'FORM' */
