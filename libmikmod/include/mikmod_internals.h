@@ -357,15 +357,15 @@ enum {
     UNI_MEDEFFECT_18,  /* stop note */
     UNI_MEDEFFECT_1E,  /* pattern delay */
     UNI_MEDEFFECT_1F,  /* note delay and retrigger */
-/* Farandole effects. */
-	UNI_FAREFFECT1,    /* Porta up */
+ /* Farandole effects. */
+    UNI_FAREFFECT1,    /* Porta up */
     UNI_FAREFFECT2,    /* Porta down */
     UNI_FAREFFECT3,    /* Porta to note */
     UNI_FAREFFECT4,    /* Retrigger */
     UNI_FAREFFECT6,    /* Vibrato */
     UNI_FAREFFECTD,    /* Fine tempo down */
     UNI_FAREFFECTE,    /* Fine tempo up */
-	UNI_FAREFFECTF,    /* Set tempo */
+    UNI_FAREFFECTF,    /* Set tempo */
 
     UNI_LAST
 };

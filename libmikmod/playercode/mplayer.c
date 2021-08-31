@@ -2278,7 +2278,7 @@ static int DoOktArp(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD c
 
 /*========== Farandole effects */
 
-static void DoFarTonePorta(MP_CONTROL* a)
+static void DoFarTonePorta(MP_CONTROL *a)
 {
 	if (!a->main.fadevol)
 		a->main.kick = (a->main.kick == KICK_NOTE) ? KICK_NOTE : KICK_KEYOFF;
@@ -2289,14 +2289,12 @@ static void DoFarTonePorta(MP_CONTROL* a)
 
 	/* Have we reached our note */
 	BOOL reachedNote = (a->fartoneportaspeed > 0) ? (a->farcurrentvalue >> 16) >= a->wantedperiod : (a->farcurrentvalue >> 16) <= a->wantedperiod;
-	if (reachedNote)
-	{
+	if (reachedNote) {
 		/* Stop the porta and set the periods to the reached note */
 		a->tmpperiod = a->main.period = a->wantedperiod;
 		a->fartoneportarunning = 0;
 	}
-	else
-	{
+	else {
 		/* Do the porta */
 		a->tmpperiod = a->main.period = (UWORD)(a->farcurrentvalue >> 16);
 	}
@@ -2311,7 +2309,7 @@ static SLONG GetFARTempoFactor()
 }
 
 /* Set the right speed and BPM for Farandole modules */
-static void SetFARTempo(MODULE* mod)
+static void SetFARTempo(MODULE *mod)
 {
 	/* According to the Farandole document, the tempo of the song is 32/tempo notes per second.
 	   So if we set tempo to 1, we will get 32 notes per second. We then need to translate this
@@ -2367,8 +2365,7 @@ static void SetFARTempo(MODULE* mod)
 	SLONG eax = gus;
 	UBYTE cx = 0, di = 0;
 
-	while (eax > 0xffff)
-	{
+	while (eax > 0xffff) {
 		eax >>= 1;
 		di++;
 		cx++;
@@ -2384,7 +2381,7 @@ static void SetFARTempo(MODULE* mod)
 	mod->bpm = (80 * mod->sngspd) / factor;
 }
 
-static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
@@ -2400,7 +2397,7 @@ static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffect2(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffect2(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
@@ -2416,12 +2413,11 @@ static int DoFAREffect2(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
-	if (!tick)
-	{
+	if (!tick) {
 		/* We have to slide a.Main.Period toward a.WantedPeriod,
 		  compute the difference between those two values */
 		SLONG dist = a->wantedperiod - a->main.period;
@@ -2440,27 +2436,22 @@ static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
 	/* Here the argument is the number of retrigs to play evenly
 	   spaced in the current row */
-	if (!tick)
-	{
-		if (dat)
-		{
+	if (!tick) {
+		if (dat) {
 			a->farretrigcount = dat;
 			a->retrig = 0;
 		}
 	}
 
-	if (dat)
-	{
-		if (!a->retrig)
-		{
-			if (a->farretrigcount > 0)
-			{
+	if (dat) {
+		if (!a->retrig) {
+			if (a->farretrigcount > 0) {
 				/* When retrig counter reaches 0,
 				   reset counter and restart the sample */
 				if (a->main.period != 0)
@@ -2478,7 +2469,7 @@ static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffect6(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffect6(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat;
 
@@ -2493,12 +2484,11 @@ static int DoFAREffect6(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
-	if (dat != 0)
-	{
+	if (dat != 0) {
 		fartempobend -= dat;
 
 		if ((fartempobend + GetFARTempoFactor()) <= 0)
@@ -2512,12 +2502,11 @@ static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
-	if (dat != 0)
-	{
+	if (dat != 0) {
 		fartempobend += dat;
 
 		if ((fartempobend + GetFARTempoFactor()) >= 100)
@@ -2531,12 +2520,11 @@ static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWO
 	return 0;
 }
 
-static int DoFAREffectF(UWORD tick, UWORD flags, MP_CONTROL* a, MODULE* mod, SWORD channel)
+static int DoFAREffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
 
-	if (!tick)
-	{
+	if (!tick) {
 		farcurtempo = dat;
 		mod->vbtick = 0;
 
