@@ -555,14 +555,6 @@ AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h])
 AC_CHECK_FUNCS([posix_memalign setenv snprintf srandom])
 AC_REPLACE_FUNCS([memcmp strstr])
 
-case "${host_os}" in
-dnl These systems don't have libm or don't need it (list based on libtool)
- mingw*|darwin*|cygwin*|haiku*|beos*|cegcc*|pw32*) ;;
-dnl djgpp has all c89 math funcs in libc.a
- *djgpp) ;;
- *) AC_CHECK_LIB([m],[pow],LIBRARY_LIB="-lm $LIBRARY_LIB") ;;
-esac
-
 # ====================
 # Check for libraries.
 # ====================
