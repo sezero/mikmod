@@ -1210,6 +1210,17 @@ fi
 # If compiling with gcc, use adequate optimization flags
 if test $ac_cv_c_compiler_gnu = yes
 then
+	CFLAGS="$CFLAGS -Wall"
+	if test $libmikmod_debug = yes
+	then
+		CFLAGS="$CFLAGS -Werror"
+	fi
+	CFLAGS="$CFLAGS -ffast-math"
+	if test $libmikmod_darwin = yes
+	then
+		CFLAGS="$CFLAGS -fno-common"
+	fi
+
 	# On at least x86 platforms, gcc 2.7.2.1 and earlier won't work if -O3 (or
 	# -finline-functions) are used. Versions 2.7.2.3, 2.8.x and egcs are ok
 	# (didn't test 2.7.2.2).
@@ -1218,48 +1229,12 @@ then
 	AC_CACHE_CHECK([if inlining functions is safe],[libmikmod_cv_gcc_inline_safe],
 	 [AC_TRY_COMPILE(,[
 #if !(defined __GNUC__ && (__GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ > 7))
-#error inlining functions is not safe
+#error inlining functions not safe
 #endif
-],
-	[libmikmod_cv_gcc_inline_safe=yes],
-	[libmikmod_cv_gcc_inline_safe=no])])
+], [libmikmod_cv_gcc_inline_safe=yes], [libmikmod_cv_gcc_inline_safe=no])])
 	if test $libmikmod_cv_gcc_inline_safe = no
 	then
 		CFLAGS="$CFLAGS -fno-strength-reduce"
-	fi
-	CFLAGS="$CFLAGS -ffast-math"
-	if test $libmikmod_darwin = yes
-	then
-		CFLAGS="$CFLAGS -fno-common"
-	fi
-	if test $libmikmod_debug = yes
-	then
-		CFLAGS="$CFLAGS -Wall -Werror"
-	else
-		CFLAGS="$CFLAGS -Wall"
-	fi
-
-	# pgcc 2.95.2 appears not to be able to compile libmikmod, although regular
-	# gcc works fine. Issue a warning if the compiler is pgcc, until a reliable
-	# way to detect flawed version (or, better, a reliable workaround) is
-	# found.
-dnl do not cache this test - better rechecking every time
-	AC_MSG_CHECKING([if compiler is pgcc])
-	if ($CC -v 2>&1 | grep ^pgcc > /dev/null) 2>/dev/null
-	then
-		libmikmod_gcc_is_pgcc=yes
-	else
-		libmikmod_gcc_is_pgcc=no
-	fi
-	AC_MSG_RESULT([$libmikmod_gcc_is_pgcc])
-	if test $libmikmod_gcc_is_pgcc = yes
-	then
-		echo "
-*** Version 2.95.2 of this compiler, and perhaps others, are unable to
-*** compile libmikmod. If compilation fails for playercode/virtch.c
-*** around line 650, with the error ``internal error--insn does not
-*** satisfy its constraints'', then you'll have to use another compiler.
-" >&2
 	fi
 fi
 
