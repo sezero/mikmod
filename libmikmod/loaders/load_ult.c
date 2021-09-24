@@ -39,7 +39,6 @@
 #include <memory.h>
 #endif
 #include <string.h>
-#include <math.h>
 
 #include "mikmod_internals.h"
 
