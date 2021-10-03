@@ -372,8 +372,9 @@ typedef struct MWRITER {
 #define SF_BIG_ENDIAN   0x0008
 #define SF_DELTA        0x0010
 #define SF_ITPACKED     0x0020
+#define SF_ADPCM4       0x0040
 
-#define SF_FORMATMASK   0x003F
+#define SF_FORMATMASK   0x007F
 
 /* General Playback flags */
 
