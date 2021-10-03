@@ -140,6 +140,10 @@ static int decompressS404(UBYTE *src, UBYTE *orgdst,
 
   eff = initGetb(&bs, src, src_length);
 
+  /* Sanity check--prevent invalid shift exponents. */
+  if (eff < 6 || eff >= 32)
+    return -1;
+
   while (oLen > 0) {
     x = getb(&bs, 9);
     /* Sanity check */
@@ -374,6 +378,18 @@ BOOL S404_Unpack(MREADER *reader, void **out, long *outlen)
 		#ifdef STC_DEBUG
 		fprintf(stderr, "S404: bad lengths\n");
 		#endif
+		return 0;
+	}
+
+	/**
+	 * Best case ratio of S404 sliding window:
+	 *
+	 *  2-3:  9b + (>=1b) -> 2-3B  ->  24:10
+	 *  4-7:  9b + (>=3b) -> 4-7B  ->  56:12
+	 *  8:22: 9b + (>=6b) -> 8-22B -> 176:15
+	 *  23+:  9b + 3b + 8b * floor((n-23)/255) + 7b + (>=0b) -> n B -> ~255:1
+	 */
+	if (pLen < (oLen / 255)) {
 		return 0;
 	}
 

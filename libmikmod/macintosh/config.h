@@ -36,10 +36,6 @@
 /* Define if you want a debug version of the library */
 /* #undef MIKMOD_DEBUG */
 
-/* Define if your system defines random(3) and srandom(3) in math.h instead
-   of stdlib.h */
-/* #undef SRANDOM_IN_MATH_H */
-
 /* Define if you have the setenv function.  */
 /* #undef HAVE_SETENV */
 

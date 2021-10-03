@@ -119,10 +119,6 @@
 /* Define if your system is SOLARIS. */
 #cmakedefine SOLARIS
 
-/* Define if your system defines random(3) and srandom(3) in math.h instead of
-   stdlib.h. */
-#cmakedefine SRANDOM_IN_MATH_H
-
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
 
