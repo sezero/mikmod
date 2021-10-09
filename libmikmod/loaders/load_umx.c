@@ -206,20 +206,21 @@ static int read_export (const struct upkg_hdr *hdr,
 }
 
 static int read_typname(const struct upkg_hdr *hdr,
-			int idx, char *out)
+			int idx, char *out, long end)
 {
 	int i, s;
 	long l;
 	char buf[64];
 
 	if (idx >= hdr->name_count) return -1;
-	buf[63] = '\0';
+	memset(buf, 0, 64);
 	for (i = 0, l = 0; i <= idx; i++) {
+		if (hdr->name_offset + l >= end) return -1;
 		_mm_fseek(modreader, hdr->name_offset + l, SEEK_SET);
 		_mm_read_UBYTES(buf, 63, modreader);
 		if (hdr->file_version >= 64) {
 			s = *(signed char *)buf; /* numchars *including* terminator */
-			if (s <= 0 || s > 64) return -1;
+			if (s <= 0) return -1;
 			l += s + 5;	/* 1 for buf[0], 4 for int32_t name_flags */
 		} else {
 			l += (long)strlen(buf);
@@ -242,6 +243,12 @@ static int probe_umx   (const struct upkg_hdr *hdr,
 	idx = 0;
 	_mm_fseek(modreader, 0, SEEK_END);
 	fsiz = _mm_ftell(modreader);
+
+	if (hdr->name_offset	>= fsiz ||
+	    hdr->export_offset	>= fsiz ||
+	    hdr->import_offset	>= fsiz) {
+		return -1;
+	}
 
 	/* Find the offset and size of the first IT, S3M or XM
 	 * by parsing the exports table. The umx files should
@@ -266,7 +273,7 @@ static int probe_umx   (const struct upkg_hdr *hdr,
 	if ((t = read_export(hdr, &pos, &s)) < 0) return -1;
 	if (s <= 0 || s > fsiz - pos) return -1;
 
-	if (read_typname(hdr, t, buf) < 0) return -1;
+	if (read_typname(hdr, t, buf, fsiz) < 0) return -1;
 	for (i = 0; mustype[i] != NULL; i++) {
 		if (!_mm_strcasecmp(buf, mustype[i])) {
 			t = i;
@@ -298,11 +305,11 @@ static SLONG probe_header (struct upkg_hdr *hdr)
 		return -1;
 	}
 	if (hdr->name_count	< 0	||
-	    hdr->name_offset	< 0	||
 	    hdr->export_count	< 0	||
-	    hdr->export_offset	< 0	||
 	    hdr->import_count	< 0	||
-	    hdr->import_offset	< 0	) {
+	    hdr->name_offset	< 36	||
+	    hdr->export_offset	< 36	||
+	    hdr->import_offset	< 36	) {
 		return -1;
 	}
 
@@ -361,9 +368,9 @@ static BOOL UMX_Test(void)
 	SLONG ofs = 0, size = 0;
 
 	if (umx_data) {
-#ifdef MIKMOD_DEBUG
+		#ifdef MIKMOD_DEBUG
 		fprintf(stderr, "UMX_Test called while a previous instance is active\n");
-#endif
+		#endif
 		MikMod_free(umx_data);
 		umx_data = NULL;
 	}

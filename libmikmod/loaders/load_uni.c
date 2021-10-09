@@ -477,14 +477,23 @@ static BOOL loadsmp5(void)
 
 		/* convert flags */
 		q->flags=0;
-		if(s->flags&128) q->flags|=SF_REVERSE;
-		if(s->flags& 64) q->flags|=SF_SUSTAIN;
-		if(s->flags& 32) q->flags|=SF_BIDI;
-		if(s->flags& 16) q->flags|=SF_LOOP;
-		if(s->flags&  8) q->flags|=SF_BIG_ENDIAN;
-		if(s->flags&  4) q->flags|=SF_DELTA;
-		if(s->flags&  2) q->flags|=SF_SIGNED;
-		if(s->flags&  1) q->flags|=SF_16BITS;
+		if (universion < 5) {
+		/* UN04 flags, as suggested by Thomas Neumann */
+			if(s->flags& 64) q->flags|=SF_OWNPAN;
+			if(s->flags& 32) q->flags|=SF_SIGNED;
+			if(s->flags& 16) q->flags|=SF_BIDI;
+			if(s->flags&  8) q->flags|=SF_LOOP;
+			if(s->flags&  4) q->flags|=SF_DELTA;
+		} else {
+			if(s->flags&128) q->flags|=SF_REVERSE;
+			if(s->flags& 64) q->flags|=SF_SUSTAIN;
+			if(s->flags& 32) q->flags|=SF_BIDI;
+			if(s->flags& 16) q->flags|=SF_LOOP;
+			if(s->flags&  8) q->flags|=SF_BIG_ENDIAN;
+			if(s->flags&  4) q->flags|=SF_DELTA;
+			if(s->flags&  2) q->flags|=SF_SIGNED;
+			if(s->flags&  1) q->flags|=SF_16BITS;
+		}
 	}
 
 	d=of.instruments;s=wh;

@@ -87,8 +87,10 @@ static CHAR fasttracker[] = "Fasttracker";
 static CHAR octalyser[] = "Octalyser";
 static CHAR oktalyzer[] = "Oktalyzer";
 static CHAR taketracker[] = "TakeTracker";
+static CHAR digitaltracker[] = "Digital Tracker MOD";
 static CHAR orpheus[] = "Imago Orpheus (MOD format)";
 static CHAR modsgrave[] = "Mod's Grave";
+static CHAR unknown[] = "Unknown tracker MOD";
 
 static MODULEHEADER *mh = NULL;
 static MODNOTE *patbuf = NULL;
@@ -159,6 +161,27 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 			modtype = 1;
 		}
 		*numchn = (id[0] - '0') * 10 + (id[1] - '0');
+		return 1;
+	}
+	/* Taketracker */
+	if (!memcmp(id, "TDZ", 3) && (id[3] >= '1' && id[3] <= '3')) {
+		*descr = taketracker;
+		*numchn = (id[3] - '0');
+		return 1;
+	}
+
+	/* Digital Tracker */
+	if (!memcmp(id, "FA0", 3) && (id[3] == '4' || id[3] == '6' || id[3] == '8')) {
+		*descr = digitaltracker;
+		*numchn = (id[3] - '0');
+		return 1;
+	}
+
+	/* Standard 4-channel MODs with unusual IDs. */
+	if (!memcmp(id, "LARD", 4)		/* judgement_day_gvine.mod */
+		|| !memcmp(id, "NSMS", 4)) {	/* kingdomofpleasure.mod */
+		*descr = unknown;
+		*numchn = 4;
 		return 1;
 	}
 
@@ -424,6 +447,12 @@ static BOOL MOD_Load(BOOL curious)
 	if (!(MOD_CheckType(mh->magic2, &of.numchn, &descr))) {
 		_mm_errno = MMERR_NOT_A_MODULE;
 		return 0;
+	}
+	if (descr == digitaltracker) {
+		/* Digital Tracker FA0x modules add four extra bytes after the
+		 * magic. These don't seem to have ever been used for their
+		 * intended purpose (rows per pattern and sample bits/rate). */
+		_mm_read_M_ULONG(modreader);
 	}
 	if (trekker && of.numchn == 8)
 		for (t = 0; t < 128; t++)

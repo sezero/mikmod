@@ -197,9 +197,6 @@ AC_CHECK_FUNCS(mkstemp srandom snprintf vsnprintf strerror)
 AC_EGREP_HEADER(usleep, unistd.h, AC_DEFINE(HAVE_USLEEP_PROTO, 1,
 		[Define if your system has the prototype for usleep(3).]))
 AC_EGREP_HEADER(usleep, sys/unistd.h, AC_DEFINE(HAVE_USLEEP_PROTO))
-AC_EGREP_HEADER(srandom, math.h, AC_DEFINE(SRANDOM_IN_MATH_H, 1,
-		[Define if your system defines random(3) and srandom(3)
-		 in math.h instead of stdlib.h.]))
 
 dnl =================================
 dnl Set PACKAGE_DATA_DIR in config.h.

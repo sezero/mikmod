@@ -4,9 +4,8 @@ PSPDIR = $(shell psp-config --psp-prefix)
 INCDIR = ../include
 CFLAGS = -G0 -Wall -O2 -fno-strict-aliasing
 
-# -lpspaudio needed for psp audio driver
-# -lm needed for aiff file writer driver (if it was compiled)
-LIBS   = -lmikmod -lpspaudio -lm
+# -lpspaudio is needed for psp audio driver
+LIBS   = -lmikmod -lpspaudio
 
 OBJS            = example.o
 TARGET          = libmikmodtest

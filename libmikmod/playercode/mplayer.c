@@ -34,11 +34,7 @@
 
 #include <string.h>
 #include <stdarg.h>
-#ifdef SRANDOM_IN_MATH_H
-#include <math.h>
-#else
 #include <stdlib.h>
-#endif
 
 #include "mikmod_internals.h"
 
@@ -402,6 +398,9 @@ static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susen
 */
 static SWORD ProcessEnvelope(MP_VOICE *aout, ENVPR *t, SWORD v)
 {
+	if (!t->pts) {	/* happens with e.g. Vikings In The Hood!.xm */
+		return v;
+	}
 	if (t->flg & EF_ON) {
 		UBYTE a, b;		/* actual points in the envelope */
 		UWORD p;		/* the 'tick counter' - real point being played */

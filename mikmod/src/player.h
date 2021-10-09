@@ -48,7 +48,7 @@
 "   Alexander Kerkhove - ``Kodiak'' - Mario Koeppen - Mike Leibow\n"           \
 "   Andy Lo A Foe - Frank Loemker - Sylvain Marchand - Claudio Matsuoka\n"     \
 "   Jeremy McDonald - Steve McIntyre - Brian McKinney - Samuel A Megens\n"     \
-"   ``MenTaLguY'' - Jean-Paul Mikkers - Thomas Neumann - C Ray C\n"            \
+"   ``MenTaLguY'' - Jean-Paul Mikkers - Thomas Neumann - C Ray C - Alice Rowan\n"\
 "   Steffen Rusitschka - Ozkan Sezer - Jake Stine - Stefan Tibus - Tinic Urou\n"\
 "   Miodrag Vallat - Kev Vance - Lutz Vieweg - Vince Vu\n"                     \
 "   Valtteri Vuorikoski - Andrew Zabolotny\n"                                  \

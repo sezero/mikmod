@@ -57,8 +57,12 @@ typedef struct MSAMPINFO {
 
 typedef struct MODULEHEADER {
 	CHAR songname[21];
+	UBYTE initspeed;
+	UBYTE inittempo;
+	UBYTE num_samples;
 	UBYTE num_patterns;	/* number of patterns used */
 	UBYTE num_orders;
+	UBYTE reppos;
 	UBYTE positions[256];	/* which pattern to play at pos */
 	MSAMPINFO samples[64];	/* all sampleinfo */
 } MODULEHEADER;
@@ -148,7 +152,6 @@ static int ConvertNote(MODNOTE *n)
 {
 	UBYTE instrument, effect, effdat, note;
 	UWORD period;
-	UBYTE lastnote = 0;
 
 	instrument = n->b&0x1f;
 	effect = n->c;
@@ -193,7 +196,6 @@ static int ConvertNote(MODNOTE *n)
 					 * played */
 					if (effect || effdat) {
 						UniInstrument(instrument - 1);
-						note = lastnote;
 					} else
 						UniPTEffect(0xc,
 							mh->samples[instrument -
@@ -202,14 +204,11 @@ static int ConvertNote(MODNOTE *n)
 			} else {
 				/* Fasttracker handling */
 				UniInstrument(instrument - 1);
-				if (!note)
-					note = lastnote;
 			}
 		}
 	}
 	if (note) {
 		UniNote(note + 2 * OCTAVE - 1);
-		lastnote = note;
 	}
 
 	/* Convert pattern jump from Dec to Hex */
@@ -292,12 +291,14 @@ static BOOL ASY_Load(BOOL curious)
 	/* no title in asylum amf files :( */
 	mh->songname[0] = '\0';
 
-	_mm_fseek(modreader, 0x23, SEEK_SET);
+	_mm_fseek(modreader, 0x20, SEEK_SET);
+	mh->initspeed = _mm_read_UBYTE(modreader);
+	mh->inittempo = _mm_read_UBYTE(modreader);
+	mh->num_samples = _mm_read_UBYTE(modreader);
 	mh->num_patterns = _mm_read_UBYTE(modreader);
 	mh->num_orders = _mm_read_UBYTE(modreader);
+	mh->reppos = _mm_read_UBYTE(modreader);
 
-	/* skip unknown byte */
-	_mm_skip_BYTE(modreader);
 	_mm_read_UBYTES(mh->positions, 256, modreader);
 
 	/* read samples headers*/
@@ -322,14 +323,19 @@ static BOOL ASY_Load(BOOL curious)
 		return 0;
 	}
 
+	if (mh->num_samples > 64) {
+		_mm_errno = MMERR_NOT_A_MODULE;
+		return 0;
+	}
+
 	/* set module variables */
-	of.initspeed = 6;
-	of.inittempo = 125;
+	of.initspeed = mh->initspeed;
+	of.inittempo = mh->inittempo;
 	of.numchn = 8;
 	modtype = 0;
 	of.songname = DupStr(mh->songname, 21, 1);
 	of.numpos = mh->num_orders;
-	of.reppos = 0;
+	of.reppos = mh->reppos;
 	of.numpat = mh->num_patterns;
 	of.numtrk = of.numpat * of.numchn;
 
@@ -346,8 +352,8 @@ static BOOL ASY_Load(BOOL curious)
 	}
 
 	/* Finally, init the sampleinfo structures  */
-	of.numins = 31;
-	of.numsmp = 31;
+	of.numins = mh->num_samples;
+	of.numsmp = mh->num_samples;
 	if (!AllocSamples())
 		return 0;
 	s = mh->samples;

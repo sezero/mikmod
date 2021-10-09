@@ -42,9 +42,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#ifdef SRANDOM_IN_MATH_H
-#include <math.h>
-#endif
 
 #include "mlist.h"
 #include "marchive.h"

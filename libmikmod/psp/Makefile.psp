@@ -8,7 +8,7 @@ CFLAGS=-DMIKMOD_BUILD
 
 # support for PSP audio output (requires -lpspaudio when linking to an app)
 CFLAGS+=-DDRV_PSP
-# support for aiff file output (requires -lm when linking to an app)
+# support for aiff file output
 CFLAGS+=-DDRV_AIFF
 # support for wav file output:
 CFLAGS+=-DDRV_WAV

@@ -105,10 +105,6 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
 
-/* Define if your system defines random(3) and srandom(3) in math.h instead of
-   stdlib.h. */
-/* #undef SRANDOM_IN_MATH_H */
-
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
