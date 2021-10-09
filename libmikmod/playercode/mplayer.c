@@ -476,6 +476,30 @@ static SWORD ProcessEnvelope(MP_VOICE *aout, ENVPR *t, SWORD v)
 	return v;
 }
 
+/* Set envelope tick to the position given */
+static void SetEnvelopePosition(ENVPR *t, ENVPT *p, SWORD pos)
+{
+	if (t->pts > 0)	{
+		UWORD i;
+
+		for (i = 0; i < t->pts - 1; i++) {
+
+			if ((pos >= p[i].pos) && (pos < p[i + 1].pos)) {
+				t->a = i;
+				t->b = i + 1;
+				t->p = pos;
+				return;
+			}
+		}
+
+		/* If position is after the last envelope point, just set
+		   it to the last one */
+		t->a = t->pts - 1;
+		t->b = t->pts;
+		t->p = p[t->a].pos;
+	}
+}
+
 /* XM linear period to frequency conversion */
 ULONG getfrequency(UWORD flags,ULONG period)
 {
@@ -1583,18 +1607,20 @@ static int DoXMEffectL(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 
 	dat=UniGetByte();
 	if ((!tick)&&(a->main.i)) {
-		UWORD points;
 		INSTRUMENT *i=a->main.i;
 		MP_VOICE *aout;
 
 		if ((aout=a->slave) != NULL) {
 			if (aout->venv.env) {
-				points=i->volenv[i->volpts-1].pos;
-				aout->venv.p=aout->venv.env[(dat>points)?points:dat].pos;
+				SetEnvelopePosition(&aout->venv, i->volenv, dat);
 			}
 			if (aout->penv.env) {
-				points=i->panenv[i->panpts-1].pos;
-				aout->penv.p=aout->penv.env[(dat>points)?points:dat].pos;
+				/* Because of a bug in FastTracker II, only the panning envelope
+				   position is set if the volume sustain flag is set. Other players
+				   may set the panning all the time */
+				if (!(mod->flags & UF_FT2QUIRKS) || (i->volflg & EF_SUSTAIN)) {
+					SetEnvelopePosition(&aout->penv, i->panenv, dat);
+				}
 			}
 		}
 	}
