@@ -477,10 +477,9 @@ static SWORD ProcessEnvelope(MP_VOICE *aout, ENVPR *t, SWORD v)
 }
 
 /* Set envelope tick to the position given */
-static void SetEnvelopePosition(ENVPR* t, ENVPT* p, SWORD pos) {
-
+static void SetEnvelopePosition(ENVPR *t, ENVPT *p, SWORD pos)
+{
 	if (t->pts > 0)	{
-		BOOL found = 0;
 		UWORD i;
 
 		for (i = 0; i < t->pts - 1; i++) {
@@ -489,18 +488,15 @@ static void SetEnvelopePosition(ENVPR* t, ENVPT* p, SWORD pos) {
 				t->a = i;
 				t->b = i + 1;
 				t->p = pos;
-				found = 1;
-				break;
+				return;
 			}
 		}
 
 		/* If position is after the last envelope point, just set
 		   it to the last one */
-		if (!found) {
-			t->a = t->pts - 1;
-			t->b = t->pts;
-			t->p = p[t->a].pos;
-		}
+		t->a = t->pts - 1;
+		t->b = t->pts;
+		t->p = p[t->a].pos;
 	}
 }
 
@@ -1611,7 +1607,6 @@ static int DoXMEffectL(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 
 	dat=UniGetByte();
 	if ((!tick)&&(a->main.i)) {
-		UWORD points;
 		INSTRUMENT *i=a->main.i;
 		MP_VOICE *aout;
 
