@@ -263,11 +263,11 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 				return 1;
 			}
 			c_block -= stodo;
-		} if (infmt&SF_ADPCM4) {
+		} else if (infmt&SF_ADPCM4) {
 			if (!compressionTable) {
 				/* Read compression table */
 				compressionTable = (SBYTE*)MikMod_malloc(16);
-				reader->Read(reader, compressionTable, 16);
+				_mm_read_SBYTES(compressionTable, 16, reader);
 			}
 
 			// 4-bit ADPCM data, used by MOD plugin
