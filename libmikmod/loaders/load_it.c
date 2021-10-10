@@ -705,7 +705,8 @@ static BOOL IT_Load(BOOL curious)
 		if(s.flag&16) q->flags|=SF_LOOP;
 		if(s.flag&64) q->flags|=SF_BIDI;
 
-		if(mh->cwt>=0x200) {
+		if(s.convert==0xff) q->flags|=SF_ADPCM4|SF_SIGNED; /* MODPlugin ADPCM */
+		else if(mh->cwt>=0x200) {
 			if(s.convert&1) q->flags|=SF_SIGNED;
 			if(s.convert&4) q->flags|=SF_DELTA;
 		}
