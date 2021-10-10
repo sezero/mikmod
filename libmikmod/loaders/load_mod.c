@@ -396,6 +396,7 @@ static BOOL MOD_Load(BOOL curious)
 	ULONG samplelength = 0;
 	ULONG filelength;
 	ULONG pos;
+	char adpcm[5];
 
 	pos = _mm_ftell(modreader);
 	_mm_fseek(modreader, 0, SEEK_END);
@@ -516,12 +517,16 @@ static BOOL MOD_Load(BOOL curious)
 	for (t = 0; t < of.numpos; t++)
 		of.positions[t] = mh->positions[t];
 
+	if (!ML_LoadPatterns())
+		return 0;
+
 	/* Finally, init the sampleinfo structures  */
 	of.numins = of.numsmp = 31;
 	if (!AllocSamples())
 		return 0;
 	s = mh->samples;
 	q = of.samples;
+	pos = _mm_ftell(modreader);
 	for (t = 0; t < of.numins; t++) {
 		/* convert the samplename */
 		q->samplename = DupStr(s->samplename, 23, 1);
@@ -540,14 +545,26 @@ static BOOL MOD_Load(BOOL curious)
 		if (s->replen > 2)
 			q->flags |= SF_LOOP;
 
+		q->seekpos = pos;
+		/* Test for MODPlugin ADPCM. These are indicated by "ADPCM"
+		 * embedded at the start of each sample's data. :( */
+		_mm_read_UBYTES(adpcm, 5, modreader);
+		if (!memcmp(adpcm, "ADPCM", 5)) {
+			q->flags |= SF_ADPCM4;
+			q->seekpos += 5;
+			/* Stored half-length, plus a 16 byte table. */
+			pos += s->length + 16 + 5;
+			_mm_fseek(modreader, s->length + 16, SEEK_CUR);
+		} else {
+			pos += q->length;
+			_mm_fseek(modreader, q->length - 5, SEEK_CUR);
+		}
+
 		s++;
 		q++;
 	}
 
 	of.modtype = MikMod_strdup(descr);
-
-	if (!ML_LoadPatterns())
-		return 0;
 
 	return 1;
 }

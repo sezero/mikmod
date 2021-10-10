@@ -221,7 +221,7 @@ static int read_itcompr16(ITPACK *status,MREADER *reader,SWORD *out,UWORD count,
 	return (dest-out);
 }
 
-static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor,ULONG length,MREADER* reader,BOOL dither)
+static int SL_LoadInternal(void *buffer,UWORD infmt,UWORD outfmt,int scalefactor,ULONG length,MREADER *reader,BOOL dither)
 {
 	SBYTE *bptr = (SBYTE*)buffer;
 	SWORD *wptr = (SWORD*)buffer;
@@ -231,13 +231,14 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 	ITPACK status;
 	UWORD incnt = 0;
 
+	SBYTE compressionTable[16];
+	SWORD adpcmDelta = 0;
+	BOOL hasTable = 0;
+
 	status.buf = 0;
 	status.last = 0;
 	status.bufbits = 0;
 	status.bits = 0;
-
-	SBYTE* compressionTable = NULL;
-	SWORD adpcmDelta = 0;
 
 	while(length) {
 		stodo=(length<SLBUFSIZE)?length:SLBUFSIZE;
@@ -264,25 +265,24 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 			}
 			c_block -= stodo;
 		} else if (infmt&SF_ADPCM4) {
-			if (!compressionTable) {
+			if (!hasTable) {
 				/* Read compression table */
-				compressionTable = (SBYTE*)MikMod_malloc(16);
 				_mm_read_SBYTES(compressionTable, 16, reader);
+				hasTable = 1;
 			}
 
 			// 4-bit ADPCM data, used by MOD plugin
 			for(t=0;t<stodo;t+=2) {
 				UBYTE b = _mm_read_UBYTE(reader);
 
-				adpcmDelta = (SWORD)(adpcmDelta + compressionTable[b & 0x0f]);
-				sl_buffer[t] = (SWORD)(adpcmDelta << 8);
-				adpcmDelta = (SWORD)(adpcmDelta + compressionTable[(b >> 4) & 0x0f]);
-				sl_buffer[t+1] = (SWORD)(adpcmDelta << 8);
+				adpcmDelta += compressionTable[b & 0x0f];
+				sl_buffer[t] = adpcmDelta << 8;
+				adpcmDelta += compressionTable[(b >> 4) & 0x0f];
+				sl_buffer[t+1] = adpcmDelta << 8;
 			}
 		} else {
 			if(infmt&SF_16BITS) {
 				if(_mm_eof(reader)) {
-					MikMod_free(compressionTable);
 					_mm_errno=MMERR_NOT_A_STREAM;/* better error? */
 					return 1;
 				}
@@ -295,7 +295,6 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 				SWORD *dest;
 
 				if(_mm_eof(reader)) {
-					MikMod_free(compressionTable);
 					_mm_errno=MMERR_NOT_A_STREAM;/* better error? */
 					return 1;
 				}
@@ -364,9 +363,6 @@ static int SL_LoadInternal(void* buffer,UWORD infmt,UWORD outfmt,int scalefactor
 				*(bptr++)=sl_buffer[t]>>8;
 		}
 	}
-
-	MikMod_free(compressionTable);
-
 	return 0;
 }
 
