@@ -179,7 +179,7 @@ static int ConvertNote(MODNOTE *n)
 
 	if (instrument) {
 		/* if instrument does not exist, note cut */
-		if ((instrument > 31) || (!mh->samples[instrument - 1].length)) {
+		if ((instrument > mh->num_samples) || (!mh->samples[instrument - 1].length)) {
 			UniPTEffect(0xc, 0);
 			if (effect == 0xc)
 				effect = effdat = 0;
@@ -301,8 +301,17 @@ static BOOL ASY_Load(BOOL curious)
 
 	_mm_read_UBYTES(mh->positions, 256, modreader);
 
+	#ifdef MIKMOD_DEBUG
+	fprintf(stderr, "ASY: bpm=%d, spd=%d, numins=%d, numpat=%d\n",
+		mh->inittempo, mh->initspeed, mh->num_samples, mh->num_patterns);
+	#endif
+	if (!mh->initspeed || !mh->inittempo || mh->num_samples > 64) {
+		_mm_errno = MMERR_NOT_A_MODULE;
+		return 0;
+	}
+
 	/* read samples headers*/
-	for (t = 0; t < 64; t++) {
+	for (t = 0; t < mh->num_samples; t++) {
 		s = &mh->samples[t];
 
 		_mm_fseek(modreader, 0x126 + (t*37), SEEK_SET);
@@ -323,10 +332,7 @@ static BOOL ASY_Load(BOOL curious)
 		return 0;
 	}
 
-	if (mh->num_samples > 64) {
-		_mm_errno = MMERR_NOT_A_MODULE;
-		return 0;
-	}
+	_mm_fseek(modreader, 37*(64-mh->num_samples), SEEK_CUR);
 
 	/* set module variables */
 	of.initspeed = mh->initspeed;
