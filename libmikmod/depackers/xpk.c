@@ -466,7 +466,7 @@ BOOL XPK_Unpack(MREADER *reader, void **out, long *outlen)
 	if (destlen < 0 || destlen > 0x200000)
 		return 0;
 
-	if ((src = (UBYTE*) MikMod_malloc(srclen + 3)) == NULL)
+	if ((src = (UBYTE*) MikMod_calloc(1, srclen + 3)) == NULL)
 		return 0;
 	if ((dest = (UBYTE*) MikMod_malloc(destlen + 100)) == NULL) {
 		MikMod_free(src);

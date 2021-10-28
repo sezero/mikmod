@@ -165,6 +165,7 @@ BOOL PP20_Unpack(MREADER* reader, void** out, long* outlen)
 	destlen |= tmp[1] << 8;
 	destlen |= tmp[2];
 	skip = tmp[3];
+	if (skip > 32) return 0;
 
 	_mm_fseek(reader,4,SEEK_SET);
 	_mm_read_UBYTES(tmp,4,reader);
