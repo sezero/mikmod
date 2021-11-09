@@ -50,10 +50,6 @@ extern long int random(void);
 /* The currently playing module */
 MODULE *pf = NULL;
 
-/* Different playing information */
-UBYTE farcurtempo;   /* Farandole current speed */
-SWORD fartempobend;  /* Used by the Farandole fine tempo effects and store the current bend value */
-
 #define NUMVOICES(mod) (md_sngchn < (mod)->numvoices ? md_sngchn : (mod)->numvoices)
 
 #define	HIGH_OCTAVE		2	/* number of above-range octaves */
@@ -2303,9 +2299,9 @@ static void DoFarTonePorta(MP_CONTROL *a)
 }
 
 /* Find tempo factor */
-static SLONG GetFARTempoFactor()
+static SLONG GetFARTempoFactor(MP_CONTROL *a)
 {
-	return farcurtempo == 0 ? 256 : (128 / farcurtempo);
+	return a->farcurtempo == 0 ? 256 : (128 / a->farcurtempo);
 }
 
 /* Set the right speed and BPM for Farandole modules */
@@ -2358,7 +2354,7 @@ static void SetFARTempo(MODULE *mod)
 
 	   You can make yourself a little exercise to prove that the above is correct :-) */
 
-	WORD realTempo = fartempobend + GetFARTempoFactor();
+	UWORD realTempo = mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0]);
 
 	SLONG gus = 1197255 / realTempo;
 
@@ -2459,7 +2455,7 @@ static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 
 				a->farretrigcount--;
 				if (a->farretrigcount > 0)
-					a->retrig = ((fartempobend + GetFARTempoFactor()) / dat / 8) - 1;
+					a->retrig = ((mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0])) / dat / 8) - 1;
 			}
 		}
 		else
@@ -2487,15 +2483,16 @@ static int DoFAREffect6(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
+	MP_CONTROL *firstControl = &mod->control[0];
 
 	if (dat != 0) {
-		fartempobend -= dat;
+		firstControl->fartempobend -= dat;
 
-		if ((fartempobend + GetFARTempoFactor()) <= 0)
-			fartempobend = 0;
+		if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) <= 0)
+			firstControl->fartempobend = 0;
 	}
 	else
-		fartempobend = 0;
+		firstControl->fartempobend = 0;
 
 	SetFARTempo(mod);
 	
@@ -2505,15 +2502,16 @@ static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
+	MP_CONTROL *firstControl = &mod->control[0];
 
 	if (dat != 0) {
-		fartempobend += dat;
+		firstControl->fartempobend += dat;
 
-		if ((fartempobend + GetFARTempoFactor()) >= 100)
-			fartempobend = 100;
+		if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) >= 100)
+			firstControl->fartempobend = 100;
 	}
 	else
-		fartempobend = 0;
+		firstControl->fartempobend = 0;
 
 	SetFARTempo(mod);
 
@@ -2525,7 +2523,7 @@ static int DoFAREffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	UBYTE dat = UniGetByte();
 
 	if (!tick) {
-		farcurtempo = dat;
+		mod->control[0].farcurtempo = dat;
 		mod->vbtick = 0;
 
 		SetFARTempo(mod);
@@ -3319,8 +3317,8 @@ void Player_HandleTick(void)
 				if (!(pf->sngpos=pf->reppos)) {
 				    pf->volume=pf->initvolume>128?128:pf->initvolume;
 					if (pf->flags & UF_FARTEMPO) {
-						farcurtempo = pf->initspeed;
-						fartempobend = 0;
+						pf->control[0].farcurtempo = pf->initspeed;
+						pf->control[0].fartempobend = 0;
 						SetFARTempo(pf);
 					}
 					else {
@@ -3372,8 +3370,8 @@ static void Player_Init_internal(MODULE* mod)
 	mod->sngpos=0;
 
 	if (mod->flags & UF_FARTEMPO) {
-		farcurtempo = mod->initspeed;
-		fartempobend = 0;
+		mod->control[0].farcurtempo = mod->initspeed;
+		mod->control[0].fartempobend = 0;
 		SetFARTempo(mod);
 	}
 	else {
