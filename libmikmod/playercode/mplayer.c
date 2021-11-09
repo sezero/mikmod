@@ -2354,7 +2354,7 @@ static void SetFARTempo(MODULE *mod)
 
 	   You can make yourself a little exercise to prove that the above is correct :-) */
 
-	UWORD realTempo = mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0]);
+	SWORD realTempo = mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0]);
 
 	SLONG gus = 1197255 / realTempo;
 
@@ -2523,8 +2523,15 @@ static int DoFAREffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 	UBYTE dat = UniGetByte();
 
 	if (!tick) {
-		mod->control[0].farcurtempo = dat;
+		MP_CONTROL *firstControl = &mod->control[0];
+
+		firstControl->farcurtempo = dat;
 		mod->vbtick = 0;
+
+		if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) <= 0)
+			firstControl->fartempobend = 0;
+		else if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) >= 100)
+			firstControl->fartempobend = 100;
 
 		SetFARTempo(mod);
 	}
