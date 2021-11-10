@@ -2355,6 +2355,8 @@ static void SetFARTempo(MODULE *mod)
 	   You can make yourself a little exercise to prove that the above is correct :-) */
 
 	SWORD realTempo = mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0]);
+	if (!realTempo)
+		return;
 
 	SLONG gus = 1197255 / realTempo;
 
