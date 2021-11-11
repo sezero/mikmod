@@ -345,7 +345,12 @@ static BOOL FAR_Load(BOOL curious)
 			q->loopend    = s.repend;
 			q->volume     = s.volume<<2;
 
-			if(s.type&1) q->flags|=SF_16BITS;
+			if(s.type&1) {
+				q->flags|=SF_16BITS;
+				q->length >>= 1;
+				q->loopstart >>= 1;
+				q->loopend >>= 1;
+			}
 
 			/* It is not always the case that this bit is set, e.g. "Budda on a bicycle" has not.
 			   So we check the loop start and end instead */
@@ -354,7 +359,7 @@ static BOOL FAR_Load(BOOL curious)
 				q->flags |= SF_LOOP;
 
 			q->seekpos    = _mm_ftell(modreader);
-			_mm_fseek(modreader,q->length,SEEK_CUR);
+			_mm_fseek(modreader,s.length,SEEK_CUR);
 		} else
 			q->samplename = MikMod_strdup("");
 		q++;

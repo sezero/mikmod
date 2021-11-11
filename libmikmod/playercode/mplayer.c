@@ -226,6 +226,11 @@ static	const SBYTE PanbrelloTable[256]={
 	-24,-23,-22,-20,-19,-17,-16,-14,-12,-11,- 9,- 8,- 6,- 5,- 3,- 2
 };
 
+/* tempo[0] = 256; tempo[i] = floor(128 /i) */
+static const int far_tempos[16] = {
+	256, 128, 64, 42, 32, 25, 21, 18, 16, 14, 12, 11, 10, 9, 9, 8
+};
+
 /* returns a random value between 0 and ceil-1, ceil must be a power of two */
 static int getrandom(int ceilval)
 {
@@ -2298,12 +2303,6 @@ static void DoFarTonePorta(MP_CONTROL *a)
 	a->ownper = 1;
 }
 
-/* Find tempo factor */
-static SLONG GetFARTempoFactor(MP_CONTROL *a)
-{
-	return a->farcurtempo == 0 ? 256 : (128 / a->farcurtempo);
-}
-
 /* Set the right speed and BPM for Farandole modules */
 static void SetFARTempo(MODULE *mod)
 {
@@ -2326,57 +2325,26 @@ static void SetFARTempo(MODULE *mod)
 	   set the tick counter to 3, so we need to calculate the BPM to use for the difference. This
 	   is easy enough, just say 80 * 3 = 240 BPM.
 
-	   So with all this information, we will try to calculate the right BPM for the speed set.
+	   So with all this information, we will try to calculate the right BPM for the speed set. */
 
-	   For argument 1:
-
-	   tps = 128 / 1 = 128
-	   gus = 1197255 / tps = 1197255 / 128 = 9353
-	   counter = 3
-	   factor = gus / 9353 = 9353 / 9353 = 1
-	   bpm = (80 * counter) / factor = (80 * 3) / 1 = 240
-
-	   For argument 4, which is the default speed
-
-	   tps = 128 / 4 = 32
-	   gus = 1197255 / tps = 1197255 / 32 = 37414
-	   counter = 3
-	   factor = gus / 9353 = 37414 / 9353 = 4
-	   bpm = (80 * counter) / factor = (80 * 3) / 4 = 60
-
-	   For argument 15, which is the slowest speed
-
-	   tps = 128 / 15 = 8
-	   gus = 1197255 / tps = 1197255 / 8 = 149656
-	   counter = 6 (see code below for why)
-	   factor = gus / 9353 = 149656 / 9353 = 16
-	   bpm = (80 * counter) / factor = (80 * 6) / 16 = 30
-
-	   You can make yourself a little exercise to prove that the above is correct :-) */
-
-	SWORD realTempo = mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0]);
-	if (!realTempo)
+	SWORD bpm = mod->control[0].fartempobend + far_tempos[mod->control[0].farcurtempo];
+	if (!bpm)
 		return;
 
-	SLONG gus = 1197255 / realTempo;
+	SLONG speed = 0;
+	ULONG divisor = 1197255 / bpm;
 
-	SLONG eax = gus;
-	UBYTE cx = 0, di = 0;
-
-	while (eax > 0xffff) {
-		eax >>= 1;
-		di++;
-		cx++;
+	while (divisor > 0xffff) {
+		divisor >>= 1;
+		bpm <<= 1;
+		speed++;
 	}
 
-	if (cx >= 2)
-		di++;
+	if (speed >= 2)
+		speed++;
 
-	mod->sngspd = di + 3;
-
-	// Calculate the factor using fixed point and round it
-	SLONG factor = (SLONG)((((SLONGLONG)gus << 32) / (9353 << 16)) + 0x8000) >> 16;
-	mod->bpm = (80 * mod->sngspd) / factor;
+	mod->sngspd = speed + 4;
+	mod->bpm = (UWORD)(bpm * 2.5);
 }
 
 static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
@@ -2457,7 +2425,7 @@ static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 
 				a->farretrigcount--;
 				if (a->farretrigcount > 0)
-					a->retrig = ((mod->control[0].fartempobend + GetFARTempoFactor(&mod->control[0])) / dat / 8) - 1;
+					a->retrig = ((mod->control[0].fartempobend + far_tempos[mod->control[0].farcurtempo]) / dat / 8) - 1;
 			}
 		}
 		else
@@ -2485,37 +2453,43 @@ static int DoFAREffect6(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
-	MP_CONTROL *firstControl = &mod->control[0];
 
-	if (dat != 0) {
-		firstControl->fartempobend -= dat;
+	if (tick == 0) {
+		MP_CONTROL *firstControl = &mod->control[0];
 
-		if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) <= 0)
+		if (dat != 0) {
+			firstControl->fartempobend -= dat;
+
+			if ((firstControl->fartempobend + far_tempos[firstControl->farcurtempo]) <= 0)
+				firstControl->fartempobend = 0;
+		}
+		else
 			firstControl->fartempobend = 0;
-	}
-	else
-		firstControl->fartempobend = 0;
 
-	SetFARTempo(mod);
-	
+		SetFARTempo(mod);
+	}
+
 	return 0;
 }
 
 static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UBYTE dat = UniGetByte();
-	MP_CONTROL *firstControl = &mod->control[0];
 
-	if (dat != 0) {
-		firstControl->fartempobend += dat;
+	if (tick == 0) {
+		MP_CONTROL *firstControl = &mod->control[0];
 
-		if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) >= 100)
-			firstControl->fartempobend = 100;
+		if (dat != 0) {
+			firstControl->fartempobend += dat;
+
+			if ((firstControl->fartempobend + far_tempos[firstControl->farcurtempo]) >= 100)
+				firstControl->fartempobend = 100;
+		}
+		else
+			firstControl->fartempobend = 0;
+
+		SetFARTempo(mod);
 	}
-	else
-		firstControl->fartempobend = 0;
-
-	SetFARTempo(mod);
 
 	return 0;
 }
@@ -2529,11 +2503,6 @@ static int DoFAREffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 
 		firstControl->farcurtempo = dat;
 		mod->vbtick = 0;
-
-		if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) <= 0)
-			firstControl->fartempobend = 0;
-		else if ((firstControl->fartempobend + GetFARTempoFactor(firstControl)) >= 100)
-			firstControl->fartempobend = 100;
 
 		SetFARTempo(mod);
 	}
