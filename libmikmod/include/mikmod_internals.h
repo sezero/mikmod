@@ -537,8 +537,8 @@ typedef struct MP_CONTROL {
     SLONG   farcurrentvalue;     /* Because we're using fixing points as speed and the current period is an integer, we need to store the current value here for next round */
     UBYTE   farretrigcount;      /* Number of retrigs to do */
 
-    /* These two variables is only stored on the first control instance and therefore used globally.
-       The reason the are stored here, is to minimize the number of global variables */
+    /* These variables is only stored on the first control instance and therefore used globally.
+       The reason they are stored here, is to minimize the number of global variables */
 	UBYTE   farcurtempo;         /* Farandole current speed */
     SWORD   fartempobend;        /* Used by the Farandole fine tempo effects and store the current bend value */
 

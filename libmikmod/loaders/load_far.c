@@ -217,7 +217,6 @@ static BOOL FAR_Load(BOOL curious)
 	of.numchn    = 16;
 	of.initspeed = mh1->speed != 0 ? mh1->speed : 4;
 	of.bpmlimit  = 5;
-	of.reppos    = 0;
 	of.flags    |= UF_PANNING | UF_FARTEMPO | UF_HIGHBPM;
 	for(t=0;t<16;t++) of.panning[t]=mh1->panning[t]<<4;
 
@@ -238,6 +237,8 @@ static BOOL FAR_Load(BOOL curious)
 	_mm_read_I_UWORDS(mh2->patsiz,256,modreader);
 
 	of.numpos = mh2->snglen;
+	of.reppos = mh2->loopto;
+
 	if(!AllocPositions(of.numpos)) return 0;
 
 	/* count number of patterns stored in file */
@@ -269,13 +270,11 @@ static BOOL FAR_Load(BOOL curious)
 	if(!AllocPatterns()) return 0;
 
 	for(t=0;t<of.numpat;t++) {
-		UWORD rows=0;
-
 		memset(pat,0,256*16*4*sizeof(FARNOTE));
 		if(mh2->patsiz[t]) {
 			/* Break position byte is always 1 less than the final row index,
 			   i.e. it is 2 less than the total row count. */
-			rows  = _mm_read_UBYTE(modreader) + 2;
+			UWORD rows  = _mm_read_UBYTE(modreader) + 2;
 			_mm_skip_BYTE(modreader);	/* tempo */
 
 			crow = pat;
@@ -305,8 +304,16 @@ static BOOL FAR_Load(BOOL curious)
 					return 0;
 				}
 		} else {
-			tracks+=16;
-			of.pattrows[t] = 0;
+			// Farandole Composer normally use a 64 rows blank track for patterns with 0 rows
+			for (u = 0; u < 16; u++) {
+				UniReset();
+
+				for (int r = 0; r < 64; r++)
+					UniNewline();
+
+				of.tracks[tracks++] = UniDup();
+			}
+			of.pattrows[t] = 64;
 		}
 	}
 
@@ -352,11 +359,7 @@ static BOOL FAR_Load(BOOL curious)
 				q->loopend >>= 1;
 			}
 
-			/* It is not always the case that this bit is set, e.g. "Budda on a bicycle" has not.
-			   So we check the loop start and end instead */
-//			if(s.loop&8) q->flags|=SF_LOOP;
-			if (((q->loopstart > 0) || (q->loopend > 0)) && (q->loopstart < q->loopend))
-				q->flags |= SF_LOOP;
+			if(s.loop&8) q->flags|=SF_LOOP;
 
 			q->seekpos    = _mm_ftell(modreader);
 			_mm_fseek(modreader,s.length,SEEK_CUR);
