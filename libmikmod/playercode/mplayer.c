@@ -2281,6 +2281,8 @@ static int DoOktArp(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD c
 
 static void DoFarTonePorta(MP_CONTROL *a)
 {
+	BOOL reachedNote;
+
 	if (!a->main.fadevol)
 		a->main.kick = (a->main.kick == KICK_NOTE) ? KICK_NOTE : KICK_KEYOFF;
 	else
@@ -2289,7 +2291,11 @@ static void DoFarTonePorta(MP_CONTROL *a)
 	a->farcurrentvalue += a->fartoneportaspeed;
 
 	/* Have we reached our note */
-	BOOL reachedNote = (a->fartoneportaspeed > 0) ? (a->farcurrentvalue >> 16) >= a->wantedperiod : (a->farcurrentvalue >> 16) <= a->wantedperiod;
+	if (a->fartoneportaspeed > 0) {
+		reachedNote = (a->farcurrentvalue >> 16) >= a->wantedperiod;
+	} else {
+		reachedNote = (a->farcurrentvalue >> 16) <= a->wantedperiod;
+	}
 	if (reachedNote) {
 		/* Stop the porta and set the periods to the reached note */
 		a->tmpperiod = a->main.period = a->wantedperiod;
@@ -2303,36 +2309,55 @@ static void DoFarTonePorta(MP_CONTROL *a)
 	a->ownper = 1;
 }
 
+static SWORD GetFARTempo(MODULE *mod)
+{
+	return mod->control[0].fartempobend + far_tempos[mod->control[0].farcurtempo];
+}
+
 /* Set the right speed and BPM for Farandole modules */
 static void SetFARTempo(MODULE *mod)
 {
-	/* According to the Farandole document, the tempo of the song is 32/tempo notes per second.
-	   So if we set tempo to 1, we will get 32 notes per second. We then need to translate this
-	   to BPM, since this is what we're using as tempo.
+	/* According to the Farandole document, the tempo of the song is
+	   32/tempo notes per second. Internally, it tracks time using
+	   (128/tempo + fine_tempo) ticks per second, and (usually) four ticks
+	   per row. Since almost everything else uses Amiga-style BPM instead,
+	   this needs to be converted to BPM.
 
-	   We know 125 BPM is at 50 hz speed (see https://modarchive.org/forums/index.php?topic=2709.0
-	   for more information). So the factor is 125/50 = 2.5. So we take the 32 notes per second
-	   above and multiply with 2.5: 32 * 2.5 = 80 BPM.
+	   Amiga-style BPM converts a value of 125 BPM to 50 Hz (ticks/second)
+	   (see https://modarchive.org/forums/index.php?topic=2709.0), so
+	   the factor is 125/50 = 2.5. To get an Amiga-compatible BPM from
+	   Farandole Composer ticks per second,: BPM/Hz = 2.5 -> BPM = 2.5 * Hz.
 
-	   So we now know, at speed 1, we need to run at 80 BPM and number of ticks (speed counter) is 1.
+	   Example: at tempo 4, Hz = 128/4 + 0 = 32, so use BPM = 2.5*32 = 80.
 
-	   Farandole however, uses another approach to calculate the tempo. It takes the speed
-	   argument and calculate a ticks per second as 128/arg. It also set the tick counter to 3 most
-	   of the times. It calculate a value (I guess it is how often GUS need to call the player) by
-	   1197255 / (128 / arg). So if we set speed to 1, we will get 1197255 / 128 = 9353.
+	   This is further complicated by the bizarre timing system it uses for
+	   slower tempos. Farandole Composer uses the programmable interval timer
+	   to determine when to execute the player interrupt, which requires
+	   calculating a divisor from the original Hz. The PIT only supports
+	   divisors up to 0x10000, which corresponds to 18.2Hz.
 
-	   Ok, we know if we set the speed counter to 1, we need to run at 80 BPM, but now Farandole
-	   set the tick counter to 3, so we need to calculate the BPM to use for the difference. This
-	   is easy enough, just say 80 * 3 = 240 BPM.
+	   When the computed divisor is > 0xffff, Farandole iteratively divides
+	   the divisor by 2 (effectively doubling Hz) and increments the number
+	   of ticks/second by 1. It also adds 1 to the number of ticks/second if
+	   two or more of these divisions occur. Further strange behavior can
+	   occur with negative ticks/second, which overflows to very slow tempos.
 
-	   So with all this information, we will try to calculate the right BPM for the speed set. */
+	   Note: to compute the divisor it uses 1197255 Hz instead of the rate
+	   of the programmable interval timer (1193182 Hz). This results in a
+	   slightly slower speed than computed, but it's not worth supporting.
 
-	SWORD bpm = mod->control[0].fartempobend + far_tempos[mod->control[0].farcurtempo];
+	   Note: Farandole Composer also has an "old tempo mode" that uses 33
+	   ticks/second and only executes every 8th tick. Nothing uses it and
+	   it's not supported here. */
+
+	SWORD bpm = GetFARTempo(mod);
+	SLONG speed;
+	ULONG divisor;
 	if (!bpm)
 		return;
 
-	SLONG speed = 0;
-	ULONG divisor = 1197255 / bpm;
+	speed = 0;
+	divisor = 1197255 / bpm;
 
 	while (divisor > 0xffff) {
 		divisor >>= 1;
@@ -2340,11 +2365,15 @@ static void SetFARTempo(MODULE *mod)
 		speed++;
 	}
 
+	/* Negative tempos can result in low BPMs, so clamp them to 18Hz. */
+	if (bpm <= 18)
+		bpm = 18;
+
 	if (speed >= 2)
 		speed++;
 
 	mod->sngspd = speed + 4;
-	mod->bpm = (UWORD)(bpm * 2.5);
+	mod->bpm = (UWORD)(bpm * 5) >> 1;
 }
 
 static int DoFAREffect1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
@@ -2415,7 +2444,7 @@ static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 		}
 	}
 
-	if (dat) {
+	if (dat && a->newnote) {
 		if (!a->retrig) {
 			if (a->farretrigcount > 0) {
 				/* When retrig counter reaches 0,
@@ -2424,12 +2453,17 @@ static int DoFAREffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 					a->main.kick = KICK_NOTE;
 
 				a->farretrigcount--;
-				if (a->farretrigcount > 0)
-					a->retrig = ((mod->control[0].fartempobend + far_tempos[mod->control[0].farcurtempo]) / dat / 8) - 1;
+				if (a->farretrigcount > 0) {
+					SWORD delay = GetFARTempo(mod) / dat;
+					/* Effect divides by 4, timer increments
+					   by 2 (round up). */
+					a->retrig = ((delay >> 2) + 1) >> 1;
+					if (a->retrig <= 0)
+						a->retrig = 1;
+				}
 			}
 		}
-		else
-			a->retrig--;
+		a->retrig--;
 	}
 
 	return 0;
@@ -2460,7 +2494,7 @@ static int DoFAREffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 		if (dat != 0) {
 			firstControl->fartempobend -= dat;
 
-			if ((firstControl->fartempobend + far_tempos[firstControl->farcurtempo]) <= 0)
+			if (GetFARTempo(mod) <= 0)
 				firstControl->fartempobend = 0;
 		}
 		else
@@ -2482,7 +2516,7 @@ static int DoFAREffectE(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 		if (dat != 0) {
 			firstControl->fartempobend += dat;
 
-			if ((firstControl->fartempobend + far_tempos[firstControl->farcurtempo]) >= 100)
+			if (GetFARTempo(mod) >= 100)
 				firstControl->fartempobend = 100;
 		}
 		else
@@ -2913,6 +2947,7 @@ static void pt_Notes(MODULE *mod)
 		}
 
 		a->row=(tr<mod->numtrk)?UniFindRow(mod->tracks[tr],mod->patpos):NULL;
+		a->newnote=0;
 		a->newsamp=0;
 		if (!mod->vbtick) a->main.notedelay=0;
 
@@ -2928,6 +2963,7 @@ static void pt_Notes(MODULE *mod)
 				a->main.kick =KICK_NOTE;
 				a->main.start=-1;
 				a->sliding=0;
+				a->newnote=1;
 				a->fartoneportarunning = 0;
 
 				/* retrig tremolo and vibrato waves ? */

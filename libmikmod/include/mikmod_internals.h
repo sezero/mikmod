@@ -572,7 +572,8 @@ typedef struct MP_CONTROL {
     SBYTE   panbspd;    /* "" speed */
     UBYTE   panbdepth;  /* "" depth */
 
-    UWORD   newsamp;    /* set to 1 upon a sample / inst change */
+    UBYTE   newnote;    /* set to 1 if the current row contains a note */
+    UBYTE   newsamp;    /* set to 1 upon a sample / inst change */
     UBYTE   voleffect;  /* Volume Column Effect Memory as used by IT */
     UBYTE   voldata;    /* Volume Column Data Memory */
 

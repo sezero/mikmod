@@ -138,6 +138,16 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 		if (n->vol>=0x01 && n->vol<=0x10) UniPTEffect(0xc,(n->vol - 1)<<2);
 		if (n->eff)
 			switch(n->eff>>4) {
+				case 0x0: /* global effects */
+					switch(n->eff & 0xf) {
+						case 0x3:	/* fulfill loop */
+							UniEffect(UNI_KEYFADE, 0);
+							break;
+						case 0x4:	/* old tempo mode */
+						case 0x5:	/* new tempo mode */
+							break;
+					}
+					break;
 				case 0x1: /* pitch adjust up */
 					UniEffect(UNI_FAREFFECT1, n->eff & 0xf);
 					break;
@@ -162,8 +172,12 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 				case 0x8: /* volume slide down */
 					UniPTEffect(0xa,n->eff&0xf);
 					break;
+				case 0x9: /* sustained vibrato */
+					break;
 				case 0xb: /* panning */
 					UniPTEffect(0xe,0x80|(n->eff&0xf));
+					break;
+				case 0xc: /* note offset */
 					break;
 				case 0xd: /* fine tempo down */
 					UniEffect(UNI_FAREFFECTD, n->eff & 0xf);
