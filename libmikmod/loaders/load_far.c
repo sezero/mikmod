@@ -205,7 +205,7 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 
 static BOOL FAR_Load(BOOL curious)
 {
-	int t,u,tracks=0;
+	int r,t,u,tracks=0;
 	SAMPLE *q;
 	FARSAMPLE s;
 	FARNOTE *crow;
@@ -321,10 +321,9 @@ static BOOL FAR_Load(BOOL curious)
 			// Farandole Composer normally use a 64 rows blank track for patterns with 0 rows
 			for (u = 0; u < 16; u++) {
 				UniReset();
-
-				for (int r = 0; r < 64; r++)
+				for (r = 0; r < 64; r++) {
 					UniNewline();
-
+				}
 				of.tracks[tracks++] = UniDup();
 			}
 			of.pattrows[t] = 64;
