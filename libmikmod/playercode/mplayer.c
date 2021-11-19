@@ -2416,14 +2416,21 @@ static int DoFAREffect3(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWO
 		/* We have to slide a.Main.Period toward a.WantedPeriod,
 		  compute the difference between those two values */
 		SLONG dist = a->wantedperiod - a->main.period;
+		SWORD tempo = GetFARTempo(mod);
 
 		/* Adjust effect argument */
 		if (dat == 0)
 			dat = 1;
+		/* This causes crashes and other weird behavior in Farandole Composer. */
+		if (tempo <= 0)
+			tempo = 1;
 
-		/* Unlike other players, the data is how many rows the port
-		   should take and not a speed */
-		a->fartoneportaspeed = (dist << 16) / (mod->sngspd * dat);
+		/* The data is supposed to be the number of rows until completion of
+		   the slide, but because it's Farandole Composer, it isn't. While
+		   that claim holds for tempo 4, for tempo 2 it takes param*2 rows,
+		   for tempo 1 it takes param*4 rows, etc. This calculation is based
+		   on the final tempo/interrupts per second count. */
+		a->fartoneportaspeed = (dist << 16) * 8 / (tempo * dat);
 		a->farcurrentvalue = (SLONG)a->main.period << 16;
 		a->fartoneportarunning = 1;
 	}
