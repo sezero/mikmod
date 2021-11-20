@@ -548,6 +548,7 @@ struct MP_VOICE;
 #define UF_FT2QUIRKS    0x0200 /* emulate some FT2 replay quirks */
 #define UF_PANNING      0x0400 /* module uses panning effects or have
                                   non-tracker default initial panning */
+#define UF_FARTEMPO     0x0800 /* Module uses Farandole tempo calculations */
 
 typedef struct MODULE {
  /* general module information */
