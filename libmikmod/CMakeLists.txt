@@ -167,6 +167,7 @@ SET (DISABLE_HQMIXER 0 CACHE BOOL "Exclude support for high quality mixer")
 
 SET (ENABLE_SIMD 0 CACHE BOOL "Use SIMD (AltiVec or SSE2) optimizations (UNSTABLE!!!)")
 SET (ENABLE_RPATH 1 CACHE BOOL "Whether to use an rpath when linking" )
+SET (ENABLE_SHARED 1 CACHE BOOL "Whether to build the shared library" )
 SET (ENABLE_STATIC 1 CACHE BOOL "Whether to build the static library" )
 
 ### This is to set the RPATH correctly, so when installed
@@ -390,12 +391,23 @@ REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
 
 SET (LIBMIKMOD_LIBS)
 
-ADD_LIBRARY (mikmod
-    SHARED
-    ${MIKMOD_LIB_MODULES}
+IF (ENABLE_SHARED)
+    ADD_LIBRARY (mikmod
+        SHARED
+        ${MIKMOD_LIB_MODULES}
     )
+    LIST (APPEND LIBMIKMOD_LIBS "mikmod")
 
-LIST (APPEND LIBMIKMOD_LIBS "mikmod")
+    SET_TARGET_PROPERTIES(mikmod
+        PROPERTIES VERSION 3.3.0 SOVERSION 3
+    )
+    IF(WIN32)
+        SET_TARGET_PROPERTIES(mikmod
+            PROPERTIES DEFINE_SYMBOL DLL_EXPORT
+        )
+    ENDIF(WIN32)
+ENDIF()
+
 IF (ENABLE_STATIC)
     ADD_LIBRARY (mikmod-static
         STATIC
@@ -412,15 +424,6 @@ IF (ENABLE_STATIC)
         PROPERTIES CLEAN_DIRECT_OUTPUT 1
     )
 ENDIF (ENABLE_STATIC)
-
-SET_TARGET_PROPERTIES(mikmod
-    PROPERTIES VERSION 3.3.0 SOVERSION 3
-)
-IF(WIN32)
-    SET_TARGET_PROPERTIES(mikmod
-        PROPERTIES DEFINE_SYMBOL DLL_EXPORT
-    )
-ENDIF(WIN32)
 
 IF(DISABLE_HQMIXER)
   SET(NO_HQMIXER 1)
