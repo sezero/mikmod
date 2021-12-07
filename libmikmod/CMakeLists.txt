@@ -170,6 +170,10 @@ SET (ENABLE_RPATH 1 CACHE BOOL "Whether to use an rpath when linking" )
 SET (ENABLE_SHARED 1 CACHE BOOL "Whether to build the shared library" )
 SET (ENABLE_STATIC 1 CACHE BOOL "Whether to build the static library" )
 
+IF (NOT ENABLE_STATIC AND NOT ENABLE_SHARED)
+    message(FATAL_ERROR "Both static and shared builds got disabled. You must enable at least one of them.")
+ENDIF()
+
 ### This is to set the RPATH correctly, so when installed
 ### under a prefix the executables will find the libraries.
 ### See:  http://www.cmake.org/Wiki/CMake_RPATH_handling
