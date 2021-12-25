@@ -582,6 +582,8 @@ static BOOL UNI_Load(BOOL curious)
 		of.bpmlimit=32;
 
 	of.songname=readstring();
+	if(!of.songname)
+		of.songname=MikMod_strdup("");
 	if(universion<0x102)
 		oldtype=readstring();
 	if(oldtype) {
@@ -706,13 +708,16 @@ static CHAR *UNI_LoadTitle(void)
 {
 	UBYTE ver;
 	int posit[3]={304,306,26};
+	CHAR *title;
 
 	_mm_fseek(modreader,3,SEEK_SET);
 	ver=_mm_read_UBYTE(modreader);
 	if(ver=='N') ver='6';
 
 	_mm_fseek(modreader,posit[ver-'4'],SEEK_SET);
-	return readstring();
+	title=readstring();
+	if(!title) title=MikMod_strdup("");
+	return title;
 }
 
 /*========== Loader information */
