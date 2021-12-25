@@ -317,7 +317,7 @@ static BOOL ASY_Load(BOOL curious)
 		_mm_fseek(modreader, 0x126 + (t*37), SEEK_SET);
 
 		_mm_read_string(s->samplename, 22, modreader);
-		s->samplename[21] = 0;	/* just in case */
+		s->samplename[22] = 0;
 
 		s->finetune = _mm_read_UBYTE(modreader);
 		s->volume = _mm_read_UBYTE(modreader);
@@ -339,7 +339,7 @@ static BOOL ASY_Load(BOOL curious)
 	of.inittempo = mh->inittempo;
 	of.numchn = 8;
 	modtype = 0;
-	of.songname = DupStr(mh->songname, 21, 1);
+	of.songname = MikMod_strdup("");
 	of.numpos = mh->num_orders;
 	of.reppos = mh->reppos;
 	of.numpat = mh->num_patterns;
