@@ -391,10 +391,13 @@ static void display_file(void)
 /* fourth and fifth lines : module name and format */
 static void display_name(void)
 {
+	const char *name;
 	if (quiet || !mf)
 		return;
 
-	SNPRINTF(storage, STORAGELEN, "Name: %.70s", mf->songname);
+	name = mf->songname;
+	if(!name) name = "";
+	SNPRINTF(storage, STORAGELEN, "Name: %.70s", name);
 	enlarge(0,storage);
 	win_print(root, 0, 3, storage);
 
@@ -1254,7 +1257,7 @@ static void display_title(void)
 
 	if (!mf) { return; }
 	
-	if (!mf->songname || strlen(mf->songname)==0) {
+	if (!mf->songname || !*mf->songname) {
 		PLAYENTRY *entry=NULL;
 		entry = PL_GetCurrent(&playlist);
 
