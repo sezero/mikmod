@@ -233,13 +233,18 @@ void set_help(MENTRY *entry, const char *str, ...)
 
 static char *skip_number(char *str)
 {
-	if (!str) return NULL;
-	while (*str && *str == ' ')
+	if (!str) {
+		return NULL;
+	}
+	while (*str == ' ') {
 		str++;
-	while (*str && isdigit((unsigned char)*str))
+	}
+	while (isdigit((unsigned char)*str)) {
 		str++;
-	while (*str && *str == ' ')
+	}
+	while (*str == ' ') {
 		str++;
+	}
 	return str;
 }
 
