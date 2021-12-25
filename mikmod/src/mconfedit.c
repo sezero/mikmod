@@ -233,11 +233,12 @@ void set_help(MENTRY *entry, const char *str, ...)
 
 static char *skip_number(char *str)
 {
-	while (str && *str == ' ')
+	if (!str) return NULL;
+	while (*str && *str == ' ')
 		str++;
-	while (str && isdigit((int)*str))
+	while (*str && isdigit((unsigned char)*str))
 		str++;
-	while (str && *str == ' ')
+	while (*str && *str == ' ')
 		str++;
 	return str;
 }
@@ -281,7 +282,7 @@ static void get_drivers(MENTRY *entry)
 				if (*(start + x) == '(')
 					break;
 				if ((*(start + x)) == 'v' &&
-					isdigit((int)*(start + x + 1))) break;
+					isdigit((unsigned char) *(start + x + 1))) break;
 			}
 			while (x > 0 && *(start + x - 1) == ' ')
 				x--;
@@ -563,7 +564,7 @@ static char *theme_uniq_name (char *src_name)
 	buf[THEME_NAME_LEN] = '\0';
 	for (pos = buf+strlen(buf)-1; pos>=buf && isspace((int)*pos); pos--)
 		*pos = '\0';
-	if (pos>buf && isdigit((int)*pos) && isdigit((int)*(pos-1)))
+	if (pos>buf && isdigit((unsigned char) *pos) && isdigit((unsigned char) *(pos-1)))
 		*(pos-2) = '\0';
 
 	if (strlen(buf) > THEME_NAME_LEN-5)
@@ -772,7 +773,7 @@ static void handle_menu(MMENU *mn)
 				dlg_message_open("Copy, edit, or delete the active theme?",
 								 "&Copy|&Edit|Delete|&Cancel", 3, 0,
 								 cb_themeedit, NULL);
-		  }
+		}
 		break;
 	}
 }
