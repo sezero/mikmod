@@ -388,7 +388,7 @@ SAMPLOAD* SL_RegisterSample(SAMPLE* s,int type,MREADER* reader)
 		return NULL;
 
 	/* Allocate and add structure to the END of the list */
-	if(!(news=(SAMPLOAD*)MikMod_malloc(sizeof(SAMPLOAD)))) return NULL;
+	if(!(news=(SAMPLOAD*)MikMod_calloc(1, sizeof(SAMPLOAD)))) return NULL;
 
 	if(cruise) {
 		while(cruise->next) cruise=cruise->next;

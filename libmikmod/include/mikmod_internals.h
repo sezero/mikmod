@@ -900,7 +900,7 @@ void MikMod_afree(void *);  /* frees if ptr != NULL */
 #endif
 
 #else /* NO SIMD */
-#define MikMod_amalloc MikMod_malloc
+#define MikMod_amalloc(s) MikMod_calloc(1,(s))
 #define MikMod_afree MikMod_free
 #endif
 
