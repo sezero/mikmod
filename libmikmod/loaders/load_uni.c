@@ -486,7 +486,7 @@ static BOOL loadsmp5(void)
 			if(s->flags&  4) q->flags|=SF_DELTA;
 		} else {
 			if(s->flags&128) q->flags|=SF_REVERSE;
-			if(s->flags& 64) q->flags|=SF_SUSTAIN;
+			if(s->flags& 64) q->flags|=SF_OWNPAN;
 			if(s->flags& 32) q->flags|=SF_BIDI;
 			if(s->flags& 16) q->flags|=SF_LOOP;
 			if(s->flags&  8) q->flags|=SF_BIG_ENDIAN;
