@@ -29,12 +29,7 @@
  *
  * UPKG parsing partially based on Unreal Media Ripper (UMR) v0.3
  * by Andy Ward <wardwh@swbell.net>, with additional updates
- * by O. Sezer - see git repo at https://github.com/sezero/umr/
- *
- * The cheaper way, i.e. linear search of music object like libxmp
- * and libmodplug does, is possible. With this however we're using
- * the embedded offset, size and object type directly from the umx
- * file, and I feel safer with it.
+ * by O. Sezer - see git repo at https://github.com/sezero/umr.git
  */
 
 #ifdef HAVE_CONFIG_H
@@ -313,6 +308,9 @@ static SLONG probe_header (struct upkg_hdr *hdr)
 		return -1;
 	}
 
+#if 1 /* no need being overzealous */
+	return 0;
+#else
 	switch (hdr->file_version) {
 	case 35: case 37:	/* Unreal beta - */
 	case 40: case 41:				/* 1998 */
@@ -328,6 +326,7 @@ static SLONG probe_header (struct upkg_hdr *hdr)
 	}
 
 	return -1;
+#endif /* #if 0  */
 }
 
 static int process_upkg (SLONG *ofs, SLONG *objsize)
