@@ -3,6 +3,8 @@ Summary of changes between MikMod 3.2.8 and MikMod 3.2.9:
 
 MikMod 3.2.9 was released on ???? ??, ????.
 
+- Avoid possible undefined behavior in display code if the songname
+  is NULL (github bug #67.)
 - Several build and portability fixes/updates. Removed support for
   lcc-win32 compiler.
 
