@@ -139,6 +139,7 @@ static int get_objtype (SLONG ofs, int type)
 {
 	char sig[16];
 _retry:
+	memset(sig, 0, sizeof(sig));
 	_mm_fseek(modreader, ofs, SEEK_SET);
 	_mm_read_UBYTES(sig, 16, modreader);
 	if (type == UMUSIC_IT) {
@@ -340,16 +341,6 @@ static int process_upkg (SLONG *ofs, SLONG *objsize)
 	return probe_umx(&header, ofs, objsize);
 }
 
-/*========== Loader vars */
-
-typedef struct _umx_info {
-	int	type;
-	SLONG	ofs, size;
-	MLOADER* loader;
-} umx_info;
-
-static umx_info *umx_data = NULL;
-
 /*========== Loader code */
 
 /* Without Test() being called first, Load[Title] is never called.
@@ -360,6 +351,14 @@ static umx_info *umx_data = NULL;
  * we must remember the type and the offset of the umx music data,
  * and always clear it when returning from LoadTitle() or Cleanup().
  */
+
+typedef struct _umx_info {
+	int	type;
+	SLONG	ofs, size;
+	MLOADER* loader;
+} umx_info;
+
+static umx_info *umx_data = NULL;
 
 static BOOL UMX_Test(void)
 {
