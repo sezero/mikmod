@@ -19,18 +19,18 @@
 
 #include "dosdma.h"
 
-#include <go32.h> /* includes sys/version.h (djgpp >= 2.02) */
+#include <sys/version.h>
 #include <dos.h>
 #include <dpmi.h>
 #include <sys/nearptr.h>
 #include <malloc.h>
-#include "mikmod.h" /* for MikMod_malloc() & co */
+#include "mikmod.h" /* for MikMod_malloc() and MikMod_free() */
 
 /* BUG WARNING:  there is an error in DJGPP libraries <= 2.01:
  * src/libc/dpmi/api/d0102.s loads the selector and allocsize
  * arguments in the wrong order.  DJGPP >= 2.02 have it fixed. */
 #if (!defined(__DJGPP_MINOR__) || (__DJGPP_MINOR__+0) < 2)
-#warning __dpmi_resize_dos_memory() from DJGPP <= 2.01 is broken!
+#error __dpmi_resize_dos_memory() from DJGPP <= 2.01 is broken!
 #endif
 
 __dma_regs dma[8] = {
