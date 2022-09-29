@@ -73,7 +73,7 @@ SET(EXTRA_LIBS )
 
 find_path(MIKMOD_INCLUDE_DIR mikmod.h)
 find_library(MIKMOD_LIBRARIES mikmod)
-IF (MIKMOD_LIBRARIES STREQUAL "MIKMOD_LIBRARIES-NOTFOUND")
+IF (NOT MIKMOD_LIBRARIES)
     MESSAGE(FATAL_ERROR "libmikmod not found.")
 ELSE()
     MESSAGE(STATUS "Found MikMod: ${MIKMOD_LIBRARIES}")
@@ -110,7 +110,7 @@ IF(UNIX OR APPLE)
     LIST (APPEND EXTRA_LIBS ${CURSES_LIBRARY})
   ELSE()
     find_library(TINFO_LIBRARY tinfo)
-    IF(TINFO_LIBRARY STREQUAL "TINFO_LIBRARY-NOTFOUND")
+    IF(NOT TINFO_LIBRARY)
       MESSAGE(FATAL_ERROR "libtinfo needed for ncurses, but not found.")
     ELSE()
       MESSAGE(STATUS "Found libtinfo: ${TINFO_LIBRARY}")
@@ -146,7 +146,7 @@ IF (NOT WIN32)
 ENDIF()
 
 CHECK_MULTI_FUNCTIONS_EXISTS(
-    "getopt_long_only"
+    getopt_long_only
     mkstemp srandom snprintf vsnprintf strerror
     usleep
     srandom
