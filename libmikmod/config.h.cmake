@@ -66,7 +66,8 @@
 /* Define if you want a debug version of the library */
 #cmakedefine MIKMOD_DEBUG 1
 
-/* Define if you want runtime dynamic linking of ALSA and EsounD drivers */
+/* Define if you want runtime dynamic linking of ALSA, PulseAudio, or EsounD
+   drivers */
 #cmakedefine MIKMOD_DYNAMIC 1
 
 /* Define if you want to use SIMD (AltiVec or SSE2) optimizations (Unstable!)  */
@@ -87,9 +88,6 @@
 #cmakedefine SUNOS 1
 /* Define if your system is AIX 3.* - might be needed for 4.* too */
 #cmakedefine AIX 1
-
-/* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
-#cmakedefine HAVE_RTLD_GLOBAL 1
 
 /* Define if your system provides POSIX.4 threads */
 #cmakedefine HAVE_PTHREAD 1

@@ -61,7 +61,7 @@
 
 #ifdef MIKMOD_DYNAMIC
 /* runtime link with libasound */
-#ifndef HAVE_RTLD_GLOBAL
+#ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL (0)
 #endif
 static int (*alsa_pcm_subformat_mask_malloc)(snd_pcm_subformat_mask_t **);

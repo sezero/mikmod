@@ -45,7 +45,7 @@
 #define pulseaudio_simple_flush pa_simple_flush
 #else
 /* runtime link with libpulse-simple */
-#ifndef HAVE_RTLD_GLOBAL
+#ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL (0)
 #endif
 static pa_simple* (*pulseaudio_simple_new)(const char*, const char*, pa_stream_direction_t, const char*, const char*, const pa_sample_spec*, const pa_channel_map*, const pa_buffer_attr*, int*);

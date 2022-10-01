@@ -127,6 +127,7 @@ libmikmod_driver_osles=no
 
 libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
+libmikmod_dynload_used=no
 libmikmod_debug=no
 libmikmod_threads=yes
 libmikmod_simd=no
@@ -1025,6 +1026,8 @@ then
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lasound $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -1035,6 +1038,8 @@ then
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lpulse-simple -lpulse $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -1050,6 +1055,8 @@ then
 	if test $libmikmod_dynload != no
 	then
 		ESD_LIBS="`echo $ESD_LIBS|sed -e 's/-lesd//'|sed -e 's/-lasound//'|sed -e 's/-laudiofile//'|sed -e 's/-lossaudio//'`"
+	else
+		libmikmod_dynload_used=yes
 	fi
 	LIBRARY_LIB="$ESD_LIBS $LIBRARY_LIB"
 fi
@@ -1182,6 +1189,8 @@ then
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lgus $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -1193,20 +1202,11 @@ fi
 
 if test $libmikmod_dynload != no
 then
-	AC_DEFINE([MIKMOD_DYNAMIC], 1, [Define if you want runtime dynamic linking of ALSA and EsounD drivers])
+	AC_DEFINE([MIKMOD_DYNAMIC], 1, [Define if you want runtime dynamic linking of ALSA, PulseAudio, or EsounD drivers])
 
-	LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
-	if test $libmikmod_dynload = sun
+	if test -n $libmikmod_dllib && test $libmikmod_dynload_used = yes
 	then
-		# RTLD_GLOBAL is not defined under every system
-		AC_CACHE_CHECK([if RTLD_GLOBAL is defined],libmikmod_cv_decl_rtld_global,
-		 [AC_TRY_COMPILE([#include <dlfcn.h>],[int flag=RTLD_GLOBAL;],
-			[libmikmod_cv_decl_rtld_global=yes],
-			[libmikmod_cv_decl_rtld_global=no])])
-		if test $libmikmod_cv_decl_rtld_global = yes
-		then
-			AC_DEFINE([HAVE_RTLD_GLOBAL], 1, [Define if your system has RTLD_GLOBAL defined in <dlfcn.h>])
-		fi
+		LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
 	fi
 fi
 

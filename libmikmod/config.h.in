@@ -176,9 +176,6 @@
 /* Define to 1 if you have the <pulse/simple.h> header file. */
 #undef HAVE_PULSE_SIMPLE_H
 
-/* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
-#undef HAVE_RTLD_GLOBAL
-
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
 
@@ -254,7 +251,8 @@
 /* Define if you want a debug version of the library */
 #undef MIKMOD_DEBUG
 
-/* Define if you want runtime dynamic linking of ALSA and EsounD drivers */
+/* Define if you want runtime dynamic linking of ALSA, PulseAudio, or EsounD
+   drivers */
 #undef MIKMOD_DYNAMIC
 
 /* Define if you want to use SIMD (AltiVec or SSE2) optimizations (Unstable!)

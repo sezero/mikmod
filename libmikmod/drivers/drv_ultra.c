@@ -146,7 +146,7 @@ static int (*_libgus_timer_start)(void*);
 static int (*_libgus_timer_stop) (void*);
 static int (*_libgus_timer_tempo) (void*, int);
 #endif
-#ifndef HAVE_RTLD_GLOBAL
+#ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL (0)
 #endif
 static void *libgus = NULL;
