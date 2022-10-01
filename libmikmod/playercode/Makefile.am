@@ -1,5 +1,4 @@
-EXTRA_DIST = CMakeLists.txt \
-             mdreg.c   \
+EXTRA_DIST = mdreg.c   \
              mdriver.c \
              mdulaw.c  \
              mloader.c \
@@ -13,3 +12,4 @@ EXTRA_DIST = CMakeLists.txt \
              virtch.c  \
              virtch2.c \
              virtch_common.c
+

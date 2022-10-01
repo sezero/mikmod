@@ -1,5 +1,5 @@
 # Excerpt taken from http://cmake.3232098.n2.nabble.com/Building-Texinfo-with-CMake-td5609561.html
-SET(ENABLE_DOC 1 CACHE BOOL "Build the library documentation")
+option(ENABLE_DOC "Build the library documentation" ON)
 
 find_program(MAKEINFO_EXECUTABLE makeinfo)
 
@@ -21,4 +21,4 @@ add_custom_command(OUTPUT ${html_out}
   VERBATIM)
 
 add_custom_target(info ALL DEPENDS ${info_out} ${html_out})
-ENDIF(ENABLE_DOC)
+ENDIF()

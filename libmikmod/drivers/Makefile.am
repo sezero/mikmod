@@ -1,6 +1,5 @@
 SUBDIRS = dos
-EXTRA_DIST = CMakeLists.txt \
-	     drv_AF.c     \
+EXTRA_DIST = drv_AF.c     \
 	     drv_aiff.c   \
 	     drv_ahi.c    \
 	     drv_aix.c    \
