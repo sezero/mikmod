@@ -42,6 +42,7 @@
 
 #ifdef DRV_DART
 
+#undef VERSION /* stop conflict with os2medef.h */
 #define INCL_DOS
 #define INCL_OS2MM
 #include <os2.h>
