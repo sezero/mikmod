@@ -125,7 +125,7 @@ option(ENABLE_AIFF "Support for output to an .aiff file" ON)
 option(ENABLE_WAV "Support for output to a .wav file" ON)
 option(ENABLE_RAW "Support for output raw pcm data to a file" ON)
 
-cmake_dependent_option(ENABLE_DL "Load ALSA and EsounD drivers at runtime" ON "ENABLE_ALSA OR ENABLE_ESD" OFF)
+cmake_dependent_option(ENABLE_DL "Load ALSA, PulseAudio or EsounD drivers at runtime" ON "ENABLE_ALSA OR ENABLE_PULSE OR ENABLE_ESD" OFF)
 cmake_dependent_option(ENABLE_THREADS "build a thread-safe version of libmikmod" ON "UNIX" OFF) # only for pthreads.
 
 option(DISABLE_DEPACKERS "Exclude support for module depackers" OFF)
@@ -447,7 +447,7 @@ IF (ENABLE_PULSE)
             INCLUDE_DIRECTORIES(${PULSESIMPLE_INCLUDE_DIR})
         ENDIF()
     ENDIF()
-    IF(ENABLE_PULSE)
+    IF(ENABLE_PULSE AND NOT ENABLE_DL)
       LIST (APPEND EXTRA_LIBS ${PULSESIMPLE_LIBRARIES})
     ENDIF()
 ENDIF()

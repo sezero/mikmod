@@ -30,8 +30,33 @@
 #ifdef DRV_PULSEAUDIO
 
 #include <string.h>
+#ifdef MIKMOD_DYNAMIC
+#include <dlfcn.h>
+#endif
 #include <pulse/simple.h>
 #include <pulse/error.h>
+
+#ifndef MIKMOD_DYNAMIC
+/* compile-time link with libpulse-simple */
+#define pulseaudio_simple_new pa_simple_new
+#define pulseaudio_simple_free pa_simple_free
+#define pulseaudio_strerror pa_strerror
+#define pulseaudio_simple_write pa_simple_write
+#define pulseaudio_simple_flush pa_simple_flush
+#else
+/* runtime link with libpulse-simple */
+#ifndef HAVE_RTLD_GLOBAL
+#define RTLD_GLOBAL (0)
+#endif
+static pa_simple* (*pulseaudio_simple_new)(const char*, const char*, pa_stream_direction_t, const char*, const char*, const pa_sample_spec*, const pa_channel_map*, const pa_buffer_attr*, int*);
+static void (*pulseaudio_simple_free)(pa_simple*);
+static int (*pulseaudio_simple_write)(pa_simple*, const void*, size_t, int*);
+static int (*pulseaudio_simple_flush)(pa_simple*, int*);
+#ifdef MIKMOD_DEBUG
+static const char* (*pulseaudio_strerror)(int);
+#endif
+static void* libpulseaudio = NULL;
+#endif
 
 #define PA_NUMSAMPLES 256	/* a fair default for md_mixfreq <= 11025 Hz */
 
@@ -60,23 +85,67 @@ static void PULSEAUDIO_CommandLine(const CHAR *cmdline)
 	}
 }
 
+#ifdef MIKMOD_DYNAMIC
+static int PULSEAUDIO_Link(void)
+{
+	if (libpulseaudio) return 0;
+
+	/* load libpulse-simple.so */
+	libpulseaudio = dlopen("libpulse-simple.so.0",RTLD_LAZY|RTLD_GLOBAL);
+	if (!libpulseaudio) libpulseaudio = dlopen("libpulse-simple.so",RTLD_LAZY|RTLD_GLOBAL);
+	if (!libpulseaudio) return 1;
+
+	/* resolve function references */
+	if (!(pulseaudio_simple_new  = (pa_simple* (*)(const char*,const char*,pa_stream_direction_t,const char*,const char*,const pa_sample_spec*,const pa_channel_map*,const pa_buffer_attr*,int*)) dlsym(libpulseaudio,"pa_simple_new"))) return 1;
+	if (!(pulseaudio_simple_free = (void (*)(pa_simple*)) dlsym(libpulseaudio,"pa_simple_free"))) return 1;
+	if (!(pulseaudio_simple_write = (int (*)(pa_simple*,const void*,size_t,int*)) dlsym(libpulseaudio,"pa_simple_write"))) return 1;
+	if (!(pulseaudio_simple_flush = (int (*)(pa_simple*,int*)) dlsym(libpulseaudio,"pa_simple_flush"))) return 1;
+#ifdef MIKMOD_DEBUG
+	if (!(pulseaudio_strerror =  (const char* (*)(int)) dlsym(libpulseaudio,"pa_strerror"))) return 1;
+#endif
+
+	return 0;
+}
+
+static void PULSEAUDIO_Unlink(void)
+{
+	pulseaudio_simple_new = NULL;
+	pulseaudio_simple_free = NULL;
+	pulseaudio_simple_write = NULL;
+	pulseaudio_simple_flush = NULL;
+#ifdef MIKMOD_DEBUG
+	pulseaudio_strerror = NULL;
+#endif
+	if (libpulseaudio) {
+		dlclose(libpulseaudio);
+		libpulseaudio = NULL;
+	}
+}
+#endif
+
 static BOOL PULSEAUDIO_IsPresent(void)
 {
+#ifdef MIKMOD_DYNAMIC
+	if (PULSEAUDIO_Link()) return 0;
+#endif
 	if (!pasp) {
 		pa_sample_spec paspec;
 		paspec.format = PA_SAMPLE_S16NE;
 		paspec.rate = 22050;
 		paspec.channels = 2;
-		pasp = pa_simple_new (server, "libMikMod client", PA_STREAM_PLAYBACK,
+		pasp = pulseaudio_simple_new (server, "libMikMod client", PA_STREAM_PLAYBACK,
 					sink, "_mm_output_test", &paspec, NULL, NULL, NULL);
 		if (!pasp) return 0;
-		pa_simple_free(pasp);
+		pulseaudio_simple_free(pasp);
 		pasp = NULL;
 	}
+#ifdef MIKMOD_DYNAMIC
+	PULSEAUDIO_Unlink();
+#endif
 	return 1;
 }
 
-static int PULSEAUDIO_Init(void)
+static int PULSEAUDIO_Init_internal(void)
 {
 	pa_sample_spec paspec;
 	int err;
@@ -86,11 +155,11 @@ static int PULSEAUDIO_Init(void)
 	paspec.rate = md_mixfreq;
 	paspec.channels = (md_mode & DMODE_STEREO) ? 2 : 1;
 
-	pasp = pa_simple_new (server, "libMikMod client", PA_STREAM_PLAYBACK,
+	pasp = pulseaudio_simple_new (server, "libMikMod client", PA_STREAM_PLAYBACK,
 				sink, "libMikMod music", &paspec, NULL, NULL, &err);
 	if (!pasp) {
 #ifdef MIKMOD_DEBUG
-		fprintf(stderr, "PulseAudio error: %s", pa_strerror(err));
+		fprintf(stderr, "PulseAudio error: %s", pulseaudio_strerror(err));
 #endif
 		_mm_errno = MMERR_OPENING_AUDIO;
 		return 1;
@@ -105,7 +174,7 @@ static int PULSEAUDIO_Init(void)
 	if (md_mode & DMODE_STEREO) pabufsize *= 2;
 
 	if (!(pabuf = (SBYTE *) MikMod_malloc(pabufsize))) {
-		pa_simple_free(pasp);
+		pulseaudio_simple_free(pasp);
 		pasp = NULL;
 		_mm_errno = MMERR_OUT_OF_MEMORY;
 		return 1;
@@ -117,22 +186,40 @@ static int PULSEAUDIO_Init(void)
 	return VC_Init();
 }
 
-static void PULSEAUDIO_Exit(void)
+static int PULSEAUDIO_Init(void)
+{
+#ifdef MIKMOD_DYNAMIC
+	if (PULSEAUDIO_Link()) {
+		_mm_errno=MMERR_DYNAMIC_LINKING;
+		return 1;
+	}
+#endif
+	return PULSEAUDIO_Init_internal();
+}
+
+static void PULSEAUDIO_Exit_internal(void)
 {
 	enabled = 0;
-/*	pa_simple_drain(pasp, NULL);*/
-	pa_simple_flush(pasp, NULL);
-	pa_simple_free(pasp);
+	pulseaudio_simple_flush(pasp, NULL);
+	pulseaudio_simple_free(pasp);
 	pasp = NULL;
 	MikMod_free(pabuf);
 	pabuf = NULL;
 	VC_Exit();
 }
 
+static void PULSEAUDIO_Exit(void)
+{
+	PULSEAUDIO_Exit_internal();
+#ifdef MIKMOD_DYNAMIC
+	PULSEAUDIO_Unlink();
+#endif
+}
+
 static int PULSEAUDIO_Reset(void)
 {
-	PULSEAUDIO_Exit();
-	return PULSEAUDIO_Init();
+	PULSEAUDIO_Exit_internal();
+	return PULSEAUDIO_Init_internal();
 }
 
 static void PULSEAUDIO_Update(void)
@@ -142,7 +229,7 @@ static void PULSEAUDIO_Update(void)
 
 	len = VC_WriteBytes(pabuf, pabufsize);
 	if (enabled) {
-		if (pa_simple_write(pasp, pabuf, len, &err) < 0) {
+		if (pulseaudio_simple_write(pasp, pabuf, len, &err) < 0) {
 			enabled = 0;
 #ifdef MIKMOD_DEBUG
 			fprintf(stderr, "PulseAudio write: %s", pa_strerror(err));
@@ -154,7 +241,7 @@ static void PULSEAUDIO_Update(void)
 static void PULSEAUDIO_PlayStop(void)
 {
 	VC_PlayStop();
-	if (pasp) pa_simple_flush(pasp, NULL);
+	if (pasp) pulseaudio_simple_flush(pasp, NULL);
 }
 
 static int PULSEAUDIO_PlayStart(void)
@@ -167,7 +254,7 @@ MIKMODAPI struct MDRIVER drv_pulseaudio =
 {
 	NULL,
 	"PulseAudio",
-	"PulseAudio driver v0.1",
+	"PulseAudio driver v0.2",
 	0, 255,
 	"pulseaudio",
 	"server:t::PulseAudio server name\n"

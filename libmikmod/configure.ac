@@ -456,7 +456,7 @@ else
   libmikmod_driver_ultra=no
 fi])
 
-AC_ARG_ENABLE([dl], [AS_HELP_STRING([--enable-dl],[load alsa, esound and ultra drivers at runtime [default=yes]])],
+AC_ARG_ENABLE([dl], [AS_HELP_STRING([--enable-dl],[load alsa, pulseaudio or esound drivers at runtime [default=yes]])],
 [if test "$enableval" = "yes"
 then
   libmikmod_dynload=yes
@@ -1032,7 +1032,10 @@ if test $libmikmod_driver_pulseaudio = yes
 then
 	libmikmod_driverlist="pulseaudio $libmikmod_driverlist"
 	AC_DEFINE([DRV_PULSEAUDIO], 1, [Define if the PulseAudio driver is compiled])
-	LIBRARY_LIB="-lpulse-simple -lpulse $LIBRARY_LIB"
+	if test $libmikmod_dynload = no
+	then
+		LIBRARY_LIB="-lpulse-simple -lpulse $LIBRARY_LIB"
+	fi
 fi
 
 if test $libmikmod_driver_esd = yes
