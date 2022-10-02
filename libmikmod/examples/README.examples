@@ -1,3 +1,7 @@
+sdlplayer/
+	Shows a way of initializing the library, loading and
+	playing a module using SDL's audio output facilities.
+
 simpleplay/
 	Shows the simplest way of initializing the library
 	loading and playing a module.
