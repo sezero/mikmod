@@ -6,11 +6,6 @@ static int quit = 0;
 static void my_sighandler (int sig)
 {
   (void) sig;
-#ifdef SIGBREAK
-  signal(SIGBREAK, SIG_DFL);
-#endif
-  signal(SIGINT, SIG_DFL);
-  signal(SIGTERM, SIG_DFL);
   quit = 1;
 }
 

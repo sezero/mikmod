@@ -8,6 +8,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <signal.h>
 #include <mikmod.h>
 
 #if defined(_WIN32)
@@ -20,6 +21,13 @@ void amiga_usleep (unsigned long timeout);
 #include <unistd.h>  /* for usleep() */
 #define MikMod_Sleep(ns) usleep(ns)
 #endif
+
+
+static int quit = 0;
+static void my_sighandler (int sig)
+{
+	quit = 1;
+}
 
 int main(int argc, char **argv)
 {
@@ -54,14 +62,28 @@ int main(int argc, char **argv)
 	/* load module */
 	module = Player_Load(argv[1], 64, 0);
 	if (module) {
+		/* handle Ctrl-C, etc. */
+		#ifdef SIGBREAK
+		signal(SIGBREAK, my_sighandler);
+		#endif
+		signal(SIGINT, my_sighandler);
+		signal(SIGTERM, my_sighandler);
+
 		/* start module */
 		printf("Playing %s (%d chn)\n", module->songname, (int) module->numchn);
 		Player_Start(module);
 
-		while (Player_Active()) {
+		while (!quit && Player_Active()) {
 			MikMod_Sleep(10000);
 			MikMod_Update();
 		}
+
+		/* restore signals. */
+		#ifdef SIGBREAK
+		signal(SIGBREAK, SIG_DFL);
+		#endif
+		signal(SIGINT, SIG_DFL);
+		signal(SIGTERM, SIG_DFL);
 
 		Player_Stop();
 		Player_Free(module);
@@ -73,4 +95,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

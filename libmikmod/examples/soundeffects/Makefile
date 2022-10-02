@@ -17,9 +17,8 @@ OBJS=soundeffects.o
 all: $(OBJS)
 	$(LD) $(OBJS) $(LDFLAGS) -o $(PROG)
 
-%.o: %.c %.h
+.c.o:
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm -f *.o $(PROG)
-
+	$(RM) *.o $(PROG)

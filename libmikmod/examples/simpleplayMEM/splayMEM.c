@@ -9,6 +9,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <mikmod.h>
@@ -25,6 +26,13 @@ void amiga_usleep (unsigned long timeout);
 #endif
 
 #include "myloader.h"
+
+
+static int quit = 0;
+static void my_sighandler (int sig)
+{
+	quit = 1;
+}
 
 int main(int argc, char **argv)
 {
@@ -55,7 +63,6 @@ int main(int argc, char **argv)
 	/* init the library */
 	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION;
 	md_mode |= DMODE_HQMIXER;
-
 	if (MikMod_Init("")) {
 		fprintf(stderr, "Could not initialize sound, reason: %s\n",
 				MikMod_strerror(MikMod_errno));
@@ -105,14 +112,28 @@ int main(int argc, char **argv)
 	/* load module */
 	module = Player_LoadGeneric(mem_reader, 64, 0);
 	if (module) {
+		/* handle Ctrl-C, etc. */
+		#ifdef SIGBREAK
+		signal(SIGBREAK, my_sighandler);
+		#endif
+		signal(SIGINT, my_sighandler);
+		signal(SIGTERM, my_sighandler);
+
 		/* start module */
 		printf("Playing %s\n", module->songname);
 		Player_Start(module);
 
-		while (Player_Active()) {
+		while (!quit && Player_Active()) {
 			MikMod_Sleep(10000);
 			MikMod_Update();
 		}
+
+		/* restore signals. */
+		#ifdef SIGBREAK
+		signal(SIGBREAK, SIG_DFL);
+		#endif
+		signal(SIGINT, SIG_DFL);
+		signal(SIGTERM, SIG_DFL);
 
 		Player_Stop();
 		Player_Free(module);
@@ -127,4 +148,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
