@@ -33,8 +33,8 @@ static int sdl_init(void)
   spec.userdata = NULL;
 
   if (SDL_OpenAudio(&spec, NULL) < 0) {
+    fprintf(stderr, "Can't initialize SDL audio: %s\n", SDL_GetError());
     SDL_Quit();
-    fprintf(stderr, "%s\n", SDL_GetError());
     return -1;
   }
 
