@@ -1,9 +1,7 @@
 /* sdlplay.c: A very basic example on how to use libmikmod to play
  * a module using SDL to output audio: SDL2 or SDL-1.2 can be used.
  *
- * This example is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRENTY; without event the implied warrenty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * This file is in public domain.
  */
 
 #include <stdio.h>
@@ -14,7 +12,7 @@
 
 static void SDLCALL fill_audio(void *udata, Uint8 *stream, int len)
 {
-  (void) udata; /* not used */
+  (void) udata; /* not used. */
   VC_WriteBytes((SBYTE *)stream, len);
 }
 
@@ -35,6 +33,7 @@ static int sdl_init(void)
   spec.userdata = NULL;
 
   if (SDL_OpenAudio(&spec, NULL) < 0) {
+    SDL_Quit();
     fprintf(stderr, "%s\n", SDL_GetError());
     return -1;
   }

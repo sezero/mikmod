@@ -23,75 +23,97 @@ void amiga_usleep (unsigned long timeout);
 #endif
 
 
+static int libmikmod_init(void)
+{
+  /* initialize MikMod threads */
+  MikMod_InitThreads ();
+
+  /* register all the drivers */
+  MikMod_RegisterAllDrivers();
+
+  /* register all the module loaders */
+  MikMod_RegisterAllLoaders();
+
+  /* init the library */
+  md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION;
+  md_mixfreq = 44100;
+  if (MikMod_Init("")) {
+    fprintf(stderr, "Could not initialize sound, reason: %s\n",
+            MikMod_strerror(MikMod_errno));
+    return -1;
+  }
+  return 0;
+}
+
+static void libmikmod_deinit(void)
+{
+  MikMod_Exit();
+}
+
 static int quit = 0;
 static void my_sighandler (int sig)
 {
-	quit = 1;
+  (void) sig;
+  quit = 1;
+}
+
+static void signals_init(void)
+{
+  /* handle Ctrl-C, etc. */
+  #ifdef SIGBREAK
+  signal(SIGBREAK, my_sighandler);
+  #endif
+  signal(SIGINT, my_sighandler);
+  signal(SIGTERM, my_sighandler);
+}
+
+static void signals_deinit(void)
+{
+  /* restore signals. */
+  #ifdef SIGBREAK
+  signal(SIGBREAK, SIG_DFL);
+  #endif
+  signal(SIGINT, SIG_DFL);
+  signal(SIGTERM, SIG_DFL);
 }
 
 int main(int argc, char **argv)
 {
-	MODULE *module;
+  MODULE *module;
 
-	if (argc < 2) {
-		fprintf(stderr, "Usage: ./splay file\n");
-		return 1;
-	}
+  if (argc < 2) {
+    fprintf(stderr, "Usage: ./splay file\n");
+    return 1;
+  }
 
 #ifdef _MIKMOD_AMIGA
-	amiga_sysinit ();
+  amiga_sysinit ();
 #endif
+  if (libmikmod_init() < 0) {
+    return 1;
+  }
+  signals_init();
 
-	/* initialize MikMod threads */
-	MikMod_InitThreads ();
+  /* load module */
+  module = Player_Load(argv[1], 64, 0);
+  if (module) {
+    /* start module */
+    printf("Playing %s (%d chn)\n", module->songname, (int) module->numchn);
+    Player_Start(module);
 
-	/* register all the drivers */
-	MikMod_RegisterAllDrivers();
+    while (!quit && Player_Active()) {
+      MikMod_Sleep(10000);
+      MikMod_Update();
+    }
 
-	/* register all the module loaders */
-	MikMod_RegisterAllLoaders();
+    Player_Stop();
+    Player_Free(module);
+  } else
+    fprintf(stderr, "Could not load module, reason: %s\n",
+            MikMod_strerror(MikMod_errno));
 
-	/* init the library */
-	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION;
-	if (MikMod_Init("")) {
-		fprintf(stderr, "Could not initialize sound, reason: %s\n",
-				MikMod_strerror(MikMod_errno));
-		return 2;
-	}
+  signals_deinit();
+  libmikmod_deinit();
 
-	/* load module */
-	module = Player_Load(argv[1], 64, 0);
-	if (module) {
-		/* handle Ctrl-C, etc. */
-		#ifdef SIGBREAK
-		signal(SIGBREAK, my_sighandler);
-		#endif
-		signal(SIGINT, my_sighandler);
-		signal(SIGTERM, my_sighandler);
-
-		/* start module */
-		printf("Playing %s (%d chn)\n", module->songname, (int) module->numchn);
-		Player_Start(module);
-
-		while (!quit && Player_Active()) {
-			MikMod_Sleep(10000);
-			MikMod_Update();
-		}
-
-		/* restore signals. */
-		#ifdef SIGBREAK
-		signal(SIGBREAK, SIG_DFL);
-		#endif
-		signal(SIGINT, SIG_DFL);
-		signal(SIGTERM, SIG_DFL);
-
-		Player_Stop();
-		Player_Free(module);
-	} else
-		fprintf(stderr, "Could not load module, reason: %s\n",
-				MikMod_strerror(MikMod_errno));
-
-	MikMod_Exit();
-
-	return 0;
+  return 0;
 }
