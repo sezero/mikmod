@@ -75,8 +75,10 @@ dnl Checks for bogus Linux old libc5 sched.h
 case "$host_os" in
     linux*)
 	AC_MSG_CHECKING([whether sched.h is correct])
-	AC_TRY_COMPILE([#include <sched.h>], [sched_yield();],
-		broken_sched=no, broken_sched=yes)
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+		[[#include <sched.h>]],
+		[sched_yield();])],
+		[broken_sched=no], [broken_sched=yes])
 	if test "$broken_sched" = "yes"
 	then
 		AC_DEFINE(BROKEN_SCHED, 1,
@@ -128,16 +130,17 @@ if test "$need_curses" = "yes" ; then
 	ac_save_LIBS=$LIBS
 	LIBS="$LIBS -l$libcurses"
 	AC_MSG_CHECKING([whether curses links without libtinfo])
-	AC_TRY_LINK([#ifdef HAVE_NCURSES_H
+	AC_LINK_IFELSE([AC_LANG_PROGRAM(
+[[#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
 #elif defined(HAVE_CURSES_H)
 #include <curses.h>
 #elif defined(HAVE_NCURSES_CURSES_H)
 #include <ncurses/curses.h>
-#endif],
-[#ifdef ACS_ULCORNER
+#endif]],
+[[#ifdef ACS_ULCORNER
 return ACS_ULCORNER;
-#endif],
+#endif]])],
 		[need_tinfo=no], [need_tinfo=yes]
 	)
 	if test "$need_tinfo" = "yes" ; then
@@ -147,16 +150,17 @@ return ACS_ULCORNER;
 		else
 			AC_MSG_CHECKING([whether ncurses links with libtinfo])
 			LIBS="$LIBS -ltinfo"
-			AC_TRY_LINK([#ifdef HAVE_NCURSES_H
+			AC_LINK_IFELSE([AC_LANG_PROGRAM(
+[[#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
 #elif defined(HAVE_CURSES_H)
 #include <curses.h>
-#endif],
-[#ifdef ACS_ULCORNER
+#endif]],
+[[#ifdef ACS_ULCORNER
 return ACS_ULCORNER;
-#endif],
-				AC_MSG_RESULT(yes),
-				AC_MSG_ERROR([--- ERROR: failed linking to ncurses library.])
+#endif]])],
+				[AC_MSG_RESULT(yes)],
+				[AC_MSG_ERROR(--- ERROR: failed linking to ncurses library.)]
 			)
 		fi
 	else

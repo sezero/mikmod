@@ -590,8 +590,8 @@ then
 		libmikmod_oldlibs=$LIBS
 		LIBS="$LIBS $libmikmod_dllib"
 		AC_LANG_PUSH([C])
-		AC_TRY_RUN(
-[#include <dlfcn.h>
+		AC_RUN_IFELSE([AC_LANG_SOURCE(
+[[#include <dlfcn.h>
 #ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL 0
 #endif
@@ -602,7 +602,7 @@ int main(void) {
 	printfptr = dlsym(libc, "_printf");
 	dlclose(libc);
 	exit(!printfptr);
-}],
+}]])],
 			[libmikmod_cv_dynload_underscores=yes],
 			[libmikmod_cv_dynload_underscores=no],
 			[libmikmod_cv_dynload_underscores=no])
@@ -630,8 +630,8 @@ then
 		ac_save_CFLAGS=$CFLAGS
 		CFLAGS="$CFLAGS -pthread"
 		AC_LANG_PUSH([C])
-		AC_TRY_LINK([#include <pthread.h>],
-			[int p = pthread_create(NULL,NULL,NULL,NULL);],
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
+			[int p = pthread_create(NULL,NULL,NULL,NULL);])],
 			[libmikmod_cv_gcc_pthread=yes],
 			[libmikmod_cv_gcc_pthread=no])
 		AC_LANG_POP([C])
@@ -703,8 +703,8 @@ then
 		test -n "$ac_x_libraries" && LDFLAGS="$LDFLAGS -L$ac_x_libraries"
 		LIBS="$LIBS -laudio"
 		AC_MSG_CHECKING([X11 locations for NAS])
-		AC_TRY_LINK([#include <audio/audiolib.h>],
-				[AuFlowID f=AuCreateFlow(0,0);],
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <audio/audiolib.h>]],
+				[AuFlowID f=AuCreateFlow(0,0);])],
 				[libmikmod_driver_nas=yes])
 		CFLAGS=$ac_save_CFLAGS
 		LDFLAGS=$ac_save_LDFLAGS
@@ -801,8 +801,11 @@ case $host_os in
 		if test $libmikmod_driver_xaudio2 = yes
 		then
 			AC_CACHE_CHECK([if XAUDIO2_VOICE_NOSAMPLESPLAYED is defined],[libmikmod_cv_xaudio2_7_header],
-			 [AC_TRY_COMPILE([#include <xaudio2.h>],[int flag=XAUDIO2_VOICE_NOSAMPLESPLAYED;],
-					[libmikmod_cv_xaudio2_7_header=yes],[libmikmod_cv_xaudio2_7_header=no])])
+			 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+					[[#include <xaudio2.h>]],
+					[int flag=XAUDIO2_VOICE_NOSAMPLESPLAYED;])],
+					[libmikmod_cv_xaudio2_7_header=yes],
+					[libmikmod_cv_xaudio2_7_header=no])])
 			if test $libmikmod_cv_xaudio2_7_header = yes && test $use_xaudio28 = yes
 			then
 			  AC_MSG_WARN([xaudio2.h <= 2.7 and xaudio2.8 enabled - build will likely fail.])
@@ -856,11 +859,13 @@ then
 	if test $ac_cv_header_libgus_h = yes
 	then
 		AC_CACHE_CHECK([if libgus is new enough],[libmikmod_cv_libgus_h_good],
-		 [AC_TRY_COMPILE([#include <libgus.h>],
+		 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[#include <libgus.h>]],
 [gus_info_t *info;
 int flg1=GUS_INSTR_SIMPLE;
-int flg2=GUS_WAVE_BIDIR;],
-				[libmikmod_cv_libgus_h_good=yes],[libmikmod_cv_libgus_h_good=no])])
+int flg2=GUS_WAVE_BIDIR;])],
+				[libmikmod_cv_libgus_h_good=yes],
+				[libmikmod_cv_libgus_h_good=no])])
 
 		if test $libmikmod_cv_libgus_h_good = yes
 		then
@@ -1100,7 +1105,8 @@ then
 	esac
 
 	AC_MSG_CHECKING([whether OSS code compiles])
-	AC_TRY_COMPILE([#ifdef HAVE_SYS_IOCTL_H
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[#ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
 #ifdef HAVE_SYS_SOUNDCARD_H
@@ -1111,8 +1117,8 @@ then
 # include <soundcard.h>
 #else
 error No OSS header present.
-#endif],
-			[int i=SNDCTL_DSP_RESET;],
+#endif]],
+			[int i=SNDCTL_DSP_RESET;])],
 			[libmikmod_driver_oss=yes],
 			[libmikmod_driver_oss=no])
 	AC_MSG_RESULT([$libmikmod_driver_oss])
@@ -1222,11 +1228,11 @@ then
 	# Until there's an easy way to catch broken inlining, we choose flags known
 	# to work correctly depending of the compiler version.
 	AC_CACHE_CHECK([if inlining functions is safe],[libmikmod_cv_gcc_inline_safe],
-	 [AC_TRY_COMPILE(,[
+	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
 #if !(defined __GNUC__ && (__GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ > 7))
 #error inlining functions not safe
 #endif
-], [libmikmod_cv_gcc_inline_safe=yes], [libmikmod_cv_gcc_inline_safe=no])])
+]])], [libmikmod_cv_gcc_inline_safe=yes], [libmikmod_cv_gcc_inline_safe=no])])
 	if test $libmikmod_cv_gcc_inline_safe = no
 	then
 		CFLAGS="$CFLAGS -fno-strength-reduce"
@@ -1315,12 +1321,12 @@ ac_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -Werror"
 AC_CACHE_CHECK([if compiler supports visibility attributes],[libmikmod_cv_gcc_visibility],
 	AC_LANG_PUSH([C])
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 __attribute__((visibility("default"))) int foo(void);
 __attribute__((visibility("hidden")))  int bar(void);
 int foo(void) { return 0; }
 int bar(void) { return 1; }],
-		[],
+		[])],
 		[libmikmod_cv_gcc_visibility=yes],
 		[libmikmod_cv_gcc_visibility=no])
 	AC_LANG_POP([C]))
