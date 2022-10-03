@@ -1,7 +1,7 @@
 /* config.h.  Generated manually for Windows. */
 
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2). */
-#define HAVE_MIKMOD_FREE 1
+#define HAVE_MIKMOD_FREE
 
 /* Define the directory for shared data. */
 #undef PACKAGE_DATA_DIR
@@ -38,6 +38,3 @@
 
 /* Define to 1 if you have the `vsnprintf' function. */
 #define HAVE_VSNPRINTF
-
-/* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE void

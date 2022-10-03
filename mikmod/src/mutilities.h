@@ -33,9 +33,6 @@
 
 #if defined(__OS2__)||defined(__EMX__)
 #include <os2.h>
-#ifndef HAVE_CONFIG_H
-#define RETSIGTYPE void
-#endif
 #endif
 
 #if defined(__MORPHOS__) || defined(__AROS__) || defined(AMIGAOS)	|| \

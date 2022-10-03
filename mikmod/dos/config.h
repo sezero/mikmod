@@ -20,9 +20,6 @@
 /* Define if you have the vprintf function.  */
 #define HAVE_VPRINTF	1
 
-/* Define as the return type of signal handlers (int or void).  */
-#define RETSIGTYPE	void
-
 /* Define if you have the mkstemp function.  */
 #define HAVE_MKSTEMP	1
 
@@ -55,4 +52,3 @@
 
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H		1
-

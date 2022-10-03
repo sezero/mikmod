@@ -261,21 +261,21 @@ static void exit_player(int exitcode, const char *message, ...)
 
 #ifndef _WIN32
 /* signal handlers */
-static RETSIGTYPE GotoNext(int signum)
+static void GotoNext(int signum)
 {
 	next = PL_CONT_NEXT;
 
 	signal(SIGUSR1, GotoNext);
 }
 
-static RETSIGTYPE GotoPrev(int signum)
+static void GotoPrev(int signum)
 {
 	next = PL_CONT_PREV;
 
 	signal(SIGUSR2, GotoPrev);
 }
 
-static RETSIGTYPE ExitGracefully(int signum)
+static void ExitGracefully(int signum)
 {
 	/* can't exit now if playing */
 	if (status.state == STATE_PLAY) {

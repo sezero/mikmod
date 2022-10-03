@@ -1,8 +1,5 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define if your system is AIX 3.* - might be needed for 4.* too. */
-#undef AIX
-
 /* Define if your copy of <sched.h> has a _P instead of __P (old Linux libc5).
    */
 #undef BROKEN_SCHED
@@ -115,6 +112,9 @@
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
 
+/* Define if your system is AIX 3.* - might be needed for 4.* too. */
+#undef MIKMOD_AIX
+
 /* Name of package */
 #undef PACKAGE
 
@@ -138,12 +138,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* Define as the return type of signal handlers (`int' or `void'). */
-#undef RETSIGTYPE
-
-/* Define if your system is SOLARIS. */
-#undef SOLARIS
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

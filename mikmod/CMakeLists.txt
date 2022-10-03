@@ -154,19 +154,6 @@ CHECK_MULTI_FUNCTIONS_EXISTS(
     vprintf
 )
 
-CHECK_C_SOURCE_COMPILES(
- "#include <sys/types.h>
-  #include <signal.h>
-  int main(void) { return *(signal(0,0))(0) == 1; }"
-  RETSIGTYPE_INT
-)
-if(RETSIGTYPE_INT)
-  set(RETSIGTYPE int)
-else()
-  set(RETSIGTYPE void)
-endif()
-MESSAGE(STATUS "Return type of signal handlers: ${RETSIGTYPE}")
-
 SET(CMAKE_REQUIRED_INCLUDES ${MIKMOD_INCLUDE_DIR})
 SET(CMAKE_REQUIRED_LIBRARIES ${MIKMOD_LIBRARIES})
 CHECK_FUNCTION_EXISTS (MikMod_free HAVE_MIKMOD_FREE)

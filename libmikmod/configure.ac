@@ -528,14 +528,6 @@ PKG_PROG_PKG_CONFIG
 AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
-AC_CACHE_CHECK([if compiler understands the signed keyword],[libmikmod_cv_gcc_signed],
-	AC_LANG_PUSH([C])
-	AC_TRY_COMPILE(,[signed int t = 0;],[libmikmod_cv_gcc_signed=yes],[libmikmod_cv_gcc_signed=no])
-	AC_LANG_POP([C]))
-if test $libmikmod_cv_gcc_signed = no
-then
-	AC_DEFINE(signed,,[Define to empty if compiler does not understand the `signed' keyword.])
-fi
 
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
@@ -627,7 +619,7 @@ fi
 # ---------------
 if test $libmikmod_mingw = yes || test $libmikmod_amiga = yes
 then
-	dnl libmikmod_threads variable is for pthreads only
+	# libmikmod_threads variable is for pthreads only
 	libmikmod_threads=no
 fi
 
@@ -647,15 +639,15 @@ then
 	)
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-		dnl There is no need for -pthread on darwin or haiku, as gcc
-		dnl complains about unrecognized option -pthread
+		# There is no need for -pthread on darwin or haiku, as gcc
+		# complains about unrecognized option -pthread
 		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			libmikmod_threads=""
 			CFLAGS="$CFLAGS -pthread"
 		fi
 	else
-		dnl AC_CHECK_HEADERS(pthread.h) unreliable
+		# AC_CHECK_HEADERS(pthread.h) unreliable
 		AC_CHECK_LIB([pthread],[pthread_create],[libmikmod_threads=-lpthread],
 				[AC_CHECK_LIB([c_r],[pthread_create],[libmikmod_threads=-lc_r])])
 	fi
@@ -1249,8 +1241,8 @@ then
 	REENTRANT="-D_REENTRANT"
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-		dnl There is no need for -pthread on darwin or haiku, as gcc
-		dnl complains about unrecognized option -pthread
+		# There is no need for -pthread on darwin or haiku, as gcc
+		# complains about unrecognized option -pthread
 		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			REENTRANT="-pthread $REENTRANT"
@@ -1266,11 +1258,11 @@ case $host_cpu in
 	then
 		case $host_os in
 		  darwin*)
-			dnl compile all Altivec functions, check at run-time
+			# compile all Altivec functions, check at run-time
 			CFLAGS="$CFLAGS -faltivec -force_cpusubtype_ALL" ;;
 		  *)
-			dnl -faltivec and -force_cpusubtype_ALL are Apple-only
-			dnl features.  -maltivec compiles all code for AltiVec..
+			# -faltivec and -force_cpusubtype_ALL are Apple-only
+			# features.  -maltivec compiles all code for AltiVec.
 			CFLAGS="$CFLAGS -maltivec" ;;
 		esac
 		libmikmod_altivec=yes
@@ -1283,8 +1275,8 @@ case $host_cpu in
 	AC_MSG_CHECKING(whether to use sse2)
 	if test x$libmikmod_simd = xyes
 	then
-		dnl x86_64 already enables sse2
-		dnl add -msse2 for x86 to enable it
+		# x86_64 already enables sse2
+		# add -msse2 for x86 to enable it
 		case `arch` in
 		  i*86) CFLAGS="$CFLAGS -msse2" ;;
 		esac

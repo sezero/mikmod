@@ -42,29 +42,23 @@
 #endif
 #include <sys/param.h>
 #include <sys/types.h>
+#include <stdio.h> /* perror() */
 
 int usleep_new(unsigned long microSeconds)
 {
 	unsigned int Seconds, uSec;
+	fd_set readfds, writefds, exceptfds;
 	int nfds;
 	struct timeval Timer;
-
-#if (defined(SOLARIS) || (defined(SGI)))
-	fd_set readfds, writefds, exceptfds;
 
 	nfds = 0;
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
 	FD_ZERO(&exceptfds);
-#else
-	int readfds, writefds, exceptfds;
-	nfds = readfds = writefds = exceptfds = 0;
-#endif
 
-	if ((microSeconds == (unsigned long)0)
-		|| microSeconds > (unsigned long)4000000) {
+	if (microSeconds == 0UL || microSeconds > 4000000UL) {
 		errno = ERANGE;			/* value out of range */
-		perror("usleep time out of range ( 0 -> 4000000 ) ");
+		perror("usleep time out of range (0 -> 4000000)");
 		return -1;
 	}
 

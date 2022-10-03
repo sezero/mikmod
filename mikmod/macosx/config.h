@@ -102,9 +102,6 @@
 /* Define to 1 if you have the `vsnprintf' function. */
 #define HAVE_VSNPRINTF 1
 
-/* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE void
-
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 

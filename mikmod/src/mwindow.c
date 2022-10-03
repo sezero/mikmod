@@ -143,7 +143,7 @@ static int cursor_old = 0;
 static BOOL resize = 0;
 
 /* old AIX curses are very limited */
-#if defined(AIX) && !defined(mvaddnstr)
+#if defined(MIKMOD_AIX) && !defined(mvaddnstr)
 void mvaddnstr(int y, int x, const char *str, int len)
 {
 	char buffer[STORAGELEN];
@@ -169,7 +169,7 @@ void getmaxyx_hpux(MWINDOW * win, int *y, int *x)
 #define getmaxyx(win,y,x) getmaxyx_hpux((win),&(y),&(x))
 #endif
 
-#if defined(AIX) && !defined(NCURSES_VERSION) && !defined(getmaxyx)
+#if defined(MIKMOD_AIX) && !defined(NCURSES_VERSION) && !defined(getmaxyx)
 #define getmaxyx(win,y,x) (y = LINES, x = COLS)
 #endif
 
@@ -178,7 +178,7 @@ void getmaxyx_hpux(MWINDOW * win, int *y, int *x)
 #endif
 
 /* handler for terminal resize events */
-RETSIGTYPE sigwinch_handler(int signum)
+void sigwinch_handler(int signum)
 {
 	/* schedule a resizeterm() */
 	resize = 1;
@@ -212,7 +212,7 @@ static void init_curses(void)
 	noecho();
 	nonl();
 	nodelay(stdscr, TRUE);
-#if !defined(AIX) || defined(NCURSES_VERSION)
+#if !defined(MIKMOD_AIX) || defined(NCURSES_VERSION)
 	timeout(0);
 #endif
 	keypad(stdscr, TRUE);

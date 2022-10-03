@@ -1,5 +1,5 @@
 /* Define if your system is AIX 3.* - might be needed for 4.* too. */
-#cmakedefine AIX
+#cmakedefine MIKMOD_AIX
 
 /* Define if your copy of <sched.h> has a _P instead of __P (old Linux libc5).
    */
@@ -112,12 +112,6 @@
 
 /* Define the directory for shared data. */
 #cmakedefine PACKAGE_DATA_DIR "${PACKAGE_DATA_DIR}"
-
-/* Define as the return type of signal handlers (`int' or `void'). */
-#cmakedefine RETSIGTYPE ${RETSIGTYPE}
-
-/* Define if your system is SOLARIS. */
-#cmakedefine SOLARIS
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS

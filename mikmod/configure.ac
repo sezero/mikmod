@@ -121,7 +121,7 @@ if test "$need_curses" = "yes" ; then
 				AC_MSG_ERROR([--- ERROR: No curses library found.])))
 	AC_CHECK_LIB([tinfo], [tgetflag], [have_tinfo=yes], [have_tinfo=no])
 
-dnl resizeterm is an optional part of ncurses
+	# resizeterm is an optional part of ncurses
 	AC_CHECK_LIB($libcurses, resizeterm, AC_DEFINE(HAVE_NCURSES_RESIZETERM, 1,
 		[Define if your libncurses defines resizeterm (not found in <4.2).]))
 
@@ -173,7 +173,7 @@ case "$host_os" in
 esac
 if test "$mikmod_threads" = "yes"; then
 	mikmod_threads=no
-	dnl AC_CHECK_HEADERS(pthread.h) unreliable
+	# AC_CHECK_HEADERS(pthread.h) unreliable
 	AC_CHECK_LIB([pthread], [pthread_create],
 			[mikmod_threads=-lpthread],
 			AC_CHECK_LIB([c_r], [pthread_attr_init],
@@ -188,7 +188,6 @@ dnl =============================
 AC_FUNC_FNMATCH
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MEMCMP
-AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 
 AC_CHECK_FUNCS(getopt_long_only, have_getopt_long_only=yes)
@@ -212,7 +211,7 @@ dnl ================
 
 case $host in
     *-aix*)
-	AC_DEFINE(AIX, 1, [Define if your system is AIX 3.* - might be needed for 4.* too.])
+	AC_DEFINE(MIKMOD_AIX, 1, [Define if your system is AIX 3.* - might be needed for 4.* too.])
     ;;
 esac
 
@@ -229,7 +228,6 @@ dnl ===================
 
 dnl solaris usleep is not thread safe, use an alternative
 dnl implementation on this system
-
 case $host in
     *-*-solaris*)
 	if test "$mikmod_threads" != "no"; then
@@ -237,7 +235,6 @@ case $host in
 	else
 		AC_CHECK_FUNCS(usleep, have_usleep=yes)
 	fi
-	AC_DEFINE(SOLARIS, 1, [Define if your system is SOLARIS.])
 	;;
     *)
 	AC_CHECK_FUNCS(usleep, have_usleep=yes)
