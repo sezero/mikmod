@@ -116,9 +116,6 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
 
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#cmakedefine TIME_WITH_SYS_TIME
-
 /* Version number of package */
 #cmakedefine VERSION "${VERSION}"
 

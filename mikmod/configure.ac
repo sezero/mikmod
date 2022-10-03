@@ -60,9 +60,9 @@ dnl ========================
 dnl Checks for header files.
 dnl ========================
 
-AC_HEADER_STDC
+dnl AC_CHECK_INCLUDES_DEFAULT is an autoconf-2.7x thing where AC_HEADER_STDC is deprecated.
+m4_ifdef([AC_CHECK_INCLUDES_DEFAULT], [AC_CHECK_INCLUDES_DEFAULT], [AC_HEADER_STDC])
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(fnmatch.h)
 AC_CHECK_HEADERS(sched.h)

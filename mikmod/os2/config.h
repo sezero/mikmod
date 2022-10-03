@@ -12,9 +12,6 @@
 /* Define if you have the vprintf function.  */
 #define HAVE_VPRINTF	1
 
-/* Define if you can safely include both <sys/time.h> and <time.h>.  */
-#define TIME_WITH_SYS_TIME	1
-
 /* Define if your system has random(3) and srandom(3) */
 #define HAVE_SRANDOM	1
 

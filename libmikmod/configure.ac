@@ -537,7 +537,8 @@ AC_C_BIGENDIAN
 # Check for header files.
 # =======================
 
-AC_HEADER_STDC
+dnl AC_CHECK_INCLUDES_DEFAULT is an autoconf-2.7x thing where AC_HEADER_STDC is deprecated.
+m4_ifdef([AC_CHECK_INCLUDES_DEFAULT], [AC_CHECK_INCLUDES_DEFAULT], [AC_HEADER_STDC])
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h])
 
