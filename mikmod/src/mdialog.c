@@ -117,11 +117,7 @@ void dlg_error_show(const char *txt, ...)
 	int len;
 
 	if (errno) {
-#ifdef HAVE_STRERROR
 		err = strerror(errno);
-#else
-		err = (errno >= sys_nerr) ? "(unknown error)" : sys_errlist[errno];
-#endif
 	}
 	va_start(args, txt);
 	VSNPRINTF (storage, STORAGELEN, txt, args);

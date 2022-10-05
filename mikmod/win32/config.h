@@ -21,9 +21,6 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strerror' function. */
-#define HAVE_STRERROR
-
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H
 
@@ -32,9 +29,6 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H
-
-/* Define to 1 if you have the `vprintf' function. */
-#define HAVE_VPRINTF
 
 /* Define to 1 if you have the `vsnprintf' function. */
 #define HAVE_VSNPRINTF

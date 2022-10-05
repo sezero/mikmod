@@ -1,8 +1,5 @@
 /* config.h --  Generated CMake. */
 
-/* Version number of package */
-#cmakedefine VERSION "${VERSION}"
-
 /* ========== Features selection */
 
 /* Define if your system supports binary pipes (i.e. Unix) */
@@ -86,8 +83,6 @@
 
 /* Define if your system is SunOS 4.* */
 #cmakedefine SUNOS 1
-/* Define if your system is AIX 3.* - might be needed for 4.* too */
-#cmakedefine AIX 1
 
 /* Define if your system provides POSIX.4 threads */
 #cmakedefine HAVE_PTHREAD 1
@@ -174,17 +169,11 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H 1
 
-/* Define to 1 if you have the `memcmp' function. */
-#cmakedefine HAVE_MEMCMP 1
-
 /* Define to 1 if you have the <soundcard.h> header file. */
 #cmakedefine HAVE_SOUNDCARD_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
 #cmakedefine HAVE_STRING_H 1
-
-/* Define to 1 if you have the `strstr' function. */
-#cmakedefine HAVE_STRSTR 1
 
 /* Define to 1 if you have the <sun/audioio.h> header file. */
 #cmakedefine HAVE_SUN_AUDIOIO_H 1

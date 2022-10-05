@@ -345,10 +345,6 @@ SET (MIKMOD_LIB_MODULES
     playercode/virtch_common.c
 )
 
-REPLACE_FUNCTIONS_FROMDIR(MIKMOD_LIB_MODULES
-    posix
-    memcmp strstr)
-
 SET (LIBMIKMOD_LIBS)
 
 IF (ENABLE_SHARED)

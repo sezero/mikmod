@@ -60,35 +60,13 @@ dnl ========================
 dnl Checks for header files.
 dnl ========================
 
-dnl AC_CHECK_INCLUDES_DEFAULT is an autoconf-2.7x thing where AC_HEADER_STDC is deprecated.
-m4_ifdef([AC_CHECK_INCLUDES_DEFAULT], [AC_CHECK_INCLUDES_DEFAULT], [AC_HEADER_STDC])
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
-AC_CHECK_HEADERS(fnmatch.h)
+AC_CHECK_HEADERS(fcntl.h limits.h fnmatch.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(sched.h)
 AC_CHECK_HEADERS(ncurses.h curses.h ncurses/curses.h)
 AC_CHECK_HEADERS(termios.h)
 
+AC_HEADER_SYS_WAIT
 AC_HEADER_TIOCGWINSZ
-
-dnl Checks for bogus Linux old libc5 sched.h
-case "$host_os" in
-    linux*)
-	AC_MSG_CHECKING([whether sched.h is correct])
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
-		[[#include <sched.h>]],
-		[sched_yield();])],
-		[broken_sched=no], [broken_sched=yes])
-	if test "$broken_sched" = "yes"
-	then
-		AC_DEFINE(BROKEN_SCHED, 1,
-			  [Define if your copy of <sched.h> has a _P instead of __P (old Linux libc5).])
-		AC_MSG_RESULT(no)
-	else
-		AC_MSG_RESULT(yes)
-	fi
-	;;
-esac
 
 dnl =====================
 dnl Checks for libraries.
@@ -190,12 +168,9 @@ dnl Checks for library functions.
 dnl =============================
 
 AC_FUNC_FNMATCH
-AC_PROG_GCC_TRADITIONAL
-AC_FUNC_MEMCMP
-AC_FUNC_VPRINTF
 
 AC_CHECK_FUNCS(getopt_long_only, have_getopt_long_only=yes)
-AC_CHECK_FUNCS(mkstemp srandom snprintf vsnprintf strerror)
+AC_CHECK_FUNCS(mkstemp srandom snprintf vsnprintf)
 
 AC_EGREP_HEADER(usleep, unistd.h, AC_DEFINE(HAVE_USLEEP_PROTO, 1,
 		[Define if your system has the prototype for usleep(3).]))

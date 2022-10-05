@@ -55,9 +55,6 @@
 /* Define if you have the srandom function.  */
 #define HAVE_SRANDOM 1
 
-/* Define if you have the strstr function.  */
-#define HAVE_STRSTR 1
-
 /* Define if you have the <dlfcn.h> header file.  */
 #define HAVE_DLFCN_H 1
 

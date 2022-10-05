@@ -45,9 +45,6 @@
 /* Define if you have the srandom function.  */
 /* #undef HAVE_SRANDOM */
 
-/* Define if you have the strstr function.  */
-#define HAVE_STRSTR 1
-
 /* Define if you have the <fcntl.h> header file.  */
 #define HAVE_FCNTL_H 1
 

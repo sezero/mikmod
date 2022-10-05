@@ -1,10 +1,6 @@
 /* Define if your system is AIX 3.* - might be needed for 4.* too. */
 #cmakedefine MIKMOD_AIX
 
-/* Define if your copy of <sched.h> has a _P instead of __P (old Linux libc5).
-   */
-#cmakedefine BROKEN_SCHED
-
 /* Define to 1 if `TIOCGWINSZ' requires <sys/ioctl.h>. */
 #cmakedefine GWINSZ_IN_SYS_IOCTL
 
@@ -65,9 +61,6 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strerror' function. */
-#cmakedefine HAVE_STRERROR
-
 /* Define to 1 if you have the <strings.h> header file. */
 #cmakedefine HAVE_STRINGS_H
 
@@ -104,9 +97,6 @@
 /* Define if your system has the prototype for usleep(3). */
 #cmakedefine HAVE_USLEEP_PROTO
 
-/* Define to 1 if you have the `vprintf' function. */
-#cmakedefine HAVE_VPRINTF
-
 /* Define to 1 if you have the `vsnprintf' function. */
 #cmakedefine HAVE_VSNPRINTF
 
@@ -115,9 +105,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
-
-/* Version number of package */
-#cmakedefine VERSION "${VERSION}"
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const

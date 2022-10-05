@@ -64,9 +64,6 @@
 #  endif
 #endif
 #if defined(__linux)
-#  ifdef BROKEN_SCHED
-#    define _P __P
-#  endif
 #  include <sched.h>
 #endif
 

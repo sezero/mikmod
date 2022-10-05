@@ -17,17 +17,11 @@
 /* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
 #define HAVE_SYS_WAIT_H	1
 
-/* Define if you have the vprintf function.  */
-#define HAVE_VPRINTF	1
-
 /* Define if you have the mkstemp function.  */
 #define HAVE_MKSTEMP	1
 
 /* Define if your system has random(3) and srandom(3) */
 #define HAVE_SRANDOM	1
-
-/* Define if your system has strerror(3) */
-#define HAVE_STRERROR 1
 
 /* Define if you have the usleep function.  */
 #define HAVE_USLEEP	1

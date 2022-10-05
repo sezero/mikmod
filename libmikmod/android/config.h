@@ -20,7 +20,7 @@
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
-#undef WORDS_BIGENDIAN
+/* #undef WORDS_BIGENDIAN */
 
 #define HAVE_UNISTD_H 1
 #define HAVE_FCNTL_H 1
@@ -32,7 +32,6 @@
 #define HAVE_STDINT_H 1
 #define HAVE_STDLIB_H 1
 #define HAVE_STRING_H 1
-#define HAVE_STRSTR 1
 #define HAVE_SYS_IOCTL_H 1
 #define HAVE_SYS_STAT_H 1
 #define HAVE_SYS_TYPES_H 1

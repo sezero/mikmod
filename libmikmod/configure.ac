@@ -65,8 +65,7 @@ case $host_os in
 	haiku*) libmikmod_haiku=yes ;;
 	hpux*) libmikmod_hpux=yes ;;
 	irix*) libmikmod_irix=yes ;;
-	aix*) AC_DEFINE([AIX], 1, [Define if your system is AIX 3.x - might be needed for 4.x too])
-		libmikmod_aix=yes ;;
+	aix*) libmikmod_aix=yes ;;
 	sunos*|solaris*)
 		if test "$cross_compiling" != yes
 		then
@@ -122,7 +121,7 @@ libmikmod_driver_wav=yes
 libmikmod_driver_raw=yes
 libmikmod_driver_stdout=yes
 libmikmod_driver_pipe=yes
-# ANDROID and DRV_OSLES are not configury-integrated
+#FIXME: ANDROID and DRV_OSLES are not configury-integrated
 libmikmod_driver_osles=no
 
 libmikmod_dynload=yes
@@ -525,7 +524,6 @@ PKG_PROG_PKG_CONFIG
 # Check for typedefs, structures, and compiler characteristics.
 # =============================================================
 
-AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
 
@@ -537,17 +535,15 @@ AC_C_BIGENDIAN
 # Check for header files.
 # =======================
 
-dnl AC_CHECK_INCLUDES_DEFAULT is an autoconf-2.7x thing where AC_HEADER_STDC is deprecated.
-m4_ifdef([AC_CHECK_INCLUDES_DEFAULT], [AC_CHECK_INCLUDES_DEFAULT], [AC_HEADER_STDC])
-AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h])
+
+AC_HEADER_SYS_WAIT
 
 # ============================
 # Check for library functions.
 # ============================
 
 AC_CHECK_FUNCS([posix_memalign setenv snprintf srandom])
-AC_REPLACE_FUNCS([memcmp strstr])
 
 # ====================
 # Check for libraries.
@@ -1225,12 +1221,11 @@ then
 
 	# On at least x86 platforms, gcc 2.7.2.1 and earlier won't work if -O3 (or
 	# -finline-functions) are used. Versions 2.7.2.3, 2.8.x and egcs are ok
-	# (didn't test 2.7.2.2).
-	# Until there's an easy way to catch broken inlining, we choose flags known
-	# to work correctly depending of the compiler version.
+	# (didn't test 2.7.2.2). Using flags known to work correctly depending on
+	# the compiler version:
 	AC_CACHE_CHECK([if inlining functions is safe],[libmikmod_cv_gcc_inline_safe],
 	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
-#if !(defined __GNUC__ && (__GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ > 7))
+#if defined __GNUC__ && !(__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 7))
 #error inlining functions not safe
 #endif
 ]])], [libmikmod_cv_gcc_inline_safe=yes], [libmikmod_cv_gcc_inline_safe=no])])

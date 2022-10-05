@@ -146,12 +146,10 @@ ENDIF()
 
 CHECK_MULTI_FUNCTIONS_EXISTS(
     getopt_long_only
-    mkstemp srandom snprintf vsnprintf strerror
+    mkstemp srandom snprintf vsnprintf
     usleep
     srandom
     fnmatch
-    memcmp
-    vprintf
 )
 
 SET(CMAKE_REQUIRED_INCLUDES ${MIKMOD_INCLUDE_DIR})
