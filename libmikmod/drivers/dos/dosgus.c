@@ -19,10 +19,8 @@
 */
 
 /*==============================================================================
-
   Driver for GUS cards under DOS
   Written by Andrew Zabolotny <bit@eltech.ru>
-
 ==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
@@ -33,15 +31,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <dos.h>
+
 #include <dpmi.h>
 #include <sys/farptr.h>
 #include <sys/nearptr.h>
 #include <go32.h>
-#include <string.h>
 
 #include "dosgus.h"
-#include "mikmod.h" /* for MikMod_malloc() & co */
+#include "mikmod.h"
 
 /********************************************* Private variables/routines *****/
 
@@ -142,20 +141,6 @@ static unsigned short __gus_volume_table[512] = {
  * Mark function as volatile: don't allow it to be inlined.
  * It *should* be slow, no need to make it work faster :-)
  */
-#if !defined(__GNUC__) || (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ == 0)
-# define _func_noinline volatile /* match original code */
-# define _func_noclone
-#else
-/* avoid warnings from newer gcc:
- * "function definition has qualified void return type" and
- * function return types not compatible due to 'volatile' */
-# define _func_noinline __attribute__((__noinline__))
-# if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
-#  define _func_noclone
-# else
-#  define _func_noclone __attribute__((__noclone__))
-# endif
-#endif
 _func_noinline
 _func_noclone
  void __gus_delay()
@@ -732,8 +717,8 @@ static void __gus_init()
 	if ((gus.port < 0x100) || (gus.port > 0x1000)
 		|| (gus.irq[0] < 2) || (gus.irq[0] > 15)
 		|| (gus.irq[1] < 2) || (gus.irq[1] > 15)
-		|| (gus.dma[0] < 0) || (gus.dma[0] > 7)
-		|| (gus.dma[1] < 0) || (gus.dma[1] > 7))
+	/*	|| (gus.dma[0] < 0) || (gus.dma[1] < 0)*/
+		|| (gus.dma[0] > 7) || (gus.dma[1] > 7))
 		return;
 
 	gus.voices = 32;
@@ -1567,7 +1552,7 @@ int gus_reset(int voices, unsigned int channel_voices)
 int gus_do_flush()
 {
 	DEBUG_PRINT(("gus_do_flush: top = %d\n", gus.cmd_pool_top))
-	  gus.cmd_pool_ready = 1;
+	gus.cmd_pool_ready = 1;
 	return 0;
 }
 
@@ -1575,7 +1560,7 @@ int gus_do_flush()
 void gus_do_tempo(unsigned int tempo)
 {
 	DEBUG_PRINT(("gus_do_tempo (%d)\n", tempo))
-	  gus_timer_tempo(tempo);
+	gus_timer_tempo(tempo);
 	gus_timer_start();
 }
 
@@ -1583,7 +1568,7 @@ void gus_do_tempo(unsigned int tempo)
 void gus_do_voice_frequency(unsigned char voice, unsigned int freq)
 {
 	DEBUG_PRINT(("gus_do_voice_frequency (%d, %d)\n", voice, freq))
-	  __pool_select_voice(voice);
+	__pool_select_voice(voice);
 	__pool_command_w(PCMD_FREQ,
 					 (((freq << 9) + (gus.freq >> 1)) / gus.freq) << 1);
 }
@@ -1592,7 +1577,7 @@ void gus_do_voice_frequency(unsigned char voice, unsigned int freq)
 void gus_do_voice_pan(unsigned char voice, unsigned short pan)
 {
 	DEBUG_PRINT(("gus_do_voice_pan (%d, %d)\n", voice, pan))
-	  pan >>= 10;
+	pan >>= 10;
 	if (pan > 15)
 		pan = 15;
 	__pool_select_voice(voice);
@@ -1603,7 +1588,7 @@ void gus_do_voice_pan(unsigned char voice, unsigned short pan)
 void gus_do_voice_volume(unsigned char voice, unsigned short vol)
 {
 	DEBUG_PRINT(("gus_do_voice_volume (%d, %d)\n", voice, vol))
-	  if (vol > 0x3fff)
+	if (vol > 0x3fff)
 		vol = 0x3fff;
 	__pool_select_voice(voice);
 	__pool_command_w(PCMD_VOLUME, __gus_volume_table[vol >> 5]);
@@ -1642,7 +1627,7 @@ void gus_do_voice_start_position(unsigned char voice, unsigned int program,
 				("gus_do_voice_start_position (%d, %d, pos: %d)\n", voice,
 				 program, position))
 
-	  instrument = __gus_instrument_get(program);
+	instrument = __gus_instrument_get(program);
 
 	if (!instrument
 		|| !instrument->info.layer
@@ -1659,7 +1644,7 @@ void gus_do_voice_start_position(unsigned char voice, unsigned int program,
 	__pool_command_w(PCMD_VOLUME_PREPARE, __gus_volume_table[volume >> 5]);
 
 	switch (instrument->mode) {
-	  case GUS_INSTR_SIMPLE:
+	case GUS_INSTR_SIMPLE:
 		wave = instrument->info.layer->wave;
 		if (position)
 			__pool_command_l(PCMD_OFFSET, position);
@@ -1687,7 +1672,7 @@ void gus_do_wait(unsigned int ticks)
 {
 	DEBUG_PRINT(("gus_do_wait (%d)\n", ticks))
 
-	  ticks += gus.t1_ticks;
+	ticks += gus.t1_ticks;
 	while ((int)(ticks - gus.t1_ticks) > 0);
 }
 
@@ -1713,17 +1698,14 @@ int gus_memory_alloc(gus_instrument_t * instrument)
 
 	DEBUG_PRINT(("gus_memory_alloc (%d)\n", instrument->number.instrument))
 
-	  if (!instr)
+	if (!instr)
 		return -1;
 
-	for (cur_layer = instr->info.layer; cur_layer;
-		 cur_layer = cur_layer->next) for (cur_wave = cur_layer->wave;
-										   cur_wave;
-										   cur_wave = cur_wave->next) {
+	for (cur_layer = instr->info.layer; cur_layer; cur_layer = cur_layer->next) {
+		for (cur_wave = cur_layer->wave; cur_wave; cur_wave = cur_wave->next) {
 			if (cur_layer->mode == GUS_INSTR_SIMPLE) {
 				cur_wave->begin.memory = __gus_mem_alloc(cur_wave->size,
-														 cur_wave->format &
-														 GUS_WAVE_16BIT);
+									 cur_wave->format & GUS_WAVE_16BIT);
 				if (cur_wave->begin.memory == (unsigned int)-1) {
 					__gus_instrument_free(instr);
 					return -1;
@@ -1733,6 +1715,7 @@ int gus_memory_alloc(gus_instrument_t * instrument)
 			} else if (cur_layer->mode == GUS_INSTR_PATCH)
 				/* not supported yet */ ;
 		}
+	}
 
 	return 0;
 }
@@ -1744,7 +1727,7 @@ int gus_memory_free(gus_instrument_t * instrument)
 
 	DEBUG_PRINT(("gus_memory_free (%d)\n", instrument->number.instrument))
 
-	  for (; cur_instr; cur_instr = cur_instr->next)
+	for (; cur_instr; cur_instr = cur_instr->next)
 		if (cur_instr->number.instrument == instrument->number.instrument)
 			return __gus_instrument_free(cur_instr);
 
@@ -1903,5 +1886,3 @@ int gus_dma_usage (int use)
 }
 
 #endif /* DRV_ULTRA */
-
-/* ex:set ts=4: */

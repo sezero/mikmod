@@ -19,11 +19,9 @@
 */
 
 /*==============================================================================
-
-  Sound Blaster I/O routines, common for SB8, SBPro and SB16
-  Written by Andrew Zabolotny <bit@eltech.ru>
-
-==============================================================================*/
+ * Sound Blaster I/O routines, common for SB8, SBPro and SB16
+ * Written by Andrew Zabolotny <bit@eltech.ru>
+ *==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,12 +30,12 @@
 #ifdef DRV_SB
 
 #include <stdlib.h>
+#include <dos.h>
+#include <string.h>
 #include <dpmi.h>
 #include <go32.h>
-#include <dos.h>
 #include <sys/nearptr.h>
 #include <sys/farptr.h>
-#include <string.h>
 
 #include "dossb.h"
 
@@ -46,20 +44,6 @@
 __sb_state sb;
 
 /* Wait for SoundBlaster for some time */
-#if !defined(__GNUC__) || (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ == 0)
-# define _func_noinline volatile /* match original code */
-# define _func_noclone
-#else
-/* avoid warnings from newer gcc:
- * "function definition has qualified void return type" and
- * function return types not compatible due to 'volatile' */
-# define _func_noinline __attribute__((__noinline__))
-# if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
-#  define _func_noclone
-# else
-#  define _func_noclone __attribute__((__noclone__))
-# endif
-#endif
 _func_noinline
 _func_noclone
  void __sb_wait()
@@ -571,5 +555,3 @@ void sb_query_dma(unsigned int *dma_size, unsigned int *dma_pos)
 }
 
 #endif /* DRV_SB */
-
-/* ex:set ts=4: */

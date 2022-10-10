@@ -19,11 +19,7 @@
 */
 
 /*==============================================================================
-
-  $Id$
-
   Windows Sound System and compatible soundcards definitions
-
 ==============================================================================*/
 
 #ifndef __DOSWSS_H__
@@ -213,5 +209,3 @@ extern void wss_query_dma(unsigned int *dma_size, unsigned int *dma_pos);
 extern void wss_level(int level);
 
 #endif /* __DOSWSS_H__ */
-
-/* ex:set ts=4: */

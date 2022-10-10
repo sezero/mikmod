@@ -18,15 +18,8 @@
 	02111-1307, USA.
 */
 
-/*==============================================================================
-
-  $Id$
-
-  Linux libGUS-alike library for DOS, used by drv_ultra.c under DOS.
-
-==============================================================================*/
-
 /*
+	Linux libGUS-alike library for DOS, used by drv_ultra.c under DOS.
 	Current limitations:
 	- Only a subset of libgus is supported
 	- Only one GUS card is supported (due to the fact that ULTRASND environment
@@ -398,5 +391,3 @@ int gus_dma_usage (int use);
    */
 
 #endif /* __LIBGUS_H__ */
-
-/* ex:set ts=4: */

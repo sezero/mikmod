@@ -19,18 +19,9 @@
 */
 
 /*==============================================================================
-
-  $Id$
-
   Driver for SoundBlaster/Pro/16/AWE32 under DOS
-
+  Written by Andrew Zabolotny <bit@eltech.ru>
 ==============================================================================*/
-
-/*
-
-	Written by Andrew Zabolotny <bit@eltech.ru>
-
-*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -231,5 +222,3 @@ MDRIVER drv_sb =
 MISSING(drv_sb);
 
 #endif
-
-/* ex:set ts=4: */

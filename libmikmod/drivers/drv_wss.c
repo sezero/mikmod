@@ -19,18 +19,9 @@
 */
 
 /*==============================================================================
-
-  $Id$
-
   Driver for Windows Sound System under DOS
-
+  Written by Andrew Zabolotny <bit@eltech.ru>
 ==============================================================================*/
-
-/*
-
-	Written by Andrew Zabolotny <bit@eltech.ru>
-
-*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -213,5 +204,3 @@ MDRIVER drv_wss =
 MISSING(drv_wss);
 
 #endif
-
-/* ex:set ts=4: */

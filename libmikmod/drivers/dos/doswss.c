@@ -32,12 +32,12 @@
 #ifdef DRV_WSS
 
 #include <stdlib.h>
+#include <string.h>
+#include <dos.h>
 #include <dpmi.h>
 #include <go32.h>
-#include <dos.h>
 #include <sys/nearptr.h>
 #include <sys/farptr.h>
-#include <string.h>
 
 #include "doswss.h"
 
@@ -573,5 +573,3 @@ void wss_level(int level)
 }
 
 #endif /* DRV_WSS */
-
-/* ex:set ts=4: */

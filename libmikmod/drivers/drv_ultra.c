@@ -20,14 +20,8 @@
 
 /*==============================================================================
 
-  $Id$
-
-  Driver for Gravis Ultrasound cards using libGUS.
-  A subset of libGUS is provided for DOS/DJGPP and OS/2
-
-==============================================================================*/
-
-/*
+	Driver for Gravis Ultrasound cards using libGUS.
+	A subset of libGUS is provided for DOS/DJGPP and OS/2
 
 	Written by Andy Lo A Foe <andy@alsa-project.org>
 
@@ -40,7 +34,7 @@
 	+ Samples are no longer kept in normal memory.
 	+ Removed sample 'unclick' logic... libGUS does unclick internally.
 
-*/
+==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -623,8 +617,8 @@ static int Ultra_Init_internal(void)
 #endif
 
 	/* Zero the voice states and sample handles */
-	memset (&voices, 0, sizeof (voices));
-	memset (&samples, 0, sizeof (samples));
+	memset(voices, 0, sizeof (voices));
+	memset(samples, 0, sizeof (samples));
 
 	return 0;
 }
@@ -742,7 +736,6 @@ static void Ultra_Update(void)
 		ultra_bpm = md_bpm;
 	}
 }
-
 #else
 static void Ultra_Update(void)
 {
@@ -771,7 +764,6 @@ static void Ultra_Update(void)
 	/* Wait so that all voice commands gets executed */
 	libgus_do_wait (1);
 }
-
 #endif
 
 /* Start playback */
@@ -1021,5 +1013,3 @@ MDRIVER drv_ultra = {
 MISSING(drv_ultra);
 
 #endif /* DRV_ULTRA */
-
-/* ex:set ts=8: */

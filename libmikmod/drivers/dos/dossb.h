@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   SoundBlaster and compatible soundcards definitions
 
 ==============================================================================*/
@@ -218,6 +216,22 @@ typedef struct __sb_state_s {
 
 extern __sb_state sb;
 
+#if !defined(__GNUC__) || (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ == 0)
+# define _func_noinline volatile /* match original code */
+# define _func_noclone
+#else
+/* avoid warnings from newer gcc:
+ * "function definition has qualified void return type" and
+ * function return types not compatible due to 'volatile' */
+# define _func_noinline __attribute__((__noinline__))
+# if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#  define _func_noclone
+# else
+#  define _func_noclone __attribute__((__noclone__))
+# endif
+#endif
+_func_noinline
+_func_noclone
 extern void __sb_wait();
 
 static inline boolean __sb_dsp_ready_in()
@@ -337,5 +351,3 @@ extern void sb_stop_dma();
 extern void sb_query_dma(unsigned int *dma_size, unsigned int *dma_pos);
 
 #endif /* __DOSSB_H__ */
-
-/* ex:set ts=4: */

@@ -1,23 +1,20 @@
-/*
-    Implementation of IRQ routines on DOS
-    Copyright (C) 1999 by Andrew Zabolotny, <bit@eltech.ru>
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/
-
-#include "dosirq.h"
+/* Implementation of IRQ routines on DOS.
+ * Copyright (C) 1999 by Andrew Zabolotny <bit@eltech.ru>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #include <dpmi.h>
 #include <go32.h>
@@ -25,7 +22,9 @@
 #include <sys/nearptr.h>
 #include <malloc.h>
 #include <string.h>
-#include "mikmod.h" /* for MikMod_malloc() & co */
+
+#include "dosirq.h"
+#include "mikmod.h"
 
 unsigned int __irq_stack_size = 0x4000;
 unsigned int __irq_stack_count = 1;
@@ -70,8 +69,6 @@ static void __int_stub_template (void)
 		"	iret\n");
 /* *INDENT-ON* */
 }
-
-#include <stdio.h>
 
 static int _allocate_iret_wrapper(_go32_dpmi_seginfo * info)
 {
@@ -235,15 +232,14 @@ static int (*__irq_confirm) (int irqno);
 static volatile unsigned int __irq_mask;
 static volatile unsigned int __irq_count[16];
 
-#define DECLARE_IRQ_HANDLER(irqno)							\
-static void __irq##irqno##_handler ()						\
-{															\
-  if (irq_check (__irqs [irqno]) && __irq_confirm (irqno))	\
-  {															\
-    __irq_count [irqno]++;									\
-    __irq_mask |= (1 << irqno);								\
-  }															\
-  irq_ack (__irqs [irqno]);									\
+#define DECLARE_IRQ_HANDLER(irqno)					\
+static void __irq##irqno##_handler ()					\
+{									\
+  if (irq_check (__irqs [irqno]) && __irq_confirm (irqno)) {		\
+    __irq_count [irqno]++;						\
+    __irq_mask |= (1 << irqno);						\
+  }									\
+  irq_ack (__irqs [irqno]);						\
 }
 
 /* *INDENT-OFF* */
@@ -319,5 +315,3 @@ void irq_detect_clear()
 	if (oldirq)
 		enable();
 }
-
-/* ex:set ts=4: */
