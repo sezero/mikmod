@@ -714,6 +714,7 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 			stop_redirect();
 			free (command);
 
+			if (!file) goto done;
 			fgets(string, PATH_MAX + offset + 1, file);
 			while (!feof(file)) {
 				string[strlen(string) - 1] = 0;
@@ -737,6 +738,7 @@ void MA_FindFiles(PLAYLIST * pl, const CHAR *filename)
 #else
 			pclose(file);
 #endif
+done:			;
 
 #else /* Archive display, the Unix way */
 			int fd[2];
