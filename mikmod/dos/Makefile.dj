@@ -1,7 +1,5 @@
 #------------------------------------------------------------------------------#
-# Makefile for building MikMod under DOS/DJGPP
-#
-# This is a Makefile designed explicitly for GNU Make.
+# GNU Makefile for building MikMod under DOS/DJGPP
 # NOTE:  Edit config.h, if necessary.
 #------------------------------------------------------------------------------#
 
@@ -19,7 +17,7 @@ endif
 LD = $(CC)
 
 CFLAGS = -DHAVE_CONFIG_H $(INCLUDE)
-INCLUDE = -I. -I../src
+INCLUDE = -I.
 LDFLAGS = -L. -lmikmod
 ifeq ($(DEBUG),1)
 CFLAGS += -g -Wall
