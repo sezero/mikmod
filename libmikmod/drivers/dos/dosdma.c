@@ -24,6 +24,7 @@
 #include <dpmi.h>
 #include <sys/nearptr.h>
 #include <malloc.h>
+
 #include "mikmod.h" /* for MikMod_malloc() and MikMod_free() */
 
 /* BUG WARNING:  there is an error in DJGPP libraries <= 2.01:
@@ -70,7 +71,7 @@ int dma_initialize()
 	   call */
 	__djgpp_selector_limit = 0xffffffff;
 
-	__locked_data.address = __djgpp_base_address + (unsigned long)&dma;
+	__locked_data.address = __djgpp_base_address + (unsigned long)dma;
 	__locked_data.size = sizeof(dma);
 	if (__dpmi_lock_linear_region(&__locked_data))
 		return 0;
