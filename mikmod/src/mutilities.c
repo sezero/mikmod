@@ -54,7 +54,7 @@
 #define INCL_DOS
 #include <os2.h>
 #include <io.h>
-#else
+#elif defined(HAVE_SYS_TIME_H)
 #include <sys/time.h>
 #endif
 
