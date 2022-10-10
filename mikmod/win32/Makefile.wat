@@ -10,11 +10,8 @@ target = dynamic
 !endif
 
 CC=wcc386
-!ifndef __UNIX__
-INCLUDES=-I..\win32 -I..\src
-!else
-INCLUDES=-I../win32 -I../src
-!endif
+
+INCLUDES=-I.
 CPPFLAGS=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_SYS_TIME_H -DHAVE_SNPRINTF -DHAVE_MKSTEMP
 
 !ifneq target static
@@ -46,19 +43,11 @@ all: $(AOUT)
 $(AOUT): $(OBJ) $(EXTRA_OBJ)
 	wlink N $(AOUT) SYS NT OP q LIBR {$(LIBS)} F {$(OBJ)} F {$(EXTRA_OBJ)}
 
+.c: ../src
 .c.obj:
 	$(COMPILE) -fo=$^@ $<
 
-!ifndef __UNIX__
-.c: ..\src
-distclean: clean .symbolic
-	@if exist $(AOUT) del $(AOUT)
-clean: .symbolic
-	@if exist *.obj del *.obj
-!else
-.c: ../src
 distclean: clean .symbolic
 	rm -f $(AOUT)
 clean: .symbolic
 	rm -f *.obj
-!endif
