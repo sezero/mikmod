@@ -43,7 +43,9 @@
 #define HAVE_SETENV
 
 /* Define if you have the srandom function.  */
+#if defined(__DJGPP__)
 #define HAVE_SRANDOM
+#endif
 
 /* Define if you have the <fcntl.h> header file.  */
 #define HAVE_FCNTL_H

@@ -38,6 +38,7 @@ COMPILE=$(CC) -c $(CFLAGS)
 
 OBJ=out/dosdma.o \
     out/dosirq.o \
+    out/dosutil.o \
     out/dosgus.o \
     out/drv_ultra.o \
     out/dossb.o \
@@ -109,22 +110,24 @@ libmikmod.a: $(OBJ)
 	$(RANLIB) $@
 
 HEADER_DEPS=../dos/config.h ../include/mikmod.h ../include/mikmod_internals.h ../include/mikmod_ctype.h
-out/drv_ultra.o: ../drivers/drv_ultra.c $(HEADER_DEPS) ../drivers/dos/libgus.h
+out/drv_ultra.o: ../drivers/drv_ultra.c $(HEADER_DEPS) ../drivers/dos/libgus.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/drv_ultra.c -o out/drv_ultra.o
-out/drv_sb.o: ../drivers/drv_sb.c $(HEADER_DEPS) ../drivers/dos/dossb.h
+out/drv_sb.o: ../drivers/drv_sb.c $(HEADER_DEPS) ../drivers/dos/dossb.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/drv_sb.c -o out/drv_sb.o
-out/drv_wss.o: ../drivers/drv_wss.c $(HEADER_DEPS) ../drivers/dos/doswss.h
+out/drv_wss.o: ../drivers/drv_wss.c $(HEADER_DEPS) ../drivers/dos/doswss.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/drv_wss.c -o out/drv_wss.o
-out/dosgus.o: ../drivers/dos/dosgus.c $(HEADER_DEPS) ../drivers/dos/libgus.h
+out/dosgus.o: ../drivers/dos/dosgus.c $(HEADER_DEPS) ../drivers/dos/libgus.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/dos/dosgus.c -o out/dosgus.o
-out/dossb.o: ../drivers/dos/dossb.c $(HEADER_DEPS) ../drivers/dos/dossb.h
+out/dossb.o: ../drivers/dos/dossb.c $(HEADER_DEPS) ../drivers/dos/dossb.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/dos/dossb.c -o out/dossb.o
-out/doswss.o: ../drivers/dos/doswss.c $(HEADER_DEPS) ../drivers/dos/doswss.h
+out/doswss.o: ../drivers/dos/doswss.c $(HEADER_DEPS) ../drivers/dos/doswss.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/dos/doswss.c -o out/doswss.o
-out/dosdma.o: ../drivers/dos/dosdma.c $(HEADER_DEPS) ../drivers/dos/dosdma.h
+out/dosdma.o: ../drivers/dos/dosdma.c $(HEADER_DEPS) ../drivers/dos/dosdma.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/dos/dosdma.c -o out/dosdma.o
-out/dosirq.o: ../drivers/dos/dosirq.c $(HEADER_DEPS) ../drivers/dos/dosirq.h
+out/dosirq.o: ../drivers/dos/dosirq.c $(HEADER_DEPS) ../drivers/dos/dosirq.h ../drivers/dos/dosutil.h
 	$(COMPILE) ../drivers/dos/dosirq.c -o out/dosirq.o
+out/dosutil.o: ../drivers/dos/dosutil.c $(HEADER_DEPS) ../drivers/dos/dosutil.h
+	$(COMPILE) ../drivers/dos/dosutil.c -o out/dosutil.o
 out/drv_nos.o: ../drivers/drv_nos.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_nos.c -o out/drv_nos.o
 out/drv_raw.o: ../drivers/drv_raw.c $(HEADER_DEPS)

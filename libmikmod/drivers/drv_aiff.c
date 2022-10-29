@@ -46,7 +46,7 @@
 #include <string.h>
 
 #define AIFF_BUFFERSIZE			32768
-#if defined(_WIN32) || defined(__DJGPP__)
+#if defined(_WIN32) || defined(__DJGPP__) || defined(_DOS)
 #define AIFF_FILENAME			"music.aif"
 #else
 #define AIFF_FILENAME			"music.aiff"

@@ -19,7 +19,7 @@
 #ifndef __DOSDMA_H__
 #define __DOSDMA_H__
 
-#include <pc.h>
+#include "dosutil.h"
 
 #define DMA1_BASE		0x00	/* 8 bit slave DMA, channels 0..3 */
 #define DMA2_BASE		0xC0	/* 16 bit master DMA, ch 4(=slave input)..7 */

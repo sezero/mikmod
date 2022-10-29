@@ -34,10 +34,15 @@
 #include <string.h>
 #include <dos.h>
 
+#ifdef __DJGPP__
 #include <dpmi.h>
 #include <sys/farptr.h>
 #include <sys/nearptr.h>
 #include <go32.h>
+#else
+#define _farsetsel(seg)
+#define _farnspeekl(addr)  (*((unsigned long *)(addr)))
+#endif
 
 #include "dosgus.h"
 #include "mikmod.h"
@@ -216,8 +221,15 @@ static inline void __gus_stop_voice()
 	__gus_outregb_slow(GF1R_VOICE_CONTROL, GF1VC_STOPPED | GF1VC_STOP);
 }
 
+#if defined(__WATCOMC__)
+static void nop (void);
+#pragma aux nop = "nop"
+#else
+#define nop()
+#endif
+
 /* The GUS IRQ handler */
-static void gf1_irq()
+static void INTERRUPT_ATTRIBUTES NO_REORDER gf1_irq()
 {
 	unsigned char irq_source;	/* The contents of GF1_IRQ_STATUS register */
 	boolean timer_cb = 0;		/* Call timer callback function */
@@ -323,8 +335,9 @@ static void gf1_irq()
 		gus.timer_callback();
 }
 
-static void gf1_irq_end()
+static void INTERRUPT_ATTRIBUTES NO_REORDER gf1_irq_end()
 {
+	nop();
 }
 
 static boolean __gus_detect()
@@ -1344,8 +1357,6 @@ int gus_info(gus_info_t * info, int reread)
 
 int gus_open(int card, size_t queue_buffer_size, int non_block)
 {
-	__dpmi_meminfo struct_info, pool_info;
-
 	if (!gus.ok)
 		__gus_init();
 
@@ -1353,18 +1364,15 @@ int gus_open(int card, size_t queue_buffer_size, int non_block)
 		return -1;
 
 	/* Now lock the gus structure in memory */
-	struct_info.address = __djgpp_base_address + (unsigned long)&gus;
-	struct_info.size = sizeof(gus);
-	if (__dpmi_lock_linear_region(&struct_info))
+	if (dpmi_lock_linear_region_base(&gus, sizeof(gus)))
 		return -1;
 
 	/* And hook the GF1 interrupt */
 	__irq_stack_count = 4;
-	gus.gf1_irq =
-	  irq_hook(gus.irq[0], gf1_irq, (long)gf1_irq_end - (long)gf1_irq);
+	gus.gf1_irq = irq_hook(gus.irq[0], gf1_irq, gf1_irq_end);
 	__irq_stack_count = 1;
 	if (!gus.gf1_irq) {
-		__dpmi_unlock_linear_region(&struct_info);
+		dpmi_unlock_linear_region_base(&gus, sizeof(gus));
 		return -1;
 	}
 
@@ -1391,7 +1399,7 @@ int gus_open(int card, size_t queue_buffer_size, int non_block)
 				dma_free(gus.dma_buff);
 				gus.dma_buff = NULL;
 			}
-			__dpmi_unlock_linear_region(&struct_info);
+			dpmi_unlock_linear_region_base(&gus, sizeof(gus));
 			irq_unhook(gus.gf1_irq);
 			gus.gf1_irq = NULL;
 			return -1;
@@ -1404,14 +1412,12 @@ int gus_open(int card, size_t queue_buffer_size, int non_block)
 	if (queue_buffer_size > 16384)
 		queue_buffer_size = 16384;
 	gus.cmd_pool = (unsigned char *) MikMod_malloc(queue_buffer_size);
-	pool_info.address = __djgpp_base_address + (unsigned long)&gus.cmd_pool;
-	pool_info.size = sizeof(queue_buffer_size);
-	if (__dpmi_lock_linear_region(&pool_info)) {
+	if (dpmi_lock_linear_region_base(&gus.cmd_pool, sizeof(queue_buffer_size))) {
 		if (gus.dma_buff) {
 			dma_free(gus.dma_buff);
 			gus.dma_buff = NULL;
 		}
-		__dpmi_unlock_linear_region(&struct_info);
+		dpmi_unlock_linear_region_base(&gus, sizeof(gus));
 		irq_unhook(gus.gf1_irq);
 		gus.gf1_irq = NULL;
 		return -1;
@@ -1430,8 +1436,6 @@ int gus_open(int card, size_t queue_buffer_size, int non_block)
 
 int gus_close(int card)
 {
-	__dpmi_meminfo struct_info;
-
 	if (!gus.open || card != 0)
 		return -1;
 
@@ -1454,9 +1458,7 @@ int gus_close(int card)
 	gus.gf1_irq = NULL;
 
 	/* Unlock the gus structure */
-	struct_info.address = __djgpp_base_address + (unsigned long)&gus;
-	struct_info.size = sizeof(gus);
-	__dpmi_unlock_linear_region(&struct_info);
+	dpmi_unlock_linear_region_base(&gus, sizeof(gus));
 
 	__gus_mem_clear();
 	__gus_instruments_clear();

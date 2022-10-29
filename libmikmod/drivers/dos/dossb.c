@@ -32,10 +32,15 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
+#ifdef __DJGPP__
 #include <dpmi.h>
 #include <go32.h>
 #include <sys/nearptr.h>
 #include <sys/farptr.h>
+#else
+#define _farsetsel(seg)
+#define _farnspeekl(addr)  (*((unsigned long *)(addr)))
+#endif
 
 #include "dossb.h"
 
@@ -56,7 +61,14 @@ _func_noclone
 	inportb(SB_DSP_RESET);
 }
 
-static void sb_irq()
+#if defined(__WATCOMC__)
+static void nop (void);
+#pragma aux nop = "nop"
+#else
+#define nop()
+#endif
+
+static void INTERRUPT_ATTRIBUTES NO_REORDER sb_irq()
 {
 	/* Make sure its not a spurious IRQ */
 	if (!irq_check(sb.irq_handle))
@@ -82,8 +94,9 @@ static void sb_irq()
 		sb.timer_callback();
 }
 
-static void sb_irq_end()
+static void NO_REORDER INTERRUPT_ATTRIBUTES sb_irq_end()
 {
+	nop();
 }
 
 static boolean __sb_reset()
@@ -123,7 +136,7 @@ static int __sb_irq_irqdetect(int irqno)
 	return 1;
 }
 
-static void __sb_irq_dmadetect()
+static void INTERRUPT_ATTRIBUTES NO_REORDER __sb_irq_dmadetect()
 {
 	/* Make sure its not a spurious IRQ */
 	if (!irq_check(sb.irq_handle))
@@ -139,6 +152,11 @@ static void __sb_irq_dmadetect()
 
 	/* Send EOI */
 	irq_ack(sb.irq_handle);
+}
+
+static void INTERRUPT_ATTRIBUTES NO_REORDER __sb_irq_dmadetect_end()
+{
+	nop();
 }
 
 static boolean __sb_detect()
@@ -204,7 +222,7 @@ static boolean __sb_detect()
 
 		sb_output(FALSE);
 		/* Temporary hook SB IRQ */
-		sb.irq_handle = irq_hook(sb.irq, __sb_irq_dmadetect, 200);
+		sb.irq_handle = irq_hook(sb.irq, __sb_irq_dmadetect, __sb_irq_dmadetect_end);
 		irq_enable(sb.irq_handle);
 		if (sb.irq > 7)
 			_irq_enable(2);
@@ -359,8 +377,6 @@ void sb_reset()
 /* Start working with SoundBlaster */
 boolean sb_open()
 {
-	__dpmi_meminfo struct_info;
-
 	if (!sb.ok)
 		if (!sb_detect())
 			return FALSE;
@@ -369,15 +385,13 @@ boolean sb_open()
 		return FALSE;
 
 	/* Now lock the sb structure in memory */
-	struct_info.address = __djgpp_base_address + (unsigned long)&sb;
-	struct_info.size = sizeof(sb);
-	if (__dpmi_lock_linear_region(&struct_info))
+	if (dpmi_lock_linear_region_base(&sb, sizeof(sb)))
 		return FALSE;
 
 	/* Hook the SB IRQ */
-	sb.irq_handle = irq_hook(sb.irq, sb_irq, (long)sb_irq_end - (long)sb_irq);
+	sb.irq_handle = irq_hook(sb.irq, sb_irq, sb_irq_end);
 	if (!sb.irq_handle) {
-		__dpmi_unlock_linear_region(&struct_info);
+		dpmi_unlock_linear_region_base(&sb, sizeof(sb));
 		return FALSE;
 	}
 
@@ -394,7 +408,6 @@ boolean sb_open()
 /* Finish working with SoundBlaster */
 boolean sb_close()
 {
-	__dpmi_meminfo struct_info;
 	if (!sb.open)
 		return FALSE;
 
@@ -408,9 +421,7 @@ boolean sb_close()
 	sb.irq_handle = NULL;
 
 	/* Unlock the sb structure */
-	struct_info.address = __djgpp_base_address + (unsigned long)&sb;
-	struct_info.size = sizeof(sb);
-	__dpmi_unlock_linear_region(&struct_info);
+	dpmi_unlock_linear_region_base(&sb, sizeof(sb));
 
 	return TRUE;
 }

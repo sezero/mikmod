@@ -34,10 +34,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dos.h>
+#ifdef __DJGPP__
 #include <dpmi.h>
 #include <go32.h>
 #include <sys/nearptr.h>
 #include <sys/farptr.h>
+#else
+#define _farsetsel(seg)
+#define _farnspeekl(addr)  (*((unsigned long *)(addr)))
+#endif
 
 #include "doswss.h"
 
@@ -63,7 +68,14 @@ static unsigned int wss_rates[14][2] = {
 	{48000, 0x0C | WSSM_XTAL1}
 };
 
-static void wss_irq()
+#if defined(__WATCOMC__)
+static void nop (void);
+#pragma aux nop = "nop"
+#else
+#define nop()
+#endif
+
+static void INTERRUPT_ATTRIBUTES NO_REORDER wss_irq()
 {
 	/* Make sure its not a spurious IRQ */
 	if (!irq_check(wss.irq_handle))
@@ -84,8 +96,9 @@ static void wss_irq()
 		wss.timer_callback();
 }
 
-static void wss_irq_end()
+static void INTERRUPT_ATTRIBUTES NO_REORDER wss_irq_end()
 {
+	nop();
 }
 
 /* WSS accepts some conventional values instead of frequency in Hz... */
@@ -282,7 +295,9 @@ static boolean __wss_detect()
 		/* Prepare timeout counter */
 		_farsetsel(_dos_ds);
 		timer = _farnspeekl(0x46c);
-		while (timer == _farnspeekl(0x46c));
+		while (timer == _farnspeekl(0x46c)) {
+			nop();
+		}
 		timer = _farnspeekl(0x46c);
 
 		/* Reset all IRQ counters */
@@ -292,7 +307,9 @@ static boolean __wss_detect()
 		__wss_regbit_set(WSSR_IFACE_CTRL, WSSM_PLAYBACK_ENABLE);
 
 		/* Now wait 1/18 seconds */
-		while (timer == _farnspeekl(0x46c));
+		while (timer == _farnspeekl(0x46c)) {
+			nop();
+		}
 		__wss_regbit_reset(WSSR_IFACE_CTRL, WSSM_PLAYBACK_ENABLE);
 		dma_disable(wss.dma);
 
@@ -381,8 +398,6 @@ void wss_reset()
 /* Open WSS for usage */
 boolean wss_open()
 {
-	__dpmi_meminfo struct_info;
-
 	if (!wss.ok)
 		if (!wss_detect())
 			return FALSE;
@@ -391,16 +406,13 @@ boolean wss_open()
 		return FALSE;
 
 	/* Now lock the wss structure in memory */
-	struct_info.address = __djgpp_base_address + (unsigned long)&wss;
-	struct_info.size = sizeof(wss);
-	if (__dpmi_lock_linear_region(&struct_info))
+	if (dpmi_lock_linear_region_base(&wss, sizeof(wss)))
 		return FALSE;
 
 	/* Hook the WSS IRQ */
-	wss.irq_handle =
-	  irq_hook(wss.irq, wss_irq, (long)wss_irq_end - (long)wss_irq);
+	wss.irq_handle = irq_hook(wss.irq, wss_irq, wss_irq_end);
 	if (!wss.irq_handle) {
-		__dpmi_unlock_linear_region(&struct_info);
+		dpmi_unlock_linear_region_base(&wss, sizeof(wss));
 		return FALSE;
 	}
 
@@ -417,7 +429,6 @@ boolean wss_open()
 /* Finish working with WSS */
 boolean wss_close()
 {
-	__dpmi_meminfo struct_info;
 	if (!wss.open)
 		return FALSE;
 
@@ -431,9 +442,7 @@ boolean wss_close()
 	wss.irq_handle = NULL;
 
 	/* Unlock the wss structure */
-	struct_info.address = __djgpp_base_address + (unsigned long)&wss;
-	struct_info.size = sizeof(wss);
-	__dpmi_unlock_linear_region(&struct_info);
+	dpmi_unlock_linear_region_base(&wss, sizeof(wss));
 
 	return TRUE;
 }

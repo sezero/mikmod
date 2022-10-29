@@ -25,7 +25,6 @@
 #ifndef __DOSGUS_H__
 #define __DOSGUS_H__
 
-#include <pc.h>
 #include "dosdma.h"
 #include "dosirq.h"
 #include "libgus.h"

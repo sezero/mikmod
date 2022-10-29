@@ -16,21 +16,15 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <sys/version.h>
 #include <dos.h>
-#include <dpmi.h>
-#include <sys/nearptr.h>
 #include <malloc.h>
+
+#ifdef __DJGPP__
+#include <sys/nearptr.h>
+#endif
 
 #include "dosdma.h"
 #include "mikmod.h"
-
-/* BUG WARNING:  there is an error in DJGPP libraries <= 2.01:
- * src/libc/dpmi/api/d0102.s loads the selector and allocsize
- * arguments in the wrong order.  DJGPP >= 2.02 have it fixed. */
-#if (!defined(__DJGPP_MINOR__) || (__DJGPP_MINOR__+0) < 2)
-#error __dpmi_resize_dos_memory() from DJGPP <= 2.01 is broken!
-#endif
 
 __dma_regs dma[8] = {
 /* *INDENT-OFF* */
@@ -58,20 +52,19 @@ __dma_regs dma[8] = {
 
 static int __initialized = 0;
 static int __buffer_count = 0;
-static __dpmi_meminfo __locked_data;
 
 int dma_initialize()
 {
+#ifdef __DJGPP__
 	if (!__djgpp_nearptr_enable())
 		return 0;
 
 	/* Trick: Avoid re-setting DS selector limit on each memory allocation
 	   call */
 	__djgpp_selector_limit = 0xffffffff;
+#endif
 
-	__locked_data.address = __djgpp_base_address + (unsigned long)dma;
-	__locked_data.size = sizeof(dma);
-	if (__dpmi_lock_linear_region(&__locked_data))
+	if (dpmi_lock_linear_region_base(dma, sizeof(dma)))
 		return 0;
 
 	return (__initialized = 1);
@@ -81,8 +74,10 @@ void dma_finalize()
 {
 	if (!__initialized)
 		return;
-	__dpmi_unlock_linear_region(&__locked_data);
+	dpmi_unlock_linear_region_base(dma, sizeof(dma));
+#ifdef __DJGPP__
 	__djgpp_nearptr_disable();
+#endif
 }
 
 dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
@@ -96,7 +91,6 @@ dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
 	int bound = 0;				/* Nearest bound address */
 	int maxsize;				/* Maximal possible block size */
 	dma_buffer *buffer = NULL;
-	__dpmi_meminfo buff_info, struct_info;
 
 	if (!dma_initialize())
 		return NULL;
@@ -114,15 +108,15 @@ dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
 				resize = 0;
 			else {
 				allocsize = maxsize;
-				if (__dpmi_resize_dos_memory(selector, allocsize, &maxsize) !=
+				if (dpmi_resize_dos_memory(selector, allocsize, &maxsize) !=
 					0) resize = 0;
 			}
 		}
 
 		if (!resize) {
 			if (selector)
-				__dpmi_free_dos_memory(selector), selector = 0;
-			par = __dpmi_allocate_dos_memory(allocsize, &selector);
+				dpmi_free_dos_memory(selector), selector = 0;
+			par = dpmi_allocate_dos_memory(allocsize, &selector);
 		}
 
 		if ((par == 0) || (par == -1))
@@ -138,31 +132,31 @@ dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
 		}
 	}
 	if (!count) {
-		__dpmi_free_dos_memory(selector);
+		dpmi_free_dos_memory(selector);
 		goto exit;
 	}
 
 	buffer = (dma_buffer *) MikMod_malloc(sizeof(dma_buffer));
+#ifdef __DJGPP__
 	buffer->linear = (unsigned char *)(__djgpp_conventional_base + bound * 16);
+#else
+	buffer->linear = (unsigned char *)(bound * 16);
+#endif
 	buffer->physical = bound * 16;
 	buffer->size = parsize * 16;
 	buffer->selector = selector;
 	buffer->channel = channel;
 
-	buff_info.address = buffer->physical;
-	buff_info.size = buffer->size;
 	/*
 	   Don't pay attention to return code since under plain DOS it often
 	   returns error (at least under HIMEM/CWSDPMI and EMM386/DPMI)
 	 */
-	__dpmi_lock_linear_region(&buff_info);
+	dpmi_lock_linear_region(buffer->physical, buffer->size);
 
 	/* Lock the DMA buffer control structure as well */
-	struct_info.address = __djgpp_base_address + (unsigned long)buffer;
-	struct_info.size = sizeof(dma_buffer);
-	if (__dpmi_lock_linear_region(&struct_info)) {
-		__dpmi_unlock_linear_region(&buff_info);
-		__dpmi_free_dos_memory(selector);
+	if (dpmi_lock_linear_region_base(buffer, sizeof(dma_buffer))) {
+		dpmi_unlock_linear_region(buffer->physical, buffer->size);
+		dpmi_free_dos_memory(selector);
 		MikMod_free(buffer);
 		buffer = NULL;
 		goto exit;
@@ -178,16 +172,11 @@ dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
 
 void dma_free(dma_buffer * buffer)
 {
-	__dpmi_meminfo buff_info;
-
 	if (!buffer)
 		return;
 
-	buff_info.address = buffer->physical;
-	buff_info.size = buffer->size;
-	__dpmi_unlock_linear_region(&buff_info);
-
-	__dpmi_free_dos_memory(buffer->selector);
+	dpmi_unlock_linear_region(buffer->physical, buffer->size);
+	dpmi_free_dos_memory(buffer->selector);
 	MikMod_free(buffer);
 
 	if (--__buffer_count == 0)
