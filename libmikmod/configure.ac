@@ -595,10 +595,10 @@ then
 int main(void) {
 	void *libc, *printfptr;
 	libc = dlopen("libc.so", RTLD_LAZY | RTLD_GLOBAL);
-	if (!libc) exit(1);
+	if (!libc) return 1;
 	printfptr = dlsym(libc, "_printf");
 	dlclose(libc);
-	exit(!printfptr);
+	return !printfptr;
 }]])],
 			[libmikmod_cv_dynload_underscores=yes],
 			[libmikmod_cv_dynload_underscores=no],
