@@ -247,6 +247,10 @@ static BOOL ULT_Load(BOOL curious)
 
 	for(t=0;t<of.numtrk;t++) {
 		int rep,row=0;
+		/* FIXME: unrolling continuous portamento is a HACK and needs to
+		 * be replaced with a real continuous effect. This implementation
+		 * breaks when tone portamento continues between patterns. See
+		 * discussion in https://github.com/sezero/mikmod/pull/40 . */
 		int continuePortaToNote = 0;
 
 		UniReset();
