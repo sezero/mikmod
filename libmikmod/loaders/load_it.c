@@ -76,6 +76,7 @@ typedef struct ITHEADER {
 
 /* sample information */
 typedef struct ITSAMPLE {
+	UBYTE	id[4];		/* 'IMPS' */
 	CHAR	filename[12];
 	UBYTE	zerobyte;
 	UBYTE	globvol;
@@ -102,6 +103,7 @@ typedef struct ITSAMPLE {
 #define ITENVCNT 25
 #define ITNOTECNT 120
 typedef struct ITINSTHEADER {
+	UBYTE	id[4];			/* 'IMPI' */
 	ULONG	size;			/* (dword) Instrument size */
 	CHAR	filename[12];	/* (char) Instrument filename */
 	UBYTE	zerobyte;		/* (byte) Instrument type (always 0) */
@@ -635,7 +637,16 @@ static BOOL IT_Load(BOOL curious)
 		ITSAMPLE s;
 
 		/* seek to sample position */
-		_mm_fseek(modreader,(long)(paraptr[mh->insnum+t]+4),SEEK_SET);
+		_mm_fseek(modreader,(long)(paraptr[mh->insnum+t]),SEEK_SET);
+		if(!_mm_read_UBYTES(s.id,4,modreader)||
+		   memcmp(s.id,"IMPS",4) != 0) {
+			/* no error so that use-brdg.it and use-funk.it
+			 * to load correctly (both IT 2.04) (from libxmp) */
+#ifdef MIKMOD_DEBUG
+			fprintf(stderr,"Bad magic in sample %d\n",t);
+#endif
+			continue;
+		}
 
 		/* load sample info */
 		_mm_read_string(s.filename,12,modreader);
@@ -723,7 +734,12 @@ static BOOL IT_Load(BOOL curious)
 			ITINSTHEADER ih;
 
 			/* seek to instrument position */
-			_mm_fseek(modreader,paraptr[t]+4,SEEK_SET);
+			_mm_fseek(modreader,paraptr[t],SEEK_SET);
+			if(!_mm_read_UBYTES(ih.id,4,modreader)||
+			   memcmp(ih.id,"IMPI",4) != 0) {
+				_mm_errno = MMERR_LOADING_SAMPLEINFO;
+				return 0;
+			}
 
 			/* load instrument info */
 			_mm_read_string(ih.filename,12,modreader);
