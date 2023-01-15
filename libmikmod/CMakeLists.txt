@@ -161,6 +161,10 @@ ELSE()
 #   SET (CMAKE_SKIP_RPATH YES)
 ENDIF()
 
+IF (POLICY CMP0075)
+    CMAKE_POLICY(SET CMP0075 NEW)
+ENDIF()
+
 include(CPack)
 include(CheckFunctionExists)
 include(CheckSymbolExists)

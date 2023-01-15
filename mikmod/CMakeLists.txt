@@ -49,6 +49,10 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "/autom4te.cache/"
 )
 
+IF (POLICY CMP0075)
+    CMAKE_POLICY(SET CMP0075 NEW)
+ENDIF()
+
 INCLUDE(CPack)
 INCLUDE(CheckFunctionExists)
 INCLUDE(CheckSymbolExists)
