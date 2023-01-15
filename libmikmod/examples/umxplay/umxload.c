@@ -1,12 +1,8 @@
-/* umxplay.c
- * Shows how to initialize the library, load an Unreal UMX
- * music module using a custom MREADER, and play it.
+/* Unreal UMX loader written by O. Sezer, put into public domain
  *
- * (C) 2022, Ozkan Sezer <sezero@users.sourceforge.net>
- *
- * This example is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRENTY; without event the implied warrenty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * UPKG parsing partially based on Unreal Media Ripper (UMR) v0.3
+ * by Andy Ward <wardwh@swbell.net>, with additional updates
+ * by O. Sezer - see git repo at https://github.com/sezero/umr/
  */
 
 #include <stdio.h>
@@ -14,11 +10,6 @@
 #include <string.h>
 
 #include "umxload.h"
-
-/* UPKG parsing partially based on Unreal Media Ripper (UMR) v0.3
- * by Andy Ward <wardwh@swbell.net>, with additional updates
- * by O. Sezer - see git repo at https://github.com/sezero/umr/
- */
 
 typedef int _is_int32[2 * (sizeof(int) == 4) - 1];/* make sure int is 32 bits. */
 
