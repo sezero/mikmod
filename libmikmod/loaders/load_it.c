@@ -194,8 +194,8 @@ static BOOL IT_Init(void)
 	if(!(mh=(ITHEADER*)MikMod_malloc(sizeof(ITHEADER)))) return 0;
 	if(!(poslookup=(UBYTE*)MikMod_malloc(256*sizeof(UBYTE)))) return 0;
 	if(!(itpat=(ITNOTE*)MikMod_malloc(200*64*sizeof(ITNOTE)))) return 0;
-	if(!(mask=(UBYTE*)MikMod_malloc(64*sizeof(UBYTE)))) return 0;
-	if(!(last=(ITNOTE*)MikMod_malloc(64*sizeof(ITNOTE)))) return 0;
+	if(!(mask=(UBYTE*)MikMod_calloc(64,sizeof(UBYTE)))) return 0;
+	if(!(last=(ITNOTE*)MikMod_calloc(64,sizeof(ITNOTE)))) return 0;
 
 	return 1;
 }
