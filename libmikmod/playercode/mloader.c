@@ -117,14 +117,13 @@ BOOL ReadComment(UWORD len)
 	if(len) {
 		int i;
 
-		if(!(of.comment=(CHAR*)MikMod_malloc(len+1))) return 0;
+		of.comment=(CHAR*)MikMod_calloc(1,len+1);
+		if(!of.comment) return 0;
 		_mm_read_UBYTES(of.comment,len,modreader);
 
 		/* translate IT linefeeds */
 		for(i=0;i<len;i++)
 			if(of.comment[i]=='\r') of.comment[i]='\n';
-
-		of.comment[len]=0;	/* just in case */
 	}
 	if(!of.comment[0]) {
 		MikMod_free(of.comment);
