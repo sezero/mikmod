@@ -465,18 +465,19 @@ typedef struct ENVPR {
     UBYTE  pts;     /* number of envelope points */
     UBYTE  susbeg;  /* envelope sustain index begin */
     UBYTE  susend;  /* envelope sustain index end */
+    BOOL   susactive;/* Indicate if sustain is active (no interpolation) */
     UBYTE  beg;     /* envelope loop begin */
     UBYTE  end;     /* envelope loop end */
     SWORD  p;       /* current envelope counter */
-    UWORD  a;       /* envelope index a */
-    UWORD  b;       /* envelope index b */
+    UWORD  index;   /* envelope index for the point after the current one */
+    SWORD  lastvalue;/* the last calculated value */
     ENVPT* env;     /* envelope points */
 } ENVPR;
 
 typedef struct MP_CHANNEL {
     INSTRUMENT* i;
     SAMPLE *s;
-    UBYTE  sample;      /* which sample number */
+    SBYTE  sample;      /* which sample number, -1 if illegal instrument has been set */
     UBYTE  note;        /* the audible note as heard, direct rep of period */
     SWORD  outvolume;   /* output volume (vol + sampcol + instvol) */
     SBYTE  chanvol;     /* channel's "global" volume */
@@ -589,6 +590,8 @@ typedef struct MP_VOICE {
     ENVPR   venv;
     ENVPR   penv;
     ENVPR   cenv;
+
+    SWORD   envstartpos;/* Start position for envelopes set by XM effect L */
 
     UWORD   avibpos;    /* autovibrato pos */
     UWORD   aswppos;    /* autovibrato sweep pos */
