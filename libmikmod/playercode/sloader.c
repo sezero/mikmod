@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   Routines for loading samples. The sample loader utilizes the routines
   provided by the "registered" sample loader.
 
@@ -56,7 +54,7 @@ typedef struct ITPACK {
 BOOL SL_Init(SAMPLOAD* s)
 {
 	if(!sl_buffer)
-		if(!(sl_buffer=(SWORD*)MikMod_malloc(SLBUFSIZE*sizeof(SWORD)))) return 0;
+		if(!(sl_buffer=(SWORD*)MikMod_calloc(1,SLBUFSIZE*sizeof(SWORD)))) return 0;
 
 	sl_rlength = s->length;
 	if(s->infmt & SF_16BITS) sl_rlength>>=1;
