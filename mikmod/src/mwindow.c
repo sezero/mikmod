@@ -603,16 +603,10 @@ void win_init_status(int height)
 void win_status(const char *msg)
 {
 	MWINDOW *win = panel[0];
-	int len;
 
 	if (msg) {
-		len = strlen(msg);
-		if (len > MAXWIDTH)
-			len = MAXWIDTH;
-		strncpy(status_message, msg, len);
-	} else
-		len = strlen(status_message);
-	status_message[len] = '\0';
+		SNPRINTF(status_message, MAXWIDTH, "%s", msg);
+	}
 
 	if (win_quiet)
 		return;
@@ -620,7 +614,8 @@ void win_status(const char *msg)
 		win_attrset(ATTR_STATUS_TEXT);
 		mvaddnstr(win->y + win->height - 1, win->x, status_message,
 				  win->width);
-		win_clrtoeol(win, win->x + len, win->y + win->height - 1);
+		win_clrtoeol(win, win->x + strlen(status_message),
+				  win->y + win->height - 1);
 	}
 }
 

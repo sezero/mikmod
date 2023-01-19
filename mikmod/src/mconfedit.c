@@ -354,6 +354,7 @@ static void get_driver_options(MENTRY *entry, MENTRY *dr_entry)
 /* extract themes for the other menu */
 static void get_themes(MENTRY *entry)
 {
+	char *pos;
 	int i, j, len = 0;
 
 	for (i=0; i<cnt_themes; i++) {
@@ -364,15 +365,17 @@ static void get_themes(MENTRY *entry)
 		free (entry->text);
 	entry->text = (char *) malloc(sizeof(char) * (len + 15));
 	strcpy(entry->text, "T&heme  [%o]");
+	pos = entry->text + strlen(entry->text);
 	for (i=0; i<cnt_themes; i++) {
-		strcat(entry->text, "|");
-		strcat(entry->text,themes[i].color ? "(C) ":"(M) ");
+		strcpy(pos, "|");
+		strcpy(pos + 1, themes[i].color ? "(C) ":"(M) ");
+		pos += 5;
 
-		len = strlen(entry->text);
 		j = strlen (themes[i].name);
 		j = (j>32 ? 32:j);
-		strncat(entry->text, themes[i].name, j);
-		entry->text[len + j] = '\0';
+		memcpy(pos, themes[i].name, j);
+		pos += j;
+		*pos = '\0';
 	}
 }
 
