@@ -7,11 +7,17 @@
 .libs
 .deps
 .dirstamp
+.vscode
 Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache
+*/autotools/compile
+*/autotools/depcomp
+*/autotools/install-sh
 */autotools/ltmain.sh
+*/autotools/missing
+*/autotools/texinfo.tex
 config.cache
 config.h
 config.log
@@ -26,5 +32,6 @@ ltsugar.m4
 ltversion.m4
 lt~obsolete.m4
 mikmod.exe
+mikmod/src/mikmod
 mikmod.info
 stamp-h1
