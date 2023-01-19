@@ -249,7 +249,7 @@ static BOOL filename2short (const char *l, char *s, int len_s)
 	__dpmi_int (0x21, &r);
 
 	if (r.x.flags & 1) {		/* is carry flag set (-> error) ?  */
-		strncpy (s, l, len_s);
+		strncpy (s, l, len_s - 1);
 		s[len_s - 1] = '\0';
 		return 0;
 	} else {
@@ -266,7 +266,7 @@ static BOOL filename2short (const char *l, char *s, int len_s)
 {
 	int copied = GetShortPathName (l, s, len_s);
 	if (copied == 0 || copied >= len_s) {
-		strncpy (s, l, len_s);
+		strncpy (s, l, len_s - 1);
 		s[len_s - 1] = '\0';
 		return 0;
 	} else
@@ -277,7 +277,7 @@ static BOOL filename2short (const char *l, char *s, int len_s)
 
 static BOOL filename2short (const char *l, char *s, int len_s)
 {
-	strncpy (s, l, len_s);
+	strncpy (s, l, len_s - 1);
 	s[len_s - 1] = '\0';
 	return 1;
 }

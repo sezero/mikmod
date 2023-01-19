@@ -59,12 +59,12 @@
 /* minimum width of second column */
 #define MINVISIBLE	10
 /* half width */
-int halfwidth;
+static int halfwidth;
 /* format used for message/banner lines : like "%-80.80s" */
-char fmt_fullwidth[20];
+static char fmt_fullwidth[32];
 /* format used for sample/instrument lines - like "%3i  %-35.35s"
    (the big number being halfwidth-5) */
-char fmt_halfwidth[20];
+static char fmt_halfwidth[32];
 /* start of information panels */
 #define PANEL_Y 7
 
@@ -140,9 +140,9 @@ static void setup_printf(void)
 	halfwidth = maxx >> 1;
 	if (halfwidth < MINWIDTH)
 		halfwidth = MINWIDTH;
-	SNPRINTF(fmt_fullwidth, 20, "%%-%d.%ds", maxx, maxx);
-	SNPRINTF(fmt_halfwidth, 20, "%%3i  %%-%d.%ds", halfwidth - 5,
-			 halfwidth - 5);
+	SNPRINTF(fmt_fullwidth, sizeof(fmt_fullwidth), "%%-%d.%ds", maxx, maxx);
+	SNPRINTF(fmt_halfwidth, sizeof(fmt_halfwidth), "%%3i  %%-%d.%ds",
+			halfwidth - 5, halfwidth - 5);
 }
 
 /* enlarges a text line to fill the root window width */
@@ -358,6 +358,7 @@ static void display_file(void)
 	storage[0] = '\0';
 	if ((entry = PL_GetCurrent(&playlist))) {
 		CHAR *archive = entry->archive, *file;
+		size_t filelen, archivelen;
 
 		if (archive && !config.fullpaths) {
 			archive = FIND_LAST_DIRSEP(entry->archive);
@@ -373,9 +374,10 @@ static void display_file(void)
 		else
 			file = entry->file;
 
-		if ((archive) && (strlen(file) < MAXWIDTH - 13)) {
-			if (strlen(archive) + strlen(file) > MAXWIDTH - 10) {
-				archive += strlen(archive) - (MAXWIDTH - 13 - strlen(file));
+		if ((archive) && ((filelen = strlen(file)) < MAXWIDTH - 13)) {
+			archivelen = strlen(archive);
+			if (archivelen > MAXWIDTH - 10 - filelen) {
+				archive += archivelen - (MAXWIDTH - 13 - filelen);
 				SNPRINTF(storage, STORAGELEN, "File: %s (...%s)", file,
 						 archive);
 			} else
@@ -430,19 +432,20 @@ void display_status(void)
 	if (mf->sngpos < mf->numpos) {
 		PLAYENTRY *cur = PL_GetCurrent(&playlist);
 		char time[7] = "";
-		char channels[17] = "";
+		char channels[18] = "";
 
 		if (cur && cur->time > 0)
 			SNPRINTF(time, 7, "/%2d:%02d",
 					 (int)((cur->time / 60) % 60), (int)(cur->time % 60));
 #if LIBMIKMOD_VERSION >= 0x030107
 		if (mf->flags & UF_NNA) {
-			SNPRINTF(channels, 17, "%2d/%d+%d->%d",
+			SNPRINTF(channels, sizeof(channels), "%2d/%d+%d->%d",
 					 mf->realchn, mf->numchn, mf->totalchn - mf->realchn,
 					 mf->totalchn);
 		} else
 #endif
-			SNPRINTF(channels, 17, "%2d/%d      ", mf->realchn, mf->numchn);
+			SNPRINTF(channels, sizeof(channels), "%2d/%d      ",
+					 mf->realchn, mf->numchn);
 
 		SNPRINTF(storage, STORAGELEN,
 				 "pat:%03d/%03d pos:%2.2X spd:%2d/%3d "
@@ -940,7 +943,7 @@ static void display_playentry(MWINDOW *win, PLAYENTRY *pos, PLAYENTRY *cur,
 							  int nr, int y, int x, BOOL reverse, int width)
 {
 	char *name, sort;
-	char time[8] = "", tmpfmt[30];
+	char time[8] = "", tmpfmt[32];
 	int timelen = 0;
 
 	if (pos->time > 0) {
@@ -1256,7 +1259,7 @@ static void display_title(void)
 	char *file;
 
 	if (!mf) { return; }
-	
+
 	if (!mf->songname || !*mf->songname) {
 		PLAYENTRY *entry=NULL;
 		entry = PL_GetCurrent(&playlist);
@@ -1300,7 +1303,7 @@ static void set_window_title(const char *content)
 
 	/* Unix/Xterm (and compatible/similar)
 	 *
-	 * Written using the 'Xterm-Title mini-howto' 
+	 * Written using the 'Xterm-Title mini-howto'
 	 */
 #if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
 	char *env_term;
@@ -1345,7 +1348,7 @@ static void set_window_title(const char *content)
 		printf("%cP1.y%s%c\\", '\033', storage, '\033');
 		printf("%cP3.y%s%c\\", '\033', mikversion, '\033');
 	}
-	else if (strcmp(env_term, "hpterm")==0) 
+	else if (strcmp(env_term, "hpterm")==0)
 	{
 		printf("\033&f0k%dD%s", (int) strlen(storage), storage);
 		printf("\033&f-1k%dD%s", (int) strlen(mikversion), mikversion);
