@@ -20,20 +20,14 @@
 
 /*==============================================================================
 
-  $Id$
-
   High-quality sample mixing routines, using a 32 bits mixing buffer,
   interpolation, and sample smoothing to improve sound quality and remove
   clicks.
 
-==============================================================================*/
-
-/*
-
   Future Additions:
-	Low-Pass filter to remove annoying staticy buzz.
+  - Low-Pass filter to remove annoying staticy buzz.
 
-*/
+==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
