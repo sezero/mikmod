@@ -42,6 +42,10 @@
 #define _mikmod_amiga 1
 #endif
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+
 #include <mikmod.h>	/* for BOOL */
 
 /*========== Constants */
@@ -110,9 +114,11 @@ static inline char *FIND_LAST_DIRSEP (const char *_the_path) {
 
 /*========== Types */
 
-/* pointer-sized signed int (ssize_t/intptr_t) : */
-#if defined(_WIN64) /* win64 is LLP64, not LP64  */
-typedef long long       SINTPTR_T;
+/* pointer-sized signed int (intptr_t) : */
+#ifdef HAVE_STDINT_H
+typedef intptr_t        SINTPTR_T;
+#elif defined(_WIN32)
+typedef INT_PTR         SINTPTR_T;
 #else
 /* long should be pointer-sized for all others : */
 typedef long            SINTPTR_T;

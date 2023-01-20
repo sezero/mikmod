@@ -60,7 +60,7 @@ dnl ========================
 dnl Checks for header files.
 dnl ========================
 
-AC_CHECK_HEADERS(fcntl.h limits.h fnmatch.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
+AC_CHECK_HEADERS(fcntl.h limits.h stdint.h fnmatch.h sys/ioctl.h sys/param.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(sched.h)
 AC_CHECK_HEADERS(ncurses.h curses.h ncurses/curses.h)
 AC_CHECK_HEADERS(termios.h)
