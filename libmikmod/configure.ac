@@ -12,7 +12,6 @@ AC_CONFIG_AUX_DIR([autotools])
 AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
 AC_CONFIG_SRCDIR([include/mikmod_internals.h])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_LIBOBJ_DIR([posix])
 AM_MAINTAINER_MODE
 
 # Library versioning for libtool: CURRENT, REVISION, AGE
@@ -121,7 +120,7 @@ libmikmod_driver_wav=yes
 libmikmod_driver_raw=yes
 libmikmod_driver_stdout=yes
 libmikmod_driver_pipe=yes
-#FIXME: ANDROID and DRV_OSLES are not configury-integrated
+# FIXME: ANDROID and DRV_OSLES are not configury-integrated.
 libmikmod_driver_osles=no
 
 libmikmod_dynload=yes
