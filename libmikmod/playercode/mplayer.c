@@ -349,37 +349,229 @@ static SWORD DoPan(SWORD envpan,SWORD pan)
 	return (newpan<PAN_LEFT)?PAN_LEFT:(newpan>PAN_RIGHT?PAN_RIGHT:newpan);
 }
 
-static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susend,UBYTE beg,UBYTE end,ENVPT *p,UBYTE keyoff)
+static void StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susend,UBYTE loopbeg,UBYTE loopend,ENVPT *p,SWORD defaultvalue)
 {
 	t->flg=flg;
 	t->pts=pts;
 	t->susbeg=susbeg;
 	t->susend=susend;
-	t->beg=beg;
-	t->end=end;
+	t->loopbeg=loopbeg;
+	t->loopend=loopend;
 	t->env=p;
-	t->p=0;
-	t->a=0;
-	t->b=((t->flg&EF_SUSTAIN)&&(!(keyoff&KEY_OFF)))?0:1;
+	t->tick=-1;
+	t->index=0;
 
 	if (!t->pts) { /* FIXME: bad/crafted file. better/more general solution? */
-		t->b=0;
-		return t->env[0].val;
+		t->index=0;
+		t->lastvalue=defaultvalue;
+	} else {
+		/* Imago Orpheus sometimes stores an extra initial point in the envelope */
+		if ((t->pts>=2)&&(t->env[0].pos==t->env[1].pos))
+			t->index++;
+
+		/* Fit in the envelope, still */
+		if (t->index >= t->pts)
+			t->index = t->pts;
+	}
+}
+
+/* Set envelope tick to the position given */
+static void SetEnvelopePosition(ENVPR *t, ENVPT *p, SWORD pos)
+{
+	if (t->flg & EF_ON) {
+		SWORD idx = 0;
+		BOOL envUpdate = 1;
+		SWORD tick = pos;
+
+		t->tick = pos - 1;
+
+		if (t->pts > 1)	{
+			UWORD i;
+			idx++;
+
+			for (i = 0; i < t->pts - 1; i++) {
+				if (tick < p[idx].pos) {
+					idx--;
+
+					tick -= p[idx].pos;
+					if (tick == 0) {
+						envUpdate = 0;
+						break;
+					}
+
+					if (p[idx + 1].pos <= p[idx].pos)
+						break;
+
+					t->lastvalue = InterpolateEnv(tick, &t->env[idx], &t->env[idx + 1]);
+					t->interpolate = 1;
+
+					idx++;
+					envUpdate = 0;
+					break;
+				}
+
+				idx++;
+			}
+
+			if (envUpdate)
+				idx--;
+		}
+
+		if (envUpdate) {
+			t->interpolate = 0;
+			t->lastvalue = p[idx].val;
+		}
+
+		/* If position is after the last envelope point, just set
+		   it to the last one */
+		if (idx >= t->pts) {
+			idx = t->pts - 1;
+			if (idx < 0)
+				idx = 0;
+		}
+
+		t->index = idx;
+	}
+}
+
+/* Set the panning envelope tick to the position given */
+static void SetPanningEnvelopePosition(MODULE *mod, INSTRUMENT *i, ENVPR *t, ENVPT *p, SWORD pos)
+{
+	/* Because of a bug in FastTracker II, only the panning envelope
+	   position is set if the volume sustain flag is set. Other players
+	   may set the panning all the time */
+	if (!(mod->flags & UF_FT2QUIRKS) || (i->volflg & EF_SUSTAIN))
+		SetEnvelopePosition(t, p, pos);
+}
+
+/* Calculates the next envelope value the XM way, based on the implementation from ft2-clone */
+static inline void ProcessEnvelopeXm(MP_VOICE *aout, ENVPR *t)
+{
+	UWORD idx = t->index;
+	const BOOL keyOff = aout->main.keyoff & KEY_OFF;
+
+	if (keyOff) {
+		if (t->tick >= t->env[idx].pos)
+			t->tick = t->env[idx].pos - 1;
 	}
 
-	/* Imago Orpheus sometimes stores an extra initial point in the envelope */
-	if ((t->pts>=2)&&(t->env[0].pos==t->env[1].pos)) {
-		t->a++;
-		t->b++;
+	// Move position and check if we reached the end of the current envelope point
+	t->tick++;
+
+	if (t->tick == t->env[idx].pos) {
+		t->lastvalue = t->env[idx].val;
+
+		// Shift to next point
+		idx++;
+
+		// Is loop enabled, check if we need to do the looping
+		if (t->flg & EF_LOOP) {
+			// If the Lxx effect has been used to set to a point after the loop, no loop is made at all. See Ebony Owl Netsuke.xml for an example
+			if ((idx - 1) == t->loopend)
+			{
+				// Only one sustain point in XM, so SusBeg and SusEnd have the same value
+				if (!(t->flg & EF_SUSTAIN) || ((idx - 1) != t->susend) || !keyOff) {
+					idx = t->loopbeg;
+					t->tick = t->env[idx].pos;
+					t->lastvalue = t->env[idx].val;
+					idx++;
+				}
+			}
+		}
+
+		if (idx < t->pts) {
+			BOOL interpolateFlag = 1;
+			if ((t->flg & EF_SUSTAIN) && !keyOff) {
+				if ((idx - 1) == t->susend) {
+					t->interpolate = 0;
+					interpolateFlag = 0;
+				}
+			}
+
+			if (interpolateFlag) {
+				t->index = idx;
+				t->interpolate = 0;
+
+				if (t->env[idx].pos > t->env[idx - 1].pos)
+					t->interpolate = 1;
+			}
+		}
+		else
+			t->interpolate = 0;
 	}
 
-	/* Fit in the envelope, still */
-	if (t->a >= t->pts)
-		t->a = t->pts - 1;
-	if (t->b >= t->pts)
-		t->b = t->pts-1;
+	if (t->interpolate)
+		t->lastvalue = InterpolateEnv(t->tick, &t->env[idx - 1], &t->env[idx]);
+}
 
-	return t->env[t->a].val;
+/* Calculates the next envelope value the IT way, based on the implementation from Schismtracker */
+static inline void ProcessEnvelopeIt(MP_VOICE *aout, ENVPR *t)
+{
+	SWORD start, end;
+	const BOOL keyOff = aout->main.keyoff & KEY_OFF;
+	BOOL fadeFlag = 0;
+	SWORD pointPos, newPos;
+	SWORD tick;
+	UWORD i, idx;
+
+	t->tick++;
+
+	if ((t->flg & EF_SUSTAIN) && !keyOff) {
+		start = t->env[t->susbeg].pos;
+		end = t->env[t->susend].pos + 1;
+	}
+	else if (t->flg & EF_LOOP) {
+		start = t->env[t->loopbeg].pos;
+		end = t->env[t->loopend].pos + 1;
+	}
+	else {
+		// End of envelope
+		start = end = t->env[t->pts - 1].pos;
+		fadeFlag = 1;
+	}
+
+	if (t->tick >= end) {
+		if (fadeFlag && (t->flg & EF_VOLENV)) {
+			aout->main.keyoff |= KEY_FADE;
+
+			if (t->env[t->pts - 1].val == 0)
+				aout->main.fadevol = 0;
+		}
+
+		t->tick = start;
+	}
+
+	tick = t->tick;
+	idx = t->pts - 1;
+
+	// Find the right point to use
+	for (i = 0; i < t->pts - 1; i++) {
+		if (tick <= t->env[i].pos) {
+			idx = i;
+			break;
+		}
+	}
+
+	pointPos = t->env[idx].pos;
+
+	if (tick >= pointPos) {
+		t->lastvalue = t->env[idx].val;
+		newPos = pointPos;
+	}
+	else if (idx != 0) {
+		t->lastvalue = t->env[idx - 1].val;
+		newPos = t->env[idx - 1].pos;
+	}
+	else {
+		t->lastvalue = 0;
+		newPos = 0;
+	}
+
+	if (tick > pointPos)
+		tick = pointPos;
+
+	if ((pointPos > newPos) && (tick > newPos))
+		t->lastvalue += ((tick - newPos) * (t->env[idx].val - t->lastvalue)) / (pointPos - newPos);
 }
 
 /* This procedure processes all envelope types, include volume, pitch, and
@@ -401,108 +593,22 @@ static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susen
      Sustain loops are loops that are only active as long as the keyoff flag is
      clear.  When a volume envelope terminates, so does the current fadeout.
 */
-static SWORD ProcessEnvelope(MP_VOICE *aout, ENVPR *t, SWORD v)
+static SWORD ProcessEnvelope(MP_VOICE *aout, ENVPR *t)
 {
-	if (!t->pts) {	/* happens with e.g. Vikings In The Hood!.xm */
-		return v;
-	}
-	if (t->flg & EF_ON) {
-		UBYTE a, b;		/* actual points in the envelope */
-		UWORD p;		/* the 'tick counter' - real point being played */
-
-		a = t->a;
-		b = t->b;
-		p = t->p;
-
-		/*
-		 * Sustain loop on one point (XM type).
-		 * Not processed if KEYOFF.
-		 * Don't move and don't interpolate when the point is reached
-		 */
-		if ((t->flg & EF_SUSTAIN) && t->susbeg == t->susend &&
-		   (!(aout->main.keyoff & KEY_OFF) && p == t->env[t->susbeg].pos)) {
-			v = t->env[t->susbeg].val;
-		} else {
-			/*
-			 * All following situations will require interpolation between
-			 * two envelope points.
+	if (t->pts > 0) {	/* e.g. Vikings In The Hood!.xm have 0 points here */
+		if (t->flg & EF_ON) {
+			/* FastTracker II will first check for loop/sustain loops after a
+			   point has been processed, while Impulse Tracker will check on
+			   each tick + some other small differences
 			 */
-
-			/*
-			 * Sustain loop between two points (IT type).
-			 * Not processed if KEYOFF.
-			 */
-			/* if we were on a loop point, loop now */
-			if ((t->flg & EF_SUSTAIN) && !(aout->main.keyoff & KEY_OFF) &&
-			   a >= t->susend) {
-				a = t->susbeg;
-				b = (t->susbeg==t->susend)?a:a+1;
-				p = t->env[a].pos;
-				v = t->env[a].val;
-			} else
-			/*
-			 * Regular loop.
-			 * Be sure to correctly handle single point loops.
-			 */
-			if ((t->flg & EF_LOOP) && a >= t->end) {
-				a = t->beg;
-				b = t->beg == t->end ? a : a + 1;
-				p = t->env[a].pos;
-				v = t->env[a].val;
-			} else
-			/*
-			 * Non looping situations.
-			 */
-			if (a != b)
-				v = InterpolateEnv(p, &t->env[a], &t->env[b]);
+			if (t->flg & EF_ITMODE)
+				ProcessEnvelopeIt(aout, t);
 			else
-				v = t->env[a].val;
-
-			/*
-			 * Start to fade if the volume envelope is finished.
-			 */
-			if (p >= t->env[t->pts - 1].pos) {
-				if (t->flg & EF_VOLENV) {
-					aout->main.keyoff |= KEY_FADE;
-					if (!v)
-						aout->main.fadevol = 0;
-				}
-			} else {
-				p++;
-				/* did pointer reach point b? */
-				if (p >= t->env[b].pos)
-					a = b++; /* shift points a and b */
-			}
-			t->a = a;
-			t->b = b;
-			t->p = p;
+				ProcessEnvelopeXm(aout, t);
 		}
 	}
-	return v;
-}
 
-/* Set envelope tick to the position given */
-static void SetEnvelopePosition(ENVPR *t, ENVPT *p, SWORD pos)
-{
-	if (t->pts > 0)	{
-		UWORD i;
-
-		for (i = 0; i < t->pts - 1; i++) {
-
-			if ((pos >= p[i].pos) && (pos < p[i + 1].pos)) {
-				t->a = i;
-				t->b = i + 1;
-				t->p = pos;
-				return;
-			}
-		}
-
-		/* If position is after the last envelope point, just set
-		   it to the last one */
-		t->a = t->pts - 1;
-		t->b = t->pts;
-		t->p = p[t->a].pos;
-	}
+	return t->lastvalue;
 }
 
 /* XM linear period to frequency conversion */
@@ -1613,21 +1719,18 @@ static int DoXMEffectL(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	dat=UniGetByte();
 	if ((!tick)&&(a->main.i)) {
 		INSTRUMENT *i=a->main.i;
-		MP_VOICE *aout;
+		MP_VOICE *aout = &mod->voice[channel];
 
-		if ((aout=a->slave) != NULL) {
-			if (aout->venv.env) {
-				SetEnvelopePosition(&aout->venv, i->volenv, dat);
-			}
-			if (aout->penv.env) {
-				/* Because of a bug in FastTracker II, only the panning envelope
-				   position is set if the volume sustain flag is set. Other players
-				   may set the panning all the time */
-				if (!(mod->flags & UF_FT2QUIRKS) || (i->volflg & EF_SUSTAIN)) {
-					SetEnvelopePosition(&aout->penv, i->panenv, dat);
-				}
-			}
-		}
+		/* We need to set this, in case if a note is played on
+		   the same row, the calculated envelope position will
+		   be overwritten in StartEnvelope() */
+		aout->envstartpos = dat;
+
+		if (aout->venv.env)
+			SetEnvelopePosition(&aout->venv, i->volenv, dat);
+
+		if (aout->penv.env)
+			SetPanningEnvelopePosition(mod, i, &aout->penv, i->panenv, dat);
 	}
 
 	return 0;
@@ -2806,30 +2909,32 @@ static void pt_UpdateVoices(MODULE *mod, int max_volume)
 		envpan = PAN_CENTER;
 		envpit = 32;
 		if (i && ((aout->main.kick==KICK_NOTE)||(aout->main.kick==KICK_ENV))) {
-			if (aout->main.volflg & EF_ON)
-				envvol = StartEnvelope(&aout->venv,aout->main.volflg,
-				  i->volpts,i->volsusbeg,i->volsusend,
-				  i->volbeg,i->volend,i->volenv,aout->main.keyoff);
-			if (aout->main.panflg & EF_ON)
-				envpan = StartEnvelope(&aout->penv,aout->main.panflg,
-				  i->panpts,i->pansusbeg,i->pansusend,
-				  i->panbeg,i->panend,i->panenv,aout->main.keyoff);
+			if (aout->main.volflg & EF_ON) {
+				StartEnvelope(&aout->venv,aout->main.volflg, i->volpts,i->volsusbeg,i->volsusend,i->volbeg,i->volend,i->volenv,256);
+				if (aout->envstartpos != 0)
+					SetEnvelopePosition(&aout->venv,i->volenv,aout->envstartpos);
+			}
+			if (aout->main.panflg & EF_ON) {
+				StartEnvelope(&aout->penv,aout->main.panflg,i->panpts,i->pansusbeg,i->pansusend,i->panbeg,i->panend,i->panenv,PAN_CENTER);
+				if (aout->envstartpos != 0)
+					SetPanningEnvelopePosition(mod,i,&aout->penv,i->panenv,aout->envstartpos);
+			}
 			if (aout->main.pitflg & EF_ON)
-				envpit = StartEnvelope(&aout->cenv,aout->main.pitflg,
-				  i->pitpts,i->pitsusbeg,i->pitsusend,
-				  i->pitbeg,i->pitend,i->pitenv,aout->main.keyoff);
+				StartEnvelope(&aout->cenv,aout->main.pitflg,i->pitpts,i->pitsusbeg,i->pitsusend,i->pitbeg,i->pitend,i->pitenv,32);
 
 			if (aout->cenv.flg & EF_ON)
 				aout->masterperiod=GetPeriod(mod->flags,
 				  (UWORD)aout->main.note<<1, aout->master->speed);
-		} else {
-			if (aout->main.volflg & EF_ON)
-				envvol = ProcessEnvelope(aout,&aout->venv,256);
-			if (aout->main.panflg & EF_ON)
-				envpan = ProcessEnvelope(aout,&aout->penv,PAN_CENTER);
-			if (aout->main.pitflg & EF_ON)
-				envpit = ProcessEnvelope(aout,&aout->cenv,32);
+
+			aout->envstartpos = 0;
 		}
+		if (aout->main.volflg & EF_ON)
+			envvol = ProcessEnvelope(aout,&aout->venv);
+		if (aout->main.panflg & EF_ON)
+			envpan = ProcessEnvelope(aout,&aout->penv);
+		if (aout->main.pitflg & EF_ON)
+			envpit = ProcessEnvelope(aout,&aout->cenv);
+
 		if (aout->main.kick == KICK_NOTE) {
 			aout->main.kick_flag = 1;
 		}
@@ -3015,13 +3120,18 @@ static void pt_Notes(MODULE *mod)
 				break;
 			case UNI_INSTRUMENT:
 				inst=UniGetByte();
-				if (inst>=mod->numins) break; /* safety valve */
+				if (inst>=mod->numins) {
+					a->main.i=NULL;
+					a->main.s=NULL;
+					a->main.sample=-1;
+					break; /* safety valve */
+				}
 				funky|=2;
 				a->main.i=(mod->flags & UF_INST)?&mod->instruments[inst]:NULL;
 				a->retrig=0;
 				a->s3mtremor=0;
 				a->ultoffset=0;
-				a->main.sample=inst;
+				a->main.sample=(SBYTE)inst;
 				break;
 			default:
 				UniSkipOpcode();
@@ -3037,6 +3147,9 @@ static void pt_Notes(MODULE *mod)
 				s=&mod->samples[i->samplenumber[a->anote]];
 				a->main.note=i->samplenote[a->anote];
 			} else {
+				if (a->main.sample < 0)
+					continue;
+
 				a->main.note=a->anote;
 				s=&mod->samples[a->main.sample];
 			}
