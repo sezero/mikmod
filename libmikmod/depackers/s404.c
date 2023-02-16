@@ -141,7 +141,7 @@ static int decompressS404(UBYTE *src, UBYTE *orgdst,
   eff = initGetb(&bs, src, src_length);
 
   /* Sanity check--prevent invalid shift exponents. */
-  if (eff < 6 || eff >= 32)
+  if (eff < 6 || eff >= 16)
     return -1;
 
   while (oLen > 0) {
