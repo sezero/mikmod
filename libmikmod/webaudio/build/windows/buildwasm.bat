@@ -14,6 +14,7 @@ IF NOT EXIST %TEMP_DIR%\ (
 )
 
 SET SRCS=^
+%SRC_DIR%\drivers\drv_nos.c ^
 %SRC_DIR%\loaders\load_669.c ^
 %SRC_DIR%\loaders\load_amf.c ^
 %SRC_DIR%\loaders\load_asy.c ^

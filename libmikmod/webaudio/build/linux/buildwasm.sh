@@ -12,6 +12,7 @@ if [ ! -d "$TEMP_DIR/" ]; then
 fi
 
 SRCS="\
+$SRC_DIR/drivers/drv_nos.c \
 $SRC_DIR/loaders/load_669.c \
 $SRC_DIR/loaders/load_amf.c \
 $SRC_DIR/loaders/load_asy.c \
