@@ -545,7 +545,7 @@ static BOOL display_information(void)
 #endif
 			)
 			continue;
-		SNPRINTF(paneltitle + strlen(paneltitle), STORAGELEN, "%c%s%c",
+		SNPRINTF(paneltitle + strlen(paneltitle), STORAGELEN - strlen(paneltitle), "%c%s%c",
 				 i == cur_display ? '[' : ' ',
 				 panel_name[i - 1], i == cur_display ? ']' : ' ');
 	}
