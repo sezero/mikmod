@@ -100,6 +100,12 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "HP-UX.*")
 set(SYS_HPUX 1)
 endif()
 
+if(SYS_OPENBSD)
+set(USE_RPATH_DEFAULT  ON)
+else()
+set(USE_RPATH_DEFAULT OFF)
+endif()
+
 include(CMakeDependentOption)
 
 cmake_dependent_option(ENABLE_ALSA "Include the ALSA driver" ON "SYS_LINUX" OFF)
@@ -132,7 +138,7 @@ option(DISABLE_DEPACKERS "Exclude support for module depackers" OFF)
 option(DISABLE_HQMIXER "Exclude support for high quality mixer" OFF)
 
 option(ENABLE_SIMD "Use SIMD (AltiVec or SSE2) optimizations (UNSTABLE!!!)" OFF)
-option(ENABLE_RPATH "Whether to use an rpath when linking" ON)
+option(ENABLE_RPATH "Whether to use RPATH when linking" ${USE_RPATH_DEFAULT})
 option(ENABLE_SHARED "Whether to build the shared library" ON)
 option(ENABLE_STATIC "Whether to build the static library" ON)
 
@@ -142,8 +148,6 @@ ENDIF()
 
 include(GNUInstallDirs)
 
-### This is to set the RPATH correctly, so when installed
-### under a prefix the executables will find the libraries.
 ### See:  http://www.cmake.org/Wiki/CMake_RPATH_handling
 IF (ENABLE_RPATH)
   # use, i.e. don't skip the full RPATH for the build tree
