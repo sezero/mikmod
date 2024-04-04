@@ -18,7 +18,7 @@ SET(mikmod_SRCS
    rcfile.c
 )
 
-IF (NOT HAVE_USLEEP)
+IF (NOT HAVE_USLEEP AND NOT WIN32 AND NOT OS2)
     LIST (APPEND mikmod_SRCS "musleep.c")
 ENDIF()
 IF (NOT HAVE_FNMATCH)
