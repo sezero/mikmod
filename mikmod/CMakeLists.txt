@@ -58,6 +58,7 @@ INCLUDE(CheckFunctionExists)
 INCLUDE(CheckSymbolExists)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
+include(GNUInstallDirs)
 include(mik_macros)
 
 CHECK_MULTI_INCLUDE_FILES(
@@ -195,7 +196,7 @@ install(
     FILES
         mikmodrc
     DESTINATION
-        "share/mikmod"
+        ${CMAKE_INSTALL_DATADIR}/mikmod
 )
 
 add_subdirectory(src)

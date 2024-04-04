@@ -34,5 +34,5 @@ add_executable(mikmod ${mikmod_SRCS})
 
 target_link_libraries(mikmod ${MIKMOD_LIBRARIES} ${EXTRA_LIBS})
 
-install(TARGETS mikmod DESTINATION bin)
-
+install(TARGETS mikmod DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES mikmod.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)

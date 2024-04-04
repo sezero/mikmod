@@ -140,6 +140,8 @@ IF (NOT ENABLE_STATIC AND NOT ENABLE_SHARED)
     message(FATAL_ERROR "Both static and shared builds got disabled. You must enable at least one of them.")
 ENDIF()
 
+include(GNUInstallDirs)
+
 ### This is to set the RPATH correctly, so when installed
 ### under a prefix the executables will find the libraries.
 ### See:  http://www.cmake.org/Wiki/CMake_RPATH_handling
@@ -152,7 +154,7 @@ IF (ENABLE_RPATH)
     SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
   # the RPATH to be used when installing
-    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+    SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
 
   # add the automatically determined parts of the RPATH
   # which point to directories outside the build tree to the install RPATH
@@ -717,8 +719,8 @@ CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/config.h.cmake" "${PROJECT_BINARY_DIR}/con
 
 SET(prefix ${CMAKE_INSTALL_PREFIX})
 SET(exec_prefix "\${prefix}")
-SET(libdir "\${exec_prefix}/lib${LIB_SUFFIX}")
-SET(includedir "\${prefix}/include")
+SET(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+SET(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/libmikmod-config.in" "${PROJECT_BINARY_DIR}/libmikmod-config" @ONLY)
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/libmikmod.pc.in" "${PROJECT_BINARY_DIR}/libmikmod.pc" @ONLY)
 
@@ -730,23 +732,24 @@ ENDFOREACH (TGT)
 
 INSTALL(
     TARGETS ${LIBMIKMOD_LIBS}
-    LIBRARY DESTINATION "lib${LIB_SUFFIX}"
-    ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 INSTALL(
     FILES "${PROJECT_BINARY_DIR}/libmikmod-config"
     PERMISSIONS GROUP_EXECUTE GROUP_READ OWNER_EXECUTE OWNER_READ OWNER_WRITE WORLD_EXECUTE WORLD_READ
-    DESTINATION "bin"
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 INSTALL(
     FILES
         "${PROJECT_SOURCE_DIR}/include/mikmod.h"
     DESTINATION
-        "include"
+        ${CMAKE_INSTALL_INCLUDEDIR}
 )
 INSTALL(
     FILES
         "${PROJECT_BINARY_DIR}/libmikmod.pc"
     DESTINATION
-        "lib${LIB_SUFFIX}/pkgconfig"
+        ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
