@@ -17,12 +17,10 @@ Watcom compilers.
    (you need GNU make: gmake, or mingw32-make, or whatever)
 
  - using MSVC:
-   Compile using project files from MSVC6 or VS2005. The VS2005
-   project file imports just fine into newer Visual Studio versions,
-   e.g. VS2012.
-
-   Hopefully, it will compile and a file named mikmod.exe will be
-   created.
+   Compile using project files from the 'VisualStudio' directory:
+   they are compatible with Visual Studio 2010 and newer.
+  (If you really need, the 'VS8' (for MSVC 2005/2008) and 'MSVC6'
+   project files are still there, too.)
 
 3) Try it!
    There are 2 audio drivers for windows.
