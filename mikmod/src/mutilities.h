@@ -138,6 +138,18 @@ extern char storage[STORAGELEN+2];
 #define BTST(v, m) ((v) & (m) ? 1 : 0)
 
 #ifdef _WIN32
+#define strdup            _strdup
+#define stricmp           _stricmp
+#define getcwd            _getcwd
+#define open              _open
+#define fdopen            _fdopen
+#define dup               _dup
+#define dup2              _dup2
+#define lseek             _lseek
+#define read              _read
+#define write             _write
+#define close             _close
+#define unlink            _unlink
 #define stat              _stat
 #ifndef S_ISDIR
 #define S_ISDIR(st_mode)  ((st_mode & _S_IFDIR) == _S_IFDIR)
