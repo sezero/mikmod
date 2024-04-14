@@ -117,40 +117,54 @@ typedef struct {
 	BOOL stop;
 } FREQ_SCAN_DATA;
 
+#if defined (_MSC_VER)
+#define CMP_CALLCONV    __cdecl
+#elif defined(__WATCOMC__) && (__WATCOMC__ >= 1240) && defined(_M_IX86)
+#define CMP_CALLCONV    __watcall
+#else
+#define CMP_CALLCONV
+#endif
+
 /* compare function for qsort on the searchlist */
-static int searchlist_cmp (char **key, char **member)
+static int CMP_CALLCONV searchlist_cmp (const void *key, const void *member)
 {
-	return (filecmp(*key,*member));
+	return filecmp(*(const char **)key, *(const char **)member);
 }
 
 /* compare function for bsearch on the searchlist */
-static int searchlist_search_cmp (char *key, char **member)
+static int CMP_CALLCONV searchlist_search_cmp (const void *key, const void *member)
 {
-	return (filecmp(key,*member));
+	return filecmp((const char *)key, *(const char **)member);
 }
 
 /* compare function for qsort on the directory list */
-static int dirlist_cmp (char **small, char **big)
+static int CMP_CALLCONV dirlist_cmp (const void *s, const void *b)
 {
+	const char **small = (const char **)s;
+	const char **big   = (const char **)b;
 	if (IS_PATH_SEP((*small)[strlen(*small)-1])) {
 		if (IS_PATH_SEP((*big)[strlen(*big)-1]))
 			return(filecmp(*small+2,*big+2));
 		else
 			return -1;
-	} else if (IS_PATH_SEP((*big)[strlen(*big)-1]))
+	}
+	if (IS_PATH_SEP((*big)[strlen(*big)-1]))
 		return 1;
 	return(filecmp(*small+2,*big+2));
 }
 
 /* compare function for bearch on the directory list */
-static int dirlist_search_cmp (char *key, char **member)
+static int CMP_CALLCONV dirlist_search_cmp (const void *k, const void *m)
 {
+	const char * key    = (const char *)k;
+	const char **member = (const char**)m;
 	if (IS_PATH_SEP(key[strlen(key)-1])) {
 		if (IS_PATH_SEP((*member)[strlen(*member)-1]))
 			return(filecmp(key,*member+2));
 		else
 			return -1;
-	} else if (IS_PATH_SEP((*member)[strlen(*member)-1]))
+	}
+	if (IS_PATH_SEP((*member)[strlen(*member)-1]))
 		return 1;
 	return(filecmp(key,*member+2));
 }
@@ -169,7 +183,7 @@ static void freq_set_marks (char **entries, int cnt, const char *path, FREQ_DATA
 		if (!IS_PATH_SEP(fstart[strlen(fstart)]) &&
 			data->cnt_list > 0 &&
 			bsearch (file,data->searchlist,data->cnt_list,
-					 sizeof(char*),(int(*)())searchlist_search_cmp))
+					 sizeof(char*),searchlist_search_cmp))
 			*(entries[i]) = FREQ_SEL;
 		else
 			*(entries[i]) = FREQ_UNSEL;
@@ -193,7 +207,7 @@ static void freq_check_searchlist (FREQ_DATA *data)
 				else
 					data->searchlist[i] = entry->file;
 			}
-			qsort (data->searchlist, len, sizeof(char*),(int(*)())searchlist_cmp);
+			qsort (data->searchlist, len, sizeof(char*),searchlist_cmp);
 		}
 		if (data->w) {
 			freq_set_marks (data->w->entries,data->w->cnt,data->path,data);
@@ -292,7 +306,7 @@ static int entry_remove_by_name(char *path, char *file, FREQ_DATA *data)
 	/* Update the searchlist */
 	while (data->cnt_list>0 &&
 		   (pos = (char **) bsearch(buffer,data->searchlist,data->cnt_list,
-						 sizeof(char*),(int(*)())searchlist_search_cmp))) {
+						 sizeof(char*),searchlist_search_cmp))) {
 		while (pos < data->searchlist + data->cnt_list - 1) {
 			*pos = *(pos+1);
 			pos++;
@@ -376,7 +390,7 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 				int j = 0;
 				if (freq_data && freq_data->cnt_list > 0)
 					pos = (char **) bsearch(file,freq_data->searchlist,freq_data->cnt_list,
-								 sizeof(char*),(int(*)())searchlist_search_cmp);
+								 sizeof(char*),searchlist_search_cmp);
 				if (pos) {
 					if (mode != FREQ_ADD) {
 						j = entry_remove_by_name(file, NULL, freq_data);
@@ -457,7 +471,7 @@ static void freq_readdir (const char *path, char ***entries, int *cnt, FREQ_DATA
 		freq_set_marks (*entries,*cnt,path,data);
 		closedir (dir);
 		if (*cnt)
-			qsort (*entries, *cnt, sizeof(char*),(int(*)())dirlist_cmp);
+			qsort (*entries, *cnt, sizeof(char*),dirlist_cmp);
 	}
 }
 
@@ -508,7 +522,7 @@ static void freq_changedir (const char *path, FREQ_DATA *data)
 				if (IS_PATH_SEP(*end)) {
 					*(end+1) = '\0';
 					pos=(char**) bsearch(last, entries, cnt, sizeof(char*),
-								 (int(*)())dirlist_search_cmp);
+								 dirlist_search_cmp);
 				} else
 					pos = NULL;
 			}
