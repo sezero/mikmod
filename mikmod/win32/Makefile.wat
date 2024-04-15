@@ -15,10 +15,10 @@ INCLUDES=-I.
 CPPFLAGS=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_SYS_TIME_H -DHAVE_SNPRINTF -DHAVE_MKSTEMP
 
 !ifneq target static
-LIBS=mikmod.lib
+LIBS=libmikmod-3.lib
 !else
 CPPFLAGS+= -DMIKMOD_STATIC
-LIBS=mikmod_static.lib winmm.lib dsound.lib dxguid.lib
+LIBS=mikmod-static.lib winmm.lib dsound.lib dxguid.lib
 !endif
 
 CFLAGS = -bt=nt -bm -fp5 -fpi87 -mf -oeatxh -w4 -zp8 -ei -zq
