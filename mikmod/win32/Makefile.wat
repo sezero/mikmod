@@ -13,6 +13,8 @@ CC=wcc386
 
 INCLUDES=-I.
 CPPFLAGS=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_SYS_TIME_H -DHAVE_SNPRINTF -DHAVE_MKSTEMP
+# Mikmod_free() is available in libmikmod >= 3.2.0-beta3:
+CPPFLAGS+= -DHAVE_MIKMOD_FREE
 
 !ifneq target static
 LIBS=libmikmod-3.lib
