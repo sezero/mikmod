@@ -30,13 +30,21 @@
 #  include "config.h"
 #endif
 
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
 #ifdef HAVE_GETOPT_LONG_ONLY
 #  include <getopt.h>
 #else
 #  include "getopt_long.h"
+#endif
+#if defined(__EMX__) && !defined(HAVE_GETOPT_LONG_ONLY) /* hack.. */
+#  define undef_getopt
+#  define getopt emx_getopt
+#endif
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+#ifdef undef_getopt
+#  undef getopt
+#  undef undef_getopt
 #endif
 #include <ctype.h>
 #ifndef _WIN32
