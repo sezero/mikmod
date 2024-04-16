@@ -42,9 +42,9 @@ COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
 .SUFFIXES:
 .SUFFIXES: .o .c
 
-LIBNAME=mikmod.lib
+LIBNAME=mikmod3.lib
 LIBSTATIC=mikmod_static.lib
-DLLNAME=mikmod.dll
+DLLNAME=mikmod3.dll
 DEFNAME=mikmod.def
 
 OBJ=drv_os2.o drv_dart.o \

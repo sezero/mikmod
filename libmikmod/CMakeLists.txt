@@ -372,6 +372,11 @@ IF (ENABLE_SHARED)
             PROPERTIES DEFINE_SYMBOL DLL_EXPORT
         )
     ENDIF()
+    IF(OS2)
+        SET_TARGET_PROPERTIES(mikmod
+            PROPERTIES OUTPUT_NAME "mikmod3"
+        )
+    ENDIF()
 ENDIF()
 
 IF (ENABLE_STATIC)

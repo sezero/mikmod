@@ -15,7 +15,7 @@ INCLUDES=-I.
 CPPFLAGS=-DHAVE_CONFIG_H
 
 !ifneq target static
-LIBS=mikmod.lib
+LIBS=mikmod3.lib
 !else
 CPPFLAGS+= -DMIKMOD_STATIC
 LIBS=mikmod_static.lib mmpm2.lib

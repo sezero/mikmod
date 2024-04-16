@@ -18,7 +18,7 @@ CFLAGS = -O2 -Wall -funroll-loops -ffast-math -fno-strength-reduce -Zomf -Zmt
 CPPFLAGS = -DHAVE_CONFIG_H
 INCLUDE = -I. -I../src
 LD = gcc
-LDFLAGS = -s -Zomf -Zmt -Zcrtdll -L. -lmikmod
+LDFLAGS = -s -Zomf -Zmt -Zcrtdll -L. -lmikmod3
 # if linking against static libmikmod.a, mmpm2 is needed too (for drv_os2 and drv_dart.)
 LDFLAGS+= -lmmpm2
 
