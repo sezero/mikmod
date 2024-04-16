@@ -47,6 +47,9 @@
 #endif
 
 #include <mikmod.h>	/* for BOOL */
+#if (LIBMIKMOD_VERSION < 0x030200) || (LIBMIKMOD_VERSION == 0x030200 && !defined(DMODE_NOISEREDUCTION))
+#undef HAVE_MIKMOD_FREE /* MikMod_free() not found in <= 3.2.0-beta2. */
+#endif
 
 /*========== Constants */
 
