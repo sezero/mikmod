@@ -16,7 +16,7 @@
 #undef HAVE_SNPRINTF /* but we do define HAVE_VSNPRINTF */
 
 /* Define to 1 if you have the `srandom' function. */
-#undef HAVE_SRANDOM
+/* #undef HAVE_SRANDOM */
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H

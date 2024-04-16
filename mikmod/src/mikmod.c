@@ -30,35 +30,27 @@
 #  include "config.h"
 #endif
 
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #ifdef HAVE_GETOPT_LONG_ONLY
 #  include <getopt.h>
 #else
 #  include "getopt_long.h"
 #endif
-#if defined(__EMX__) && !defined(HAVE_GETOPT_LONG_ONLY) /* hack.. */
-#  define undef_getopt
-#  define getopt emx_getopt
-#endif
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
-#ifdef undef_getopt
-#  undef getopt
-#  undef undef_getopt
-#endif
-#include <ctype.h>
 #ifndef _WIN32
 #  include <signal.h>
 #endif
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #if defined(__OS2__)||defined(__EMX__)
 #  define INCL_DOS
 #  define INCL_KBD
 #  define INCL_DOSPROCESS
 #  include <os2.h>
+#  include <io.h>	/* unlink() */
+#elif defined HAVE_UNISTD_H
+#  include <unistd.h>
 #endif
 
 #if defined(__FreeBSD__)||defined(__NetBSD__)||defined(__OpenBSD__)

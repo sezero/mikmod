@@ -18,7 +18,9 @@
 #define HAVE_MKSTEMP	1
 
 /* Define if your system has random(3) and srandom(3) */
+#if defined(__DJGPP__)
 #define HAVE_SRANDOM	1
+#endif
 
 /* Define if you have the usleep function.  */
 #define HAVE_USLEEP	1

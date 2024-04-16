@@ -1,4 +1,4 @@
-/* config.h.in.  Generated manually for GCC/EMX.  */
+/* config.h.in.  Generated manually for OS/2.  */
 
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).  */
 #define HAVE_MIKMOD_FREE 1
@@ -10,13 +10,13 @@
 #define HAVE_MKSTEMP	1
 
 /* Define if your system has random(3) and srandom(3) */
-#define HAVE_SRANDOM	1
+/* #undef HAVE_SRANDOM */
 
 /* Define if your system has snprintf(3)  */
 #define HAVE_SNPRINTF	1
 
 /* Define if you have the usleep function.  */
-#define HAVE_USLEEP	1
+/* #undef HAVE_USLEEP */
 
 /* Define if you have the vsnprintf function.  */
 #define HAVE_VSNPRINTF	1
@@ -36,9 +36,11 @@
 /* Define if you have the <sys/time.h> header file.  */
 #define HAVE_SYS_TIME_H		1
 
+#ifdef __EMX__
 /* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
 #define HAVE_SYS_WAIT_H	1
 
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H		1
+#endif
 

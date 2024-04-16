@@ -91,7 +91,7 @@ void PL_InitList(PLAYLIST * pl)
 	pl->current = -1;
 	pl->curr_deleted = 0;
 	pl->add_pos = -1;
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)||!defined(HAVE_SRANDOM)
 	srand(time(NULL));
 #else
 	{
