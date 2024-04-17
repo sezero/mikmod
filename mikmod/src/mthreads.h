@@ -99,8 +99,9 @@ typedef enum {
 
 #define DEFINE_THREAD(name,modevar) \
 	int modevar = MTH_NORUN
+#define THREAD_STKSIZE		8192 /* was 4096, wasn't enough with my old emx environment */
 #define THREAD_START(name,fkt,arg) \
-	(_beginthread(fkt, NULL, 4096, arg) != -1)
+	(_beginthread(fkt, NULL, THREAD_STKSIZE, arg) != -1)
 #define THREAD_JOIN(name,modevar) \
 	{	modevar = MTH_QUITTING; \
 		while (modevar==MTH_QUITTING) SLEEP(1); \
@@ -124,8 +125,9 @@ typedef enum {
 
 #define DEFINE_THREAD(name,modevar) \
 	int modevar = MTH_NORUN
+#define THREAD_STKSIZE		8192 /* was 4096 */
 #define THREAD_START(name,fkt,arg) \
-	(_beginthread(fkt, 4096, arg) != -1)
+	(_beginthread(fkt, THREAD_STKSIZE, arg) != -1)
 #define THREAD_JOIN(name,modevar) \
 	{	modevar = MTH_QUITTING; \
 		while (modevar==MTH_QUITTING) SLEEP(1); \
