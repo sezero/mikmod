@@ -30,17 +30,8 @@ SSE2FLAGS=-msse2
 VECFLAGS=-faltivec
 
 # support for CoreAudio sound output:
-LDLIBS+=-Wl,-framework,CoreAudio
+LDLIBS+= -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices
 CPPFLAGS+=-DDRV_OSX
-
-# support for output through OpenAL (requires 10.4 or newer)
-#LDLIBS+=-Wl,-framework,OpenAL
-#CPPFLAGS+=-DDRV_OPENAL
-
-# support for output through SDL:
-# SDL_FRAMEWORK define is for including SDL.h as <SDL/SDL.h> from SDL.framework.
-#LDLIBS+=-Wl,-framework,SDL
-#CPPFLAGS+=-DDRV_SDL -DSDL_FRAMEWORK
 
 # support for output via a pipe to another command:
 CPPFLAGS+=-DDRV_PIPE

@@ -1133,7 +1133,7 @@ if test $libmikmod_driver_osx = yes
 then
 	libmikmod_driverlist="osx $libmikmod_driverlist"
 	AC_DEFINE([DRV_OSX], 1, [Define this if you want the MacOS X CoreAudio driver])
-	LIBRARY_LIB="-framework CoreAudio $LIBRARY_LIB"
+	LIBRARY_LIB="-framework AudioToolbox -framework AudioUnit -framework CoreServices $LIBRARY_LIB"
 fi
 
 #OpenSL ES driver (e.g. Android)

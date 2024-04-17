@@ -20,46 +20,11 @@
 
 /*==============================================================================
 
-  $Id$
-
   Driver for output via CoreAudio [MacOS X and Darwin].
+  Based on xmp player:
+  Copyright (C) 1996-2016 Claudio Matsuoka and Hipolito Carraro Jr
 
 ==============================================================================*/
-
-/*
-
-	Written by Axel Wefers <awe@fruitz-of-dojo.de>
-
-	Notes:
-	- if HAVE_PTHREAD (config.h) is defined, an extra thread will be created to fill the buffers.
-	- if HAVE_PTHREAD is defined, a double buffered method will be used.
-	- if an unsupported frequency is selected [md_mixfreq], the native device frequency is used.
-	- if mono playback is selected and is not supported by the device, we will emulate mono
-	  playback.
-	- if stereo/surround playback is selected and is not supported by the device, DMODE_STEREO
-	  will be deactivated automagically.
-
-	Bug fixes by Anders F Bjoerklund <afb@algonet.se>
-
-	Changes:
-	- cleared up in the macro jungle, to see what was going on in the code
-	- separated "has ability to use pthreads" from "wish to use pthreads"
-	- moved pthread_cond_wait inside the mutex lock, to avoid a deadlock [!]
-	- added more than one back buffer, currently left at eight or something
-	- gave up on whole thread idea, since it stutters if you rescale a window
-	- moved a #pragma mark and added DRV_OSX/MISSING, for non-Darwin compiles
-	- added support for float-point buffers, to avoid the conversion and copying
-	- Altivec optimizations of the various vector transforms (S.Denis)
-
-	Future ideas: (TODO)
-
-	- support possibly partially filled buffers from libmikmod
-	- clean up the rest of the code and lose even more macros
-	- use hardware preferred native size for the sample buffers
-	- provide a PPC64 version of the library, for PowerMac G5
-
-*/
-
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -69,627 +34,286 @@
 
 #ifdef DRV_OSX
 
-/* INCLUDES */
-#include <mach-o/arch.h>
-#include <sys/sysctl.h>
-#include <CoreAudio/AudioHardware.h>
+#include <CoreAudio/CoreAudio.h>
+#include <AudioUnit/AudioUnit.h>
+#include <AudioToolbox/AudioToolbox.h>
+#include <CoreServices/CoreServices.h>
 
-/* DEFINES */
-#define SOUND_BUFFER_SCALE_8BIT		(1.0f / 128.0f)		/* CoreAudio requires float input. */
-#define SOUND_BUFFER_SCALE_16BIT	(1.0f / 32768.0f)	/* CoreAudio requires float input. */
+static AudioUnit au;
 
-#define SOUND_BUFFER_SIZE		4096		/* The buffersize libmikmod will use. */
-#define USE_FILL_THREAD			0		/* Use an extra thread to fill the buffers? */
-
-#ifndef HAVE_PTHREAD
-#undef USE_FILL_THREAD
-#define USE_FILL_THREAD			0		/* must have pthread supports to use thread */
+#if (MAC_OS_X_VERSION_MIN_REQUIRED < 1060) || \
+    (!defined(AUDIO_UNIT_VERSION) || ((AUDIO_UNIT_VERSION - 0) < 1060))
+#define AudioComponent Component
+#define AudioComponentDescription ComponentDescription
+#define AudioComponentFindNext FindNextComponent
+#define AudioComponentInstanceNew OpenAComponent
+#define AudioComponentInstanceDispose CloseComponent
 #endif
 
-#define NUMBER_BACK_BUFFERS		8		/* Number of back buffers for the thread */
-#define DEBUG_TRACE_THREADS		0
+/*
+ * CoreAudio helpers by Timothy J. Wood from mplayer/libao
+ * The player fills a ring buffer, OSX retrieves data from the buffer
+ */
 
-/* MACROS */
-#define CHECK_ERROR(ERRNO, RESULT)								\
-			if (RESULT != kAudioHardwareNoError) {					\
-				_mm_errno = ERRNO;						\
-				return 1;							\
-			}
+static SBYTE *buffer;
+static int buffer_len;
+static int buf_write_pos;
+static int buf_read_pos;
+static int num_chunks;
+static int chunk_size;
+static int packet_size;
 
-#define SET_PROPS()	if (AudioDeviceSetProperty(gSoundDeviceID, NULL, 0, 0,			\
-							kAudioDevicePropertyStreamFormat,	\
-							myPropertySize,				\
-							&mySoundBasicDescription)) {		\
-				CHECK_ERROR (MMERR_OSX_BAD_PROPERTY,				\
-					AudioDeviceGetProperty(gSoundDeviceID, 0, 0,		\
-							kAudioDevicePropertyStreamFormat,	\
-							&myPropertySize,			\
-							&mySoundBasicDescription));		\
-			}
-
-#define SET_STEREO()	switch (mySoundBasicDescription.mChannelsPerFrame) {			\
-			case 1:									\
-				md_mode &= ~DMODE_STEREO;					\
-				gBufferMono2Stereo = 0;						\
-				break;								\
-			case 2:									\
-				if (md_mode & DMODE_STEREO)	gBufferMono2Stereo = 0;		\
-				else				gBufferMono2Stereo = 1;		\
-				break;								\
-			default:								\
-				_mm_errno = MMERR_OSX_SET_STEREO;				\
-				return 1;							\
-			}
-
-#define FILL_BUFFER(_buffer,_size)								\
-			MUTEX_LOCK (vars);							\
-			if (Player_Paused_internal())						\
-				VC_SilenceBytes ((SBYTE*) (_buffer), (ULONG) (_size));		\
-			else	VC_WriteBytes ((SBYTE*) (_buffer), (ULONG) (_size));		\
-			MUTEX_UNLOCK (vars);
-
-/* GLOBALS */
-#if USE_FILL_THREAD
-
-static pthread_t		gBufferFillThread;
-static pthread_mutex_t		gBufferMutex;
-static pthread_cond_t		gBufferCondition;
-static Boolean			gExitBufferFillThread = 0;
-
-static int			gCurrentPlayBuffer;
-static int			gCurrentFillBuffer;
-static unsigned char		*gSoundBackBuffer[NUMBER_BACK_BUFFERS];
-
-#else
-
-static unsigned char 		*gSoundBuffer = NULL;
-
-#endif /* USE_FILL_THREAD */
-
-static AudioDeviceID 		gSoundDeviceID;
-static UInt32			gInBufferSize;
-static UInt32			gHardwareBufferSize = 0;
-static Boolean			gIOProcIsInstalled = 0,
-				gDeviceHasStarted = 0,
-				gBufferMono2Stereo = 0;
-
-static OSStatus	(*gAudioIOProc) (AudioDeviceID,
-				 const AudioTimeStamp *, const AudioBufferList *,
-				 const AudioTimeStamp *, AudioBufferList *,
-				 const AudioTimeStamp *, void *);
-
-/* FUNCTION PROTOTYPES */
-#if USE_FILL_THREAD
-
-static void * OSX_FillBuffer (void *);
-
-#endif /* USE_FILL_THREAD */
-
-static OSStatus OSX_AudioIOProc8Bit (AudioDeviceID,
-					const AudioTimeStamp *, const AudioBufferList *,
-					const AudioTimeStamp *, AudioBufferList *,
-					const AudioTimeStamp *, void *);
-static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID,
-					const AudioTimeStamp *, const AudioBufferList *,
-					const AudioTimeStamp *, AudioBufferList *,
-					const AudioTimeStamp *, void *);
-static OSStatus OSX_AudioIOProcFloat (AudioDeviceID,
-					const AudioTimeStamp *, const AudioBufferList *,
-					const AudioTimeStamp *, AudioBufferList *,
-					const AudioTimeStamp *, void *);
-
-static BOOL OSX_IsPresent (void);
-static int OSX_Init (void);
-static void OSX_Exit (void);
-static int OSX_PlayStart (void);
-static void OSX_PlayStop (void);
-static void OSX_Update (void);
+#define DEFAULT_LATENCY 250
+static int latency = DEFAULT_LATENCY;
 
 
-#if USE_FILL_THREAD
-static void *OSX_FillBuffer (void *theID)
+/* return minimum number of free bytes in buffer, value may change between
+ * two immediately following calls, and the real number of free bytes
+ * might actually be larger!  */
+static int buf_free(void)
 {
-	unsigned char *buffer;
-	int done;
-
-	while (1)
-	{
-		done = 0;
-
-		while (!done)
-		{
-			/* shall the thread exit? */
-			if (gExitBufferFillThread) pthread_exit (NULL);
-
-			pthread_mutex_lock (&gBufferMutex);
-
-			if ((gCurrentFillBuffer+1) % NUMBER_BACK_BUFFERS != gCurrentPlayBuffer) {
-			#if DEBUG_TRACE_THREADS
-				fprintf(stderr,"filling buffer #%d\n", gCurrentFillBuffer);
-			#endif
-				buffer = gSoundBackBuffer[gCurrentFillBuffer];
-				if (++gCurrentFillBuffer >= NUMBER_BACK_BUFFERS)
-					gCurrentFillBuffer = 0;
-				FILL_BUFFER (buffer, gInBufferSize);
-			}
-			else {
-			/* we are caught up now, give it a rest */
-				done = 1;
-			}
-
-			pthread_mutex_unlock (&gBufferMutex);
-		}
-
-		pthread_mutex_lock (&gBufferMutex);
-		/* wait for the next buffer-fill request */
-		pthread_cond_wait (&gBufferCondition, &gBufferMutex);
-		pthread_mutex_unlock (&gBufferMutex);
+	int free = buf_read_pos - buf_write_pos - chunk_size;
+	if (free < 0) {
+	    free += buffer_len;
 	}
-
-	return theID;
-}
-#endif /* USE_FILL_THREAD */
-
-static OSStatus OSX_AudioIOProc8Bit (AudioDeviceID inDevice,
-				     const AudioTimeStamp *inNow, const AudioBufferList *inInputData,
-				     const AudioTimeStamp *inInputTime, AudioBufferList *outOutputData,
-				     const AudioTimeStamp *inOutputTime, void *inClientData)
-{
-	register float	*myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
-	register UInt8	*myInBuffer;
-	register UInt32	i;
-
-#if USE_FILL_THREAD
-	pthread_mutex_lock (&gBufferMutex);
-
-	#if DEBUG_TRACE_THREADS
-	fprintf(stderr,"playing buffer #%d\n", gCurrentPlayBuffer);
-	#endif
-	myInBuffer = (UInt8 *) gSoundBackBuffer[gCurrentPlayBuffer];
-	if (++gCurrentPlayBuffer >= NUMBER_BACK_BUFFERS)
-		gCurrentPlayBuffer = 0;
-	pthread_cond_signal (&gBufferCondition);
-	pthread_mutex_unlock (&gBufferMutex);
-#else
-	myInBuffer = (UInt8 *) gSoundBuffer;
-	FILL_BUFFER(gSoundBuffer, gInBufferSize);
-#endif /* USE_FILL_THREAD */
-
-	if (gBufferMono2Stereo) {
-		for (i = 0; i < SOUND_BUFFER_SIZE >> 1; i++) {
-			myOutBuffer[1] = myOutBuffer[0] = (*myInBuffer++) * SOUND_BUFFER_SCALE_8BIT;
-			myOutBuffer+=2;
-		}
-	}
-	else {
-		for (i = 0; i < SOUND_BUFFER_SIZE; i++) {
-			*myOutBuffer++ = (*myInBuffer++) * SOUND_BUFFER_SCALE_8BIT;
-		}
-	}
-
-	return 0;
+	return free;
 }
 
-#ifdef HAVE_SSE2
-/* FIXME: SSE2-specific code here? */
-#endif /* HAVE_SSE2 */
-
-#ifdef HAVE_ALTIVEC
-/* note: AltiVec code needs to be in a function of its own,
- *	 since the compiler will generate vrsave instructions */
-
-#ifdef __GNUC__
-__attribute__((noinline))
-#endif
-static void OSX_AudioIOProc16Bit_Altivec(SInt16	*myInBuffer, float *myOutBuffer)
+/* return minimum number of buffered bytes, value may change between
+ * two immediately following calls, and the real number of buffered bytes
+ * might actually be larger! */
+static int buf_used(void)
 {
-	register UInt32	i;
-
-	float f = SOUND_BUFFER_SCALE_16BIT;
-	const vector float gain = vec_load_ps1(&f); /* multiplier */
-	const vector float mix = vec_setzero();
-
-	if (gBufferMono2Stereo) {
-		int j = 0;
-		/* TEST: OK */
-		for (i = 0; i < SOUND_BUFFER_SIZE; i += 8, j += 16) {
-			vector short int v0 = vec_ld(0, myInBuffer + i); /* Load 8 shorts */
-			vector float v1 = vec_ctf((vector signed int)vec_unpackh(v0), 0); /* convert to float */
-			vector float v2 = vec_ctf((vector signed int)vec_unpackl(v0), 0); /* convert to float */
-			vector float v3 = vec_madd(v1, gain, mix); /* scale */
-			vector float v4 = vec_madd(v2, gain, mix); /* scale */
-
-			vector float v5 = vec_mergel(v3, v3); /* v3(0,0,1,1); */
-			vector float v6 = vec_mergeh(v3, v3); /* v3(2,2,3,3); */
-			vector float v7 = vec_mergel(v4, v4); /* v4(0,0,1,1); */
-			vector float v8 = vec_mergeh(v4, v4); /* v4(2,2,3,3); */
-
-			vec_st(v5, 0, myOutBuffer + j); /* Store 4 floats */
-			vec_st(v6, 0, myOutBuffer + 4 + j); /* Store 4 floats */
-			vec_st(v7, 0, myOutBuffer + 8 + j); /* Store 4 floats */
-			vec_st(v8, 0, myOutBuffer + 12 + j); /* Store 4 floats */
-		}
+	int used = buf_write_pos - buf_read_pos;
+	if (used < 0) {
+	    used += buffer_len;
 	}
-	else {
-		/* TEST: OK */
-		for (i = 0; i < SOUND_BUFFER_SIZE; i += 8) {
-			vector short int v0 = vec_ld(0, myInBuffer + i); /* Load 8 shorts */
-			vector float v1 = vec_ctf((vector signed int)vec_unpackh(v0), 0); /* convert to float */
-			vector float v2 = vec_ctf((vector signed int)vec_unpackl(v0), 0); /* convert to float */
-			vector float v3 = vec_madd(v1, gain, mix); /* scale */
-			vector float v4 = vec_madd(v2, gain, mix); /* scale */
-			vec_st(v3, 0, myOutBuffer + i); /* Store 4 floats */
-			vec_st(v4, 0, myOutBuffer + 4 + i); /* Store 4 floats */
-		}
-	}
-}
-#endif /* HAVE_ALTIVEC */
-
-static OSStatus OSX_AudioIOProc16Bit (AudioDeviceID inDevice,
-				      const AudioTimeStamp *inNow, const AudioBufferList *inInputData,
-				      const AudioTimeStamp *inInputTime, AudioBufferList *outOutputData,
-				      const AudioTimeStamp *inOutputTime, void *inClientData)
-{
-	register float	*myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
-	register SInt16	*myInBuffer;
-	register UInt32	i;
-
-#if USE_FILL_THREAD
-	pthread_mutex_lock (&gBufferMutex);
-
-	#if DEBUG_TRACE_THREADS
-	fprintf(stderr,"playing buffer #%d\n", gCurrentPlayBuffer);
-	#endif
-
-	myInBuffer = (SInt16 *) gSoundBackBuffer[gCurrentPlayBuffer];
-	if (++gCurrentPlayBuffer >= NUMBER_BACK_BUFFERS)
-		gCurrentPlayBuffer = 0;
-	pthread_cond_signal (&gBufferCondition);
-	pthread_mutex_unlock (&gBufferMutex);
-#else
-	myInBuffer = (SInt16 *) gSoundBuffer;
-	FILL_BUFFER(gSoundBuffer, gInBufferSize);
-#endif /* USE_FILL_THREAD */
-
-#ifdef HAVE_ALTIVEC
-	if (md_mode & DMODE_SIMDMIXER) {
-	#if __MWERKS__
-		#pragma dont_inline on
-	#endif
-		OSX_AudioIOProc16Bit_Altivec(myInBuffer,myOutBuffer);
-	#if __MWERKS__
-		#pragma dont_inline reset
-	#endif
-	}
-	else
-#endif
-	{
-		if (gBufferMono2Stereo) {
-			for (i = 0; i < SOUND_BUFFER_SIZE >> 1; i++) {
-				myOutBuffer[1] = myOutBuffer[0] = (*myInBuffer++) * SOUND_BUFFER_SCALE_16BIT;
-				myOutBuffer+=2;
-			}
-		}
-		else {
-			for (i = 0; i < SOUND_BUFFER_SIZE; i++) {
-				*myOutBuffer++ = (*myInBuffer++) * SOUND_BUFFER_SCALE_16BIT;
-			}
-		}
-	}
-
-	return 0;
+	return used;
 }
 
-static OSStatus OSX_AudioIOProcFloat (AudioDeviceID inDevice,
-				      const AudioTimeStamp *inNow, const AudioBufferList *inInputData,
-				      const AudioTimeStamp *inInputTime, AudioBufferList *outOutputData,
-				      const AudioTimeStamp *inOutputTime, void *inClientData)
+/* remove data from ringbuffer */
+static int read_buffer(SBYTE *data, int len)
 {
-	register float	*myOutBuffer = (float *) outOutputData->mBuffers[0].mData;
-	register float	*myInBuffer;
-	register UInt32	i;
+	int first_len = buffer_len - buf_read_pos;
+	int buffered = buf_used();
 
-#if USE_FILL_THREAD
-	pthread_mutex_lock (&gBufferMutex);
-
-	#if DEBUG_TRACE_THREADS
-	fprintf(stderr,"playing buffer #%d\n", gCurrentPlayBuffer);
-	#endif
-
-	myInBuffer = (float *) gSoundBackBuffer[gCurrentPlayBuffer];
-	if (++gCurrentPlayBuffer >= NUMBER_BACK_BUFFERS)
-		gCurrentPlayBuffer = 0;
-	pthread_cond_signal (&gBufferCondition);
-	pthread_mutex_unlock (&gBufferMutex);
-#else
-	/* avoid copy, if no conversion needed */
-	myInBuffer = (gBufferMono2Stereo) ? (float *) gSoundBuffer : myOutBuffer;
-	FILL_BUFFER( myInBuffer, gInBufferSize);
-#endif /* USE_FILL_THREAD */
-
-	if (gBufferMono2Stereo) {
-		for (i = 0; i < SOUND_BUFFER_SIZE >> 1; i++) {
-			myOutBuffer[1] = myOutBuffer[0] = *myInBuffer++;
-			myOutBuffer+=2;
-		}
+	if (len > buffered) {
+	    len = buffered;
 	}
-	else if (myInBuffer != myOutBuffer) {
-		for (i = 0; i < SOUND_BUFFER_SIZE; i++) {
-			*myOutBuffer++ = *myInBuffer++;
-		}
+	if (first_len > len) {
+	    first_len = len;
 	}
 
-	return 0;
+	/* till end of buffer */
+	memcpy(data, buffer + buf_read_pos, first_len);
+	if (len > first_len) {
+	/* wrap around remaining part from beginning of buffer */
+	    memcpy(data + first_len, buffer, len - first_len);
+	}
+	buf_read_pos = (buf_read_pos + len) % buffer_len;
+
+	return len;
 }
 
-#ifdef HAVE_ALTIVEC
-static BOOL OSX_HasAltivec (void)
+static OSStatus render_proc(void *inRefCon,
+                            AudioUnitRenderActionFlags *inActionFlags,
+                            const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber,
+                            UInt32 inNumFrames, AudioBufferList *ioData)
 {
-	int result = 0;
-	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
-	size_t length = sizeof(result);
-	sysctl(selectors, 2, &result, &length, NULL, 0);
-	return !!result;
+	int amt = buf_used();
+	int req = inNumFrames * packet_size;
+
+	if (amt > req) {
+	    amt = req;
+	}
+
+	read_buffer((SBYTE *)ioData->mBuffers[0].mData, amt);
+	ioData->mBuffers[0].mDataByteSize = amt;
+
+	return noErr;
 }
-#endif
+
+/*
+ * end of CoreAudio helpers
+ */
+
+static void OSX_CommandLine(const CHAR *cmdline)
+{
+	CHAR *ptr = MD_GetAtom("latency", cmdline, 0);
+	if (ptr) {
+	    int n = atoi(ptr);
+	    if (n >= 20 && n <= 1024)
+		latency = n;
+	    MikMod_free(ptr);
+	}
+}
 
 static BOOL OSX_IsPresent (void)
 {
-/* weak_import and check syms? meh.. */
 	return 1;
 }
 
-static int OSX_Init (void)
+static int OSX_Init(void)
 {
-	AudioStreamBasicDescription	mySoundBasicDescription;
-	UInt32				myPropertySize, myBufferByteCount;
-#if USE_FILL_THREAD
-	int				i;
-#endif
+	AudioStreamBasicDescription ad;
+	AudioComponent comp;
+	AudioComponentDescription cd;
+	AURenderCallbackStruct rc;
+	OSStatus status;
+	UInt32 size, max_frames;
 
-	/* get the device */
-	myPropertySize = sizeof (gSoundDeviceID);
-	CHECK_ERROR(MMERR_DETECTING_DEVICE,
-		AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice,
-					  &myPropertySize, &gSoundDeviceID)
-	);
-	if (gSoundDeviceID == kAudioDeviceUnknown) {
-		_mm_errno = MMERR_OSX_UNKNOWN_DEVICE;
-		return 1;
+	if (!(md_mode & DMODE_STEREO)) {
+	    _mm_errno = MMERR_OSX_UNSUPPORTED_FORMAT;
+	    return 1;
 	}
-
-	/* get the device format */
-	myPropertySize = sizeof (mySoundBasicDescription);
-	CHECK_ERROR(MMERR_OSX_BAD_PROPERTY,
-		AudioDeviceGetProperty (gSoundDeviceID, 0, 0, kAudioDevicePropertyStreamFormat,
-					&myPropertySize, &mySoundBasicDescription)
-	);
+	if (!(md_mode & (DMODE_16BITS|DMODE_FLOAT))) {
+	    _mm_errno = MMERR_OSX_UNSUPPORTED_FORMAT;
+	    return 1;
+	}
 
 	/* set up basic md_mode, just to be secure */
 	md_mode |= DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
 
-#ifdef HAVE_ALTIVEC
-	/* check for Altivec support */
-	if (OSX_HasAltivec()) {
-		md_mode |= DMODE_SIMDMIXER;
-	}
-#endif
-
-	/* try the selected mix frequency, if failure, fall back to native frequency */
-	if (mySoundBasicDescription.mSampleRate != md_mixfreq) {
-		mySoundBasicDescription.mSampleRate = md_mixfreq;
-		SET_PROPS ();
-		md_mixfreq = mySoundBasicDescription.mSampleRate;
-	}
-
-	/* try selected channels, if failure select native channels */
-	switch (md_mode & DMODE_STEREO) {
-	case 0:
-		if (mySoundBasicDescription.mChannelsPerFrame != 1) {
-			mySoundBasicDescription.mChannelsPerFrame = 1;
-			SET_PROPS ();
-			SET_STEREO ();
-		}
-		break;
-	case 1:
-		if (mySoundBasicDescription.mChannelsPerFrame != 2) {
-			mySoundBasicDescription.mChannelsPerFrame = 2;
-			SET_PROPS();
-			SET_STEREO();
-		}
-		break;
-	}
-
-	/* linear PCM is required */
-	if (mySoundBasicDescription.mFormatID != kAudioFormatLinearPCM) {
-		_mm_errno = MMERR_OSX_UNSUPPORTED_FORMAT;
-		return 1;
-	}
-
-	/* prepare the buffers */
-	if (gBufferMono2Stereo) {
-		gInBufferSize = SOUND_BUFFER_SIZE >> 1;
-	}
-	else {
-		gInBufferSize = SOUND_BUFFER_SIZE;
-	}
+	/* Setup for signed 16 bit or float output: */
+	ad.mSampleRate = md_mixfreq;
+	ad.mFormatID = kAudioFormatLinearPCM;
+	ad.mFormatFlags = kAudioFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
+	ad.mChannelsPerFrame = 2;
 
 	if (md_mode & DMODE_FLOAT) {
-		gInBufferSize *= sizeof(float);
-		gAudioIOProc = OSX_AudioIOProcFloat;
+	    ad.mFormatFlags |= kAudioFormatFlagIsFloat;
+	    ad.mBitsPerChannel = 32;
+	    ad.mBytesPerFrame = 4 * ad.mChannelsPerFrame;
+	} else {
+	    ad.mFormatFlags |= kAudioFormatFlagIsSignedInteger;
+	    ad.mBitsPerChannel = 16;
+	    ad.mBytesPerFrame = 2 * ad.mChannelsPerFrame;
 	}
-	else if (md_mode & DMODE_16BITS) {
-		gInBufferSize *= sizeof(SInt16);
-		gAudioIOProc = OSX_AudioIOProc16Bit;
-	}
-	else {
-		gInBufferSize *= sizeof(UInt8);
-		gAudioIOProc = OSX_AudioIOProc8Bit;
-	}
+	ad.mBytesPerPacket = ad.mBytesPerFrame;
+	ad.mFramesPerPacket = 1;
 
-	/* save the original buffer size */
-	myPropertySize = sizeof (gHardwareBufferSize);
-	AudioDeviceGetProperty (gSoundDeviceID, 0, 0, kAudioDevicePropertyBufferSize,
-				&myPropertySize, &gHardwareBufferSize);
+	packet_size = ad.mFramesPerPacket * ad.mChannelsPerFrame * (ad.mBitsPerChannel / 8);
 
-	myBufferByteCount = SOUND_BUFFER_SIZE * sizeof(float);
-	CHECK_ERROR(MMERR_OSX_BUFFER_ALLOC,
-		AudioDeviceSetProperty (gSoundDeviceID, NULL, 0, 0, kAudioDevicePropertyBufferSize,
-					sizeof(myBufferByteCount), &myBufferByteCount)
-	);
+	cd.componentType = kAudioUnitType_Output;
+	cd.componentSubType = kAudioUnitSubType_DefaultOutput;
+	cd.componentManufacturer = kAudioUnitManufacturer_Apple;
+	cd.componentFlags = 0;
+	cd.componentFlagsMask = 0;
 
-	/* add our audio IO procedure. */
-	CHECK_ERROR(MMERR_OSX_ADD_IO_PROC,
-		AudioDeviceAddIOProc (gSoundDeviceID, gAudioIOProc, NULL)
-	);
-	gIOProcIsInstalled = 1;
-
-#if !USE_FILL_THREAD
-	/* get the buffer memory */
-	if ((gSoundBuffer = (unsigned char *) MikMod_amalloc(gInBufferSize)) == NULL) {
-		_mm_errno = MMERR_OUT_OF_MEMORY;
-		return 1;
-	}
-#else
-	/* some thread init */
-	if (pthread_mutex_init (&gBufferMutex, NULL) ||
-	    pthread_cond_init (&gBufferCondition, NULL)) {
-		_mm_errno = MMERR_OSX_PTHREAD;
-		return 1;
+	if ((comp = AudioComponentFindNext(NULL, &cd)) == NULL) {
+	    goto err;
 	}
 
-	for (i = 0; i < NUMBER_BACK_BUFFERS; i++) {
-		if ((gSoundBackBuffer[i] = (unsigned char *) MikMod_amalloc(gInBufferSize)) == NULL) {
-			_mm_errno = MMERR_OUT_OF_MEMORY;
-			return 1;
-		}
+	if ((status = AudioComponentInstanceNew(comp, &au))) {
+	    goto err1;
 	}
 
-	gCurrentPlayBuffer = 0;
-	gCurrentFillBuffer = 0;
-#endif /* USE_FILL_THREAD */
+	if ((status = AudioUnitInitialize(au))) {
+	    goto err1;
+	}
 
-	/* init mikmod */
+	status = AudioUnitSetProperty(au, kAudioUnitProperty_StreamFormat,
+                                      kAudioUnitScope_Input, 0, &ad, sizeof(ad));
+	if (status) {
+	    goto err1;
+	}
+
+	size = sizeof(UInt32);
+	status = AudioUnitGetProperty(au, kAudioDevicePropertyBufferSize,
+                                      kAudioUnitScope_Input, 0, &max_frames, &size);
+	if (status) {
+	    goto err1;
+	}
+
+	chunk_size = max_frames;
+	num_chunks = (md_mixfreq * ad.mBytesPerFrame * latency / 1000 + chunk_size - 1) / chunk_size;
+	buffer_len = (num_chunks + 1) * chunk_size;
+	if ((buffer = (SBYTE *)MikMod_calloc(num_chunks + 1, chunk_size)) == NULL) {
+	    _mm_errno = MMERR_OUT_OF_MEMORY;
+	    goto err;
+	}
+
+	rc.inputProc = render_proc;
+	rc.inputProcRefCon = 0;
+
+	buf_read_pos = 0;
+	buf_write_pos = 0;
+
+	status = AudioUnitSetProperty(au,
+                                      kAudioUnitProperty_SetRenderCallback,
+                                      kAudioUnitScope_Input, 0, &rc, sizeof(rc));
+	if (status) {
+	    goto err2;
+	}
+
 	return VC_Init ();
+
+    err2:
+	MikMod_free(buffer);
+	buffer = NULL;
+    err1:
+	fprintf(stderr, "initialization error: %d\n", (int)status);
+    err:
+	return 1;
+}
+
+
+/* add data to ringbuffer */
+static void OSX_Update (void)
+{
+	int len = buffer_len;
+	int first_len = buffer_len - buf_write_pos;
+	int free = buf_free();
+
+	if (len > free) { /* shouldn't happen */
+	    len = free;
+	}
+	if (first_len > len) {
+	    first_len = len;
+	}
+
+	/* till end of buffer */
+	VC_WriteBytes(buffer + buf_write_pos, first_len);
+	if (len > first_len) {
+	/* wrap around remaining part from beginning of buffer */
+	    VC_WriteBytes(buffer, len - first_len);
+	}
+	buf_write_pos = (buf_write_pos + len) % buffer_len;
 }
 
 static void OSX_Exit (void)
 {
-#if USE_FILL_THREAD
-	int		i;
-#endif
-
-	if (gDeviceHasStarted) {
-		/* stop the audio device */
-		AudioDeviceStop (gSoundDeviceID, gAudioIOProc);
-		gDeviceHasStarted = 0;
-#if USE_FILL_THREAD
-		/* finish the fill buffer thread off */
-		pthread_mutex_lock (&gBufferMutex);
-		gExitBufferFillThread = 1;
-		pthread_mutex_unlock (&gBufferMutex);
-		pthread_cond_signal(&gBufferCondition);
-		pthread_join (gBufferFillThread, NULL);
-	}
-
-	/* destroy other thread related stuff */
-	pthread_mutex_destroy (&gBufferMutex);
-	pthread_cond_destroy (&gBufferCondition);
-#else
-	}
-#endif /* USE_FILL_THREAD */
-
-	/* remove the audio IO proc */
-	if (gIOProcIsInstalled) {
-		AudioDeviceRemoveIOProc (gSoundDeviceID, gAudioIOProc);
-		gIOProcIsInstalled = 0;
-	}
-
-	if (gHardwareBufferSize) {
-		AudioDeviceSetProperty (gSoundDeviceID, NULL, 0, 0, kAudioDevicePropertyBufferSize,
-					sizeof(gHardwareBufferSize), &gHardwareBufferSize);
-		gHardwareBufferSize = 0;
-	}
-
-#if !USE_FILL_THREAD
-	/* free up the sound buffer */
-	MikMod_afree (gSoundBuffer);
-	gSoundBuffer = NULL;
-#else
-	for ( i = 0; i < NUMBER_BACK_BUFFERS; i++ ) {
-		/* free up the back buffer */
-		MikMod_afree (gSoundBackBuffer[i]);
-		gSoundBackBuffer[i] = NULL;
-	}
-#endif /* USE_FILL_THREAD */
-
-	VC_Exit ();
+	AudioOutputUnitStop(au);
+	AudioUnitUninitialize(au);
+	AudioComponentInstanceDispose(au);
+	MikMod_free(buffer);
+	buffer = NULL;
 }
 
-/* OSX_PlayStart() */
 static int OSX_PlayStart (void)
 {
 	/* start virtch */
 	if (VC_PlayStart ()) {
-		return 1;
+	    return 1;
 	}
-
-	/* just for security: audio device already playing? */
-	if (gDeviceHasStarted) return 0;
-
-#if USE_FILL_THREAD
-	/* start the buffer fill thread */
-	gExitBufferFillThread = 0;
-	if (pthread_create(&gBufferFillThread, NULL, OSX_FillBuffer, NULL)) {
-		_mm_errno = MMERR_OSX_PTHREAD;
-		return 1;
-	}
-#endif /* USE_FILL_THREAD */
-
-	/* start the audio IO Proc */
-	if (AudioDeviceStart (gSoundDeviceID, gAudioIOProc)) {
-		_mm_errno = MMERR_OSX_DEVICE_START;
-		return 1;
-	}
-	gDeviceHasStarted = 1;
-
+	AudioOutputUnitStart(au);
 	return 0;
 }
 
 static void OSX_PlayStop (void)
 {
-	if (gDeviceHasStarted) {
-		/* stop the audio IO Proc */
-		AudioDeviceStop (gSoundDeviceID, gAudioIOProc);
-		gDeviceHasStarted = 0;
-
-#if USE_FILL_THREAD
-		/* finish the fill buffer thread off */
-		pthread_mutex_lock (&gBufferMutex);
-		gExitBufferFillThread = 1;
-		pthread_mutex_unlock (&gBufferMutex);
-		pthread_cond_signal (&gBufferCondition);
-		pthread_join (gBufferFillThread, NULL);
-#endif /* USE_FILL_THREAD */
-	}
-
-	/* tell virtch that playback has stopped. */
+	AudioOutputUnitStop(au);
 	VC_PlayStop ();
-}
-
-static void OSX_Update (void)
-{
-	/* do nothing */
 }
 
 MIKMODAPI MDRIVER drv_osx={
 	NULL,
 	"CoreAudio Driver",
-	"CoreAudio Driver v2.1",
+	"CoreAudio Driver v3.0",
 	0,255,
 	"osx",
-	NULL,
-	NULL,
+	"latency:r:20,1024,250:CoreAudio latency\n",
+	OSX_CommandLine,
 	OSX_IsPresent,
 	VC_SampleLoad,
 	VC_SampleUnload,

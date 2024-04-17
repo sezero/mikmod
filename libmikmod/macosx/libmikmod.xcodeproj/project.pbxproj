@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6385D5452BD038D600575DD0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6385D5442BD038D600575DD0 /* AudioToolbox.framework */; };
+		6385D5562BD038F700575DD0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6385D5442BD038D600575DD0 /* AudioToolbox.framework */; };
+		6385D5582BD0390A00575DD0 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6385D5572BD0390A00575DD0 /* AudioUnit.framework */; };
+		6385D56A2BD0391000575DD0 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6385D5572BD0390A00575DD0 /* AudioUnit.framework */; };
+		6385D56C2BD0391E00575DD0 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6385D56B2BD0391E00575DD0 /* CoreServices.framework */; };
+		6385D6002BD0392400575DD0 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6385D56B2BD0391E00575DD0 /* CoreServices.framework */; };
 		63883ECF1AF40F0A00666EF1 /* s404.c in Sources */ = {isa = PBXBuildFile; fileRef = 63883ECE1AF40F0A00666EF1 /* s404.c */; };
 		63883ED01AF40F0A00666EF1 /* s404.c in Sources */ = {isa = PBXBuildFile; fileRef = 63883ECE1AF40F0A00666EF1 /* s404.c */; };
 		638B8F531AE42B6C00D32F8C /* mmcmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B8F521AE42B6C00D32F8C /* mmcmp.c */; };
@@ -72,7 +78,6 @@
 		A4E3AF5405D43FCC000F1B47 /* virtch.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE65017CB3B80103A810 /* virtch.c */; };
 		A4E3AF5505D43FCC000F1B47 /* virtch_common.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE66017CB3B80103A810 /* virtch_common.c */; };
 		A4E3AF5605D43FCC000F1B47 /* virtch2.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE67017CB3B80103A810 /* virtch2.c */; };
-		A4E3AF5805D43FCC000F1B47 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */; };
 		A4E3AF5F05D43FCC000F1B47 /* mikmod_internals.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE31017CB3390103A810 /* mikmod_internals.h */; };
 		A4E3AF6005D43FCC000F1B47 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F5DE7E017CB4010103A810 /* config.h */; };
 		A4E3AF6105D43FCC000F1B47 /* mikmod.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5F5DE7C017CB3EC0103A810 /* mikmod.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -116,7 +121,6 @@
 		A4E3AF8905D43FCC000F1B47 /* virtch.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE65017CB3B80103A810 /* virtch.c */; };
 		A4E3AF8A05D43FCC000F1B47 /* virtch_common.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE66017CB3B80103A810 /* virtch_common.c */; };
 		A4E3AF8B05D43FCC000F1B47 /* virtch2.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F5DE67017CB3B80103A810 /* virtch2.c */; };
-		A4E3AF8D05D43FCC000F1B47 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */; };
 		A4E3AFDE05D5ABCF000F1B47 /* load_asy.c in Sources */ = {isa = PBXBuildFile; fileRef = A4E3AFDD05D5ABCF000F1B47 /* load_asy.c */; };
 		A4E3AFDF05D5ABCF000F1B47 /* load_asy.c in Sources */ = {isa = PBXBuildFile; fileRef = A4E3AFDD05D5ABCF000F1B47 /* load_asy.c */; };
 		F4E367FA07EDC8E8000D2C4B /* load_gt2.c in Sources */ = {isa = PBXBuildFile; fileRef = F4E367F907EDC8E8000D2C4B /* load_gt2.c */; };
@@ -136,6 +140,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6385D5442BD038D600575DD0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		6385D5572BD0390A00575DD0 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		6385D56B2BD0391E00575DD0 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		63883ECE1AF40F0A00666EF1 /* s404.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = s404.c; path = ../depackers/s404.c; sourceTree = SOURCE_ROOT; };
 		638B8F521AE42B6C00D32F8C /* mmcmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mmcmp.c; path = ../depackers/mmcmp.c; sourceTree = SOURCE_ROOT; };
 		638B8F551AE42B7F00D32F8C /* pp20.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pp20.c; path = ../depackers/pp20.c; sourceTree = SOURCE_ROOT; };
@@ -193,7 +200,6 @@
 		F5F5DE78017CB3D10103A810 /* mmio.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = mmio.c; path = ../mmio/mmio.c; sourceTree = SOURCE_ROOT; };
 		F5F5DE7C017CB3EC0103A810 /* mikmod.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; name = mikmod.h; path = ../include/mikmod.h; sourceTree = SOURCE_ROOT; };
 		F5F5DE7E017CB4010103A810 /* config.h */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		F5F9982201D1638A01046A14 /* drv_openal.c */ = {isa = PBXFileReference; fileEncoding = 12; lastKnownFileType = sourcecode.c.c; name = drv_openal.c; path = ../drivers/drv_openal.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -202,7 +208,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4E3AF5805D43FCC000F1B47 /* CoreAudio.framework in Frameworks */,
+				6385D5452BD038D600575DD0 /* AudioToolbox.framework in Frameworks */,
+				6385D5582BD0390A00575DD0 /* AudioUnit.framework in Frameworks */,
+				6385D56C2BD0391E00575DD0 /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,7 +218,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4E3AF8D05D43FCC000F1B47 /* CoreAudio.framework in Frameworks */,
+				6385D5562BD038F700575DD0 /* AudioToolbox.framework in Frameworks */,
+				6385D56A2BD0391000575DD0 /* AudioUnit.framework in Frameworks */,
+				6385D6002BD0392400575DD0 /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +251,9 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				F5F5DEF1017CE9F90103A810 /* CoreAudio.framework */,
+				6385D5442BD038D600575DD0 /* AudioToolbox.framework */,
+				6385D5572BD0390A00575DD0 /* AudioUnit.framework */,
+				6385D56B2BD0391E00575DD0 /* CoreServices.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
