@@ -23,8 +23,8 @@
 #
 # (This copyright notice applies only to this file)
 
-PROJECT(libmikmod C)
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1...3.5)
+PROJECT(libmikmod C)
 LIST(APPEND CMAKE_MODULE_PATH "${libmikmod_SOURCE_DIR}/cmake")
 
 SET(LIBMIKMOD_MAJOR_VERSION 3)
@@ -358,6 +358,12 @@ SET (MIKMOD_LIB_MODULES
 SET (LIBMIKMOD_LIBS)
 
 IF (ENABLE_SHARED)
+    IF (MINGW)
+        SET(CMAKE_SHARED_LIBRARY_NAME_WITH_VERSION 1)
+    ENDIF()
+    IF (MSVC)
+        SET(CMAKE_SHARED_LIBRARY_PREFIX "lib")
+    ENDIF()
     ADD_LIBRARY (mikmod
         SHARED
         ${MIKMOD_LIB_MODULES}
@@ -386,11 +392,12 @@ IF (ENABLE_STATIC)
         ${MIKMOD_LIB_MODULES}
     )
     LIST (APPEND LIBMIKMOD_LIBS "mikmod-static")
-
-    SET_TARGET_PROPERTIES(
-        mikmod-static
-        PROPERTIES OUTPUT_NAME "mikmod"
-    )
+    IF (NOT MSVC)
+        SET_TARGET_PROPERTIES(
+            mikmod-static
+            PROPERTIES OUTPUT_NAME "mikmod"
+        )
+    ENDIF()
     SET_TARGET_PROPERTIES(
         ${LIBMIKMOD_LIBS}
         PROPERTIES CLEAN_DIRECT_OUTPUT 1

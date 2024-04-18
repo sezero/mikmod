@@ -2,8 +2,8 @@
 # is installed, which you can do on your cmake command line, like:
 # cmake -DCMAKE_PREFIX_PATH=/path/to/libmikmod_dir ....
 
-PROJECT(mikmod C)
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1...3.5)
+PROJECT(mikmod C)
 LIST(APPEND CMAKE_MODULE_PATH "${mikmod_SOURCE_DIR}/cmake")
 
 SET(VERSION "3.2.9")
