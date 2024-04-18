@@ -57,9 +57,9 @@ DLLFLAGS=-bd
 .SUFFIXES:
 .SUFFIXES: .obj .c
 
-DLLNAME=libmikmod-3.dll
-EXPNAME=libmikmod-3.exp
-LIBNAME=libmikmod-3.lib
+DLLNAME=libmikmod.dll
+EXPNAME=libmikmod.exp
+LIBNAME=libmikmod.lib
 LIBSTATIC=mikmod-static.lib
 
 !ifeq target static

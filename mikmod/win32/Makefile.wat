@@ -17,7 +17,7 @@ CPPFLAGS=-DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_SYS_TIME_H -DHAVE_SNPRINTF -DHAVE
 CPPFLAGS+= -DHAVE_MIKMOD_FREE
 
 !ifneq target static
-LIBS=libmikmod-3.lib
+LIBS=libmikmod.lib
 !else
 CPPFLAGS+= -DMIKMOD_STATIC
 LIBS=mikmod-static.lib winmm.lib dsound.lib dxguid.lib
