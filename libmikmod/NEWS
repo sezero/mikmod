@@ -86,10 +86,12 @@ libmikmod v3.3.12 was released on ???? ??, ????.
 - Fix shifts by invalid exponents in S404 depacker.
 - Add best case compression ratio bounding to S404 depacker.
 - Improved sanity checks in S404 depacker to prevent out-of-bound reads.
+- Updated macOS CoreAudio output driver (based on xmp player.)
 - Added Nintendo64 output driver -- based on old work by 'dragonminded'.
-- Removed support for lcc-win32 compiler.
 - The library is free of libm dependency.
+- Multiple other cleanups throughout the code.
 - Several build and portability fixes/updates.
+- Removed support for lcc-win32 compiler.
 
 Thanks to:
 - Lionel Debroux, for providing fuzz files which helped finding defects.

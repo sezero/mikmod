@@ -5,8 +5,12 @@ MikMod 3.2.9 was released on ???? ??, ????.
 
 - Avoid possible undefined behavior in display code if the songname
   is NULL (github bug #67.)
-- Several build and portability fixes/updates. Removed support for
-  lcc-win32 compiler.
+- Fixed a startup crash with _FORTIFY_SOURCE=3 on some systems.
+- Fixed warnings from new gcc versions.
+- Fixed a stack size issue in os2 builds.
+- Multiple other cleanups throughout the code.
+- Several build and portability fixes/updates.
+- Removed support for lcc-win32 compiler.
 
 
 Summary of changes between MikMod 3.2.7 and MikMod 3.2.8:
