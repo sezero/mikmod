@@ -200,6 +200,8 @@ static int OSX_Init(void)
 	cd.componentFlags = 0;
 	cd.componentFlagsMask = 0;
 
+	_mm_errno = MMERR_OSX_DEVICE_START; /* generic errnum. */
+
 	if ((comp = AudioComponentFindNext(NULL, &cd)) == NULL) {
 	    goto err;
 	}
@@ -245,6 +247,8 @@ static int OSX_Init(void)
 	if (status) {
 	    goto err2;
 	}
+
+	_mm_errno = 0; /* reset. */
 
 	return VC_Init ();
 
