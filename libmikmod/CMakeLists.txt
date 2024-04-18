@@ -373,6 +373,7 @@ IF (ENABLE_SHARED)
         )
     ENDIF()
     IF(OS2)
+        TARGET_SOURCES(mikmod PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/os2/mikmod.def)
         SET_TARGET_PROPERTIES(mikmod
             PROPERTIES OUTPUT_NAME "mikmod3"
         )

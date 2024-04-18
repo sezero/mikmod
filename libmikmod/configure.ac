@@ -1340,6 +1340,11 @@ if test $libmikmod_cv_gcc_visibility = yes
 then
    CFLAGS="$CFLAGS -DSYM_VISIBILITY -fvisibility=hidden"
 fi
+# for os2, use our def file for exports:
+if test $libmikmod_os2 = yes
+then
+   LT_EXTRA="-Wl,$srcdir/os2/mikmod.def"
+fi
 
 # =================
 # Create Makefiles.
@@ -1356,6 +1361,7 @@ AC_SUBST(LIBMIKMOD_MINOR_VERSION)
 AC_SUBST(LIBMIKMOD_MICRO_VERSION)
 AC_SUBST(LIBMIKMOD_VERSION)
 
+AC_SUBST(LT_EXTRA)
 AC_SUBST(LIB_LDADD)
 
 AC_CONFIG_FILES([

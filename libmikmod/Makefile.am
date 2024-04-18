@@ -112,6 +112,6 @@ libmikmod_la_SOURCES = \
 		playercode/virtch2.c \
 		playercode/virtch_common.c
 
-libmikmod_la_LDFLAGS = -no-undefined -version-info @MIKMOD_LT_CURRENT@:@MIKMOD_LT_REVISION@:@MIKMOD_LT_AGE@
+libmikmod_la_LDFLAGS = -no-undefined -version-info @MIKMOD_LT_CURRENT@:@MIKMOD_LT_REVISION@:@MIKMOD_LT_AGE@ @LT_EXTRA@
 libmikmod_la_LIBADD = @LTLIBOBJS@ @LIBRARY_LIB@
 
