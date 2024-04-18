@@ -72,11 +72,11 @@ static int latency = DEFAULT_LATENCY;
  * might actually be larger!  */
 static int buf_free(void)
 {
-	int free = buf_read_pos - buf_write_pos - chunk_size;
-	if (free < 0) {
-	    free += buffer_len;
+	int freebuf = buf_read_pos - buf_write_pos - chunk_size;
+	if (freebuf < 0) {
+	    freebuf += buffer_len;
 	}
-	return free;
+	return freebuf;
 }
 
 /* return minimum number of buffered bytes, value may change between
@@ -263,10 +263,10 @@ static void OSX_Update (void)
 {
 	int len = buffer_len;
 	int first_len = buffer_len - buf_write_pos;
-	int free = buf_free();
+	int freebuf = buf_free();
 
-	if (len > free) { /* shouldn't happen */
-	    len = free;
+	if (len > freebuf) { /* shouldn't happen */
+	    len = freebuf;
 	}
 	if (first_len > len) {
 	    first_len = len;
