@@ -12,7 +12,7 @@ EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
 	     libmikmod.spec.in libmikmod.spec COPYING.LESSER  \
 	     examples config.h.cmake CMakeLists.txt cmake     \
 	     amiga android macosx win32 dos os2 macintosh     \
-	     dc gp32 n64 psp
+	     dc gp32 n64 psp webaudio
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
