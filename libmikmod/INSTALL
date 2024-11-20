@@ -4,7 +4,7 @@ INSTALL file for libmikmod
 COMPILE USING CMAKE :
 =====================
 
-libmikmod versions 3.3.2 and newer support CMake.  CMake version 2.8.x
+libmikmod versions 3.3.2 and newer support CMake.  CMake version 3.1.0
 or later is required.  CMake homepage is at http://www.cmake.org/ .
 
 Run:
