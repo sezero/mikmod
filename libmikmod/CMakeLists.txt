@@ -606,6 +606,7 @@ IF (ENABLE_SNDIO)
     MESSAGE(WARNING "OpenBSD sndio support is disabled.")
   ELSE()
     SET (DRV_SNDIO 1)
+    LIST (APPEND EXTRA_LIBS ${SNDIO_LIBRARIES})
   ENDIF()
 ENDIF()
 
