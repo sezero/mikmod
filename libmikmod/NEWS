@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.3.11 and libmikmod 3.3.12:
 ========================================================================
 
-libmikmod v3.3.12 was released on ???? ??, ????.
+libmikmod v3.3.12 was released on Dec. 31, 2024.
 
 - Add WebAudio support (see webaudio/README.md for details.)
 - Dynamically load pulseaudio library at runtime.

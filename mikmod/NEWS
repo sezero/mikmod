@@ -1,7 +1,7 @@
 Summary of changes between MikMod 3.2.8 and MikMod 3.2.9:
 ==================================================================
 
-MikMod 3.2.9 was released on ???? ??, ????.
+MikMod 3.2.9 was released on Dec. 31, 2024.
 
 - Avoid possible undefined behavior in display code if the songname
   is NULL (github bug #67.)
