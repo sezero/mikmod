@@ -793,3 +793,9 @@ INSTALL(
     DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
+INSTALL(
+    FILES
+        "${PROJECT_SOURCE_DIR}/libmikmod.m4"
+    DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/aclocal
+)
