@@ -20,16 +20,52 @@
 	02111-1307, USA.
 */
 
-// As of July 2021, TypeScript lacks these definitions as well...
+// As of January 2025, TypeScript lacks these definitions as well, unless they are added from an external package...
+// I updated the definitions based on these two comments:
+// - https://github.com/microsoft/TypeScript/issues/28308#issuecomment-1921865859
+// - https://github.com/microsoft/TypeScript/issues/28308#issuecomment-1935417258
 
-class AudioWorkletProcessor {
-	public port: MessagePort;
-
-	constructor() {
-		this.port = null as any;
-	}
+interface AudioWorkletProcessor {
+	readonly port: MessagePort;
 }
 
-function registerProcessor(name: string, clazz: any) { }
+interface AudioWorkletProcessorImpl extends AudioWorkletProcessor {
+	process(
+		inputs: Float32Array[][],
+		outputs: Float32Array[][],
+		parameters: Record<string, Float32Array>
+	): boolean;
+}
 
-const sampleRate = 44100;
+type AudioParamDescriptor = {
+	name: string,
+	automationRate?: AutomationRate,
+	minValue?: number,
+	maxValue?: number,
+	defaultValue?: number
+};
+
+declare var AudioWorkletProcessor: {
+	prototype: AudioWorkletProcessor;
+	new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
+};
+
+interface AudioWorkletProcessorConstructor {
+	new (options?: AudioWorkletNodeOptions): AudioWorkletProcessorImpl;
+	parameterDescriptors?: AudioParamDescriptor[];
+}
+
+/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AudioWorkletGlobalScope/currentFrame) */
+declare var currentFrame: number;
+
+/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AudioWorkletGlobalScope/currentTime) */
+declare var currentTime: number;
+
+/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AudioWorkletGlobalScope/sampleRate) */
+declare var sampleRate: number;
+
+/** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AudioWorkletGlobalScope/registerProcessor) */
+declare function registerProcessor(
+	name: string,
+	processorCtor: AudioWorkletProcessorConstructor,
+): void;
