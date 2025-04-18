@@ -141,7 +141,7 @@ static SAMPLE* Sample_LoadGeneric_internal_wav(MREADER* reader)
 				_mm_errno=MMERR_UNKNOWN_WAVE_TYPE;
 				return NULL;
 			}
-			if(!(si=(SAMPLE*)MikMod_malloc(sizeof(SAMPLE)))) return NULL;
+			if(!(si=(SAMPLE*)MikMod_calloc(1,sizeof(SAMPLE)))) return NULL;
 			si->speed  = wh.nSamplesPerSec/wh.nChannels;
 			si->volume = 64;
 			si->length = len;
@@ -172,7 +172,7 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 	long len;
 	int samp_size=1;
 
-	if(!(si=(SAMPLE*)MikMod_malloc(sizeof(SAMPLE)))) return NULL;
+	if(!(si=(SAMPLE*)MikMod_calloc(1,sizeof(SAMPLE)))) return NULL;
 
 	/* length */
 	_mm_fseek(reader, 0, SEEK_END);
