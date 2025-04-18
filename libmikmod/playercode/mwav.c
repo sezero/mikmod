@@ -187,6 +187,8 @@ static SAMPLE* Sample_LoadRawGeneric_internal(MREADER* reader, ULONG rate, ULONG
 	si->susbegin = 0;
 	si->susend = 0;
 	si->inflags = si->flags = flags;
+	si->onfree = NULL;
+	si->ctx = NULL;
 	if (si->flags & SF_16BITS) {
 		si->length >>= 1;
 		si->loopstart >>= 1;
