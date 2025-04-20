@@ -362,7 +362,7 @@ static void split_command (char *command, char **argv, int sizeargv)
 
 /* Create a copy of file 'fd' with the first 'start' lines and the
    last 'end' lines removed. Ignore all lines up to the first
-   occurence of startpat. Unlink the copy and return a file
+   occurrence of startpat. Unlink the copy and return a file
    descriptor to the copy. If the file could not be unlinked (e.g.
    under Windows an open file can not be unlinked), return its
    name in 'file'.*/

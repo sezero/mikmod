@@ -760,7 +760,7 @@ static void handle_menu(MMENU *mn)
 			break;
 		  case MENU_REVERT:
 			config_set_config(&config);
-			win_status("Changed configuration reseted");
+			win_status("Changed configuration is reset");
 			break;
 		}
 		break;

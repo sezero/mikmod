@@ -262,7 +262,7 @@ static int mono_attributes[ATTRS_COUNT] = {
 
 	The last three fields specify which part to use from the extracted file
 	(if the extraction program mixes status information and the module).
-	The first skipstart lines starting from the first occurence of skippat
+	The first skipstart lines starting from the first occurrence of skippat
 	and the last skipend lines from the extracted file are removed.
 */
 
@@ -762,7 +762,7 @@ BOOL CF_Save(CONFIG * cfg)
 			 "  EXTRACT = <command>, command to extract a file to stdout (%A archive name,\n"
 			 "             %a short archive name, %f file name, %d destination name(non UNIX))\n"
 			 "  SKIPPAT = <string>, Remove the first SKIPSTART lines starting from the first\n"
-			 "                      occurence of SKIPPAT and the last SKIPEND lines from the\n"
+			 "                      occurrence of SKIPPAT and the last SKIPEND lines from the\n"
 			 "                      extracted file (if the command EXTRACT mixes status\n"
 			 "                      information and the module).\n"
 			 "  SKIPSTART = <val>, \n"

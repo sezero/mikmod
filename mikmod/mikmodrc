@@ -221,7 +221,7 @@ END "THEME"
 #   EXTRACT = <command>, command to extract a file to stdout (%A archive name,
 #              %a short archive name, %f file name, %d destination name(non UNIX))
 #   SKIPPAT = <string>, Remove the first SKIPSTART lines starting from the first
-#                       occurence of SKIPPAT and the last SKIPEND lines from the
+#                       occurrence of SKIPPAT and the last SKIPEND lines from the
 #                       extracted file (if the command EXTRACT mixes status
 #                       information and the module).
 #   SKIPSTART = <val>, 
