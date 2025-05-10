@@ -1,4 +1,4 @@
-# Excerpt taken from http://cmake.3232098.n2.nabble.com/Building-Texinfo-with-CMake-td5609561.html
+# Excerpt taken from https://cmake.org/pipermail/cmake/2010-October/040088.html
 option(ENABLE_DOC "Build the library documentation" ON)
 
 find_program(MAKEINFO_EXECUTABLE makeinfo)
@@ -29,6 +29,5 @@ install(FILES ${info_out} DESTINATION ${CMAKE_INSTALL_INFODIR})
 install(FILES ${html_out}
     ${PROJECT_SOURCE_DIR}/NEWS
     ${PROJECT_SOURCE_DIR}/README
-    ${PROJECT_SOURCE_DIR}/TODO
   DESTINATION ${CMAKE_INSTALL_DOCDIR})
 ENDIF()
