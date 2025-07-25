@@ -129,8 +129,8 @@ The first time you build the library, whether or not you have changed the C file
 
 After that you can run the scripts `tscbdbg` and `tscfdbg` at any time to convert the TypeScript files into JS.
 
-- `tscbdbg` builds the "back-end" script file ([libmikmod/webaudio/dist/libmikmodprocessor.min.js](https://github.com/carlosrafaelgn/mikmod/blob/master/libmikmod/webaudio/dist/libmikmodprocessor.min.js)), responsive for generating the audio on a separate thread.
-- `tscfdbg` builds the "front-end" script file ([libmikmod/webaudio/dist/libmikmod.min.js](https://github.com/carlosrafaelgn/mikmod/blob/master/libmikmod/webaudio/dist/libmikmod.min.js)), which is the only file you must actually reference from your HTML page.
+- `tscbdbg` builds the "back-end" script file `libmikmod/webaudio/dist/libmikmodprocessor.min.js`, responsive for generating the audio on a separate thread.
+- `tscfdbg` builds the "front-end" script file `libmikmod/webaudio/dist/libmikmod.min.js`, which is the only file you must actually reference from your HTML page.
 
 Despite the extension `.min.js`, both scripts `tscbdbg` and `tscfdbg` do not generate minified files. For that, you must install the optional dependencies listed above and run the scripts `tscbmin` and `tscfmin`.
 

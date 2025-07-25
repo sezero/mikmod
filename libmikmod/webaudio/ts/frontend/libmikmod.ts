@@ -24,7 +24,7 @@ class LibMikMod {
 	// Due to both LibMikMod and AudioWorklet's nature we can
 	// have only one module loaded at a time...
 
-	public static readonly WEB_VERSION = 4;
+	public static readonly WEB_VERSION = 5;
 	public static LIB_VERSION: string | null = null;
 
 	public static readonly ERROR_FILE_READ = 1;
@@ -52,6 +52,19 @@ class LibMikMod {
 		return (("AudioWorklet" in window) && ("AudioWorkletNode" in window) && ("WebAssembly" in window));
 	}
 
+	private static createAudioWorkletNode(audioContext: AudioContext): AudioWorkletNode {
+		// https://webaudio.github.io/web-audio-api/#AudioWorkletNodeOptions
+		// https://www.w3.org/TR/webaudio/#computednumberofchannels
+		return new AudioWorkletNode(audioContext, "libmikmodprocessor", {
+			channelCount: 2,
+			channelCountMode: "explicit",
+			channelInterpretation: "speakers",
+			numberOfInputs: 0,
+			numberOfOutputs: 1,
+			outputChannelCount: [2],
+		});
+	}
+
 	public static async init(audioContext: AudioContext, libPath?: string | null): Promise<void> {
 		if (LibMikMod.initialized || LibMikMod.initializing || LibMikMod.initializationError)
 			return;
@@ -73,7 +86,7 @@ class LibMikMod {
 			await audioContext.audioWorklet.addModule(libPath + "libmikmodprocessor.min.js?" + LibMikMod.WEB_VERSION);
 
 			await new Promise<void>(function (resolve, reject) {
-				const audioNode = new AudioWorkletNode(audioContext, "libmikmodprocessor");
+				const audioNode = LibMikMod.createAudioWorkletNode(audioContext);
 
 				audioNode.port.onmessage = function (ev) {
 					const message = ev.data as LibMikModResponse;
@@ -140,7 +153,7 @@ class LibMikMod {
 
 		LibMikMod.stopModule();
 
-		const audioNode = new AudioWorkletNode(options.audioContext, "libmikmodprocessor");
+		const audioNode = LibMikMod.createAudioWorkletNode(options.audioContext);
 
 		LibMikMod.currentId++;
 
@@ -238,6 +251,8 @@ class LibMikMod {
 		LibMikMod.infoModType = null;
 		LibMikMod.infoComment = null;
 
+		if (LibMikMod.audioNode && LibMikMod.audioNode.port)
+			LibMikMod.audioNode.port.close();
 		LibMikMod.audioNode = null;
 
 		LibMikMod.onload = null;
@@ -271,7 +286,7 @@ class LibMikMod {
 
 		const onerror = LibMikMod.onerror;
 
-		LibMikMod.cleanUp();
+		LibMikMod.stopModule();
 
 		if (onerror)
 			onerror(errorCode, reason);

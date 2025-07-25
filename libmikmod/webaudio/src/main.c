@@ -52,7 +52,7 @@ int init() {
 	md_mode =
 		// These ones take effect only after MikMod_Init or MikMod_Reset
 		//DMODE_16BITS | // enable 16 bit output
-		//DMODE_STEREO | // enable stereo output
+		DMODE_STEREO | // enable stereo output
 		DMODE_SOFT_SNDFX | // Process sound effects via software mixer
 		DMODE_SOFT_MUSIC | // Process music via software mixer
 		DMODE_HQMIXER | // Use high-quality (slower) software mixer
@@ -136,7 +136,7 @@ int loadModule(int mixfreq, int reverb, BOOL hqMixer, BOOL interpolation, BOOL n
 	md_musicvolume = 128; // volume of song
 	md_sndfxvolume = 128; // volume of sound effects
 	md_reverb = (reverb <= 0 ? 0 : (reverb >= 15 ? 15 : reverb)); // 0 = none;  15 = chaos
-	md_pansep = 0; // 0 = mono;  128 == 100% (full left/right)
+	md_pansep = 128; // 0 = mono;  128 == 100% (full left/right)
 
 	MikMod_errno = 0;
 

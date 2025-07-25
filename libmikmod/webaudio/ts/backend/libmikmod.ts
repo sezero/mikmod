@@ -238,6 +238,11 @@ class LibMikMod {
 
 		let audioBufferUsedLength = LibMikMod.audioBufferUsedLength;
 
+		/*
+
+		The previous version considered the library produced a mono output, which helped optimizing
+		the copy process. But now that the output is stereo, there is no room for such optimization.
+
 		if (!audioBufferUsedLength) {
 			for (let attempts = 0; attempts < 3; attempts++) {
 				audioBufferUsedLength = LibMikMod.cLib._update();
@@ -350,5 +355,57 @@ class LibMikMod {
 		}
 
 		return true;
+
+		*/
+
+		// The AudioWorkletNode is always created with 0 inputs and 1 output containing 2 channels
+
+		const channels = outputs[0];
+		const left = channels[0];
+		const right = channels[1];
+		const samplesInChannel = left.length;
+
+		let tmpBuffer = LibMikMod.tmpBuffer;
+		let audioBufferI = (tmpBuffer ? (tmpBuffer.length - (audioBufferUsedLength >> 2)) : 0);
+
+		let ret = true;
+
+		// Skip 2 mono 32-bit float samples at a time (8 bytes)
+		SAMPLES_LOOP: for (let i = 0; i < samplesInChannel; i++, audioBufferI += 2, audioBufferUsedLength -= 8) {
+			if (audioBufferUsedLength <= 0) {
+				for (let attempts = 0; attempts < 3; attempts++) {
+					audioBufferUsedLength = LibMikMod.cLib._update();
+
+					if (audioBufferUsedLength < 0) {
+						ret = false;
+						tmpBuffer = null;
+						audioBufferUsedLength = 0;
+						break SAMPLES_LOOP;
+					}
+
+					if (audioBufferUsedLength) {
+						LibMikMod.audioBufferPtr = LibMikMod.cLib._getAudioBuffer();
+						// Convert bytes into 32-bit float samples
+						tmpBuffer = new Float32Array(LibMikMod.cLib.HEAP8.buffer, LibMikMod.audioBufferPtr, audioBufferUsedLength >> 2);
+						audioBufferI = 0;
+						break;
+					}
+				}
+
+				// Output silence if we cannot fill the buffer
+				if (!audioBufferUsedLength) {
+					tmpBuffer = null;
+					break SAMPLES_LOOP;
+				}
+			}
+
+			left[i] = (tmpBuffer as Float32Array)[audioBufferI];
+			right[i] = (tmpBuffer as Float32Array)[audioBufferI + 1];
+		}
+
+		LibMikMod.tmpBuffer = tmpBuffer;
+		LibMikMod.audioBufferUsedLength = audioBufferUsedLength;
+
+		return ret;
 	}
 }
