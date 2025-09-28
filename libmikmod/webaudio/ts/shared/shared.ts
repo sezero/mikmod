@@ -35,7 +35,7 @@ interface LibMikModInitialOptions extends LibMikModGeneralOptions {
 
 interface LibMikModLoadOptions extends LibMikModInitialOptions {
 	audioContext: AudioContext;
-	source: File | ArrayBuffer | Uint8Array;
+	source: File | ArrayBuffer | Uint8Array<ArrayBuffer>;
 	onload: (audioNode: AudioWorkletNode) => void;
 	onerror: (errorCode: number, reason?: any) => void;
 	onended: () => void;
@@ -54,7 +54,7 @@ interface LibMikModMessage {
 	id: number;
 	messageId: LibMikModMessageId;
 	options?: LibMikModGeneralOptions | LibMikModInitialOptions | null;
-	buffer?: ArrayBuffer;
+	buffer?: ArrayBuffer | Uint8Array<ArrayBuffer>;
 }
 
 interface LibMikModResponse {

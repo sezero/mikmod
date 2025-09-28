@@ -21,8 +21,8 @@
 */
 
 interface LibMikModCLib {
-	HEAP8: Uint8Array;
-	HEAPF32: Float32Array;
+	HEAP8: Uint8Array<ArrayBuffer>;
+	HEAPF32: Float32Array<ArrayBuffer>;
 
 	_getVersion(): number;
 	_init(): number;
@@ -44,7 +44,7 @@ interface LibMikModCLib {
 
 class LibMikMod {
 	private static cLib: LibMikModCLib | null = null;
-	private static tmpBuffer: Float32Array | null = null;
+	private static tmpBuffer: Float32Array<ArrayBuffer> | null = null;
 
 	private static audioBufferPtr = 0;
 	private static audioBufferUsedLength = 0;
@@ -61,7 +61,7 @@ class LibMikMod {
 	public static loaded = false;
 	public static loadErrorStr: string | null = null;
 
-	public static init(wasmBinary: ArrayBuffer): Promise<void> {
+	public static init(wasmBinary: ArrayBuffer | Uint8Array<ArrayBuffer>): Promise<void> {
 		return (LibMikMod.loaded ? Promise.resolve() : new Promise((resolve, reject) => {
 			if (LibMikMod.loading) {
 				reject(LibMikMod.loadErrorStr = "The library was still loading");
@@ -101,6 +101,7 @@ class LibMikMod {
 			LibMikMod.cLib._terminate();
 			LibMikMod.cLib = null;
 
+			LibMikMod.tmpBuffer = null;
 			LibMikMod.audioBufferPtr = 0;
 			LibMikMod.audioBufferUsedLength = 0;
 		}
@@ -110,7 +111,7 @@ class LibMikMod {
 		return (LibMikMod.cLib ? LibMikMod.cLib._getVersion() : 0);
 	}
 
-	public static loadModule(destinationSampleRate: number, srcBuffer?: ArrayBuffer | Uint8Array, options?: LibMikModInitialOptions | null): number {
+	public static loadModule(destinationSampleRate: number, srcBuffer?: ArrayBuffer | Uint8Array<ArrayBuffer>, options?: LibMikModInitialOptions | null): number {
 		if (!LibMikMod.cLib)
 			return 3; // MMERR_DYNAMIC_LINKING
 
@@ -128,6 +129,7 @@ class LibMikMod {
 		else
 			dstBuffer.set(new Uint8Array(srcBuffer, 0, srcBuffer.byteLength), 0);
 
+		LibMikMod.tmpBuffer = null;
 		LibMikMod.audioBufferPtr = 0;
 		LibMikMod.audioBufferUsedLength = 0;
 
@@ -184,6 +186,7 @@ class LibMikMod {
 		if (LibMikMod.cLib) {
 			LibMikMod.cLib._freeModule();
 
+			LibMikMod.tmpBuffer = null;
 			LibMikMod.audioBufferPtr = 0;
 			LibMikMod.audioBufferUsedLength = 0;
 		}
@@ -232,7 +235,7 @@ class LibMikMod {
 		return (LibMikMod.cLib ? LibMikMod.getString(LibMikMod.cLib._getStrerr(code)) : null);
 	}
 
-	public static process(outputs: Float32Array[][]): boolean {
+	public static process(outputs: Float32Array<ArrayBuffer>[][]): boolean {
 		if (!LibMikMod.cLib)
 			return false;
 
@@ -262,7 +265,7 @@ class LibMikMod {
 				return true;
 		}
 
-		let tmpBuffer: Float32Array | null = null;
+		let tmpBuffer: Float32Array<ArrayBuffer> | null = null;
 
 		for (let o = outputs.length - 1; o >= 0; o--) {
 			const channels = outputs[o];
@@ -371,7 +374,7 @@ class LibMikMod {
 		let ret = true;
 
 		// Skip 2 mono 32-bit float samples at a time (8 bytes)
-		SAMPLES_LOOP: for (let i = 0; i < samplesInChannel; i++, audioBufferI += 2, audioBufferUsedLength -= 8) {
+		SAMPLES_LOOP: for (let i = 0; i < samplesInChannel; ) {
 			if (audioBufferUsedLength <= 0) {
 				for (let attempts = 0; attempts < 3; attempts++) {
 					audioBufferUsedLength = LibMikMod.cLib._update();
@@ -399,8 +402,17 @@ class LibMikMod {
 				}
 			}
 
-			left[i] = (tmpBuffer as Float32Array)[audioBufferI];
-			right[i] = (tmpBuffer as Float32Array)[audioBufferI + 1];
+			const audioBufferUsedLengthInSamples = (audioBufferUsedLength >> 3);
+			const availableSamplesInChannel = samplesInChannel - i;
+			let availableSamples = (audioBufferUsedLengthInSamples <= availableSamplesInChannel ? audioBufferUsedLengthInSamples : availableSamplesInChannel);
+			while (availableSamples > 0) {
+				left[i] = (tmpBuffer as Float32Array<ArrayBuffer>)[audioBufferI];
+				right[i] = (tmpBuffer as Float32Array<ArrayBuffer>)[audioBufferI + 1];
+				i++;
+				audioBufferI += 2;
+				audioBufferUsedLength -= 8;
+				availableSamples--;
+			}
 		}
 
 		LibMikMod.tmpBuffer = tmpBuffer;

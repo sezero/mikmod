@@ -125,7 +125,7 @@ class LibMikModProcessor extends AudioWorkletProcessor {
 		}
 	}
 
-	public process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: { [key: string]: Float32Array }): boolean {
+	public process(inputs: Float32Array<ArrayBuffer>[][], outputs: Float32Array<ArrayBuffer>[][], parameters: { [key: string]: Float32Array<ArrayBuffer> }): boolean {
 		if (this.ended)
 			return false;
 

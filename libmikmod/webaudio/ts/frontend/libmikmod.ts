@@ -24,7 +24,7 @@ class LibMikMod {
 	// Due to both LibMikMod and AudioWorklet's nature we can
 	// have only one module loaded at a time...
 
-	public static readonly WEB_VERSION = 5;
+	public static readonly WEB_VERSION = 7;
 	public static LIB_VERSION: string | null = null;
 
 	public static readonly ERROR_FILE_READ = 1;

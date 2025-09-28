@@ -31,9 +31,9 @@ interface AudioWorkletProcessor {
 
 interface AudioWorkletProcessorImpl extends AudioWorkletProcessor {
 	process(
-		inputs: Float32Array[][],
-		outputs: Float32Array[][],
-		parameters: Record<string, Float32Array>
+		inputs: Float32Array<ArrayBuffer>[][],
+		outputs: Float32Array<ArrayBuffer>[][],
+		parameters: Record<string, Float32Array<ArrayBuffer>>
 	): boolean;
 }
 
