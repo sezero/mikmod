@@ -110,19 +110,19 @@ static char driveroptions[100] = "";
 #endif
 
 static MENTRY output_entries[] = {
-	{NULL, 0, "The device driver for output"},
+	{NULL, NULL, "The device driver for output"},
 #if LIBMIKMOD_VERSION >= 0x030107
 	{NULL, driveroptions,
 		"Driver options (e.g. \"buffer=14,count=16\" for the OSS-driver)"},
 #endif
-	{"[%c] &Stereo", 0, "mono/stereo output"},
-	{"[%c] 16 &bit output", 0, "8/16 bit output"},
-	{"&Frequency        [%d]|Enter mixing frequency:|4000|60000", 0,
+	{"[%c] &Stereo", NULL, "mono/stereo output"},
+	{"[%c] 16 &bit output", NULL, "8/16 bit output"},
+	{"&Frequency        [%d]|Enter mixing frequency:|4000|60000", NULL,
 	 "Mixing frequency in hertz (from 4000 Hz to 60000 Hz)"},
-	{"[%c] &Interpolate", 0, "Use interpolated mixing"},
-	{"[%c] &HQmixer", 0, "Use high-quality (but slower) software mixer"},
-	{"[%c] S&urround", 0, "Use surround mixing"},
-	{"&Reverb              [%d]|Enter reverb amount:|0|15", 0,
+	{"[%c] &Interpolate", NULL, "Use interpolated mixing"},
+	{"[%c] &HQmixer", NULL, "Use high-quality (but slower) software mixer"},
+	{"[%c] S&urround", NULL, "Use surround mixing"},
+	{"&Reverb              [%d]|Enter reverb amount:|0|15", NULL,
 	 "Reverb amount from 0 (no reverb) to 15"},
 	{NULL,NULL,NULL}
 };
@@ -131,32 +131,32 @@ static MMENU output_menu =
 
 static MENTRY playback_entries[] = {
 	{"&Volume     [%d]|Enter output volume:|0|100",
-	 0, "Output volume from 0 to 100 in %"},
-	{"[%c] &Restrict Volume", 0,
+	 NULL, "Output volume from 0 to 100 in %"},
+	{"[%c] &Restrict Volume", NULL,
 	 "Restrict volume of player to volume supplied by user (with 1..0,<,>)"},
-	{"[%c] &Fadeout", 0, "Force volume fade at the end of module"},
-	{"[%c] &Loops", 0, "Enable in-module loops"},
-	{"[%c] &Panning", 0, "Process panning effects"},
-	{"[%c] Pro&tracker", 0, "Use extended protracker effects"},
+	{"[%c] &Fadeout", NULL, "Force volume fade at the end of module"},
+	{"[%c] &Loops", NULL, "Enable in-module loops"},
+	{"[%c] &Panning", NULL, "Process panning effects"},
+	{"[%c] Pro&tracker", NULL, "Use extended protracker effects"},
 	{NULL,NULL,NULL}
 };
 static MMENU playback_menu =
 	{ 0, 0, -1, 1, playback_entries, handle_menu, NULL, NULL, 2 };
 
 static MENTRY plmode_entries[] = {
-	{"[%c] Loop &module", 0, "Loop current module"},
-	{"[%c] Loop &list", 0, "Play the list repeatedly"},
-	{"[%c] &Shuffle list", 0,
+	{"[%c] Loop &module", NULL, "Loop current module"},
+	{"[%c] Loop &list", NULL, "Play the list repeatedly"},
+	{"[%c] &Shuffle list", NULL,
 	 "Shuffle list at start and when all entries are played"},
-	{"[%c] List &random", 0, "Play list in random order"},
+	{"[%c] List &random", NULL, "Play list in random order"},
 	{NULL,NULL,NULL}
 };
 static MMENU plmode_menu =
 	{ 0, 0, -1, 1, plmode_entries, handle_menu, NULL, NULL, 4 };
 
 static MENTRY exit_entries[] = {
-	{"[%c] Save &config", 0, NULL},
-	{"[%c] Save &playlist", 0, NULL},
+	{"[%c] Save &config", NULL, NULL},
+	{"[%c] Save &playlist", NULL, NULL},
 	{NULL,NULL,NULL}
 };
 static MMENU exit_menu =
@@ -164,19 +164,19 @@ static MMENU exit_menu =
 
 static MENTRY other_entries[] = {
 	{"&Playmode  %>", &plmode_menu, "Playlist playing mode"},
-	{"[%c] &Curious", 0, "Look for hidden patterns in module"},
-	{"[%c] &Tolerant", 0, "Don't halt on file access errors"},
-	{"[%c] &Full path", 0, "Display full path of files"},
-	{"&Edit theme", 0, "Copy, edit, or delete active theme"},
-	{NULL, 0, "Color theme to use ((C) color theme, (M) mono theme)"},
-	{"[%c] &Window title", 0, "Set the term/window title to song name/filename"},
+	{"[%c] &Curious", NULL, "Look for hidden patterns in module"},
+	{"[%c] &Tolerant", NULL, "Don't halt on file access errors"},
+	{"[%c] &Full path", NULL, "Display full path of files"},
+	{"&Edit theme", NULL, "Copy, edit, or delete active theme"},
+	{NULL, NULL, "Color theme to use ((C) color theme, (M) mono theme)"},
+	{"[%c] &Window title", NULL, "Set the term/window title to song name/filename"},
 #if LIBMIKMOD_VERSION >= 0x030200
-	{"[%c] Sample&names", 0, "Always display sample names in volumebars panel"},
-	{"[%c] Fake &volumebars", 0, "Display fast (non CPU-intensive) volumebars"},
+	{"[%c] Sample&names", NULL, "Always display sample names in volumebars panel"},
+	{"[%c] Fake &volumebars", NULL, "Display fast (non CPU-intensive) volumebars"},
 #endif
-	{"&Scheduling       [%o]|Normal|Renice|Realtime", 0,
+	{"&Scheduling       [%o]|Normal|Renice|Realtime", NULL,
 	 "Change process priority, MikMod must be restarted to change this"},
-	{"Status&bar           [%o]|None|Small|Big", 0, "Size of the statusbar"},
+	{"Status&bar           [%o]|None|Small|Big", NULL, "Size of the statusbar"},
 	{"&On exit   %>", &exit_menu, ""},
 	{NULL,NULL,NULL}
 };
@@ -187,10 +187,10 @@ static MENTRY entries[] = {
 	{"&Output options %>", &output_menu, ""},
 	{"&Playback options %>", &playback_menu, ""},
 	{"O&ther options %>", &other_menu, ""},
-	{"%------------", 0, NULL},
-	{"&Use config", 0, "Activate the edited configuration"},
-	{"S&ave config", 0, "Save and activate the edited configuration"},
-	{"R&evert config", 0, "Reset the configuration to the actual used one"},
+	{"%------------", NULL, NULL},
+	{"&Use config", NULL, "Activate the edited configuration"},
+	{"S&ave config", NULL, "Save and activate the edited configuration"},
+	{"R&evert config", NULL, "Reset the configuration to the actual used one"},
 	{NULL,NULL,NULL}
 };
 static MMENU menu =

@@ -1259,37 +1259,37 @@ void list_open(int *actLine)
 	static MENU_DATA menu_data;
 
 	static MENTRY file_entries[] = {
-		{"&Load...", 0, "Load new playlists/modules"},
-		{"&Insert...", 0, "Insert new playlists/modules in current playlist"},
-		{"&Save", 0, NULL},
-		{"Save &as...", 0, "Save playlist in a specified file"},
+		{"&Load...", NULL, "Load new playlists/modules"},
+		{"&Insert...", NULL, "Insert new playlists/modules in current playlist"},
+		{"&Save", NULL, NULL},
+		{"Save &as...", NULL, "Save playlist in a specified file"},
 		{NULL,NULL,NULL}
 	};
 	static MMENU file_menu =
 	  { 0, 0, -1, 1, file_entries, cb_handle_menu, NULL, &menu_data, 1 };
 
 	static MENTRY sort_entries[] = {
-		{"by &name", 0, "Sort list by name of modules"},
-		{"by &extension", 0, "Sort list by extension of modules"},
-		{"by &path", 0, "Sort list by path of modules/archives"},
-		{"by &time", 0, "Sort list by playing time of modules"},
-		{"%---------", 0, NULL},
-		{"[%c] &reverse", 0, "Smaller to bigger or reverse sort"},
+		{"by &name", NULL, "Sort list by name of modules"},
+		{"by &extension", NULL, "Sort list by extension of modules"},
+		{"by &path", NULL, "Sort list by path of modules/archives"},
+		{"by &time", NULL, "Sort list by playing time of modules"},
+		{"%---------", NULL, NULL},
+		{"[%c] &reverse", NULL, "Smaller to bigger or reverse sort"},
 		{NULL,NULL,NULL}
 	};
 	static MMENU sort_menu =
 	  { 0, 0, -1, 1, sort_entries, cb_handle_menu, NULL, &menu_data, 2 };
 
 	static MENTRY entries[] = {
-		{"&Play", 0, "Play selected entry"},
-		{"&Remove", 0, "Remove selected entry from list"},
-		{"&Delete...", 0,
+		{"&Play", NULL, "Play selected entry"},
+		{"&Remove", NULL, "Remove selected entry from list"},
+		{"&Delete...", NULL,
 		 "Remove selected entry from list and delete it on disk"},
-		{"%----------", 0, NULL},
+		{"%----------", NULL, NULL},
 		{"&File        %>", &file_menu, "Load/Save playlist/modules"},
-		{"&Shuffle", 0, "Shuffle the list"},
+		{"&Shuffle", NULL, "Shuffle the list"},
 		{"S&ort        %>", &sort_menu, "Sort the list"},
-		{"&Back", 0, "Leave menu"},
+		{"&Back", NULL, "Leave menu"},
 		{NULL,NULL,NULL}
 	};
 	static MMENU menu =
