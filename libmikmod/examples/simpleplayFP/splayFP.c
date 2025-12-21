@@ -18,6 +18,9 @@
 void amiga_sysinit (void);
 void amiga_usleep (unsigned long timeout);
 #define MikMod_Sleep(ns) amiga_usleep(ns)
+#elif defined(__WATCOMC__) && defined(_DOS)
+#include <dos.h>
+#define MikMod_Sleep(ns) delay(ns / 1000)
 #else
 #include <unistd.h>  /* for usleep() */
 #define MikMod_Sleep(ns) usleep(ns)
