@@ -35,7 +35,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_DOS)&&!defined(_WIN32)
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -44,7 +44,7 @@
 #endif
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 #if defined(__OS2__)||defined(__EMX__)
 #define INCL_VIO
 #define INCL_DOS

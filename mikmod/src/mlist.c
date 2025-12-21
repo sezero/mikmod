@@ -49,7 +49,7 @@
 
 static int mikmod_random(int limit)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)
 	return rand() % limit;
 #else
 	return random() % limit;
@@ -91,7 +91,7 @@ void PL_InitList(PLAYLIST * pl)
 	pl->current = -1;
 	pl->curr_deleted = 0;
 	pl->add_pos = -1;
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)||!defined(HAVE_SRANDOM)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)||!defined(HAVE_SRANDOM)
 	srand(time(NULL));
 #else
 	{
@@ -387,7 +387,7 @@ BOOL PL_Save(PLAYLIST * pl, const CHAR *filename)
 
 char *PL_GetFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_mikmod_amiga)
 	return get_cfg_name("mikmodpl.cfg");
 #elif defined(_WIN32)
 	return get_cfg_name("mikmod_playlist.mpl");

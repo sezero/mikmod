@@ -79,7 +79,7 @@
 #define PATH_SEP '/'
 #define PATH_SEP_STR "/"
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 
 #define PATH_SEP_SYS '\\'
 #define PATH_SEP_SYS_STR "\\"
@@ -170,7 +170,7 @@ extern char storage[STORAGELEN+2];
 #define S_ISBLK(st_mode)  0
 #endif
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 #undef S_ISLNK /* djgpp-v2.04 does define S_ISLNK (and has lstat, too..) */
 #define lstat             stat
 #undef S_ISSOCK
@@ -202,7 +202,7 @@ int get_tmp_file (const char *tmpl, char **name_used);
 
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)
 char *get_tmp_name(void);
 #endif
 
@@ -217,12 +217,12 @@ char *get_cfg_name(const char *name);
 /* Return precise time in milliseconds */
 unsigned long Time1000(void);
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)
 #define filecmp strcasecmp
 #else
 #define filecmp strcmp
 #endif
-#if defined(__OS2__)||defined(__EMX__)||(defined(_WIN32)&&!defined(__MINGW32__))
+#if defined(__OS2__)||defined(__EMX__)||defined(_DOS)||(defined(_WIN32)&&!defined(__MINGW32__))
 #define strcasecmp(s,t) stricmp(s,t)
 #endif
 

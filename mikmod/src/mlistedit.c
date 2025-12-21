@@ -45,6 +45,8 @@
 #include <dirent.h>
 #elif defined(__OS2__) /* Watcom */
 #include <direct.h>
+#elif defined(_DOS) /* Watcom */
+#include <direct.h>
 #elif defined(_WIN32) /* MSVC, etc. */
 #include <direct.h>
 #else
@@ -345,7 +347,7 @@ static void scan_dir (char *path, BOOL recursive, BOOL links,
 	int cnt = 0, max = 0, i;
 
 	if (
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)&&!defined(_mikmod_amiga)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_DOS)&&!defined(_WIN32)&&!defined(_mikmod_amiga)
 		!strcmp (path,"/proc/") ||
 		!strcmp (path,"/dev/") ||
 #endif
@@ -905,7 +907,7 @@ void freq_open (const char *title, const char *path, int actline,
 		path_first = strdup (freq_data->path);
 
 		/* error on initial path -> try root directory */
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 		strcpy (freq_data->path,"c:"PATH_SEP_STR);
 #elif defined _mikmod_amiga
 		strcpy (freq_data->path,"SYS:"); /* or use ":" instead??? */
@@ -970,7 +972,7 @@ int list_scan_dir (char *path, BOOL quiet)
 	int added = 0;
 	char dir[PATH_MAX<<1]="", *pos;
 
-#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__EMX__)||defined(__OS2__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 	if (*path!=PATH_SEP && *(path+1)!=':')
 #else
 	if (!IS_PATH_SEP(*path))

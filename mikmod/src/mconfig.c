@@ -278,7 +278,7 @@ static char lzsignat[] = "-lz";
 
 /* interesting file extensions */
 static char targzext[] = ".TAR.GZ .TAZ .TGZ";
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_DOS)&&!defined(_WIN32)
 static char tarbzip2ext[] = ".TAR.BZ2 .TBZ .TBZ2";
 #endif
 
@@ -303,7 +303,7 @@ static ARCHIVE archiver_def[] = {
 				    0, "tar --use-compress-program=bzip2 -xOf \"%a\" \"%f\" > \"%d\"", NULL, 0, 0},
 	{  0,    gzsignat, NULL, 0, "gzip -dqc \"%a\" > \"%d\"", NULL, 0, 0},
 	{  0, bzip2signat, NULL, 0, "bzip2 -dqc \"%a\" > \"%d\"", NULL, 0, 0}
-#elif !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#elif !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_DOS)&&!defined(_WIN32)
 	{  0,  pksignat, "unzip -vqq \"%a\"",
 				 58, "unzip -pqq \"%a\" \"%f\"", NULL, 0, 0},
 	{ 20, zoosignat, "zoo lq \"%a\"",
@@ -353,7 +353,7 @@ static ARCHIVE archiver_def[] = {
 
 char *CF_GetFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)
 	return get_cfg_name("mikmod.cfg");
 #else
 	return get_cfg_name(".mikmodrc");
@@ -362,7 +362,7 @@ char *CF_GetFilename(void)
 
 char *CF_GetDefaultFilename(void)
 {
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)
 	return NULL;
 #else
 	return str_sprintf2("%s" PATH_SEP_STR "%s", PACKAGE_DATA_DIR, "mikmodrc");

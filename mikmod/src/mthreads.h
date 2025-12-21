@@ -39,6 +39,9 @@ int usleep_new(unsigned long);
 
 #if defined(__OS2__)||defined(__EMX__)
 #define SLEEP(n)  DosSleep(n)
+#elif defined(_DOS)
+#include <dos.h>
+#define SLEEP(n)  delay(n)
 #elif defined(_WIN32)
 #define SLEEP(n)  Sleep(n*10)
 #elif !defined(HAVE_USLEEP)

@@ -31,7 +31,7 @@
 
 #include "mlist.h"
 
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)&&!defined(_mikmod_amiga)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_DOS)&&!defined(_WIN32)&&!defined(_mikmod_amiga)
 /* Drop all root privileges we might have. */
 BOOL DropPrivileges (void);
 #endif

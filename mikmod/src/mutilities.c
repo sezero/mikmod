@@ -43,7 +43,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_WIN32)
+#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(__DJGPP__)&&!defined(_DOS)&&!defined(_DOS)&&!defined(_WIN32)
 #include <pwd.h>
 #endif
 #include <sys/types.h>
@@ -68,7 +68,7 @@
 #include <proto/dos.h>
 #endif
 
-#if defined(__DJGPP__)
+#if defined(__DJGPP__) || defined(_DOS)
 static const char *get_homedir (void)
 {
 	return "C:"; /* good enough for msdos */
@@ -149,7 +149,7 @@ static const char *get_homedir (void)
 }
 #endif /* get_homedir */
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 
 void path_conv(char *file)
 {
@@ -227,7 +227,7 @@ BOOL path_relative(const char *path)
 	if (!path)
 		return 1;
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 	if (*path && (path[1] == ':'))
 		return 0;
 #elif defined(_mikmod_amiga)
@@ -260,7 +260,7 @@ static int m_mkstemp (char *tmpl)
 	XXXXXX = &tmpl[len - 6];
 
 	/* Get some more or less random data.  */
-#ifdef _WIN32
+#if defined(_WIN32)||defined(_DOS)
 	value = Time1000();
 	value = ((value % 1000) ^ (value / 1000)) + counter++;
 #else
@@ -322,7 +322,7 @@ int get_tmp_file (const char *tmpl, char **name_used)
 #ifdef P_tmpdir
 		if (!tmpdir) tmpdir = P_tmpdir;
 #endif
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)
 		if (!tmpdir) tmpdir = "C:\\";
 #else
 		if (!tmpdir) tmpdir = "/tmp";
@@ -352,7 +352,7 @@ int get_tmp_file (const char *tmpl, char **name_used)
 	return retval;
 }
 
-#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_WIN32)||defined(_mikmod_amiga)
+#if defined(__OS2__)||defined(__EMX__)||defined(__DJGPP__)||defined(_DOS)||defined(_WIN32)||defined(_mikmod_amiga)
 /* allocate and return a name for a temporary file
    (under UNIX not used because of tempnam race condition) */
 char *get_tmp_name(void)
@@ -361,7 +361,7 @@ char *get_tmp_name(void)
 #if defined(__OS2__) && defined(__WATCOMC__)
 	tmp_file = str_sprintf2("%s" PATH_SEP_STR "%s", getenv("TEMP"),
 							"!MikMod.tmp");
-#elif defined(_WIN32)
+#elif defined(_WIN32) || defined(_DOS)
 	if (!(tmp_file = _tempnam(NULL, ".mod")))
 		if (!(tmp_file = _tempnam(get_homedir(), ".mod")))
 			return NULL;
@@ -463,6 +463,12 @@ unsigned long Time1000(void)
 	LastRest = Delta % Freq;
 	LastCount = Count;
 	return LastTime;
+#elif defined(_DOS)
+	#include <dos.h>
+	union REGS r;
+	r.h.ah = 0x2c;
+	int386(0x21, &r, &r);
+	return r.h.dh * 1000 + r.h.dl * 10;
 #else
 	struct timeval tv;
 

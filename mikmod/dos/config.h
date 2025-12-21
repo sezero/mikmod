@@ -1,4 +1,4 @@
-/* config.h.in.  Generated manually for DOS/DJGPP.  */
+/* config.h.in.  Generated manually for DOS.  */
 
 /* Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).  */
 #define HAVE_MIKMOD_FREE 1
@@ -38,7 +38,9 @@
 #define HAVE_LIMITS_H	1
 
 /* Define if you have the <sys/time.h> header file.  */
+#if defined(__DJGPP__)
 #define HAVE_SYS_TIME_H		1
+#endif
 
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H		1
