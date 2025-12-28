@@ -45,6 +45,7 @@ static volatile int playing = 0;
 static int fragsize = 1 << DEFAULT_FRAGSIZE;
 static SBYTE *audiobuffers[2];
 static int whichbuffer = 0;
+static SceUID audiothread;
 
 static int audio_thread(int args, void *argp)
 {
@@ -111,7 +112,7 @@ static int VITA_Init(void)
 		}
 	}
 
-	SceUID audiothread = sceKernelCreateThread("Audio Thread", (void*)&audio_thread, 0x10000100, 0x10000, 0, 0, NULL);
+	audiothread = sceKernelCreateThread("Audio Thread", (void*)&audio_thread, 0x10000100, 0x10000, 0, 0, NULL);
 	int res = sceKernelStartThread(audiothread, sizeof(audiothread), &audiothread);
 	if (res != 0) {
 		sceClibPrintf("Failed to init audio thread (0x%x)", res);
@@ -124,6 +125,9 @@ static int VITA_Init(void)
 static void VITA_Exit(void)
 {
 	audio_terminate = 1;
+	sceKernelWaitThreadEnd(audiothread, NULL, NULL);
+	sceKernelDeleteThread(audiothread);
+
 	if (audio_handle != -1) {
 		sceAudioOutReleasePort(audio_handle);
 		audio_handle = -1;
