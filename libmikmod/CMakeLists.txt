@@ -129,6 +129,7 @@ cmake_dependent_option(ENABLE_PIPE "Support for output via a pipe to another com
 cmake_dependent_option(ENABLE_AIX "Include the AIX audio driver" ON "SYS_AIX" OFF)
 cmake_dependent_option(ENABLE_HPUX "Include the HP-UX audio driver" ON "SYS_HPUX" OFF)
 cmake_dependent_option(ENABLE_SUNAUDIO "Include the SunAudio (or compatibles) driver" ${USE_SUNAUDIO_DEFAULT} "SYS_NETBSD OR SYS_OPENBSD OR SYS_SOLARIS" OFF)
+cmake_dependent_option(ENABLE_VITA "Include the Playstation Vita driver" ON "VITA" OFF)
 option(ENABLE_OPENAL "Include the OpenAL driver" OFF)
 option(ENABLE_SDL "Include the SDL driver" OFF)
 option(ENABLE_AIFF "Support for output to an .aiff file" ON)
@@ -311,6 +312,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_stdout.c
     drivers/drv_sun.c
     drivers/drv_ultra.c
+    drivers/drv_vita.c
     drivers/drv_wav.c
     drivers/drv_win.c
     drivers/drv_xaudio2.c
@@ -660,6 +662,10 @@ IF (ENABLE_COREAUDIO)
     LIST (APPEND EXTRA_LIBS -Wl,-framework,AudioUnit)
     LIST (APPEND EXTRA_LIBS -Wl,-framework,CoreServices)
     SET(LIBRARY_LIB "${LIBRARY_LIB} -framework AudioToolbox -framework AudioUnit -framework CoreServices")
+ENDIF()
+
+IF (ENABLE_VITA)
+    SET (DRV_VITA 1)
 ENDIF()
 
 IF (ENABLE_WINMM)
