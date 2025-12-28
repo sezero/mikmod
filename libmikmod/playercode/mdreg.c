@@ -123,6 +123,9 @@ static void _mm_registeralldrivers(void)
 #ifdef DRV_N64
 	_mm_registerdriver(&drv_n64);
 #endif
+#ifdef DRV_VITA
+	_mm_registerdriver(&drv_vita);
+#endif
 
 	/* dos drivers - wss first, since some cards emulate sb */
 #ifdef DRV_WSS

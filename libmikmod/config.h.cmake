@@ -59,6 +59,8 @@
 #cmakedefine DRV_XAUDIO2 1
 /* Define if using XAudio 2.8 for Windows8 with XAudio2 driver */
 #cmakedefine DRV_XAUDIO28 1
+/* Define if using the PlayStation Vita driver */
+#cmakedefine DRV_VITA 1
 
 /* Define if you want a debug version of the library */
 #cmakedefine MIKMOD_DEBUG 1
