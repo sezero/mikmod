@@ -1,16 +1,23 @@
-# GNU Makefile for OS/2 -- using GCC/EMX-0.9d environment
+# GNU Makefile for OS/2 -- using GCC/EMX KLIBC environment
 #
-# make dll    : builds mikmod.dll and its import lib mikmod.lib
-# make static : builds the static library mikmod_static.lib
 
 INCLUDES=-I../os2 -I../include
+
+ifeq ($(CROSS),)
 CC=gcc
-AR=emxomfar
+AR=ar
+RANLIB=ranlib
+else
+CC=$(CROSS)-gcc
+AR=$(CROSS)-ar
+RANLIB=$(CROSS)-ranlib
+endif
 ARFLAGS=cr
 IMPLIB=emximp
 
-CFLAGS=-O2 -Wall -funroll-loops -ffast-math -fno-strength-reduce -Zomf -Zmt
+CFLAGS  =-O2 -Wall -Zmt
 CPPFLAGS=-DMIKMOD_BUILD -DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_SYS_IOCTL_H -DHAVE_SYS_TIME_H
+LDFLAGS =-Zdll -Zomf -Zmt
 
 # To build a debug version:
 #CPPFLAGS+= -DMIKMOD_DEBUG
@@ -42,8 +49,6 @@ COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
 .SUFFIXES:
 .SUFFIXES: .o .c
 
-LIBNAME=mikmod3.lib
-LIBSTATIC=mikmod_static.lib
 DLLNAME=mikmod3.dll
 DEFNAME=mikmod.def
 
@@ -58,29 +63,23 @@ OBJ=drv_os2.o drv_dart.o \
     mdriver.o mdreg.o mloader.o mlreg.o mlutil.o mplayer.o munitrk.o mwav.o \
     npertab.o sloader.o virtch.o virtch2.o virtch_common.o
 
-help:
-	@echo ""
-	@echo "Valid targets:"
-	@echo ""
-	@echo "  $(MAKE) dll    : build dll and import library."
-	@echo "  $(MAKE) static : build static library."
-	@echo ""
+all: $(DLLNAME) mikmod_dll.a mikmod.lib mikmod.a
 
-clean: FORCE
-	FOR %F IN ( $(LIBNAME) $(DLLNAME) $(OBJ) ) DO IF EXIST %F ERASE %F
+clean:
+	$(RM) *.o *.a *.lib *.dll
 
-dll: $(DLLNAME) $(LIBNAME)
-static: $(LIBSTATIC)
-
-$(DLLNAME): CFLAGS+=-Zdll
-$(LIBNAME): $(DLLNAME)
 $(DLLNAME): $(OBJ) $(DEFNAME)
-	$(CC) $(CFLAGS) -Zso -Zsys -o $(DLLNAME) $(DEFNAME) $(OBJ) $(LIBS)
-	$(IMPLIB) -o $(LIBNAME) $(DEFNAME)
+	$(CC) $(LDFLAGS) -o $(DLLNAME) $(DEFNAME) $(OBJ) $(LIBS)
 
-$(LIBSTATIC): CPPFLAGS+=-DMIKMOD_STATIC
-$(LIBSTATIC): $(OBJ)
-	$(AR) $(ARFLAGS) $(LIBSTATIC) $(OBJ)
+mikmod.a: $(OBJ)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+mikmod_dll.a: $(DLLNAME)
+	emximp -o $@ $(DLLNAME)
+
+mikmod.lib: mikmod_dll.a
+	emxomf -o $@ $<
 
 HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h ../include/mikmod_ctype.h
 drv_dart.o: ../drivers/drv_dart.c $(HEADER_DEPS)
@@ -182,4 +181,3 @@ virtch_common.o: ../playercode/virtch_common.c $(HEADER_DEPS)
 strcasecmp.o: ../posix/strcasecmp.c $(HEADER_DEPS)
 	$(COMPILE) -o $@ -c ../posix/strcasecmp.c
 
-FORCE:

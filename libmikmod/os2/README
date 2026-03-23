@@ -29,7 +29,7 @@ on an HPFS drive, or an ext2fs drive, or a network drive where you can
 use decent-size filenames.
 
 For EMX, run:
-    make -f Makefile.emx dll
+    make -f Makefile.emx
 
 For Watcom, run:
     wmake -f Makefile.wat
