@@ -89,7 +89,7 @@ LIBS="$ac_save_LIBS"
 
 dnl ncurses
 case $host_os in
-    mingw*|emx*|*djgpp)
+    mingw*|os2*|*djgpp)
 	need_curses=no  ;;
     *)
 	need_curses=yes ;;

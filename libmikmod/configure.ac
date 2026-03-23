@@ -57,7 +57,7 @@ case $host_os in
 	darwin*) libmikmod_darwin=yes ;;
 	netbsd*) libmikmod_netbsd=yes ;;
 	openbsd*) libmikmod_openbsd=yes ;;
-	emx*) libmikmod_os2=yes ;;
+	os2*) libmikmod_os2=yes ;;
 	*djgpp) libmikmod_djgpp=yes ;;
 	amigaos*|aros*|morphos*)
 		libmikmod_amiga=yes ;;
@@ -288,7 +288,7 @@ else
 fi])
 
 case $host_os in
-  mingw*|emx*|*djgpp|amigaos*|aros*|morphos*)
+  mingw*|os2*|*djgpp|amigaos*|aros*|morphos*)
      libmikmod_driver_oss=no
      libmikmod_driver_esd=no
      libmikmod_driver_nas=no
@@ -824,7 +824,7 @@ esac
 # OS/2 audio
 # ---------------------
 case $host_os in
- emx*)
+ os2*)
 	# do an os2.h check, just in case..
 	AC_CHECK_HEADERS([os2.h],,[AC_MSG_ERROR([Targeting OS/2, but os2.h not available])])
 	;;
@@ -1330,7 +1330,7 @@ int bar(void) { return 1; }],
 # supposed to fail the above check. (I'm adding the manual test
 # below nonetheless, just in case.)
 case $host_os in
-   mingw*|cygwin*|emx*|*djgpp|amigaos*|aros*|morphos*)
+   mingw*|cygwin*|os2*|*djgpp|amigaos*|aros*|morphos*)
 	libmikmod_cv_gcc_visibility=no
 	;;
 esac
