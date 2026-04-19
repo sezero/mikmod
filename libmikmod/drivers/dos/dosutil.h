@@ -28,6 +28,15 @@ extern int dpmi_unlock_linear_region(unsigned long address, unsigned long size);
 extern int dpmi_lock_linear_region_base(void *address, unsigned long size);
 extern int dpmi_unlock_linear_region_base(void *address, unsigned long size);
 
+extern int dpmi_map_physical_to_linear(unsigned long phys_addr,
+    unsigned long size,
+    unsigned long* linear_addr);
+
+extern int dpmi_alloc_selector(void);
+extern int dpmi_free_selector(int selector);
+extern int dpmi_set_selector_base(int selector, unsigned long linear_base);
+extern int dpmi_set_selector_limit(int selector, unsigned long limit);
+
 #ifdef __WATCOMC__
 #include <conio.h>
 

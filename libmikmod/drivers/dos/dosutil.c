@@ -139,4 +139,83 @@ int dpmi_unlock_linear_region_base(void *address, unsigned long size) {
 	return dpmi_unlock_linear_region((unsigned long)address, size);
 }
 
+int dpmi_map_physical_to_linear(unsigned long phys_addr,
+	unsigned long size,
+	unsigned long* linear_addr)
+{
+	union REGS r;
+
+	r.w.ax = 0x0800;                    /* DPMI Map Physical Address */
+	r.w.bx = (uint16_t)(phys_addr >> 16);
+	r.w.cx = (uint16_t)(phys_addr & 0xFFFF);
+	r.w.si = (uint16_t)(size >> 16);
+	r.w.di = (uint16_t)(size & 0xFFFF);
+
+	int386(0x31, &r, &r);
+
+	if (r.w.cflag & 1)
+		return -1;
+
+	if (linear_addr)
+		*linear_addr = ((unsigned long)r.w.bx << 16) | (unsigned long)r.w.cx;
+
+	return 0;
+}
+
+int dpmi_alloc_selector(void)
+{
+	union REGS r;
+
+	r.w.ax = 0x0000;                    /* DPMI Allocate LDT Descriptors */
+	r.w.cx = 1;                         /* allocate one selector */
+	int386(0x31, &r, &r);
+
+	if (r.w.cflag & 1)
+		return -1;
+
+	return (int)r.w.ax;
+}
+
+int dpmi_free_selector(int selector)
+{
+	union REGS r;
+
+	if (selector == 0)
+		return 0;
+
+	r.w.ax = 0x0001;                    /* DPMI Free LDT Descriptor */
+	r.w.bx = (unsigned short)selector;
+	int386(0x31, &r, &r);
+
+	return (r.w.cflag & 1) ? -1 : 0;
+}
+
+int dpmi_set_selector_base(int selector, unsigned long linear_base)
+{
+	union REGS r;
+
+	r.w.ax = 0x0007;                    /* DPMI Set Segment Base Address */
+	r.w.bx = (unsigned short)selector;
+	r.w.cx = (uint16_t)(linear_base >> 16);
+	r.w.dx = (uint16_t)(linear_base & 0xFFFF);
+
+	int386(0x31, &r, &r);
+
+	return (r.w.cflag & 1) ? -1 : 0;
+}
+
+int dpmi_set_selector_limit(int selector, unsigned long limit)
+{
+	union REGS r;
+
+	r.w.ax = 0x0008;                    /* DPMI Set Segment Limit */
+	r.w.bx = (unsigned short)selector;
+	r.w.cx = (uint16_t)(limit >> 16);
+	r.w.dx = (uint16_t)(limit & 0xFFFF);
+
+	int386(0x31, &r, &r);
+
+	return (r.w.cflag & 1) ? -1 : 0;
+}
+
 #endif
