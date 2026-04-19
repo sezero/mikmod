@@ -28,6 +28,19 @@ static int      g_volume = 128;   /* md_musicvolume range: 0-128 */
 static int      g_muted = 0;
 
 /* -----------------------------------------------------------------------
+ * print_mikmod_version
+ * --------------------------------------------------------------------- */
+static void print_mikmod_version(void)
+{
+    long version = MikMod_GetVersion();
+
+    printf("libmikmod version: %ld.%ld.%ld\n",
+        (version >> 16) & 0xff,
+        (version >> 8) & 0xff,
+        version & 0xff);
+}
+
+/* -----------------------------------------------------------------------
  * cleanup – registered with atexit
  * --------------------------------------------------------------------- */
 static void cleanup(void)
@@ -59,6 +72,37 @@ static void print_status(void)
 }
 
 /* -----------------------------------------------------------------------
+ * print_driver_details
+ * --------------------------------------------------------------------- */
+static void print_driver_details(void)
+{
+    CHAR* drivers = MikMod_InfoDriver();
+
+    puts("Registered output drivers:");
+    if (drivers && drivers[0])
+        printf("%s\n", drivers);
+    else
+        puts("(none)");
+
+    MikMod_free(drivers);
+}
+
+/* -----------------------------------------------------------------------
+ * prompt_driver_selection
+ * --------------------------------------------------------------------- */
+static void prompt_driver_selection(void)
+{
+    char input[32];
+
+    printf("Select driver number (Enter=auto): ");
+    if (fgets(input, sizeof(input), stdin) != NULL)
+    {
+        if (input[0] != '\n' && input[0] != '\r' && input[0] != '\0')
+            md_device = (UWORD)atoi(input);
+    }
+}
+
+/* -----------------------------------------------------------------------
  * main
  * --------------------------------------------------------------------- */
 int main(int argc, char* argv[])
@@ -70,6 +114,7 @@ int main(int argc, char* argv[])
 
     puts("MikMod Test  (Command line)");
     puts("---------------------------------");
+    print_mikmod_version();
 
     /* ------------------------------------------------------------------
      * Choose module file
@@ -89,37 +134,31 @@ int main(int argc, char* argv[])
 
     /* ------------------------------------------------------------------
      * Initialise MikMod
-     * drv_nos  = null driver; on real DOS hardware swap for drv_sb or
-     *            drv_ultra as appropriate.  Under DOSBox drv_nos is fine
-     *            because DOSBox intercepts the SB port itself – use
-     *            drv_sb if you want audible output on real iron.
+     * Register all drivers that were compiled into libmikmod and let
+     * MikMod_Init pick the first present one. On DOS, registration order
+     * in libmikmod is WSS, then SB, then nosound.
      * ---------------------------------------------------------------- */
     MikMod_RegisterAllLoaders();
-#ifdef DRV_SB
-    MikMod_RegisterDriver(&drv_sb);   /* swap to &drv_sb for real HW */
+    MikMod_RegisterAllDrivers();
+    print_driver_details();
+    prompt_driver_selection();
+
     md_mode = DMODE_SOFT_MUSIC;
     md_mixfreq = 22050;
     md_volume = 128;
     md_musicvolume = g_volume;
 
-    if (MikMod_Init("port=220 irq=7 dma=1 hidma=5") != 0)
-    {
-        fprintf(stderr, "MikMod_Init failed: %s\n", MikMod_strerror(MikMod_errno));
-        return 1;
-    }
-#else
-    MikMod_RegisterDriver(&drv_nos);   /* swap to &drv_sb for real HW */
-    md_mode = DMODE_SOFT_MUSIC;
-    md_mixfreq = 44100;
-    md_volume = 128;
-    md_musicvolume = g_volume;
+    puts("Init MikMod...");
 
     if (MikMod_Init("") != 0)
     {
         fprintf(stderr, "MikMod_Init failed: %s\n", MikMod_strerror(MikMod_errno));
         return 1;
     }
-#endif
+
+    printf("MikMod initialized. Using driver: %s (%s)\n",
+        md_driver && md_driver->Name ? md_driver->Name : "(unknown)",
+        md_driver && md_driver->Version ? md_driver->Version : "(unknown)");
 
     atexit(cleanup);
 

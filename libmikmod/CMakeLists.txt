@@ -135,7 +135,16 @@ option(ENABLE_SDL "Include the SDL driver" OFF)
 option(ENABLE_AIFF "Support for output to an .aiff file" ON)
 option(ENABLE_WAV "Support for output to a .wav file" ON)
 option(ENABLE_RAW "Support for output raw pcm data to a file" ON)
-option(ENABLE_DOS "Support for DOS" ON)
+if(CMAKE_SYSTEM_NAME STREQUAL "DOS")
+    option(ENABLE_DOS "Support for DOS" ON)
+else()
+    option(ENABLE_DOS "Support for DOS" OFF)
+endif()
+
+if(ENABLE_DOS AND NOT CMAKE_SYSTEM_NAME STREQUAL "DOS")
+    message(WARNING "ENABLE_DOS is ignored for non-DOS targets.")
+    set(ENABLE_DOS OFF)
+endif()
 
 cmake_dependent_option(ENABLE_DL "Load ALSA, PulseAudio or EsounD drivers at runtime" ON "ENABLE_ALSA OR ENABLE_PULSE OR ENABLE_ESD" OFF)
 cmake_dependent_option(ENABLE_THREADS "build a thread-safe version of libmikmod" ON "UNIX" OFF) # only for pthreads.
@@ -324,7 +333,6 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_wav.c
     drivers/drv_win.c
     drivers/drv_xaudio2.c
-    drivers/drv_sb.c
     loaders/load_669.c
     loaders/load_amf.c
     loaders/load_asy.c
@@ -460,8 +468,7 @@ ENDIF()
 if (ENABLE_DOS)
   SET(DRV_SB 1)
   add_definitions(-DDRV_SB)
-
-ENDIF()
+endif()
 
 SET(LIBRARY_LIB )
 SET(EXTRA_LIBS )
