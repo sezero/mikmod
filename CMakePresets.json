@@ -1,0 +1,147 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_LIBMIKMOD": "ON",
+        "BUILD_MIKMOD_APP": "ON",
+        "BUILD_MIKTEST": "ON",
+        "BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "dos-watcom",
+      "displayName": "DOS32A (OpenWatcom / WMake)",
+      "inherits": "base",
+      "generator": "Watcom WMake",
+      "binaryDir": "${sourceDir}/build/dos-watcom",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "DOS",
+        "CMAKE_SYSTEM_PROCESSOR": "I386",
+        "CMAKE_TRY_COMPILE_TARGET_TYPE": "STATIC_LIBRARY",
+        "CMAKE_C_COMPILER": "C:/WATCOM/binnt64/wcl386.exe",
+        "CMAKE_C_FLAGS": "-bt=dos32a -mf -3r",
+        "CMAKE_C_FLAGS_RELEASE": "",
+        "CMAKE_C_FLAGS_DEBUG": "",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "",
+        "CMAKE_C_FLAGS_MINSIZEREL": "",
+        "MIKMOD_BUILD_DOS": "ON",
+        "BUILD_MIKMOD_APP": "OFF",
+        "ENABLE_SHARED": "OFF",
+        "ENABLE_DOC": "OFF"
+      }
+    },
+    {
+      "name": "dos-djgpp",
+      "displayName": "DOS (DJGPP)",
+      "inherits": "base",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/dos-djgpp",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "DOS",
+        "CMAKE_SYSTEM_PROCESSOR": "I386",
+        "CMAKE_TRY_COMPILE_TARGET_TYPE": "STATIC_LIBRARY",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_C_FLAGS": "-O2",
+        "MIKMOD_BUILD_DOS": "ON"
+      }
+    },
+    {
+      "name": "vs2022",
+      "displayName": "Windows (Visual Studio 2022)",
+      "inherits": "base",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/vs2022",
+      "architecture": {
+        "value": "x64"
+      }
+    },
+    {
+      "name": "vs2022-release",
+      "displayName": "Windows (Visual Studio 2022, Release)",
+      "inherits": "vs2022",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release"
+      }
+    },
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
+      "inherits": "base",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
+      "inherits": "base",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dos-watcom",
+      "configurePreset": "dos-watcom"
+    },
+    {
+      "name": "dos-djgpp",
+      "configurePreset": "dos-djgpp"
+    },
+    {
+      "name": "vs2022-debug",
+      "configurePreset": "vs2022",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-release",
+      "configurePreset": "vs2022",
+      "configuration": "Release"
+    },
+    {
+      "name": "ninja-debug",
+      "configurePreset": "ninja-debug"
+    },
+    {
+      "name": "ninja-release",
+      "configurePreset": "ninja-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "ninja-debug",
+      "configurePreset": "ninja-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "ninja-release",
+      "configurePreset": "ninja-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "vs2022-debug",
+      "configurePreset": "vs2022",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

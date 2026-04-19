@@ -1,4 +1,4 @@
-# Copyright (c) 2012 Shlomi Fish
+# Copyright (c) 2012, 2026 Shlomi Fish
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -135,6 +135,16 @@ option(ENABLE_SDL "Include the SDL driver" OFF)
 option(ENABLE_AIFF "Support for output to an .aiff file" ON)
 option(ENABLE_WAV "Support for output to a .wav file" ON)
 option(ENABLE_RAW "Support for output raw pcm data to a file" ON)
+if(CMAKE_SYSTEM_NAME STREQUAL "DOS")
+    option(ENABLE_DOS "Support for DOS" ON)
+else()
+    option(ENABLE_DOS "Support for DOS" OFF)
+endif()
+
+if(ENABLE_DOS AND NOT CMAKE_SYSTEM_NAME STREQUAL "DOS")
+    message(WARNING "ENABLE_DOS is ignored for non-DOS targets.")
+    set(ENABLE_DOS OFF)
+endif()
 
 cmake_dependent_option(ENABLE_DL "Load ALSA, PulseAudio or EsounD drivers at runtime" ON "ENABLE_ALSA OR ENABLE_PULSE OR ENABLE_ESD" OFF)
 cmake_dependent_option(ENABLE_THREADS "build a thread-safe version of libmikmod" ON "UNIX" OFF) # only for pthreads.
@@ -144,7 +154,14 @@ option(DISABLE_HQMIXER "Exclude support for high quality mixer" OFF)
 
 option(ENABLE_SIMD "Use SIMD (AltiVec or SSE2) optimizations (UNSTABLE!!!)" OFF)
 option(ENABLE_RPATH "Whether to use RPATH when linking" ${USE_RPATH_DEFAULT})
-option(ENABLE_SHARED "Whether to build the shared library" ON)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "DOS")
+    option(ENABLE_SHARED "Whether to build the shared library" OFF)
+else()
+    option(ENABLE_SHARED "Whether to build the shared library" ON)
+endif()
+
+
 option(ENABLE_STATIC "Whether to build the static library" ON)
 
 IF (NOT ENABLE_STATIC AND NOT ENABLE_SHARED)
@@ -361,6 +378,17 @@ SET (MIKMOD_LIB_MODULES
     playercode/virtch_common.c
 )
 
+if(ENABLE_DOS)
+    file(GLOB MIKMOD_DOS_DRIVER_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/drivers/dos/*.c"
+    )
+
+    list(APPEND MIKMOD_LIB_MODULES
+        drivers/drv_sb.c
+        ${MIKMOD_DOS_DRIVER_SOURCES}
+    )
+endif()
+
 SET (LIBMIKMOD_TARGETS)
 
 IF (ENABLE_SHARED)
@@ -437,6 +465,10 @@ ENDIF()
 IF (ENABLE_DL)
   SET(MIKMOD_DYNAMIC 1)
 ENDIF()
+if (ENABLE_DOS)
+  SET(DRV_SB 1)
+  add_definitions(-DDRV_SB)
+endif()
 
 SET(LIBRARY_LIB )
 SET(EXTRA_LIBS )
