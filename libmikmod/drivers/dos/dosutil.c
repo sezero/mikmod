@@ -70,7 +70,6 @@ int dpmi_unlock_linear_region_base(void *address, unsigned long size) {
 #elif defined(__WATCOMC__)
 
 #include <i86.h>
-#include <stdint.h>
 
 int dpmi_allocate_dos_memory(int paragraphs, int *ret_selector_or_max) {
 	union REGS r;
@@ -147,10 +146,10 @@ int dpmi_map_physical_to_linear(unsigned long phys_addr,
 	union REGS r;
 
 	r.w.ax = 0x0800;                    /* DPMI Map Physical Address */
-	r.w.bx = (uint16_t)(phys_addr >> 16);
-	r.w.cx = (uint16_t)(phys_addr & 0xFFFF);
-	r.w.si = (uint16_t)(size >> 16);
-	r.w.di = (uint16_t)(size & 0xFFFF);
+	r.w.bx = (unsigned short)(phys_addr >> 16);
+	r.w.cx = (unsigned short)(phys_addr & 0xFFFF);
+	r.w.si = (unsigned short)(size >> 16);
+	r.w.di = (unsigned short)(size & 0xFFFF);
 
 	int386(0x31, &r, &r);
 
@@ -197,8 +196,8 @@ int dpmi_set_selector_base(int selector, unsigned long linear_base)
 
 	r.w.ax = 0x0007;                    /* DPMI Set Segment Base Address */
 	r.w.bx = (unsigned short)selector;
-	r.w.cx = (uint16_t)(linear_base >> 16);
-	r.w.dx = (uint16_t)(linear_base & 0xFFFF);
+	r.w.cx = (unsigned short)(linear_base >> 16);
+	r.w.dx = (unsigned short)(linear_base & 0xFFFF);
 
 	int386(0x31, &r, &r);
 
@@ -211,8 +210,8 @@ int dpmi_set_selector_limit(int selector, unsigned long limit)
 
 	r.w.ax = 0x0008;                    /* DPMI Set Segment Limit */
 	r.w.bx = (unsigned short)selector;
-	r.w.cx = (uint16_t)(limit >> 16);
-	r.w.dx = (uint16_t)(limit & 0xFFFF);
+	r.w.cx = (unsigned short)(limit >> 16);
+	r.w.dx = (unsigned short)(limit & 0xFFFF);
 
 	int386(0x31, &r, &r);
 
