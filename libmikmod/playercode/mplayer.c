@@ -230,10 +230,14 @@ static const int far_tempos[16] = {
 /* returns a random value between 0 and ceil-1, ceil must be a power of two */
 static int getrandom(int ceilval)
 {
-#if defined(HAVE_SRANDOM) && !defined(_MIKMOD_AMIGA)
-	return random()&(ceilval-1);
+	/* ceilval is always a power of two in this code path */
+
+	/* Fast path using bitmask when RAND_MAX allows it */
+#if RAND_MAX >= 0x7fff
+	return rand() & (ceilval - 1);
 #else
-	return (rand()*ceilval)/(RAND_MAX+1.0);
+	/* Fallback (very rare case) */
+	return (int)((rand() / (double)(RAND_MAX + 1.0)) * ceilval);
 #endif
 }
 

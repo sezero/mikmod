@@ -35,3 +35,4 @@ mikmod.exe
 mikmod/src/mikmod
 mikmod.info
 stamp-h1
+/build
