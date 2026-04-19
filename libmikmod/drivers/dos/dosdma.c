@@ -140,7 +140,7 @@ dma_buffer *dma_allocate(unsigned int channel, unsigned int size)
 #ifdef __DJGPP__
 	buffer->linear = (unsigned char *)(__djgpp_conventional_base + bound * 16);
 #else
-	buffer->linear = (unsigned char *)(bound * 16);
+	buffer->linear = (unsigned char *)(size_t)(bound * 16);
 #endif
 	buffer->physical = bound * 16;
 	buffer->size = parsize * 16;

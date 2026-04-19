@@ -43,7 +43,7 @@ extern int disable();
 #pragma aux enable = "sti" "mov eax,1"
 #pragma aux disable = "cli" "mov eax,1"
 
-#else
+#elif defined __DJGPP__
 #include <pc.h>
 #endif
 

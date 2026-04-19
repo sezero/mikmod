@@ -12,11 +12,18 @@ target_include_directories(miktest PRIVATE
 
 if(TARGET mikmod-static)
     target_link_libraries(miktest PRIVATE mikmod-static)
+    target_compile_definitions(miktest PRIVATE MIKMOD_STATIC)
 elseif(TARGET mikmod)
     target_link_libraries(miktest PRIVATE mikmod)
 else()
     message(FATAL_ERROR "miktest requires libmikmod to be built in-tree.")
 endif()
+
+set_target_properties(miktest PROPERTIES
+    C_STANDARD 99
+    C_STANDARD_REQUIRED YES
+    C_EXTENSIONS NO
+)
 
 set_target_properties(miktest PROPERTIES
     OUTPUT_NAME "miktest"

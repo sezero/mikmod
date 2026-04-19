@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
     setbuf(stdout, NULL);
 
-    puts("MikMod DOS Test  (Watcom/DOS4GW)");
+    puts("MikMod Test  (Command line)");
     puts("---------------------------------");
 
     /* ------------------------------------------------------------------
@@ -95,9 +95,8 @@ int main(int argc, char* argv[])
      *            drv_sb if you want audible output on real iron.
      * ---------------------------------------------------------------- */
     MikMod_RegisterAllLoaders();
+#ifdef DRV_SB
     MikMod_RegisterDriver(&drv_sb);   /* swap to &drv_sb for real HW */
-
-
     md_mode = DMODE_SOFT_MUSIC;
     md_mixfreq = 22050;
     md_volume = 128;
@@ -108,6 +107,19 @@ int main(int argc, char* argv[])
         fprintf(stderr, "MikMod_Init failed: %s\n", MikMod_strerror(MikMod_errno));
         return 1;
     }
+#else
+    MikMod_RegisterDriver(&drv_nos);   /* swap to &drv_sb for real HW */
+    md_mode = DMODE_SOFT_MUSIC;
+    md_mixfreq = 44100;
+    md_volume = 128;
+    md_musicvolume = g_volume;
+
+    if (MikMod_Init("") != 0)
+    {
+        fprintf(stderr, "MikMod_Init failed: %s\n", MikMod_strerror(MikMod_errno));
+        return 1;
+    }
+#endif
 
     atexit(cleanup);
 
