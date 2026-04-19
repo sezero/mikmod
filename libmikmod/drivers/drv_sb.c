@@ -38,7 +38,7 @@
 
 #include "mikmod_internals.h"
 
-#include "dossb.h"
+#include "dos/dossb.h"
 
 static void SB_CommandLine(const CHAR *cmdline)
 {

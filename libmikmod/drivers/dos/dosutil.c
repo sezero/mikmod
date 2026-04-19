@@ -70,6 +70,7 @@ int dpmi_unlock_linear_region_base(void *address, unsigned long size) {
 #elif defined(__WATCOMC__)
 
 #include <i86.h>
+#include <stdint.h>
 
 int dpmi_allocate_dos_memory(int paragraphs, int *ret_selector_or_max) {
 	union REGS r;
