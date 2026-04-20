@@ -4,8 +4,9 @@
 #
 # wmake -f Makefile.wat
 # - builds static library mikmod.lib
+#
 
-INCLUDES=-I. -I"../drivers/dos" -I"../include"
+INCLUDES=-I. -I"../include"
 CPPFLAGS=-DMIKMOD_BUILD -DHAVE_CONFIG_H -DMIKMOD_STATIC=1
 
 CFLAGS = -bt=dos -fp5 -fpi87 -mf -oeatxh -w4 -ei -zp8 -zq

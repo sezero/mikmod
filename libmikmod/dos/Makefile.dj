@@ -9,7 +9,6 @@
 # Set to 1 for debug build
 DEBUG = 0
 
-# The tools
 ifeq ($(CROSS),)
 CC=gcc
 AS=as
@@ -22,7 +21,7 @@ AR=$(CROSS)-ar
 RANLIB=$(CROSS)-ranlib
 endif
 CFLAGS = -DMIKMOD_BUILD -DHAVE_CONFIG_H $(INCLUDE)
-INCLUDE = -I../dos -I../drivers/dos -I../include
+INCLUDE = -I../dos -I../include
 ARFLAGS = cr
 
 ifeq ($(DEBUG),1)

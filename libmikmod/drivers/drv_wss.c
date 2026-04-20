@@ -38,7 +38,7 @@
 
 #include "mikmod_internals.h"
 
-#include "doswss.h"
+#include "dos/doswss.h"
 
 static void WSS_CommandLine(const CHAR *cmdline)
 {

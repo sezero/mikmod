@@ -58,11 +58,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(__EMX__) || defined(__DJGPP__) || defined(_DOS)
+#include "dos/libgus.h"
+#else
 #include <libgus.h>
+#endif
 
 #if !defined(GUS_INSTR_SIMPLE) || !defined(GUS_WAVE_BIDIR)
 #error libgus version is too old
 #endif
+
 /* just in case */
 #ifndef LIBGUS_VERSION_MAJOR
 #define LIBGUS_VERSION_MAJOR 0x0003
