@@ -1,6 +1,6 @@
 /* drv_wasapi.c - Windows WASAPI output driver for MikMod
  *
- * Ported from C++ to C99/C11.  Requires linking against ole32.lib and
+ * Ported from C++ to C89.  Requires linking against ole32.lib and
  * mmdevapi is loaded at run-time through COM so no extra import lib is needed.
  *
  * Build guard: define DRV_WASAPI in your build system (or config.h).
@@ -19,41 +19,34 @@
 #include <windows.h>
 #include <audioclient.h>
 #include <mmdeviceapi.h>
-#include <functiondiscoverykeys_devpkey.h>  /* PKEY_Device_FriendlyName */
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-#define INITGUID
+/* -------------------------------------------------------------------------
+ * Namespace the GUID constants so that we don't bother with INITGUID, etc.
+ * ---------------------------------------------------------------------- */
 
-#include <initguid.h>
-#include <ksmedia.h>
+static const PROPERTYKEY MIKMOD_PKEY_Device_FriendlyName = {
+{ 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0, } }, 14 };
 
-static const GUID KSDATAFORMAT_SUBTYPE_IEEE_FLOAT =
+static const GUID MIKMOD_KSDATAFORMAT_SUBTYPE_IEEE_FLOAT =
 { 0x00000003, 0x0000, 0x0010, { 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 } };
 
-DEFINE_GUID(CLSID_MMDeviceEnumerator,
-    0xBCDE0395, 0xE52F, 0x467C, 0x8E, 0x3D, 0xC4, 0x57, 0x92, 0x91, 0x69, 0x2E);
+static const CLSID MIKMOD_CLSID_MMDeviceEnumerator =
+{ 0xbcde0395, 0xe52f, 0x467c, { 0x8e, 0x3d, 0xc4, 0x57, 0x92, 0x91, 0x69, 0x2e } };
 
-DEFINE_GUID(IID_IMMDeviceEnumerator,
-    0xA95664D2, 0x9614, 0x4F35, 0xA7, 0x46, 0xDE, 0x8D, 0xB6, 0x36, 0x17, 0xE6);
+static const IID MIKMOD_IID_IMMDeviceEnumerator =
+{ 0xa95664d2, 0x9614, 0x4f35, { 0xa7, 0x46, 0xde, 0x8d, 0xb6, 0x36, 0x17, 0xe6 } };
 
-DEFINE_GUID(IID_IAudioClient,
-    0x1CB9AD4C, 0xDBFA, 0x4C32, 0xB1, 0x78, 0xC2, 0xF5, 0x68, 0xA7, 0x03, 0xB2);
+static const IID MIKMOD_IID_IAudioClient =
+{ 0x1cb9ad4c, 0xdbfa, 0x4c32, { 0xb1, 0x78, 0xc2, 0xf5, 0x68, 0xa7, 0x03, 0xb2 } };
 
-DEFINE_GUID(IID_IAudioRenderClient,
-    0xF294ACFC, 0x3146, 0x4483, 0xA7, 0xBF, 0xAD, 0xDC, 0xA7, 0xC2, 0x60, 0xE2);
+static const IID MIKMOD_IID_IAudioRenderClient =
+{ 0xf294acfc, 0x3146, 0x4483, { 0xa7, 0xbf, 0xad, 0xdc, 0xa7, 0xc2, 0x60, 0xe2 } };
 
-DEFINE_GUID(IID_IAudioClient3,
-    0x7ED4EE07, 0x8E67, 0x4CD4, 0x8C, 0x1A, 0x2B, 0x7A, 0x59, 0x87, 0xAD, 0x42);
-
- /* -------------------------------------------------------------------------
-  * Forward-declare the GUID constants that <audioclient.h> only gives us when
-  * INITGUID is defined before including the header *once*.  We use initguid.h
-  * above which handles that, but keep explicit references here for clarity.
-  * ---------------------------------------------------------------------- */
-  /* KSDATAFORMAT_SUBTYPE_IEEE_FLOAT  – defined by initguid.h + ksmedia.h */
-  /* KSDATAFORMAT_SUBTYPE_PCM         – same                               */
+static const IID MIKMOD_IID_IAudioClient3 =
+{ 0x7ed4ee07, 0x8e67, 0x4cd4, { 0x8c, 0x1a, 0x2b, 0x7a, 0x59, 0x87, 0xad, 0x42 } };
 
 #ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
 #define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
@@ -101,6 +94,11 @@ static void safe_close_handle(HANDLE* h)
     if (*h) { CloseHandle(*h); *h = NULL; }
 }
 
+static __inline BOOL is_equal_guid (const GUID *guid1, const GUID *guid2)
+{
+  return memcmp(guid1, guid2, sizeof(GUID)) == 0;
+}
+
 /* Is the mix format 32-bit IEEE float? */
 static BOOL is_float32_mix_format(const WAVEFORMATEX* wf)
 {
@@ -108,7 +106,7 @@ static BOOL is_float32_mix_format(const WAVEFORMATEX* wf)
     if (wf->wFormatTag == WAVE_FORMAT_IEEE_FLOAT) return TRUE;
     if (wf->wFormatTag == WAVE_FORMAT_EXTENSIBLE) {
         const WAVEFORMATEXTENSIBLE* wfe = (const WAVEFORMATEXTENSIBLE*)wf;
-        return IsEqualGUID(&wfe->SubFormat, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
+        return is_equal_guid(&wfe->SubFormat, &MIKMOD_KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
     }
     return FALSE;
 }
@@ -214,8 +212,8 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
 
     if (!dev->enumerator) {
         hr = CoCreateInstance(
-            &CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL,
-            &IID_IMMDeviceEnumerator, (void**)&dev->enumerator);
+            &MIKMOD_CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL,
+            &MIKMOD_IID_IMMDeviceEnumerator, (void**)&dev->enumerator);
         if (FAILED(hr) || !dev->enumerator) {
             if (comHere) CoUninitialize();
             return FALSE;
@@ -262,7 +260,7 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
         if (SUCCEEDED(IMMDevice_OpenPropertyStore(d, STGM_READ, &props)) && props) {
             PROPVARIANT v;
             PropVariantInit(&v);
-            if (SUCCEEDED(IPropertyStore_GetValue(props, &PKEY_Device_FriendlyName, &v))
+            if (SUCCEEDED(IPropertyStore_GetValue(props, &MIKMOD_PKEY_Device_FriendlyName, &v))
                 && v.vt == VT_LPWSTR && v.pwszVal)
             {
                 wide_to_utf8(v.pwszVal, ep.name, (int)sizeof(ep.name));
@@ -272,7 +270,7 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
         }
 
         /* Mix format – channels + sample rate */
-        hr = IMMDevice_Activate(d, &IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&client);
+        hr = IMMDevice_Activate(d, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&client);
         if (SUCCEEDED(hr) && client) {
             WAVEFORMATEX* mix = NULL;
             if (SUCCEEDED(IAudioClient_GetMixFormat(client, &mix)) && mix) {
@@ -360,12 +358,12 @@ static BOOL audio_device_open(
 
     /* ---- Activate IAudioClient ---------------------------------------- */
     hr = IMMDevice_Activate(
-        dev->device, &IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&dev->audioClient);
+        dev->device, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&dev->audioClient);
     if (FAILED(hr)) return FALSE;
 
     /* Try to also get IAudioClient3 (Win10+) */
     (void)IUnknown_QueryInterface(
-        (IUnknown*)dev->audioClient, &IID_IAudioClient3, (void**)&dev->audioClient3);
+        (IUnknown*)dev->audioClient, &MIKMOD_IID_IAudioClient3, (void**)&dev->audioClient3);
 
     /* ---- Mix format --------------------------------------------------- */
     hr = IAudioClient_GetMixFormat(dev->audioClient, &dev->mixFormat);
@@ -421,7 +419,7 @@ static BOOL audio_device_open(
 
     /* ---- Render client ------------------------------------------------ */
     hr = IAudioClient_GetService(
-        dev->audioClient, &IID_IAudioRenderClient, (void**)&dev->renderClient);
+        dev->audioClient, &MIKMOD_IID_IAudioRenderClient, (void**)&dev->renderClient);
     if (FAILED(hr)) return FALSE;
 
     return TRUE;
@@ -465,6 +463,7 @@ static void audio_device_close(AudioDevice* dev)
 /* =========================================================================
  * start() – prime buffer, launch thread
  * ====================================================================== */
+static BOOL audio_device_render(AudioDevice* dev, BYTE* pData, UINT32 framesAvail);
 static BOOL audio_device_start(AudioDevice* dev)
 {
     HRESULT hr;
@@ -521,6 +520,7 @@ static void audio_device_stop(AudioDevice* dev)
         IAudioClient_Stop(dev->audioClient);
 }
 
+#if 0 /* not used yet. */
 static void audio_device_suspend(AudioDevice* dev)
 {
     if (dev->audioClient) IAudioClient_Stop(dev->audioClient);
@@ -530,6 +530,7 @@ static void audio_device_resume(AudioDevice* dev)
 {
     if (dev->audioClient) IAudioClient_Start(dev->audioClient);
 }
+#endif
 
 /* =========================================================================
  * Render thread
