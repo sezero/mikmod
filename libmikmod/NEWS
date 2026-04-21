@@ -3,6 +3,7 @@ Summary of changes between libmikmod 3.3.13 and libmikmod 3.3.14:
 
 libmikmod v3.3.14 was released on ???. ??, ????.
 
+- Added Windows WASAPI output driver, thanks to Stephane Denis.
 - Added Playstation Vita output driver, thanks to Matthieu Milan and
   'scribam'.
 - Updated webaudio driver with stereo output support.

@@ -3133,7 +3133,7 @@ hardware. Network drivers only support software mixing.
 
 @table @code
 @item drv_AF
-This driver works with the ``Digital AudioFile'' library.@*
+This driver works with the archaic ``Digital AudioFile'' library.@*
 Start the server on the machine you want, set its hostname in the
 @samp{AUDIOFILE} environment variable, and MikMod is ready to send it sound.
 @item drv_esd
@@ -3223,7 +3223,7 @@ driver to be compiled for your current kernel.@*
 This driver only supports hardware mixing.
 @item drv_sb
 This driver is only available under DOS, and supports the SoundBlaster/Pro/16/AWE32.@*
-This driver only supports hardware mixing. This driver needs to be tested.
+This driver only supports hardware mixing.
 @item drv_sdl
 This driver is available for all platforms where ``SDL'' is supported, and
 uses the ``Simple DirectMedia Layer'' apis.@*
