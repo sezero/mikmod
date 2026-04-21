@@ -23,6 +23,14 @@
 #include <stdio.h>
 #include <string.h>
 
+#if defined(_MSC_VER)
+#define MIK_UINT64_C(c) c ## ui64
+#elif defined(__LP64__) || defined(_LP64)
+#define MIK_UINT64_C(c) c ## UL
+#else
+#define MIK_UINT64_C(c) c ## ULL
+#endif
+
 /* -------------------------------------------------------------------------
  * Namespace the GUID constants so that we don't bother with INITGUID, etc.
  * ---------------------------------------------------------------------- */
@@ -69,8 +77,8 @@ static const IID MIKMOD_IID_IAudioClient3 =
   /* FNV-1a 64-bit hash – stable device id from the wide-char device-id string */
 static uint64_t fnv1a64_w(const wchar_t* s)
 {
-    const uint64_t FNV_OFFSET = 14695981039346656037ull;
-    const uint64_t FNV_PRIME = 1099511628211ull;
+    const uint64_t FNV_OFFSET = MIK_UINT64_C(14695981039346656037);
+    const uint64_t FNV_PRIME = MIK_UINT64_C(1099511628211);
     uint64_t h = FNV_OFFSET;
     if (!s) return 0;
     while (*s) {
@@ -83,10 +91,11 @@ static uint64_t fnv1a64_w(const wchar_t* s)
 /* Truncating wide?UTF-8 conversion */
 static void wide_to_utf8(const wchar_t* ws, char* out, int outSize)
 {
+    int n;
     if (!out || outSize <= 0) return;
     out[0] = '\0';
     if (!ws) return;
-    int n = WideCharToMultiByte(CP_UTF8, 0, ws, -1, out, outSize, NULL, NULL);
+    n = WideCharToMultiByte(CP_UTF8, 0, ws, -1, out, outSize, NULL, NULL);
     if (n <= 0) out[0] = '\0';
     out[outSize - 1] = '\0';
 }
