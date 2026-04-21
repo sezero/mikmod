@@ -354,6 +354,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\drivers\drv_wasapi.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\drivers\drv_xaudio2.c"
 				>
 			</File>

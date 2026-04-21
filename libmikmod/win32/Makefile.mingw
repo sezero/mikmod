@@ -32,6 +32,10 @@ CPPFLAGS+=-DDRV_WIN
 LDLIBS+=-ldsound
 CPPFLAGS+=-DDRV_DS
 
+# support for WASAPI output:
+LDLIBS+=-lole32
+CPPFLAGS+=-DDRV_WASAPI
+
 # disable support for module depackers
 #CPPFLAGS+=-DNO_DEPACKERS
 # disable the high quality mixer (build only with the standart mixer)
@@ -88,7 +92,7 @@ DEFNAME=libmikmod-$(DLL_VER).def
 
 LIBS=$(LIBNAME) $(DLLNAME)
 
-OBJ=drv_ds.o drv_xaudio2.o drv_win.o drv_openal.o drv_sdl.o \
+OBJ=drv_ds.o drv_wasapi.o drv_xaudio2.o drv_win.o drv_openal.o drv_sdl.o \
     drv_raw.o drv_aiff.o drv_wav.o \
     drv_nos.o drv_stdout.o \
     load_669.o load_amf.o load_asy.o load_dsm.o load_far.o load_gdm.o load_gt2.o \
@@ -160,6 +164,8 @@ drv_wav.o: ../drivers/drv_wav.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_wav.c -o drv_wav.o
 drv_win.o: ../drivers/drv_win.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_win.c -o drv_win.o
+drv_wasapi.o: ../drivers/drv_wasapi.c $(HEADER_DEPS)
+	$(COMPILE) ../drivers/drv_wasapi.c -o drv_wasapi.o
 drv_xaudio2.o: ../drivers/drv_xaudio2.c $(HEADER_DEPS)
 	$(COMPILE) ../drivers/drv_xaudio2.c -o drv_xaudio2.o
 load_669.o: ../loaders/load_669.c $(HEADER_DEPS)

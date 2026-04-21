@@ -111,6 +111,7 @@ libmikmod_driver_osx=$libmikmod_darwin
 libmikmod_driver_mac=no
 libmikmod_driver_win=yes
 libmikmod_driver_ds=yes
+libmikmod_driver_wasapi=yes
 libmikmod_driver_xaudio2=no
 libmikmod_driver_ultra=no
 libmikmod_driver_os2=$libmikmod_os2
@@ -179,6 +180,7 @@ then
   libmikmod_driver_mac=no
   libmikmod_driver_win=no
   libmikmod_driver_ds=no
+  libmikmod_driver_wasapi=no
   libmikmod_driver_xaudio2=no
   libmikmod_driver_ultra=no
   libmikmod_driver_os2=no
@@ -405,6 +407,14 @@ then
   libmikmod_driver_ds=yes
 else
   libmikmod_driver_ds=no
+fi])
+
+AC_ARG_ENABLE([wasapi], [AS_HELP_STRING([--enable-wasapi],[Windows only: include WASAPI driver [default=yes]])],
+[if test "$enableval" = "yes"
+then
+  libmikmod_driver_wasapi=yes
+else
+  libmikmod_driver_wasapi=no
 fi])
 
 AC_ARG_ENABLE([xaudio2], [AS_HELP_STRING([--enable-xaudio2],[Windows only: include XAudio2 driver [default=no]])],
@@ -785,6 +795,12 @@ case $host_os in
 		libmikmod_driver_ds=no
 		AC_CHECK_HEADERS([dsound.h],[libmikmod_driver_ds=yes],[],[#include <windows.h>])
 	fi
+	if test $libmikmod_driver_wasapi = yes
+	then
+		libmikmod_driver_wasapi=no
+		AC_CHECK_HEADERS([mmdeviceapi.h],[libmikmod_driver_wasapi=yes],[],[#include <windows.h>])
+		AC_CHECK_HEADERS([audioclient.h],[],[libmikmod_driver_wasapi=no], [#include <windows.h>])
+	fi
 	if test $libmikmod_driver_xaudio2 = yes
 	then
 		libmikmod_driver_xaudio2=no
@@ -817,6 +833,7 @@ case $host_os in
 
  *)	libmikmod_driver_win=no
 	libmikmod_driver_ds=no
+	libmikmod_driver_wasapi=no
 	libmikmod_driver_xaudio2=no
 	;;
 esac
@@ -968,6 +985,13 @@ then
 	libmikmod_driverlist="ds $libmikmod_driverlist"
 	AC_DEFINE([DRV_DS], 1, [Define if the Windows DirectSound driver is compiled])
 	LIBRARY_LIB="-ldsound $LIBRARY_LIB"
+fi
+
+if test $libmikmod_driver_wasapi = yes
+then
+	libmikmod_driverlist="wasapi $libmikmod_driverlist"
+	AC_DEFINE([DRV_WASAPI], 1, [Define if the Windows WASAPI driver is compiled])
+	LIBRARY_LIB="-lole32 $LIBRARY_LIB"
 fi
 
 if test $libmikmod_driver_xaudio2 = yes

@@ -42,6 +42,9 @@
     <ClCompile Include="..\..\drivers\drv_win.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\drivers\drv_wasapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\drivers\drv_xaudio2.c">
       <Filter>Source Files</Filter>
     </ClCompile>

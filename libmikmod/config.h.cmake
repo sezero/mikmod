@@ -55,6 +55,8 @@
 #cmakedefine DRV_DS 1
 /* Define if the Windows MCI driver is compiled */
 #cmakedefine DRV_WIN 1
+/* Define if the Windows WASAPI driver is compiled */
+#cmakedefine DRV_WASAPI 1
 /* Define if the Windows XAudio2 driver is compiled */
 #cmakedefine DRV_XAUDIO2 1
 /* Define if using XAudio 2.8 for Windows8 with XAudio2 driver */
@@ -114,6 +116,9 @@
 /* Define to 1 if you have the <audio/audiolib.h> header file. */
 #cmakedefine HAVE_AUDIO_AUDIOLIB_H 1
 
+/* Define to 1 if you have the <audioclient.h> header file. */
+#cmakedefine HAVE_AUDIOCLIENT_H 1
+
 /* Define to 1 if you have the <devices/ahi.h> header file. */
 #cmakedefine HAVE_DEVICES_AHI_H 1
 
@@ -149,6 +154,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
+
+/* Define to 1 if you have the <mmdeviceapi.h> header file. */
+#cmakedefine HAVE_MMDEVICEAPI_H 1
 
 /* Define to 1 if you have the `posix_memalign' function. */
 #cmakedefine HAVE_POSIX_MEMALIGN 1

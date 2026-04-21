@@ -86,6 +86,9 @@
 /* Define if the Linux Ultra driver is compiled */
 #undef DRV_ULTRA
 
+/* Define if the Windows WASAPI driver is compiled */
+#undef DRV_WASAPI
+
 /* Define if you want a .wav file writer driver */
 #undef DRV_WAV
 
@@ -112,6 +115,9 @@
 
 /* Define to 1 if you have the <AL/al.h> header file. */
 #undef HAVE_AL_AL_H
+
+/* Define to 1 if you have the <audioclient.h> header file. */
+#undef HAVE_AUDIOCLIENT_H
 
 /* Define to 1 if you have the <audio/audiolib.h> header file. */
 #undef HAVE_AUDIO_AUDIOLIB_H
@@ -151,6 +157,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <mmdeviceapi.h> header file. */
+#undef HAVE_MMDEVICEAPI_H
 
 /* Define to 1 if you have the <OpenAL/alc.h> header file. */
 #undef HAVE_OPENAL_ALC_H
@@ -235,9 +244,6 @@
 
 /* Define to 1 if you have the <xaudio2.h> header file. */
 #undef HAVE_XAUDIO2_H
-
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
-#undef LT_OBJDIR
 
 /* Define if you want a debug version of the library */
 #undef MIKMOD_DEBUG

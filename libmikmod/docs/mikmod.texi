@@ -3255,6 +3255,10 @@ This driver only supports software mixing. This driver needs to be tested.
 This driver is only available under Windows XP and newer Windows versions
 and uses the ``XAudio2'' 2.7 or 2.8 apis.@*
 This driver only supports software mixing.
+@item drv_wasapi
+This driver is only available under Windows Vista and newer Windows versions,
+and uses ``WASAPI''.@*
+This driver only supports software mixing.
 @end table
 
 @node Disk Writer Drivers, Other Drivers, Hardware Drivers, Driver Reference

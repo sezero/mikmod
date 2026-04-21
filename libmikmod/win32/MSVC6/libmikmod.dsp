@@ -136,6 +136,10 @@ SOURCE=..\..\drivers\drv_xaudio2.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\drivers\drv_wasapi.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\loaders\load_669.c
 # End Source File
 # Begin Source File

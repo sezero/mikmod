@@ -65,6 +65,7 @@ libmikmod_la_SOURCES = \
 		drivers/drv_sun.c \
 		drivers/drv_ultra.c \
 		drivers/drv_wav.c \
+		drivers/drv_wasapi.c \
 		drivers/drv_win.c \
 		drivers/drv_wss.c \
 		drivers/drv_xaudio2.c \

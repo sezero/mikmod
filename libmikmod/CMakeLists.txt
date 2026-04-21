@@ -121,6 +121,7 @@ cmake_dependent_option(ENABLE_NAS "Include the Network Audio System driver" OFF 
 #cmake_dependent_option(ENABLE_AF "Include the DEC AudioFile server (AF) driver" OFF "UNIX;NOT APPLE" OFF)
 cmake_dependent_option(ENABLE_COREAUDIO "Include the CoreAudio driver" ON "APPLE" OFF)
 cmake_dependent_option(ENABLE_DSOUND "Include the DirectSound driver" ON "WIN32" OFF)
+cmake_dependent_option(ENABLE_WASAPI "Include the WASAPI driver" ON "WIN32" OFF)
 cmake_dependent_option(ENABLE_WINMM "Include the Windows MCI driver" ON "WIN32" OFF)
 cmake_dependent_option(ENABLE_XAUDIO2 "Include the XAudio2 driver" OFF "WIN32" OFF)
 cmake_dependent_option(ENABLE_XAUDIO28 "Use XAudio2.8 for Windows8 instead of XAudio2.7" OFF "WIN32" OFF)
@@ -314,6 +315,7 @@ SET (MIKMOD_LIB_MODULES
     drivers/drv_ultra.c
     drivers/drv_vita.c
     drivers/drv_wav.c
+    drivers/drv_wasapi.c
     drivers/drv_win.c
     drivers/drv_xaudio2.c
     loaders/load_669.c
@@ -683,6 +685,19 @@ IF (ENABLE_DSOUND)
     ELSE()
       SET (ENABLE_DSOUND 0)
       MESSAGE(WARNING "DirectSound support is disabled.")
+    ENDIF()
+ENDIF()
+
+IF (ENABLE_WASAPI)
+    CHECK_INCLUDE_FILE(mmdeviceapi.h HAVE_MMDEVICEAPI_H)
+    CHECK_INCLUDE_FILE(audioclient.h HAVE_AUDIOCLIENT_H)
+    IF (HAVE_AUDIOCLIENT_H AND HAVE_MMDEVICEAPI_H)
+      SET (DRV_WASAPI 1)
+      LIST (APPEND EXTRA_LIBS "ole32")
+      SET(LIBRARY_LIB "${LIBRARY_LIB} -lole32")
+    ELSE()
+      SET (ENABLE_WASAPI 0)
+      MESSAGE(WARNING "WASAPI support is disabled.")
     ENDIF()
 ENDIF()
 
