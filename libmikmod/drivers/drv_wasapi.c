@@ -45,8 +45,10 @@ static const IID MIKMOD_IID_IAudioClient =
 static const IID MIKMOD_IID_IAudioRenderClient =
 { 0xf294acfc, 0x3146, 0x4483, { 0xa7, 0xbf, 0xad, 0xdc, 0xa7, 0xc2, 0x60, 0xe2 } };
 
+#ifdef __IAudioClient3_INTERFACE_DEFINED__
 static const IID MIKMOD_IID_IAudioClient3 =
 { 0x7ed4ee07, 0x8e67, 0x4cd4, { 0x8c, 0x1a, 0x2b, 0x7a, 0x59, 0x87, 0xad, 0x42 } };
+#endif
 
 #ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
 #define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
@@ -146,7 +148,9 @@ typedef struct {
     IMMDeviceEnumerator* enumerator;
     IMMDevice* device;
     IAudioClient* audioClient;
+#ifdef __IAudioClient3_INTERFACE_DEFINED__
     IAudioClient3* audioClient3;   /* Win10+, may be NULL */
+#endif
     IAudioRenderClient* renderClient;
 
     /* Event for event-driven rendering */
@@ -361,9 +365,11 @@ static BOOL audio_device_open(
         dev->device, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&dev->audioClient);
     if (FAILED(hr)) return FALSE;
 
+#ifdef __IAudioClient3_INTERFACE_DEFINED__
     /* Try to also get IAudioClient3 (Win10+) */
     (void)IUnknown_QueryInterface(
         (IUnknown*)dev->audioClient, &MIKMOD_IID_IAudioClient3, (void**)&dev->audioClient3);
+#endif
 
     /* ---- Mix format --------------------------------------------------- */
     hr = IAudioClient_GetMixFormat(dev->audioClient, &dev->mixFormat);
@@ -375,6 +381,7 @@ static BOOL audio_device_open(
 
     streamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
 
+#ifdef __IAudioClient3_INTERFACE_DEFINED__
     /* ---- Optional low-latency shared (IAudioClient3) ------------------ */
     if (dev->useDirect && dev->audioClient3) {
         UINT32 defPeriod = 0, fundamental = 0, minPeriod = 0, maxPeriod = 0;
@@ -395,6 +402,7 @@ static BOOL audio_device_open(
             /* on failure fall through to classic Initialize */
         }
     }
+#endif
 
     /* ---- Classic shared-mode Initialize ------------------------------- */
     if (!initialized) {
@@ -451,7 +459,9 @@ static void audio_device_close(AudioDevice* dev)
     safe_close_handle(&dev->event);
 
     if (dev->renderClient) { IAudioRenderClient_Release(dev->renderClient); dev->renderClient = NULL; }
+#ifdef __IAudioClient3_INTERFACE_DEFINED__
     if (dev->audioClient3) { IAudioClient3_Release(dev->audioClient3);      dev->audioClient3 = NULL; }
+#endif
     if (dev->audioClient) { IAudioClient_Release(dev->audioClient);        dev->audioClient = NULL; }
     if (dev->device) { IMMDevice_Release(dev->device);                dev->device = NULL; }
 
