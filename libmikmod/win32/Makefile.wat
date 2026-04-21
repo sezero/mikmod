@@ -76,7 +76,7 @@ BLD_TARGET=$(DLLNAME)
 
 COMPILE=wcc386 $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
 
-OBJ=drv_win.obj drv_ds.obj &
+OBJ=drv_win.obj drv_wasapi.obj drv_ds.obj &
     drv_raw.obj drv_aiff.obj drv_wav.obj &
     drv_nos.obj drv_stdout.obj &
     load_669.obj load_amf.obj load_asy.obj load_dsm.obj load_far.obj load_gdm.obj load_gt2.obj &
