@@ -328,8 +328,6 @@ static void DS_Exit(void)
 		IDirectSound_Release(pSoundCard);
 		pSoundCard = NULL;
 	}
-
-	VC_Exit();
 }
 
 static BOOL do_update = 0;

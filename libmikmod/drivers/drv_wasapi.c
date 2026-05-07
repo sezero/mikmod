@@ -740,7 +740,6 @@ static int WASAPI_Init(void)
 
 static void WASAPI_Exit(void)
 {
-    VC_Exit();
     if (g_wasapi) {
         audio_device_destroy(g_wasapi);
         g_wasapi = NULL;
