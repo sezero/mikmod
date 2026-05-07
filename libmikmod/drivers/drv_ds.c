@@ -53,9 +53,7 @@
 #include <basetyps.h> /* guiddef.h not in all SDKs, e.g. mingw.org */
 #endif
 
-#if !defined(__cplusplus) && !defined(CINTERFACE)
 #define CINTERFACE
-#endif
 #include <dsound.h>
 
 #ifdef __WATCOMC__
