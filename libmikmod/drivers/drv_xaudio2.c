@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   Driver for output on win32 platforms using XAudio2
 
 ==============================================================================*/
@@ -48,6 +46,7 @@
 #endif
 #include "mikmod_internals.h"
 
+#define COBJMACROS
 #define INITGUID
 #include <xaudio2.h>
 
