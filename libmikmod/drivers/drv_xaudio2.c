@@ -83,8 +83,7 @@
 /* doing things C-only .. */
 static HANDLE hBufferEvent;
 
-static void STDMETHODCALLTYPE cb_OnVoiceProcessPassStart(IXAudio2VoiceCallback* p,
-							 UINT32 SamplesRequired) {
+static void STDMETHODCALLTYPE cb_OnVoiceProcessPassStart(IXAudio2VoiceCallback* p, UINT32 SamplesRequired) {
 	dbgprintf(stderr, "\n>XAudio2: OnVoiceProcessingPassStart<\n");
 }
 static void STDMETHODCALLTYPE cb_OnVoiceProcessPassEnd(IXAudio2VoiceCallback* p) {
@@ -93,22 +92,17 @@ static void STDMETHODCALLTYPE cb_OnVoiceProcessPassEnd(IXAudio2VoiceCallback* p)
 static void STDMETHODCALLTYPE cb_OnStreamEnd(IXAudio2VoiceCallback* p) {
 	dbgprintf(stderr, "\n>XAudio2: OnStreamEnd<\n");
 }
-static void STDMETHODCALLTYPE cb_OnBufferStart(IXAudio2VoiceCallback* p,
-						 void* pBufferContext) {
+static void STDMETHODCALLTYPE cb_OnBufferStart(IXAudio2VoiceCallback* p, void* pBufferContext) {
 	dbgprintf(stderr, "\n>XAudio2: OnBufferStart<\n");
 }
-static void STDMETHODCALLTYPE cb_OnBufferEnd(IXAudio2VoiceCallback* p,
-						 void* pBufferContext) {
+static void STDMETHODCALLTYPE cb_OnBufferEnd(IXAudio2VoiceCallback* p, void* pBufferContext) {
 	SetEvent(hBufferEvent);
 	dbgprintf(stderr, "\n>XAudio2: OnBufferEnd<\n");
 }
-static void STDMETHODCALLTYPE cb_OnLoopEnd(IXAudio2VoiceCallback* p,
-						 void* pBufferContext) {
+static void STDMETHODCALLTYPE cb_OnLoopEnd(IXAudio2VoiceCallback* p, void* pBufferContext) {
 	dbgprintf(stderr, "\n>XAudio2: OnLoopEnd<\n");
 }
-static void STDMETHODCALLTYPE cb_OnVoiceError(IXAudio2VoiceCallback* p,
-						 void* pBufferContext,
-						 HRESULT Error) {
+static void STDMETHODCALLTYPE cb_OnVoiceError(IXAudio2VoiceCallback* p, void* pBufferContext, HRESULT Error) {
 	dbgprintf(stderr, "\n>XAudio2: OnVoiceError: %ld <\n", Error);
 }
 static IXAudio2VoiceCallbackVtbl cbVoice_vtbl = {
@@ -123,7 +117,7 @@ static IXAudio2VoiceCallbackVtbl cbVoice_vtbl = {
 static IXAudio2VoiceCallback cbVoice = {
 	&cbVoice_vtbl
 };
-#define pcbVoice		&cbVoice
+#define pcbVoice &cbVoice
 
 #else /* __cplusplus: */
 class XAudio2VoiceCallback: public IXAudio2VoiceCallback {
@@ -221,17 +215,17 @@ static BOOL XAudio2_IsPresent(void) {
 	HRESULT r;
 
 	if (pXAudio2 == NULL) {
-#ifndef _XBOX
+		#ifndef _XBOX
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
-#endif
+		#endif
 		r = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
 		if (pXAudio2) {
 			IXAudio2_Release(pXAudio2);
 			pXAudio2 = NULL;
 		}
-#ifndef _XBOX
+		#ifndef _XBOX
 		CoUninitialize();
-#endif
+		#endif
 		if (FAILED(r))
 			return 0;
 	}
@@ -258,42 +252,45 @@ static int XAudio2_Init(void) {
 
 	current_buf = 0;
 	flags = 0;
-#if defined(_DEBUG) && !defined(DRV_XAUDIO28)
-/*	flags |= XAUDIO2_DEBUG_ENGINE;*/
-#endif
-#ifndef _XBOX
+	#if defined(_DEBUG) && !defined(DRV_XAUDIO28)
+	/* flags |= XAUDIO2_DEBUG_ENGINE; */
+	#endif
+
+	#ifndef _XBOX
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
-#endif
+	#endif
+
 	if (FAILED(XAudio2Create(&pXAudio2, flags, XAUDIO2_DEFAULT_PROCESSOR))) {
 		goto fail;
 	}
-#ifdef DRV_XAUDIO28
+	#ifdef DRV_XAUDIO28
 	if (FAILED(IXAudio2_CreateMasteringVoice(pXAudio2, &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE,
 						 0, NULL, NULL, AudioCategory_Other))) {
 		goto fail;
 	}
-#else
+	#else
 	if (FAILED(IXAudio2_CreateMasteringVoice(pXAudio2, &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE, 0, 0, NULL))) {
 		goto fail;
 	}
-#endif
+	#endif
 	if (FAILED(IXAudio2_CreateSourceVoice(pXAudio2, &pSourceVoice, &wfmt, 0, 1.0f, pcbVoice, NULL, NULL))) {
 		goto fail;
 	}
-#ifndef __cplusplus
+	#ifndef __cplusplus
 	if ((hBufferEvent = CreateEvent(NULL, FALSE, FALSE, TEXT("libmikmod XAudio2 Driver buffer Event"))) == NULL) {
 		goto fail;
 	}
-#endif
+	#endif
 	if ((UpdateBufferHandle = CreateThread(NULL, 0, UpdateBufferProc, NULL, CREATE_SUSPENDED, &thread_id)) == NULL) {
 		goto fail;
 	}
-#if defined HAVE_SSE2
+
+	#if defined HAVE_SSE2
 	/* this test only works on Windows XP or later */
 	if (IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE)) {
 		md_mode|=DMODE_SIMDMIXER;
 	}
-#endif
+	#endif
 	return VC_Init();
 
 fail:
@@ -309,9 +306,10 @@ fail:
 		IXAudio2_Release(pXAudio2);
 		pXAudio2 = NULL;
 	}
-#ifndef _XBOX
+
+	#ifndef _XBOX
 	CoUninitialize();
-#endif
+	#endif
 	return 1;
 }
 
@@ -341,15 +339,15 @@ static void XAudio2_Exit(void) {
 		IXAudio2_Release(pXAudio2);
 		pXAudio2 = NULL;
 	}
-#ifndef __cplusplus
+	#ifndef __cplusplus
 	if (hBufferEvent != NULL) {
 		CloseHandle(hBufferEvent);
 		hBufferEvent = NULL;
 	}
-#endif
-#ifndef _XBOX
+	#endif
+	#ifndef _XBOX
 	CoUninitialize();
-#endif
+	#endif
 	VC_Exit();
 }
 
