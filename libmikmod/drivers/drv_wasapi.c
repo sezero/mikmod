@@ -549,7 +549,7 @@ static void audio_device_resume(AudioDevice* dev)
 {
     if (dev->audioClient) IAudioClient_Start(dev->audioClient);
 }
-#endif
+#endif /*  #if 0 */
 
 /* =========================================================================
  * Render thread
@@ -658,7 +658,7 @@ static BOOL wasapi_render_cb(void* user, BYTE* dst, uint32_t framesAvail)
         VC_SilenceBytes((SBYTE*)dst, bytes);
         return TRUE;
     }
-    return VC_WriteBytes((SBYTE*)dst, bytes) == (int)bytes;
+    return VC_WriteBytes((SBYTE*)dst, bytes) == bytes;
 }
 
 static void WASAPI_CommandLine(const CHAR* cmdline)
