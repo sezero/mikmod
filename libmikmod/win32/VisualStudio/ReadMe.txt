@@ -1,9 +1,6 @@
-* For XAudio2 support you need xaudio2.h (DirectX SDK June 2010 has
-  xaudio2_7). Add DRV_XAUDIO2 among your preprocessor definitions.
-  If you want xaudio2_8 for Windows 8 and newer, then:
-  - also add DRV_XAUDIO28 among the preprocessor definitions,
-  - make sure that xaudio2.h is from Windows 8 or newer sdk,
-  - change properties of drv_xaudio2.c and choose "Compile as C++".
+* WASAPI support is enabled in the project file.
+
+* XAudio2 support for XAudio2 >= 2.8 is enabled in the project file.
 
 * For OpenAL support you need OpenAL 1.1 SDK: Add DRV_OPENAL among
   your preprocessor definitions, and add OpenAL32.lib among your
