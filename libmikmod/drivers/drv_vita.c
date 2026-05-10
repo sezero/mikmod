@@ -167,7 +167,7 @@ MIKMODAPI MDRIVER drv_vita =
 	"VITA Output Driver v1.0 - by usineur",
 	0,255,
 	"vitadrv",
-	NULL,
+	"buffer:r:6,15,11:Audio buffer log2 size\n",
 	VITA_CommandLine,
 
 	VITA_IsPresent,
