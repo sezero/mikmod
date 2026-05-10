@@ -745,24 +745,22 @@ static void WASAPI_Exit(void)
         g_wasapi = NULL;
     }
     g_started = FALSE;
+    VC_Exit();
 }
+
+static BOOL do_update = 0;
 
 static int WASAPI_PlayStart(void)
 {
     if (VC_PlayStart()) return 1;
 
-    if (g_wasapi && !audio_device_start(g_wasapi)) {
-        VC_PlayStop();
-        _mm_errno = MMERR_OPENING_AUDIO;
-        return 1;
-    }
-
-    g_started = TRUE;
+    do_update = 1;
     return 0;
 }
 
 static void WASAPI_PlayStop(void)
 {
+    do_update = 0;
     if (g_wasapi && g_started)
         audio_device_stop(g_wasapi);
     g_started = FALSE;
@@ -770,7 +768,21 @@ static void WASAPI_PlayStop(void)
 }
 
 /* Event-driven backend: no polling needed */
-static void WASAPI_Update(void) {}
+static void WASAPI_Update(void)
+{
+    if (!do_update)
+        return;
+    do_update = 0;
+
+    if (g_wasapi && !audio_device_start(g_wasapi)) {
+        VC_PlayStop();
+        _mm_errno = MMERR_OPENING_AUDIO;
+        WASAPI_Exit();
+        return;
+    }
+
+    g_started = TRUE;
+}
 
 MIKMODAPI MDRIVER drv_wasapi = {
     NULL,
