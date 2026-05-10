@@ -7,6 +7,14 @@ libmikmod v3.3.14 was released on ???. ??, ????.
 - Added Playstation Vita output driver, thanks to Matthieu Milan and
   'scribam'.
 - Updated webaudio driver with stereo output support.
+- Fixed Windows XAudio2 driver build using MinGW-w64.
+- Revised SDL output driver for MikMod_Reset() issue.
+- Updated OS2 EMX makefile for KLIBC environment (build tested with
+  cross-os2emx toolchain at https://github.com/komh/cross-os2emx )
+- Cmake build system now installs documentation and the autoconf macro,
+  thanks to Jan Alexander Steffen.
+- Minor cmake build system fixes.
+- A few other minor fixes and clean-ups.
 
 
 Summary of changes between libmikmod 3.3.12 and libmikmod 3.3.13:
