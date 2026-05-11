@@ -37,7 +37,7 @@ General contributors
 * Shlomi Fish <shlomif@shlomifish.org>
   wrote the Java port, bug fixes, CMake build system.
 * Ozkan Sezer <sezero@users.sourceforge.net>
-  overall bug fixes, configury updates.
+  overall bug fixes, build system fixes/updates.
 * Juan Linietsky <coding@reduz.com.ar>
   overall bug fixes.
 * Claudio Matsuoka <claudio@helllabs.org>
@@ -52,14 +52,16 @@ General contributors
 * Alexander Kerkhove fixed an ULT panning effect bug.
 * ``Kodiak'' helped on the interfaces of libmikmod.
 * Sylvain Marchand make MikMod more portable and GCC compilable.
+* Cedric OCHS contributed the OpenAL driver.
 * Alice Rowan contributed DSMI AMF, FAR, GDM, IT, STM, and many
   other loader fixes.
 * Carlos Rafael Gimenes das Neves contributed WebAudio support.
 
-
 Contributors on the Unix side
 -----------------------------
 
+* Claudio Matsuoka contributed MacOSX CoreAudio driver
+  from xmp.
 * Axel "awe" Wefers <awe@fruitz-of-dojo.de>
   wrote the OSX CoreAudio driver, the AIFF driver and
   updated the Mac Audio Carbon driver
@@ -101,6 +103,7 @@ Contributors on the Windows side
   created the Multimedia API windows driver.
 * Paul Spark <sparkynz74@gmail.com>
   created the SDL windows driver and made changes to build with MSVC++ 6.
+* 'honza.c' contributed the XAudio2 driver.
 * Stephane Denis contributed the WASAPI driver.
 
 Contributors on the Android side
