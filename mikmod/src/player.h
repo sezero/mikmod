@@ -21,8 +21,6 @@
 
 /*==============================================================================
 
-  $Id: player.h,v 1.3 2004/01/29 02:48:06 raph Exp $
-
   Module player which uses the MikMod library as the player engine.
 
 ==============================================================================*/
@@ -32,7 +30,7 @@
 
 /*========== Messages */
 
-#define playerversion "3.2.9"
+#define playerversion "3.2.10"
 
 #define mikversion "-= MikMod " playerversion " =-"
 
