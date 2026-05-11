@@ -11,19 +11,28 @@ Comments & feedback are welcome.
 - If you're not building libmikmod for DOS, then you're lost in the sources.
   Go up one directory, and read the main README file.
 
-This port has been designed to work only with DJGPP compiler. However, it
-should not be too complex to make it compile with any other compiler. If you
-manage to make libmikmod compile and work with another compiler, we'd like to
-hear from you. You'll likely have to write an appropiate makefile, or build
+This port has been designed to work with either DJGPP or Open Watcom compiler.
+However, it should not be too complex to make it compile with any other compiler.
+If you manage to make libmikmod compile and work with another compiler, we'd like
+to hear from you. You'll likely have to write an appropiate makefile, or build
 things manually ...
 
-If you have all proper tools installed, just type
+
+If you have DJGPP properly installed, just type:
 
 	make -f Makefile.dj
 
 To make your library ready to use, copy the files 'libmikmod.a' and
 'include/mikmod.h' to your '%DJGPP%/lib' and '%DJGPP%/include' directories
 respectively.
+
+
+If you want to use Open Watcom, run:
+
+	wmake -f Makefile.wat
+
+.. which will generate the static library mikmod.lib for you.
+
 
 HTML documentation of the library, for programmers, is located in the doc
 directory.
