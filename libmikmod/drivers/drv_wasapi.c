@@ -74,7 +74,7 @@ static const IID MIKMOD_IID_IAudioClient3 =
   * Simple helpers
   * ====================================================================== */
 
-  /* FNV-1a 64-bit hash – stable device id from the wide-char device-id string */
+/* FNV-1a 64-bit hash - stable device id from the wide-char device-id string */
 static uint64_t fnv1a64_w(const wchar_t* s)
 {
     const uint64_t FNV_OFFSET = MIK_UINT64_C(14695981039346656037);
@@ -98,11 +98,6 @@ static void wide_to_utf8(const wchar_t* ws, char* out, int outSize)
     n = WideCharToMultiByte(CP_UTF8, 0, ws, -1, out, outSize, NULL, NULL);
     if (n <= 0) out[0] = '\0';
     out[outSize - 1] = '\0';
-}
-
-static void safe_close_handle(HANDLE* h)
-{
-    if (*h) { CloseHandle(*h); *h = NULL; }
 }
 
 static __inline BOOL is_equal_guid (const GUID *guid1, const GUID *guid2)
@@ -142,9 +137,9 @@ typedef struct {
 
 /* =========================================================================
  * Render callback type
- *   user       – opaque pointer passed through from open()
- *   dst        – destination buffer (WASAPI render buffer)
- *   frames     – number of frames to fill
+ *   user       - opaque pointer passed through from open()
+ *   dst        - destination buffer (WASAPI render buffer)
+ *   frames     - number of frames to fill
  *   returns TRUE if audio was written, FALSE to output silence
  * ====================================================================== */
 typedef BOOL(*RenderCallback)(void* user, BYTE* dst, uint32_t frames);
@@ -153,7 +148,7 @@ typedef BOOL(*RenderCallback)(void* user, BYTE* dst, uint32_t frames);
  * AudioDevice 
  * ====================================================================== */
 typedef struct {
-    /* COM interfaces – held as raw pointers, released explicitly */
+    /* COM interfaces - held as raw pointers, released explicitly */
     IMMDeviceEnumerator* enumerator;
     IMMDevice* device;
     IAudioClient* audioClient;
@@ -282,7 +277,7 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
             IPropertyStore_Release(props);
         }
 
-        /* Mix format – channels + sample rate */
+        /* Mix format - channels + sample rate */
         hr = IMMDevice_Activate(d, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&client);
         if (SUCCEEDED(hr) && client) {
             WAVEFORMATEX* mix = NULL;
@@ -351,7 +346,7 @@ static BOOL audio_device_open(
     DWORD   streamFlags;
     BOOL    initialized = FALSE;
 
-    (void)deviceIndex; /* reserved – currently always uses default endpoint */
+    (void)deviceIndex; /* reserved - currently always uses default endpoint */
 
     if (!dev->enumerator) return FALSE;
 
@@ -465,14 +460,29 @@ static void audio_device_close(AudioDevice* dev)
         dev->mixFormat = NULL;
     }
 
-    safe_close_handle(&dev->event);
+    if (dev->event) {
+        CloseHandle(dev->event);
+        dev->event = NULL;
+    }
 
-    if (dev->renderClient) { IAudioRenderClient_Release(dev->renderClient); dev->renderClient = NULL; }
+    if (dev->renderClient) {
+        IAudioRenderClient_Release(dev->renderClient);
+        dev->renderClient = NULL;
+    }
 #ifdef __IAudioClient3_INTERFACE_DEFINED__
-    if (dev->audioClient3) { IAudioClient3_Release(dev->audioClient3);      dev->audioClient3 = NULL; }
+    if (dev->audioClient3) {
+        IAudioClient3_Release(dev->audioClient3);
+        dev->audioClient3 = NULL;
+    }
 #endif
-    if (dev->audioClient) { IAudioClient_Release(dev->audioClient);        dev->audioClient = NULL; }
-    if (dev->device) { IMMDevice_Release(dev->device);                dev->device = NULL; }
+    if (dev->audioClient) {
+        IAudioClient_Release(dev->audioClient);
+        dev->audioClient = NULL;
+    }
+    if (dev->device) {
+        IMMDevice_Release(dev->device);
+        dev->device = NULL;
+    }
 
     dev->user = NULL;
     dev->renderCb = NULL;
@@ -705,7 +715,7 @@ static int WASAPI_Init(void)
     if (!audio_device_open(
         g_wasapi,
         0,
-        (uint32_t)md_mixfreq,
+        md_mixfreq,
         channels,
         wantFloat,
         framesPerCb,
