@@ -1,8 +1,31 @@
+/*	MikMod sound library
+	(c) 1998-2005 Miodrag Vallat and others - see file AUTHORS for
+	complete list.
+
+	This library is free software; you can redistribute it and/or modify
+	it under the terms of the GNU Library General Public License as
+	published by the Free Software Foundation; either version 2 of
+	the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Library General Public License for more details.
+
+	You should have received a copy of the GNU Library General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+	02111-1307, USA.
+*/
+
 /* drv_wasapi.c - Windows WASAPI output driver for MikMod
+ * Contributed by Stephane Denis <stephane@realtech-vr.com> :
+ *    https://sourceforge.net/p/mikmod/support-requests/8/
  *
- * Ported from C++ to C89.  Requires linking against ole32.lib and
- * mmdevapi is loaded at run-time through COM so no extra import lib is needed.
+ * Clean-ups/fixes by: O.Sezer <sezero@users.sourceforge.net>
  *
+ * Requires linking against ole32.lib and mmdevapi is loaded at run-time
+ * through COM so no extra import lib is needed.
  * Build guard: define DRV_WASAPI in your build system (or config.h).
  */
 
