@@ -291,6 +291,7 @@ enum {
 
     MMERR_MAX
 };
+#define MMERR_WASAPI_SAMPLERATE MMERR_SGI_SPEED
 
 /*
  *  ========== Error handling

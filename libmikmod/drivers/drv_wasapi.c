@@ -731,7 +731,14 @@ static int WASAPI_Init(void)
     /* WASAPI shared mode runs at the endpoint mix rate. Since this driver
        currently does no resampling, MikMod must mix at that same rate. */
     if (g_wasapi->mixFormat) {
-        md_mixfreq = g_wasapi->mixFormat->nSamplesPerSec;
+        const ULONG rate = g_wasapi->mixFormat->nSamplesPerSec;
+        if (rate > 65535) { /* md_mixfreq is an UWORD */
+            audio_device_destroy(g_wasapi);
+            g_wasapi = NULL;
+            _mm_errno = MMERR_WASAPI_SAMPLERATE;
+            return 1;
+        }
+        md_mixfreq = rate;
     }
 
     md_mode |= DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
