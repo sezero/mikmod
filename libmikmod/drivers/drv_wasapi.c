@@ -33,11 +33,12 @@
 #include "config.h"
 #endif
 
+#define COBJMACROS
+#define CINTERFACE
+
 #include "mikmod_internals.h"
 
 #ifdef DRV_WASAPI
-
-#define COBJMACROS          /* get C-style COM macros: IFoo_Method(p, ...) */
 
 #include <windows.h>
 #include <audioclient.h>
@@ -52,6 +53,12 @@
 #define MIK_UINT64_C(c) c ## UL
 #else
 #define MIK_UINT64_C(c) c ## ULL
+#endif
+
+#ifdef __cplusplus
+#define GUID_REF(X)  (X)
+#else
+#define GUID_REF(X) &(X)
 #endif
 
 /* -------------------------------------------------------------------------
@@ -243,8 +250,8 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
 
     if (!dev->enumerator) {
         hr = CoCreateInstance(
-            &MIKMOD_CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL,
-            &MIKMOD_IID_IMMDeviceEnumerator, (void**)&dev->enumerator);
+            GUID_REF(MIKMOD_CLSID_MMDeviceEnumerator), NULL, CLSCTX_ALL,
+            GUID_REF(MIKMOD_IID_IMMDeviceEnumerator), (void**)&dev->enumerator);
         if (FAILED(hr) || !dev->enumerator) {
             if (comHere) CoUninitialize();
             return FALSE;
@@ -291,7 +298,7 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
         if (SUCCEEDED(IMMDevice_OpenPropertyStore(d, STGM_READ, &props)) && props) {
             PROPVARIANT v;
             PropVariantInit(&v);
-            if (SUCCEEDED(IPropertyStore_GetValue(props, &MIKMOD_PKEY_Device_FriendlyName, &v))
+            if (SUCCEEDED(IPropertyStore_GetValue(props, GUID_REF(MIKMOD_PKEY_Device_FriendlyName), &v))
                 && v.vt == VT_LPWSTR && v.pwszVal)
             {
                 wide_to_utf8(v.pwszVal, ep.name, (int)sizeof(ep.name));
@@ -301,7 +308,7 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
         }
 
         /* Mix format - channels + sample rate */
-        hr = IMMDevice_Activate(d, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&client);
+        hr = IMMDevice_Activate(d, GUID_REF(MIKMOD_IID_IAudioClient), CLSCTX_ALL, NULL, (void**)&client);
         if (SUCCEEDED(hr) && client) {
             WAVEFORMATEX* mix = NULL;
             if (SUCCEEDED(IAudioClient_GetMixFormat(client, &mix)) && mix) {
@@ -389,13 +396,13 @@ static BOOL audio_device_open(
 
     /* ---- Activate IAudioClient ---------------------------------------- */
     hr = IMMDevice_Activate(
-        dev->device, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&dev->audioClient);
+        dev->device, GUID_REF(MIKMOD_IID_IAudioClient), CLSCTX_ALL, NULL, (void**)&dev->audioClient);
     if (FAILED(hr)) return FALSE;
 
 #ifdef __IAudioClient3_INTERFACE_DEFINED__
     /* Try to also get IAudioClient3 (Win10+) */
     (void)IUnknown_QueryInterface(
-        (IUnknown*)dev->audioClient, &MIKMOD_IID_IAudioClient3, (void**)&dev->audioClient3);
+        (IUnknown*)dev->audioClient, GUID_REF(MIKMOD_IID_IAudioClient3), (void**)&dev->audioClient3);
 #endif
 
     /* ---- Mix format --------------------------------------------------- */
@@ -454,7 +461,7 @@ static BOOL audio_device_open(
 
     /* ---- Render client ------------------------------------------------ */
     hr = IAudioClient_GetService(
-        dev->audioClient, &MIKMOD_IID_IAudioRenderClient, (void**)&dev->renderClient);
+        dev->audioClient, GUID_REF(MIKMOD_IID_IAudioRenderClient), (void**)&dev->renderClient);
     if (FAILED(hr)) return FALSE;
 
     return TRUE;
@@ -761,7 +768,7 @@ static int WASAPI_Init(void)
             _mm_errno = MMERR_WASAPI_SAMPLERATE;
             return 1;
         }
-        md_mixfreq = rate;
+        md_mixfreq = (UWORD)rate;
     }
 
     md_mode |= DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
