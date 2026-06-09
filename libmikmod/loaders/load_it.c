@@ -827,7 +827,9 @@ static BOOL IT_Load(BOOL curious)
 				return 0;
 			}
 
-			d->volflg|=EF_VOLENV;
+			d->volflg|=(EF_VOLENV | EF_ITMODE);
+			d->panflg|=EF_ITMODE;
+			d->pitflg|=EF_ITMODE;
 			d->insname = DupStr(ih.name,26,0);
 			d->nnatype = ih.nna & NNA_MASK;
 
