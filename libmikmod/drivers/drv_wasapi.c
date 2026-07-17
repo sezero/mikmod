@@ -845,7 +845,7 @@ static int WASAPI_Init(void)
         if (rate > 65535) { /* md_mixfreq is an UWORD */
             audio_device_destroy(g_wasapi);
             g_wasapi = NULL;
-            _mm_errno = MMERR_OPENING_AUDIO;
+            _mm_errno = MMERR_WASAPI_SAMPLERATE;
             return 1;
         }
         md_mixfreq = (UWORD)rate;
