@@ -144,7 +144,7 @@ different parameters, for example: somevalue=1,someothervalue=2
 
 - WASAPI ("wasapi") [Win32 only]
   buffer=   audio buffer size in milliseconds, in the range 2-100.
-            Default is 10.
+            Default is 20.
 
 - Windows Multimedia ("winmm") [Win32 only]
   buffer=   audio buffer size in milliseconds, in the range 50-1000.
