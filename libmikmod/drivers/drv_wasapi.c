@@ -102,7 +102,7 @@ static const IID MIKMOD_IID_IAudioClient3 =
 
 /* avrt.dll is loaded dynamically so older toolchains need no extra import lib. */
 typedef HANDLE (WINAPI *AvSetMmThreadCharacteristicsAFn)(LPCSTR, LPDWORD);
-typedef BOOL (WINAPI *AvSetMmThreadPriorityFn)(HANDLE, int);
+typedef BOOL (WINAPI *AvSetMmThreadPriorityFn)(HANDLE, /* AVRT_PRIORITY */ int);
 typedef BOOL (WINAPI *AvRevertMmThreadCharacteristicsFn)(HANDLE);
 
  /* =========================================================================
