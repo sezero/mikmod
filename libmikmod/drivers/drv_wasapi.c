@@ -97,8 +97,13 @@ static const IID MIKMOD_IID_IAudioClient3 =
  * ====================================================================== */
 #define WASAPI_MAX_ENDPOINTS  32
 #define WASAPI_MAX_NAME       256
-#define WASAPI_BUF_DURATION   (10 * 10000)   /* 10 ms in 100-ns units */
+#define WASAPI_DEFAULT_BUFFER_MS 20
 #define WASAPI_WAIT_MS        2000
+
+/* avrt.dll is loaded dynamically so older toolchains need no extra import lib. */
+typedef HANDLE (WINAPI *AvSetMmThreadCharacteristicsWFn)(LPCWSTR, LPDWORD);
+typedef BOOL (WINAPI *AvSetMmThreadPriorityFn)(HANDLE, int);
+typedef BOOL (WINAPI *AvRevertMmThreadCharacteristicsFn)(HANDLE);
 
  /* =========================================================================
   * Simple helpers
@@ -178,6 +183,9 @@ typedef BOOL(*RenderCallback)(void* user, BYTE* dst, uint32_t frames);
  * AudioDevice 
  * ====================================================================== */
 typedef struct {
+    /* COM is initialized for the lifetime of this object. */
+    BOOL                 comInitializedHere;
+
     /* COM interfaces - held as raw pointers, released explicitly */
     IMMDeviceEnumerator* enumerator;
     IMMDevice* device;
@@ -237,40 +245,25 @@ static void         audio_device_close(AudioDevice* dev);
 static BOOL audio_device_enumerate(AudioDevice* dev)
 {
     HRESULT hr;
-    BOOL comHere;
     IMMDeviceCollection* collection = NULL;
     UINT count, i;
-
-    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    comHere = SUCCEEDED(hr) || hr == S_FALSE;
-    if (FAILED(hr) && hr != (HRESULT)RPC_E_CHANGED_MODE) {
-        _mm_errno = MMERR_OPENING_AUDIO;
-        return FALSE;
-    }
 
     if (!dev->enumerator) {
         hr = CoCreateInstance(
             GUID_REF(MIKMOD_CLSID_MMDeviceEnumerator), NULL, CLSCTX_ALL,
             GUID_REF(MIKMOD_IID_IMMDeviceEnumerator), (void**)&dev->enumerator);
-        if (FAILED(hr) || !dev->enumerator) {
-            if (comHere) CoUninitialize();
-            return FALSE;
-        }
+        if (FAILED(hr) || !dev->enumerator) return FALSE;
     }
 
     dev->endPointCount = 0;
 
     hr = IMMDeviceEnumerator_EnumAudioEndpoints(
         dev->enumerator, eRender, DEVICE_STATE_ACTIVE, &collection);
-    if (FAILED(hr) || !collection) {
-        if (comHere) CoUninitialize();
-        return FALSE;
-    }
+    if (FAILED(hr) || !collection) return FALSE;
 
     hr = IMMDeviceCollection_GetCount(collection, &count);
     if (FAILED(hr)) {
         IMMDeviceCollection_Release(collection);
-        if (comHere) CoUninitialize();
         return FALSE;
     }
 
@@ -335,7 +328,16 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
 static AudioDevice* audio_device_create(void)
 {
     AudioDevice* dev = (AudioDevice*)calloc(1, sizeof(AudioDevice));
+    HRESULT hr;
     if (!dev) return NULL;
+
+    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(hr) && hr != (HRESULT)RPC_E_CHANGED_MODE) {
+        free(dev);
+        return NULL;
+    }
+    dev->comInitializedHere = SUCCEEDED(hr);
+
     /* gainBits = 1.0f */
     {
         float one = 1.0f;
@@ -343,7 +345,14 @@ static AudioDevice* audio_device_create(void)
         memcpy(&bits, &one, sizeof(bits));
         dev->gainBits = bits;
     }
-    audio_device_enumerate(dev);
+    if (!audio_device_enumerate(dev)) {
+        if (dev->enumerator)
+            IMMDeviceEnumerator_Release(dev->enumerator);
+        if (dev->comInitializedHere)
+            CoUninitialize();
+        free(dev);
+        return NULL;
+    }
     return dev;
 }
 
@@ -356,6 +365,8 @@ static void audio_device_destroy(AudioDevice* dev)
         dev->enumerator = NULL;
     }
     free(dev->tmpS16);
+    if (dev->comInitializedHere)
+        CoUninitialize();
     free(dev);
 }
 
@@ -429,6 +440,18 @@ static BOOL audio_device_open(
                 if (desired < minPeriod) desired = minPeriod;
                 if (desired > maxPeriod) desired = maxPeriod;
             }
+            if (fundamental != 0) {
+                UINT32 remainder = desired % fundamental;
+                if (remainder != 0) {
+                    UINT32 increment = fundamental - remainder;
+                    if (desired <= maxPeriod - increment)
+                        desired += increment;
+                    else
+                        desired -= remainder;
+                }
+                if (desired < minPeriod)
+                    desired = minPeriod;
+            }
             hr = IAudioClient3_InitializeSharedAudioStream(
                 dev->audioClient3, streamFlags, desired, dev->mixFormat, NULL);
             if (SUCCEEDED(hr))
@@ -440,11 +463,17 @@ static BOOL audio_device_open(
 
     /* ---- Classic shared-mode Initialize ------------------------------- */
     if (!initialized) {
+        REFERENCE_TIME bufferDuration =
+            (REFERENCE_TIME)WASAPI_DEFAULT_BUFFER_MS * 10000;
+        if (framesPerCallback != 0 && sampleRate != 0) {
+            bufferDuration = ((REFERENCE_TIME)framesPerCallback * 10000000)
+                / sampleRate;
+        }
         hr = IAudioClient_Initialize(
             dev->audioClient,
             AUDCLNT_SHAREMODE_SHARED,
             streamFlags,
-            WASAPI_BUF_DURATION,
+            bufferDuration,
             0,                  /* periodicity must be 0 in shared mode */
             dev->mixFormat,
             NULL);
@@ -458,6 +487,15 @@ static BOOL audio_device_open(
     /* ---- Buffer size -------------------------------------------------- */
     hr = IAudioClient_GetBufferSize(dev->audioClient, &dev->bufferFrames);
     if (FAILED(hr)) return FALSE;
+
+    /* Allocate conversion storage outside the real-time render callback. */
+    if (!wantFloat && is_float32_mix_format(dev->mixFormat)) {
+        size_t need = (size_t)dev->bufferFrames * dev->mixFormat->nChannels;
+        int16_t* tmp = (int16_t*)realloc(dev->tmpS16, need * sizeof(int16_t));
+        if (!tmp) return FALSE;
+        dev->tmpS16 = tmp;
+        dev->tmpS16Cap = need;
+    }
 
     /* ---- Render client ------------------------------------------------ */
     hr = IAudioClient_GetService(
@@ -520,7 +558,7 @@ static void audio_device_close(AudioDevice* dev)
 }
 
 /* =========================================================================
- * start() – prime buffer, launch thread
+ * start() â€“ prime buffer, launch thread
  * ====================================================================== */
 static BOOL audio_device_render(AudioDevice* dev, BYTE* pData, UINT32 framesAvail);
 static BOOL audio_device_start(AudioDevice* dev)
@@ -548,14 +586,20 @@ static BOOL audio_device_start(AudioDevice* dev)
         IAudioRenderClient_ReleaseBuffer(dev->renderClient, framesAvail, 0);
     }
 
-    hr = IAudioClient_Start(dev->audioClient);
-    if (FAILED(hr)) return FALSE;
-
     InterlockedExchange(&dev->running, 1);
     dev->thread = CreateThread(NULL, 0, render_thread_main, dev, 0, NULL);
     if (!dev->thread) {
         InterlockedExchange(&dev->running, 0);
-        IAudioClient_Stop(dev->audioClient);
+        return FALSE;
+    }
+
+    hr = IAudioClient_Start(dev->audioClient);
+    if (FAILED(hr)) {
+        InterlockedExchange(&dev->running, 0);
+        SetEvent(dev->event);
+        WaitForSingleObject(dev->thread, INFINITE);
+        CloseHandle(dev->thread);
+        dev->thread = NULL;
         return FALSE;
     }
     return TRUE;
@@ -620,12 +664,7 @@ static BOOL audio_device_render(AudioDevice* dev, BYTE* pData, UINT32 framesAvai
 
     if (!dev->reqFloat && mixFloat) {
         size_t need = (size_t)framesAvail * ch;
-        if (need > dev->tmpS16Cap) {
-            free(dev->tmpS16);
-            dev->tmpS16 = (int16_t*)malloc(need * sizeof(int16_t));
-            dev->tmpS16Cap = dev->tmpS16 ? need : 0;
-        }
-        if (dev->tmpS16 && dev->renderCb) {
+        if (need <= dev->tmpS16Cap && dev->tmpS16 && dev->renderCb) {
             BOOL produced = dev->renderCb(dev->user, (BYTE*)dev->tmpS16, framesAvail);
             if (produced)
                 convert_i16_to_f32((float*)pData, dev->tmpS16, need);
@@ -643,6 +682,33 @@ static BOOL audio_device_render(AudioDevice* dev, BYTE* pData, UINT32 framesAvai
 static DWORD WINAPI render_thread_main(LPVOID param)
 {
     AudioDevice* dev = (AudioDevice*)param;
+    HRESULT comResult;
+    BOOL comInitializedHere;
+    HMODULE avrt;
+    HANDLE mmcss = NULL;
+    AvSetMmThreadCharacteristicsWFn setCharacteristics = NULL;
+    AvSetMmThreadPriorityFn setPriority = NULL;
+    AvRevertMmThreadCharacteristicsFn revertCharacteristics = NULL;
+
+    comResult = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    comInitializedHere = SUCCEEDED(comResult);
+
+    avrt = LoadLibraryW(L"avrt.dll");
+    if (avrt) {
+        DWORD taskIndex = 0;
+        setCharacteristics = (AvSetMmThreadCharacteristicsWFn)
+            GetProcAddress(avrt, "AvSetMmThreadCharacteristicsW");
+        setPriority = (AvSetMmThreadPriorityFn)
+            GetProcAddress(avrt, "AvSetMmThreadPriority");
+        revertCharacteristics = (AvRevertMmThreadCharacteristicsFn)
+            GetProcAddress(avrt, "AvRevertMmThreadCharacteristics");
+        if (setCharacteristics)
+            mmcss = setCharacteristics(L"Pro Audio", &taskIndex);
+        if (mmcss && setPriority)
+            setPriority(mmcss, 1); /* AVRT_PRIORITY_HIGH */
+    }
+    if (!mmcss)
+        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
     while (InterlockedCompareExchange(&dev->running, 1, 1)) {
         HRESULT hr;
@@ -671,6 +737,13 @@ static DWORD WINAPI render_thread_main(LPVOID param)
 
         IAudioRenderClient_ReleaseBuffer(dev->renderClient, framesAvail, 0);
     }
+
+    if (mmcss && revertCharacteristics)
+        revertCharacteristics(mmcss);
+    if (avrt)
+        FreeLibrary(avrt);
+    if (comInitializedHere)
+        CoUninitialize();
     return 0;
 }
 
@@ -680,13 +753,14 @@ static DWORD WINAPI render_thread_main(LPVOID param)
 
 static AudioDevice* g_wasapi = NULL;
 static ULONG        g_frames_per_cb = 0;
-static ULONG        g_req_buffer_ms = 10;
+static ULONG        g_req_buffer_ms = WASAPI_DEFAULT_BUFFER_MS;
 static BOOL         g_started = FALSE;
 
 /* MikMod callback: fill the WASAPI render buffer */
 static BOOL wasapi_render_cb(void* user, BYTE* dst, uint32_t framesAvail)
 {
     ULONG bytes;
+    ULONG written = 0;
     (void)user;
 
     /* MikMod side for WASAPI currently always renders int16 PCM. */
@@ -694,11 +768,17 @@ static BOOL wasapi_render_cb(void* user, BYTE* dst, uint32_t framesAvail)
         * 2u
         * ((md_mode & DMODE_STEREO) ? 2u : 1u);
 
+    MUTEX_LOCK(vars);
     if (Player_Paused_internal()) {
         VC_SilenceBytes((SBYTE*)dst, bytes);
-        return TRUE;
     }
-    return VC_WriteBytes((SBYTE*)dst, bytes) == bytes;
+    else {
+        written = VC_WriteBytes((SBYTE*)dst, bytes);
+        if (written < bytes)
+            VC_SilenceBytes((SBYTE*)dst + written, bytes - written);
+    }
+    MUTEX_UNLOCK(vars);
+    return TRUE;
 }
 
 static void WASAPI_CommandLine(const CHAR* cmdline)
@@ -765,7 +845,7 @@ static int WASAPI_Init(void)
         if (rate > 65535) { /* md_mixfreq is an UWORD */
             audio_device_destroy(g_wasapi);
             g_wasapi = NULL;
-            _mm_errno = MMERR_WASAPI_SAMPLERATE;
+            _mm_errno = MMERR_OPENING_AUDIO;
             return 1;
         }
         md_mixfreq = (UWORD)rate;
@@ -837,7 +917,7 @@ MIKMODAPI MDRIVER drv_wasapi = {
     "Windows WASAPI driver v0.1",
     0, 255,
     "wasapi",
-    "buffer:r:2,100,10:Audio buffer size in milliseconds\n",
+    "buffer:r:2,100,20:Audio buffer size in milliseconds\n",
     WASAPI_CommandLine,
     WASAPI_IsPresent,
     VC_SampleLoad,
