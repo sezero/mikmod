@@ -47,19 +47,15 @@ static int enabled = 0;
 
 static void SDLSoundCallback(void *userdata, Uint8 *stream, int len)
 {
-    if (!enabled) return;
-    if (enabled < 0) {
-        if (++enabled == 0)
-            enabled = 1;
+    if (enabled <= 0) {
+        VC_SilenceBytes((SBYTE *) stream, (ULONG)len);
         return;
     }
-
     MUTEX_LOCK(vars);
     if (Player_Paused_internal()) {
         VC_SilenceBytes((SBYTE *) stream, (ULONG)len);
     }
-    else
-    {
+    else {
         int got = (int) VC_WriteBytes((SBYTE *) stream, (ULONG)len);
         if (got < len) {	/* fill the rest with silence, then */
             VC_SilenceBytes((SBYTE *) &stream[got], (ULONG)(len-got));
@@ -124,7 +120,9 @@ static int SDLDrv_Init(void)
     if (VC_Init())
         return 1;
 
-    enabled = -2; /* delay the callback 2 frames */
+    enabled = -1;
+    SDL_PauseAudio(0);
+
     return 0;
 }
 
@@ -145,7 +143,9 @@ static int SDLDrv_Reset(void)
 
 static void SDLDrv_Update( void )
 {
-/* do nothing */
+    if (enabled < 0) {
+        enabled = 1;
+    }
 }
 
 static void SDLDrv_PlayStop(void)

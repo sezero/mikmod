@@ -1,7 +1,7 @@
   Hello folks!
 
 
-This is libmikmod, version 3.3.13, a portable sound library for Unix
+This is libmikmod, version 3.3.14, a portable sound library for Unix
 and other systems. Check out the file 'NEWS' for more history information.
 
 
@@ -26,8 +26,8 @@ and other systems. Check out the file 'NEWS' for more history information.
 - If you're building libmikmod for AmigaOS, or its variants like MorphOS
   or AROS, refer to the 'README' located in the 'amiga' subdirectory.
 
-- If you're building libmikmod for MacOS, refer to the 'README' file
-  located in the 'macintosh' subdirectory.
+- If you're building libmikmod for classic MacOS, refer to the 'README'
+  file located in the 'macintosh' subdirectory.
 
 - If you're building libmikmod for dreamcast, gp32, n64 or psp platforms,
   refer to the corresponding 'README' files located under the 'dc',
@@ -142,6 +142,15 @@ different parameters, for example: somevalue=1,someothervalue=2
             always play music, even if the application has not the
             focus. Required for full-screen applications.
 
+- WASAPI ("wasapi") [Win32 only]
+  buffer=   audio buffer size in milliseconds, in the range 2-100.
+            Default is 10.
+
+- Windows Multimedia ("winmm") [Win32 only]
+  buffer=   audio buffer size in milliseconds, in the range 50-1000.
+            Default is 120.
+  count=    Audio buffer count, in the range 2-16. Default is 2.
+
 - EsounD ("esd") [Unix only]
   machine=  same syntax as the ESPEAKER environment variable.
 
@@ -198,9 +207,11 @@ different parameters, for example: somevalue=1,someothervalue=2
 - Linux sam9407-based soundcards ("sam9407") [Linux only]
   card=     card number. Default is first card.
 
+- PlayStation VITA ("vita")
+  buffer=   logarithmic fragment size, in the range 6-15. Default is 11.
+
 - NoSound ("nosound"), Standard output ("stdout"), Ultrasound ("ultra"),
-  Windows Multimedia ("winmm"), Windows XAudio2 ("xaudio2"),
-  Amiga AHI ("ahi"), Linux ALSA ("alsa")
+  Windows XAudio2 ("xaudio2"), Amiga AHI ("ahi"), Linux ALSA ("alsa"):
   These drivers have no options.
 
 

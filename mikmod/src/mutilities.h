@@ -31,13 +31,19 @@
 #include <windows.h>
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning(disable:4389) /* signed/unsigned mismatch ( <, <=, >, >= ) */
+#pragma warning(disable:4018) /* signed/unsigned mismatch ( ==, != ) */
+#pragma warning(disable:4761) /* integral size mismatch in argument; conversion supplied (for MSVC6 and older.) */
+#pragma warning(disable:4244) /* conversion from 'type' to 'int', possible loss of data */
+#pragma warning(disable:4267) /* conversion from 'size_t' to 'type', possible loss of data */
+#endif
+
 #if defined(__OS2__)||defined(__EMX__)
 #include <os2.h>
 #endif
 
-#if defined(__MORPHOS__) || defined(__AROS__) || defined(AMIGAOS)	|| \
-    defined(__amigaos__) || defined(__amigados__)			|| \
-    defined(AMIGA) || defined(_AMIGA) || defined(__AMIGA__)
+#if defined(__MORPHOS__) || defined(__AROS__) || defined(_AMIGA) || defined(__AMIGA__) || defined(__amigaos__) || defined(AMIGAOS)
 #include <exec/types.h>
 #define _mikmod_amiga 1
 #endif

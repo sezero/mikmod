@@ -34,6 +34,8 @@
 #include "config.h"
 #endif
 
+#define CINTERFACE
+
 #include "mikmod_internals.h"
 
 #ifdef DRV_DS
@@ -45,30 +47,11 @@
  * explicitly included first (without WIN32_LEAN_AND_MEAN).
  */
 #include <windows.h>
-
-#define INITGUID
-#if defined(__WATCOMC__)
-#include <guiddef.h>
-#else
-#include <basetyps.h> /* guiddef.h not in all SDKs, e.g. mingw.org */
-#endif
-
-#if !defined(__cplusplus) && !defined(CINTERFACE)
-#define CINTERFACE
-#endif
 #include <dsound.h>
 
-#ifdef __WATCOMC__
-/* If you encounter build failures from Open Watcom's dsound.h,
- * see: https://github.com/open-watcom/open-watcom-v2/pull/313
- */
-/* Open Watcom has broken __cdecl (leading underscore) name mangling for Windows
- * internal var names. It is fixed in Open Watcom V2 fork as of May/2014:
- * https://github.com/open-watcom/open-watcom-v2/commit/961ef1ff756f3ec5a7248cefcae00a6ecaa97ff4
- * Therefore, we define and use a local copy of IID_IDirectSoundNotify here.
- */
-DEFINE_GUID(IID_IDirectSoundNotify,0xB0210783,0x89cd,0x11d0,0xAF,0x08,0x00,0xA0,0xC9,0x25,0xCD,0x16);
-#endif
+/* Namespace the GUID constants so that we don't bother with INITGUID, etc. */
+static const IID MIKMOD_IID_IDirectSoundNotify =
+{ 0xB0210783, 0x89cd, 0x11d0, { 0xAF, 0x08, 0x00, 0xA0, 0xC9, 0x25, 0xCD, 0x16 } };
 
 /* PF_XMMI64_INSTRUCTIONS_AVAILABLE not in all SDKs */
 #ifndef PF_XMMI64_INSTRUCTIONS_AVAILABLE
@@ -238,9 +221,9 @@ static int DS_Init(void)
 	}
 
 #ifdef __cplusplus
-	IDirectSoundBuffer_QueryInterface(pSoundBuffer, IID_IDirectSoundNotify,&p);
+	IDirectSoundBuffer_QueryInterface(pSoundBuffer, MIKMOD_IID_IDirectSoundNotify,&p);
 #else
-	IDirectSoundBuffer_QueryInterface(pSoundBuffer,&IID_IDirectSoundNotify,&p);
+	IDirectSoundBuffer_QueryInterface(pSoundBuffer,&MIKMOD_IID_IDirectSoundNotify,&p);
 #endif
 	if (!p) {
 		_mm_errno=MMERR_DS_NOTIFY;

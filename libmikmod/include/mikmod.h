@@ -74,7 +74,7 @@ extern "C" {
 
 #define LIBMIKMOD_VERSION_MAJOR 3L
 #define LIBMIKMOD_VERSION_MINOR 3L
-#define LIBMIKMOD_REVISION     13L
+#define LIBMIKMOD_REVISION     14L
 
 #define LIBMIKMOD_VERSION \
     ((LIBMIKMOD_VERSION_MAJOR<<16)| \
@@ -291,6 +291,7 @@ enum {
 
     MMERR_MAX
 };
+#define MMERR_WASAPI_SAMPLERATE MMERR_SGI_SPEED
 
 /*
  *  ========== Error handling

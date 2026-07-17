@@ -1,8 +1,31 @@
+/*	MikMod sound library
+	(c) 1998-2005 Miodrag Vallat and others - see file AUTHORS for
+	complete list.
+
+	This library is free software; you can redistribute it and/or modify
+	it under the terms of the GNU Library General Public License as
+	published by the Free Software Foundation; either version 2 of
+	the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Library General Public License for more details.
+
+	You should have received a copy of the GNU Library General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+	02111-1307, USA.
+*/
+
 /* drv_wasapi.c - Windows WASAPI output driver for MikMod
+ * Contributed by Stephane Denis <stephane@realtech-vr.com> :
+ *    https://sourceforge.net/p/mikmod/support-requests/8/
  *
- * Ported from C++ to C89.  Requires linking against ole32.lib and
- * mmdevapi is loaded at run-time through COM so no extra import lib is needed.
+ * Clean-ups/fixes by: O.Sezer <sezero@users.sourceforge.net>
  *
+ * Requires linking against ole32.lib and mmdevapi is loaded at run-time
+ * through COM so no extra import lib is needed.
  * Build guard: define DRV_WASAPI in your build system (or config.h).
  */
 
@@ -10,11 +33,12 @@
 #include "config.h"
 #endif
 
+#define COBJMACROS
+#define CINTERFACE
+
 #include "mikmod_internals.h"
 
 #ifdef DRV_WASAPI
-
-#define COBJMACROS          /* get C-style COM macros: IFoo_Method(p, ...) */
 
 #include <windows.h>
 #include <audioclient.h>
@@ -29,6 +53,12 @@
 #define MIK_UINT64_C(c) c ## UL
 #else
 #define MIK_UINT64_C(c) c ## ULL
+#endif
+
+#ifdef __cplusplus
+#define GUID_REF(X)  (X)
+#else
+#define GUID_REF(X) &(X)
 #endif
 
 /* -------------------------------------------------------------------------
@@ -74,7 +104,7 @@ static const IID MIKMOD_IID_IAudioClient3 =
   * Simple helpers
   * ====================================================================== */
 
-  /* FNV-1a 64-bit hash – stable device id from the wide-char device-id string */
+/* FNV-1a 64-bit hash - stable device id from the wide-char device-id string */
 static uint64_t fnv1a64_w(const wchar_t* s)
 {
     const uint64_t FNV_OFFSET = MIK_UINT64_C(14695981039346656037);
@@ -98,11 +128,6 @@ static void wide_to_utf8(const wchar_t* ws, char* out, int outSize)
     n = WideCharToMultiByte(CP_UTF8, 0, ws, -1, out, outSize, NULL, NULL);
     if (n <= 0) out[0] = '\0';
     out[outSize - 1] = '\0';
-}
-
-static void safe_close_handle(HANDLE* h)
-{
-    if (*h) { CloseHandle(*h); *h = NULL; }
 }
 
 static __inline BOOL is_equal_guid (const GUID *guid1, const GUID *guid2)
@@ -142,9 +167,9 @@ typedef struct {
 
 /* =========================================================================
  * Render callback type
- *   user       – opaque pointer passed through from open()
- *   dst        – destination buffer (WASAPI render buffer)
- *   frames     – number of frames to fill
+ *   user       - opaque pointer passed through from open()
+ *   dst        - destination buffer (WASAPI render buffer)
+ *   frames     - number of frames to fill
  *   returns TRUE if audio was written, FALSE to output silence
  * ====================================================================== */
 typedef BOOL(*RenderCallback)(void* user, BYTE* dst, uint32_t frames);
@@ -153,7 +178,7 @@ typedef BOOL(*RenderCallback)(void* user, BYTE* dst, uint32_t frames);
  * AudioDevice 
  * ====================================================================== */
 typedef struct {
-    /* COM interfaces – held as raw pointers, released explicitly */
+    /* COM interfaces - held as raw pointers, released explicitly */
     IMMDeviceEnumerator* enumerator;
     IMMDevice* device;
     IAudioClient* audioClient;
@@ -225,8 +250,8 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
 
     if (!dev->enumerator) {
         hr = CoCreateInstance(
-            &MIKMOD_CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL,
-            &MIKMOD_IID_IMMDeviceEnumerator, (void**)&dev->enumerator);
+            GUID_REF(MIKMOD_CLSID_MMDeviceEnumerator), NULL, CLSCTX_ALL,
+            GUID_REF(MIKMOD_IID_IMMDeviceEnumerator), (void**)&dev->enumerator);
         if (FAILED(hr) || !dev->enumerator) {
             if (comHere) CoUninitialize();
             return FALSE;
@@ -273,7 +298,7 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
         if (SUCCEEDED(IMMDevice_OpenPropertyStore(d, STGM_READ, &props)) && props) {
             PROPVARIANT v;
             PropVariantInit(&v);
-            if (SUCCEEDED(IPropertyStore_GetValue(props, &MIKMOD_PKEY_Device_FriendlyName, &v))
+            if (SUCCEEDED(IPropertyStore_GetValue(props, GUID_REF(MIKMOD_PKEY_Device_FriendlyName), &v))
                 && v.vt == VT_LPWSTR && v.pwszVal)
             {
                 wide_to_utf8(v.pwszVal, ep.name, (int)sizeof(ep.name));
@@ -282,8 +307,8 @@ static BOOL audio_device_enumerate(AudioDevice* dev)
             IPropertyStore_Release(props);
         }
 
-        /* Mix format – channels + sample rate */
-        hr = IMMDevice_Activate(d, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&client);
+        /* Mix format - channels + sample rate */
+        hr = IMMDevice_Activate(d, GUID_REF(MIKMOD_IID_IAudioClient), CLSCTX_ALL, NULL, (void**)&client);
         if (SUCCEEDED(hr) && client) {
             WAVEFORMATEX* mix = NULL;
             if (SUCCEEDED(IAudioClient_GetMixFormat(client, &mix)) && mix) {
@@ -351,7 +376,7 @@ static BOOL audio_device_open(
     DWORD   streamFlags;
     BOOL    initialized = FALSE;
 
-    (void)deviceIndex; /* reserved – currently always uses default endpoint */
+    (void)deviceIndex; /* reserved - currently always uses default endpoint */
 
     if (!dev->enumerator) return FALSE;
 
@@ -371,13 +396,13 @@ static BOOL audio_device_open(
 
     /* ---- Activate IAudioClient ---------------------------------------- */
     hr = IMMDevice_Activate(
-        dev->device, &MIKMOD_IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&dev->audioClient);
+        dev->device, GUID_REF(MIKMOD_IID_IAudioClient), CLSCTX_ALL, NULL, (void**)&dev->audioClient);
     if (FAILED(hr)) return FALSE;
 
 #ifdef __IAudioClient3_INTERFACE_DEFINED__
     /* Try to also get IAudioClient3 (Win10+) */
     (void)IUnknown_QueryInterface(
-        (IUnknown*)dev->audioClient, &MIKMOD_IID_IAudioClient3, (void**)&dev->audioClient3);
+        (IUnknown*)dev->audioClient, GUID_REF(MIKMOD_IID_IAudioClient3), (void**)&dev->audioClient3);
 #endif
 
     /* ---- Mix format --------------------------------------------------- */
@@ -436,7 +461,7 @@ static BOOL audio_device_open(
 
     /* ---- Render client ------------------------------------------------ */
     hr = IAudioClient_GetService(
-        dev->audioClient, &MIKMOD_IID_IAudioRenderClient, (void**)&dev->renderClient);
+        dev->audioClient, GUID_REF(MIKMOD_IID_IAudioRenderClient), (void**)&dev->renderClient);
     if (FAILED(hr)) return FALSE;
 
     return TRUE;
@@ -465,14 +490,29 @@ static void audio_device_close(AudioDevice* dev)
         dev->mixFormat = NULL;
     }
 
-    safe_close_handle(&dev->event);
+    if (dev->event) {
+        CloseHandle(dev->event);
+        dev->event = NULL;
+    }
 
-    if (dev->renderClient) { IAudioRenderClient_Release(dev->renderClient); dev->renderClient = NULL; }
+    if (dev->renderClient) {
+        IAudioRenderClient_Release(dev->renderClient);
+        dev->renderClient = NULL;
+    }
 #ifdef __IAudioClient3_INTERFACE_DEFINED__
-    if (dev->audioClient3) { IAudioClient3_Release(dev->audioClient3);      dev->audioClient3 = NULL; }
+    if (dev->audioClient3) {
+        IAudioClient3_Release(dev->audioClient3);
+        dev->audioClient3 = NULL;
+    }
 #endif
-    if (dev->audioClient) { IAudioClient_Release(dev->audioClient);        dev->audioClient = NULL; }
-    if (dev->device) { IMMDevice_Release(dev->device);                dev->device = NULL; }
+    if (dev->audioClient) {
+        IAudioClient_Release(dev->audioClient);
+        dev->audioClient = NULL;
+    }
+    if (dev->device) {
+        IMMDevice_Release(dev->device);
+        dev->device = NULL;
+    }
 
     dev->user = NULL;
     dev->renderCb = NULL;
@@ -549,7 +589,7 @@ static void audio_device_resume(AudioDevice* dev)
 {
     if (dev->audioClient) IAudioClient_Start(dev->audioClient);
 }
-#endif
+#endif /*  #if 0 */
 
 /* =========================================================================
  * Render thread
@@ -658,7 +698,7 @@ static BOOL wasapi_render_cb(void* user, BYTE* dst, uint32_t framesAvail)
         VC_SilenceBytes((SBYTE*)dst, bytes);
         return TRUE;
     }
-    return VC_WriteBytes((SBYTE*)dst, bytes) == (int)bytes;
+    return VC_WriteBytes((SBYTE*)dst, bytes) == bytes;
 }
 
 static void WASAPI_CommandLine(const CHAR* cmdline)
@@ -705,7 +745,7 @@ static int WASAPI_Init(void)
     if (!audio_device_open(
         g_wasapi,
         0,
-        (uint32_t)md_mixfreq,
+        md_mixfreq,
         channels,
         wantFloat,
         framesPerCb,
@@ -721,7 +761,14 @@ static int WASAPI_Init(void)
     /* WASAPI shared mode runs at the endpoint mix rate. Since this driver
        currently does no resampling, MikMod must mix at that same rate. */
     if (g_wasapi->mixFormat) {
-        md_mixfreq = g_wasapi->mixFormat->nSamplesPerSec;
+        const ULONG rate = g_wasapi->mixFormat->nSamplesPerSec;
+        if (rate > 65535) { /* md_mixfreq is an UWORD */
+            audio_device_destroy(g_wasapi);
+            g_wasapi = NULL;
+            _mm_errno = MMERR_WASAPI_SAMPLERATE;
+            return 1;
+        }
+        md_mixfreq = (UWORD)rate;
     }
 
     md_mode |= DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
@@ -740,30 +787,27 @@ static int WASAPI_Init(void)
 
 static void WASAPI_Exit(void)
 {
-    VC_Exit();
     if (g_wasapi) {
         audio_device_destroy(g_wasapi);
         g_wasapi = NULL;
     }
     g_started = FALSE;
+    VC_Exit();
 }
+
+static BOOL do_update = 0;
 
 static int WASAPI_PlayStart(void)
 {
     if (VC_PlayStart()) return 1;
 
-    if (g_wasapi && !audio_device_start(g_wasapi)) {
-        VC_PlayStop();
-        _mm_errno = MMERR_OPENING_AUDIO;
-        return 1;
-    }
-
-    g_started = TRUE;
+    do_update = 1;
     return 0;
 }
 
 static void WASAPI_PlayStop(void)
 {
+    do_update = 0;
     if (g_wasapi && g_started)
         audio_device_stop(g_wasapi);
     g_started = FALSE;
@@ -771,7 +815,21 @@ static void WASAPI_PlayStop(void)
 }
 
 /* Event-driven backend: no polling needed */
-static void WASAPI_Update(void) {}
+static void WASAPI_Update(void)
+{
+    if (!do_update)
+        return;
+    do_update = 0;
+
+    if (g_wasapi && !audio_device_start(g_wasapi)) {
+        VC_PlayStop();
+        _mm_errno = MMERR_OPENING_AUDIO;
+        WASAPI_Exit();
+        return;
+    }
+
+    g_started = TRUE;
+}
 
 MIKMODAPI MDRIVER drv_wasapi = {
     NULL,
