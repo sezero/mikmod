@@ -101,7 +101,7 @@ static const IID MIKMOD_IID_IAudioClient3 =
 #define WASAPI_WAIT_MS        2000
 
 /* avrt.dll is loaded dynamically so older toolchains need no extra import lib. */
-typedef HANDLE (WINAPI *AvSetMmThreadCharacteristicsWFn)(LPCWSTR, LPDWORD);
+typedef HANDLE (WINAPI *AvSetMmThreadCharacteristicsAFn)(LPCSTR, LPDWORD);
 typedef BOOL (WINAPI *AvSetMmThreadPriorityFn)(HANDLE, int);
 typedef BOOL (WINAPI *AvRevertMmThreadCharacteristicsFn)(HANDLE);
 
@@ -686,24 +686,24 @@ static DWORD WINAPI render_thread_main(LPVOID param)
     BOOL comInitializedHere;
     HMODULE avrt;
     HANDLE mmcss = NULL;
-    AvSetMmThreadCharacteristicsWFn setCharacteristics = NULL;
+    AvSetMmThreadCharacteristicsAFn setCharacteristics = NULL;
     AvSetMmThreadPriorityFn setPriority = NULL;
     AvRevertMmThreadCharacteristicsFn revertCharacteristics = NULL;
 
     comResult = CoInitializeEx(NULL, COINIT_MULTITHREADED);
     comInitializedHere = SUCCEEDED(comResult);
 
-    avrt = LoadLibraryW(L"avrt.dll");
+    avrt = LoadLibraryA("avrt.dll");
     if (avrt) {
         DWORD taskIndex = 0;
-        setCharacteristics = (AvSetMmThreadCharacteristicsWFn)
-            GetProcAddress(avrt, "AvSetMmThreadCharacteristicsW");
+        setCharacteristics = (AvSetMmThreadCharacteristicsAFn)
+            GetProcAddress(avrt, "AvSetMmThreadCharacteristicsA");
         setPriority = (AvSetMmThreadPriorityFn)
             GetProcAddress(avrt, "AvSetMmThreadPriority");
         revertCharacteristics = (AvRevertMmThreadCharacteristicsFn)
             GetProcAddress(avrt, "AvRevertMmThreadCharacteristics");
         if (setCharacteristics)
-            mmcss = setCharacteristics(L"Pro Audio", &taskIndex);
+            mmcss = setCharacteristics("Pro Audio", &taskIndex);
         if (mmcss && setPriority)
             setPriority(mmcss, 1); /* AVRT_PRIORITY_HIGH */
     }
