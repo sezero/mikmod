@@ -815,6 +815,8 @@ case $host_os in
 		fi
 		CPPFLAGS=$ac_save_CPPFLAGS
 	fi
+	# link statically to libgcc:
+	CFLAGS="$CFLAGS -static-libgcc"
 	;;
 
  *)	libmikmod_driver_win=no
