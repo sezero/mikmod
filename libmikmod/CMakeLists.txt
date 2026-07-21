@@ -385,6 +385,9 @@ IF (ENABLE_SHARED)
             PROPERTIES DEFINE_SYMBOL DLL_EXPORT
         )
     ENDIF()
+    if(MINGW OR CYGWIN)
+        TARGET_LINK_OPTIONS(mikmod PRIVATE -static-libgcc)
+    ENDIF()
     IF(OS2)
         TARGET_SOURCES(mikmod PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/os2/mikmod.def)
         SET_TARGET_PROPERTIES(mikmod
