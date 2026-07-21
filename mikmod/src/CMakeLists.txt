@@ -33,6 +33,9 @@ include_directories(${MIKMOD_INCLUDE_DIR})
 add_executable(mikmod ${mikmod_SRCS})
 
 target_link_libraries(mikmod ${MIKMOD_LIBRARIES} ${EXTRA_LIBS})
+if(MINGW OR CYGWIN)
+   target_link_options(mikmod PRIVATE -static-libgcc)
+endif()
 
 install(TARGETS mikmod DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES mikmod.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)

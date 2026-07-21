@@ -87,6 +87,13 @@ AC_CHECK_LIB(mikmod, MikMod_free, AC_DEFINE(HAVE_MIKMOD_FREE, 1,
 		[Define if your libmikmod has MikMod_free (not found in <= 3.2.0-beta2).]))
 LIBS="$ac_save_LIBS"
 
+case $host_os in
+    mingw*|msys*|cygwin*)
+	# link statically to libgcc:
+	CFLAGS="$CFLAGS -static-libgcc"
+	;;
+esac
+
 dnl ncurses
 case $host_os in
     mingw*|os2*|*djgpp)
