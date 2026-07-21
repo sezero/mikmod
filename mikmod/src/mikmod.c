@@ -1071,6 +1071,7 @@ int main(int argc, char *argv[])
 		signal(SIGUSR2, GotoPrev);
 	}
 #endif
+	(void) use_threads;
 
 	if (!quiet)
 		win_panel_set_handle_key(DISPLAY_ROOT, player_handle_key);
