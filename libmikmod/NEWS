@@ -1,3 +1,16 @@
+Summary of changes between libmikmod 3.3.14 and libmikmod 3.3.15:
+========================================================================
+
+libmikmod v3.3.15 was released on Oct. 10, 2026.
+
+- Fix out-of-bounds writes in unimod version 6 loader with crafted files.
+- Reject zero-channel samples to avoid division by zero.
+
+Thanks to:
+- Louis Clinckx for the unimod v6 bug report.
+- Suk Eunho for the 0-channel samples report.
+
+
 Summary of changes between libmikmod 3.3.13 and libmikmod 3.3.14:
 ========================================================================
 
