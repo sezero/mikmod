@@ -178,6 +178,12 @@ static BOOL MTM_Load(BOOL curious)
 	of.numpat    = mh->lastpattern+1;
 	of.reppos    = 0;
 	of.flags    |= UF_PANNING;
+
+	if(of.numchn > 32) {
+		_mm_errno = MMERR_NOT_A_MODULE;
+		return 0;
+	}
+
 	for(t=0;t<32;t++) of.panning[t]=mh->panpos[t]<< 4;
 	of.numins=of.numsmp=mh->numsamples;
 
