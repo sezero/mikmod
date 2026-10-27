@@ -1,3 +1,12 @@
+Summary of changes between libmikmod 3.3.15 and libmikmod 3.3.16:
+========================================================================
+
+libmikmod v3.3.16 was released on Oct. 28, 2026.
+
+- Fix out-of-bounds reads in MTM loader (CVE-2026-111165.)
+- Fix out-of-bounds reads in IMF loader (CVE-2026-111166.)
+
+
 Summary of changes between libmikmod 3.3.14 and libmikmod 3.3.15:
 ========================================================================
 
