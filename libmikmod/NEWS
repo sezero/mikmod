@@ -1,3 +1,16 @@
+Summary of changes between libmikmod 3.3.16 and libmikmod 3.3.17:
+========================================================================
+
+libmikmod v3.3.17 was released on ??. ??, 2026.
+
+- mmcmp depacker: fixed heap buffer overflow writes with crafted files.
+- xpk depacker: fixed oob reads with crafted files.
+- 669, asylum, and mtm loaders: fixed oob reads with crafted files.
+
+Thanks to:
+- Thanks to 'tinkerwren' for bug reports and the patches
+
+
 Summary of changes between libmikmod 3.3.15 and libmikmod 3.3.16:
 ========================================================================
 
