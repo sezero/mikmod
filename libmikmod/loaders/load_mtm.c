@@ -206,7 +206,7 @@ static BOOL MTM_Load(BOOL curious)
 
 		q->samplename = DupStr(s.samplename,22,1);
 		q->seekpos   = 0;
-		q->speed     = finetune[s.finetune];
+		q->speed     = finetune[s.finetune & 0x0F];
 		q->length    = s.length;
 		q->loopstart = s.reppos;
 		q->loopend   = s.repend;
