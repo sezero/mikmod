@@ -273,6 +273,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 			fprintf(stderr, "\n");
 #endif
 			size = block.pk_size - block.tt_entries;
+			if (size > srclen) goto err;
 			if (bufsize < size) {
 				while (bufsize < size) bufsize += 65536;
 				MikMod_free(buf);
@@ -354,6 +355,7 @@ BOOL MMCMP_Unpack(MREADER* reader, void** out, long* outlen)
 			UBYTE ptable[0x100];
 
 			size = block.pk_size - block.tt_entries;
+			if (size > srclen) goto err;
 			if (bufsize < size) {
 				while (bufsize < size) bufsize += 65536;
 				MikMod_free(buf);
