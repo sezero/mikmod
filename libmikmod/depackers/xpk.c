@@ -369,7 +369,7 @@ static int unsqsh(UBYTE *src, SLONG srclen, UBYTE *dest, SLONG destlen)
 
 	while (len) {
 		/* Sanity check */
-		if (c >= src + srclen) {
+		if (c + 8 > src + srclen) {
 			return -1;
 		}
 
