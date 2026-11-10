@@ -93,6 +93,9 @@ static const UWORD periodtable[] = {
 	63,  60,  56,  53,  50,  47,  45,  42,  40,
 	37,  35,  33,  31,  30,  28};
 
+static const unsigned int periodtable_size = 
+	sizeof(periodtable) / sizeof(periodtable[0]);
+
 /*========== Loader variables */
 
 static CHAR asylum[] = "Asylum 1.0";
@@ -158,7 +161,7 @@ static int ConvertNote(MODNOTE *n)
 	effdat = n->d;
 
 	/* convert amf note to mod period */
-	if (n->a) {
+	if (n->a && n->a < periodtable_size) {
 		period = periodtable[n->a];
 	} else {
 		period = 0;
