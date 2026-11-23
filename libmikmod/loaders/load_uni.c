@@ -388,12 +388,19 @@ static BOOL loadinstr5(void)
 		for(u=0;u<numsmp;u++,s++,of.numsmp++) {
 			/* Allocate more room for sample information if necessary */
 			if(of.numsmp==wavcnt) {
-				wavcnt+=UNI_SMPINCR;
+				UWORD incr;
+				if(wavcnt==65535) {
+					_mm_errno = MMERR_LOADING_SAMPLEINFO;
+					return 0;
+				}
+				if(wavcnt<65535-UNI_SMPINCR) wavcnt+=UNI_SMPINCR;
+				else wavcnt=65535;
+				incr=wavcnt-of.numsmp;
 				if(!(wh=(UNISMP05*)MikMod_realloc(wh,wavcnt*sizeof(UNISMP05)))) {
 					_mm_errno=MMERR_OUT_OF_MEMORY;
 					return 0;
 				}
-				s=wh+(wavcnt-UNI_SMPINCR);
+				s=wh+(wavcnt-incr);
 			}
 
 			s->c2spd    =_mm_read_I_UWORD(modreader);
