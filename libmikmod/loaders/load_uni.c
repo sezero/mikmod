@@ -348,7 +348,7 @@ static BOOL loadinstr5(void)
 {
 	INSTRUMENT *i;
 	int t;
-	UWORD wavcnt=0;
+	ULONG wavcnt=0;
 	UBYTE vibtype,vibsweep,vibdepth,vibrate;
 
 	i=of.instruments;
@@ -385,15 +385,28 @@ static BOOL loadinstr5(void)
 		i->volfade=_mm_read_I_UWORD(modreader);
 		i->insname=readstring();
 
+		/* of.numsmp is a UWORD: don't let the total sample count wrap. */
+		if((ULONG)of.numsmp+numsmp>0xffff) {
+			MikMod_free(wh);wh=NULL;
+			_mm_errno=MMERR_LOADING_SAMPLEINFO;
+			return 0;
+		}
+
 		for(u=0;u<numsmp;u++,s++,of.numsmp++) {
-			/* Allocate more room for sample information if necessary */
-			if(of.numsmp+u==wavcnt) {
+			/* Allocate more room for sample information if necessary.
+			 * of.numsmp is the number of entries written to wh so far,
+			 * i.e. the index of the entry about to be written. */
+			if(of.numsmp==wavcnt) {
+				UNISMP05 *newwh;
 				wavcnt+=UNI_SMPINCR;
-				if(!(wh=(UNISMP05*)MikMod_realloc(wh,wavcnt*sizeof(UNISMP05)))) {
+				if(!(newwh=(UNISMP05*)MikMod_realloc(wh,wavcnt*sizeof(UNISMP05)))) {
+					MikMod_free(wh);wh=NULL;
 					_mm_errno=MMERR_OUT_OF_MEMORY;
 					return 0;
 				}
-				s=wh+(wavcnt-UNI_SMPINCR);
+				wh=newwh;
+				memset(wh+of.numsmp,0,UNI_SMPINCR*sizeof(UNISMP05));
+				s=wh+of.numsmp;
 			}
 
 			s->c2spd    =_mm_read_I_UWORD(modreader);
