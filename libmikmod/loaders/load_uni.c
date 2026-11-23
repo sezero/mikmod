@@ -385,6 +385,11 @@ static BOOL loadinstr5(void)
 		i->volfade=_mm_read_I_UWORD(modreader);
 		i->insname=readstring();
 
+		if(of.numsmp > 65535-numsmp) {
+			_mm_errno = MMERR_LOADING_SAMPLEINFO;
+			return 0;
+		}
+
 		for(u=0;u<numsmp;u++,s++,of.numsmp++) {
 			/* Allocate more room for sample information if necessary */
 			if(of.numsmp==wavcnt) {
