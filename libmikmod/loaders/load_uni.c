@@ -401,6 +401,7 @@ static BOOL loadinstr5(void)
 					return 0;
 				}
 				s=wh+(wavcnt-incr);
+				memset(s, 0, incr*sizeof(UNISMP05));
 			}
 
 			s->c2spd    =_mm_read_I_UWORD(modreader);
