@@ -387,7 +387,7 @@ static BOOL loadinstr5(void)
 
 		for(u=0;u<numsmp;u++,s++,of.numsmp++) {
 			/* Allocate more room for sample information if necessary */
-			if(of.numsmp+u==wavcnt) {
+			if(of.numsmp==wavcnt) {
 				wavcnt+=UNI_SMPINCR;
 				if(!(wh=(UNISMP05*)MikMod_realloc(wh,wavcnt*sizeof(UNISMP05)))) {
 					_mm_errno=MMERR_OUT_OF_MEMORY;
