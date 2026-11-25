@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id$
-
   UNIMOD (libmikmod's and APlayer's internal module format) loader
 
 ==============================================================================*/
@@ -385,19 +383,13 @@ static BOOL loadinstr5(void)
 		i->volfade=_mm_read_I_UWORD(modreader);
 		i->insname=readstring();
 
-		if(of.numsmp > 65535-numsmp) {
-			_mm_errno = MMERR_LOADING_SAMPLEINFO;
-			return 0;
-		}
+		if(of.numsmp > 65535-numsmp) goto fail;
 
 		for(u=0;u<numsmp;u++,s++,of.numsmp++) {
 			/* Allocate more room for sample information if necessary */
 			if(of.numsmp==wavcnt) {
 				UWORD incr;
-				if(wavcnt==65535) {
-					_mm_errno = MMERR_LOADING_SAMPLEINFO;
-					return 0;
-				}
+				if(wavcnt==65535) goto fail;
 				if(wavcnt<65535-UNI_SMPINCR) wavcnt+=UNI_SMPINCR;
 				else wavcnt=65535;
 				incr=wavcnt-of.numsmp;
@@ -424,16 +416,13 @@ static BOOL loadinstr5(void)
 			s->vibdepth=vibdepth;
 			s->vibrate =vibrate;
 
-			if(_mm_eof(modreader)) {
-				MikMod_free(wh);wh=NULL;
-				_mm_errno=MMERR_LOADING_SAMPLEINFO;
-				return 0;
-			}
+			if(_mm_eof(modreader)) goto fail;
 		}
 	}
 
 	/* sanity check */
 	if(!of.numsmp) {
+	fail:
 		MikMod_free(wh);wh=NULL;
 		_mm_errno=MMERR_LOADING_SAMPLEINFO;
 		return 0;
